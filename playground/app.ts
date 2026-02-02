@@ -1020,18 +1020,24 @@ async function loadThemeManifest() {
 function replaceCanvas(): void {
   const parent = canvas.parentElement;
   if (!parent) return;
+  const oldWidth = canvas.width;
+  const oldHeight = canvas.height;
   const newCanvas = document.createElement("canvas");
   newCanvas.id = canvas.id;
   newCanvas.className = canvas.className;
   newCanvas.style.cssText = canvas.style.cssText;
   parent.replaceChild(newCanvas, canvas);
   canvas = newCanvas;
-  // Force layout reflow and set correct pixel dimensions
+  // Force layout reflow
+  void canvas.offsetWidth;
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
-  canvas.width = Math.max(1, Math.floor(rect.width * dpr));
-  canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+  const w = Math.max(1, Math.floor(rect.width * dpr));
+  const h = Math.max(1, Math.floor(rect.height * dpr));
+  canvas.width = w;
+  canvas.height = h;
   currentDpr = dpr;
+  console.log(`[replaceCanvas] old=${oldWidth}x${oldHeight} css=${rect.width.toFixed(0)}x${rect.height.toFixed(0)} new=${w}x${h} dpr=${dpr}`);
   currentContextType = null;
   // Clear glyph atlases from font entries (they were for old context)
   for (const entry of fontState.fonts) {
