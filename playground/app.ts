@@ -2156,7 +2156,7 @@ function tickWebGPU(state) {
   emitGlyphs(glyphQueueByFont, glyphDataByFont);
   emitGlyphs(overlayGlyphQueueByFont, overlayGlyphDataByFont);
 
-  if (cursor && cursor.visible) {
+  if (cursor) { // force blink overlay even if TUI hides cursor
     const isBlinking = cursor.blinking || FORCE_CURSOR_BLINK;
     const blinkVisible =
       !isBlinking || Math.floor(performance.now() / CURSOR_BLINK_MS) % 2 === 0;
@@ -2581,7 +2581,7 @@ function tickWebGL(state: WebGLState) {
   }
 
   // Cursor
-  if (cursor && cursor.visible) {
+  if (cursor) { // force blink overlay even if TUI hides cursor
     const { col, row, shape: cursorShape, color: cursorColor } = cursor;
     const isBlinking = cursor.blinking || FORCE_CURSOR_BLINK;
     const blinkVisible = !isBlinking || Math.floor(performance.now() / CURSOR_BLINK_MS) % 2 === 0;
@@ -3171,8 +3171,9 @@ async function init() {
       // Force full size/grid sync after context creation
       updateSize(true);
       console.log(`[init webgpu] canvas=${canvas.width}x${canvas.height} grid=${gridState.cols}x${gridState.rows}`);
-      loop(gpuState);
+      // Wait a frame for context to be ready before starting render loop
       await wasmPromise;
+      requestAnimationFrame(() => loop(gpuState));
       return;
     }
   }
@@ -3192,8 +3193,9 @@ async function init() {
       // Force full size/grid sync after context creation
       updateSize(true);
       console.log(`[init webgl2] canvas=${canvas.width}x${canvas.height} grid=${gridState.cols}x${gridState.rows}`);
-      loop(glState);
+      // Wait a frame for context to be ready before starting render loop
       await wasmPromise;
+      requestAnimationFrame(() => loop(glState));
       return;
     }
   }
