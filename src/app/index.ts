@@ -149,8 +149,6 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   const DEFAULT_FG_BASE: Color = [0.92, 0.93, 0.95, 1.0];
   const SELECTION_BASE: Color = [0.35, 0.55, 0.9, 0.45];
   const CURSOR_BASE: Color = [0.95, 0.95, 0.95, 1.0];
-  const LINK_HOVER_BG: Color = [0.28, 0.5, 0.95, 0.18];
-  const LINK_HOVER_UL: Color = [0.4, 0.7, 1.0, 0.9];
   let defaultBg: Color = [...DEFAULT_BG_BASE];
   let defaultFg: Color = [...DEFAULT_FG_BASE];
   let selectionColor: Color = [...SELECTION_BASE];
@@ -3993,10 +3991,6 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
         const linkId = linkIds ? (linkIds[idx] ?? 0) : 0;
         const linkHovered = linkId && linkId === linkState.hoverId;
-        if (linkHovered && !selectionState.active && !selectionState.dragging) {
-          pushRect(selectionData, x, rowY, cellW, cellH, LINK_HOVER_BG);
-        }
-
         const blinkOff = blink && !blinkVisible;
         const textHidden = invisible || blinkOff;
         if (!textHidden && !bgOnly) {
@@ -4025,7 +4019,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
               baseY,
               underlineOffsetPx,
               underlineThicknessPx,
-              LINK_HOVER_UL,
+              ul,
             );
           }
           if (strike) drawStrikethrough(underlineData, x, rowY, cellW, cellH, fg);
@@ -5070,10 +5064,6 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
         const linkId = linkIds ? (linkIds[idx] ?? 0) : 0;
         const linkHovered = linkId && linkId === linkState.hoverId;
-        if (linkHovered && !selectionState.active && !selectionState.dragging) {
-          pushRect(selectionData, x, rowY, cellW, cellH, LINK_HOVER_BG);
-        }
-
         const blinkOff = blink && !blinkVisible;
         const textHidden = invisible || blinkOff;
         if (!textHidden && !bgOnly) {
@@ -5102,7 +5092,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
               baseY,
               underlineOffsetPx,
               underlineThicknessPx,
-              LINK_HOVER_UL,
+              ul,
             );
           }
           if (strike) drawStrikethrough(underlineData, x, rowY, cellW, cellH, fg);

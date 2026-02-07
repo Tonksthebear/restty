@@ -44,3 +44,29 @@ test("output filter replies to XTWINOPS size queries", () => {
     "\x1b[8;46;153t",
   ]);
 });
+
+test("output filter preserves unhandled OSC 8 hyperlinks (BEL terminator)", () => {
+  const filter = new OutputFilter({
+    getCursorPosition: () => ({ row: 1, col: 1 }),
+    sendReply: () => {},
+    mouse: {
+      handleModeSeq: () => false,
+    } as any,
+  });
+
+  const input = "\x1b]8;;https://example.com\x07click me\x1b]8;;\x07\n";
+  expect(filter.filter(input)).toBe(input);
+});
+
+test("output filter preserves unhandled OSC 8 hyperlinks (ST terminator)", () => {
+  const filter = new OutputFilter({
+    getCursorPosition: () => ({ row: 1, col: 1 }),
+    sendReply: () => {},
+    mouse: {
+      handleModeSeq: () => false,
+    } as any,
+  });
+
+  const input = "\x1b]8;;https://example.com\x1b\\click me\x1b]8;;\x1b\\\n";
+  expect(filter.filter(input)).toBe(input);
+});

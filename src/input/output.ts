@@ -269,7 +269,9 @@ export class OutputFilter {
         }
         const seq = data.slice(i, j);
         if (!this.handleOsc(seq)) {
-          result += seq;
+          // Preserve full OSC bytes (including terminator) for sequences
+          // we don't intercept, e.g. OSC 8 hyperlinks.
+          result += data.slice(i, j + terminatorLen);
         }
         i = j + terminatorLen;
         continue;
