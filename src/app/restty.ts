@@ -3,11 +3,14 @@ import type { InputHandler } from "../input";
 import {
   createResttyAppPaneManager,
   type CreateResttyAppPaneManagerOptions,
+  type ResttyPaneAppOptionsInput,
   type ResttyManagedAppPane,
 } from "./pane-app-manager";
 import type { ResttyPaneManager, ResttyPaneSplitDirection } from "./panes";
 
-export type ResttyOptions = CreateResttyAppPaneManagerOptions & {
+export type ResttyOptions = Omit<CreateResttyAppPaneManagerOptions, "appOptions"> & {
+  appOptions?: CreateResttyAppPaneManagerOptions["appOptions"];
+  fontSources?: ResttyPaneAppOptionsInput["fontSources"];
   createInitialPane?: boolean | { focus?: boolean };
 };
 
@@ -15,8 +18,31 @@ export class Restty {
   readonly paneManager: ResttyPaneManager<ResttyManagedAppPane>;
 
   constructor(options: ResttyOptions) {
-    const { createInitialPane = true, ...paneManagerOptions } = options;
-    this.paneManager = createResttyAppPaneManager(paneManagerOptions);
+    const { createInitialPane = true, appOptions, fontSources, ...paneManagerOptions } = options;
+    const mergedAppOptions: CreateResttyAppPaneManagerOptions["appOptions"] =
+      fontSources === undefined
+        ? appOptions
+        : typeof appOptions === "function"
+          ? (context) => {
+              const resolved = appOptions(context);
+              return {
+                ...resolved,
+                fontSources,
+              };
+            }
+          : appOptions
+            ? {
+                ...appOptions,
+                fontSources,
+              }
+            : {
+                fontSources,
+              };
+
+    this.paneManager = createResttyAppPaneManager({
+      ...paneManagerOptions,
+      appOptions: mergedAppOptions,
+    });
 
     if (createInitialPane) {
       const focus = typeof createInitialPane === "object" ? createInitialPane.focus ?? true : true;

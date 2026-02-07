@@ -54,7 +54,7 @@ import {
   type AtlasConstraintContext,
 } from "./atlas-builder";
 import * as bundledTextShaper from "text-shaper";
-import type { ResttyApp, ResttyAppOptions } from "./types";
+import type { FontSource, ResttyApp, ResttyAppOptions } from "./types";
 import { getDefaultResttyAppSession } from "./session";
 export { createResttyAppSession, getDefaultResttyAppSession } from "./session";
 export {
@@ -85,6 +85,60 @@ export type {
 } from "./panes";
 export type { ResttyOptions } from "./restty";
 
+const DEFAULT_PRIMARY_FONT_SOURCE = {
+  url: "https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono@v2.304/fonts/ttf/JetBrainsMono-Regular.ttf",
+  matchers: [
+    "jetbrainsmono nerd font",
+    "jetbrains mono nerd font",
+    "fira code nerd font",
+    "fira code nerd",
+    "hack nerd font",
+    "meslo lgm nerd font",
+    "monaspace nerd font",
+    "nerd font mono",
+    "jetbrains mono",
+  ],
+};
+
+const DEFAULT_FALLBACK_FONT_SOURCES: FontSource[] = [
+  {
+    name: "Symbols Nerd Font Mono",
+    url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf",
+    matchers: ["symbols nerd font mono", "symbols nerd font", "nerd fonts symbols"],
+  },
+  {
+    name: "Noto Sans Symbols 2",
+    url: "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf",
+    matchers: ["noto sans symbols 2", "noto sans symbols"],
+  },
+  {
+    name: "Apple Color Emoji",
+    matchers: ["apple color emoji"],
+  },
+  {
+    name: "OpenMoji Black",
+    url: "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji@master/font/OpenMoji-black-glyf/OpenMoji-black-glyf.ttf",
+    matchers: ["openmoji", "emoji"],
+  },
+  {
+    name: "Noto Sans CJK",
+    matchers: [
+      "noto sans cjk",
+      "source han sans",
+      "pingfang",
+      "hiragino",
+      "yu gothic",
+      "meiryo",
+      "microsoft yahei",
+      "ms gothic",
+      "simhei",
+      "simsun",
+      "apple sd gothic",
+      "nanum",
+    ],
+  },
+];
+
 export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   const { canvas: canvasInput, imeInput: imeInputInput, elements, callbacks } = options;
   const session = options.session ?? getDefaultResttyAppSession();
@@ -110,7 +164,6 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   const nerdIconScale = Number.isFinite(options.nerdIconScale)
     ? Number(options.nerdIconScale)
     : 1.0;
-  const assetBaseUrl = options.assetBaseUrl;
   const alphaBlending = options.alphaBlending ?? "linear-corrected";
   const srgbChannelToLinear = (c: number) =>
     c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
@@ -2627,62 +2680,10 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     };
   }
 
-  function assetUrl(path) {
-    if (!path) return "";
-    if (/^(https?:|data:|blob:)/i.test(path)) return path;
-    let normalized = path;
-    if (normalized.startsWith("./public/")) {
-      normalized = normalized.slice("./public/".length);
-    }
-    if (normalized.startsWith("/")) {
-      normalized = normalized.slice(1);
-    }
-    const base = assetBaseUrl ?? new URL("/playground/public/", window.location.origin).toString();
-    return new URL(normalized, base).toString();
-  }
-
   const fallbackFontSources: FontSource[] =
     options.fontSources?.fallbacks && options.fontSources.fallbacks.length
       ? options.fontSources.fallbacks
-      : [
-          {
-            name: "Symbols Nerd Font Mono",
-            url: assetUrl("./public/fonts/SymbolsNerdFontMono-Regular.ttf"),
-            matchers: ["symbols nerd font mono", "symbols nerd font", "nerd fonts symbols"],
-          },
-          {
-            name: "Noto Sans Symbols 2",
-            url: assetUrl("./public/fonts/NotoSansSymbols2-Regular.ttf"),
-            matchers: ["noto sans symbols 2", "noto sans symbols"],
-          },
-          {
-            name: "Apple Color Emoji",
-            matchers: ["apple color emoji"],
-          },
-          {
-            name: "OpenMoji Black",
-            url: assetUrl("./public/fonts/OpenMoji-black-glyf.ttf"),
-            matchers: ["openmoji", "emoji"],
-          },
-          {
-            name: "Noto Sans CJK",
-            url: assetUrl("./public/fonts/NotoSansCJK-Regular.ttc"),
-            matchers: [
-              "noto sans cjk",
-              "source han sans",
-              "pingfang",
-              "hiragino",
-              "yu gothic",
-              "meiryo",
-              "microsoft yahei",
-              "ms gothic",
-              "simhei",
-              "simsun",
-              "apple sd gothic",
-              "nanum",
-            ],
-          },
-        ];
+      : DEFAULT_FALLBACK_FONT_SOURCES;
 
   const gridState = {
     cols: 0,
@@ -3183,7 +3184,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   }
 
   async function loadFontBuffer() {
-    const primary = options.fontSources?.primary;
+    const primary = options.fontSources?.primary ?? DEFAULT_PRIMARY_FONT_SOURCE;
     if (primary?.buffer) return primary.buffer;
     if (primary?.url) {
       const buffer = await tryFetchFontBuffer(primary.url);
@@ -3205,8 +3206,10 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       "nerd font mono",
     ]);
     if (nerdLocal) return nerdLocal;
-    const buffer = await tryFetchFontBuffer(assetUrl("./public/fonts/JetBrainsMono-Regular.ttf"));
-    if (buffer) return buffer;
+    if (DEFAULT_PRIMARY_FONT_SOURCE.url && primary?.url !== DEFAULT_PRIMARY_FONT_SOURCE.url) {
+      const cdnBuffer = await tryFetchFontBuffer(DEFAULT_PRIMARY_FONT_SOURCE.url);
+      if (cdnBuffer) return cdnBuffer;
+    }
     const local = await tryLocalFontBuffer(["jetbrains mono"]);
     if (local) return local;
     throw new Error("Unable to load JetBrains Mono font.");

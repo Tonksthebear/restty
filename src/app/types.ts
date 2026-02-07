@@ -63,7 +63,6 @@ export type ResttyAppOptions = {
   callbacks?: ResttyAppCallbacks;
   renderer?: "auto" | "webgpu" | "webgl2";
   fontSize?: number;
-  assetBaseUrl?: string;
   alphaBlending?: "native" | "linear" | "linear-corrected";
   fontSources?: {
     primary?: { url?: string; buffer?: ArrayBuffer; matchers?: string[] };

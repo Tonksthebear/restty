@@ -35,6 +35,8 @@ const restty = new Restty({
 });
 ```
 
+By default, `restty` loads primary/fallback fonts from CDN URLs. You can override them at init via `fontSources`.
+
 ## Common examples
 
 ### Connect to a PTY websocket
@@ -69,6 +71,25 @@ restty.applyTheme(parseGhosttyTheme(themeText), "inline");
 
 ```ts
 restty.sendInput("ls -la\n");
+```
+
+### Provide custom fonts on init
+
+```ts
+const restty = new Restty({
+  root: document.getElementById("termRoot") as HTMLElement,
+  fontSources: {
+    primary: {
+      url: "https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono@v2.304/fonts/ttf/JetBrainsMono-Regular.ttf",
+    },
+    fallbacks: [
+      {
+        name: "Symbols Nerd Font Mono",
+        url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf",
+      },
+    ],
+  },
+});
 ```
 
 ## Multi-pane + Context Menu Defaults
