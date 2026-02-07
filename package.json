@@ -2,6 +2,14 @@
   "name": "restty",
   "version": "0.1.1",
   "description": "Browser terminal rendering library powered by WASM, WebGPU/WebGL2, and TypeScript text shaping.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wiedymi/restty"
+  },
+  "bugs": {
+    "url": "https://github.com/wiedymi/restty/issues"
+  },
+  "homepage": "https://github.com/wiedymi/restty#readme",
   "license": "MIT",
   "files": [
     "dist",
