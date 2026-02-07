@@ -235,6 +235,9 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   let resizeWasActive = false;
   let pendingTerminalResize: { cols: number; rows: number } | null = null;
   let terminalResizeTimer = 0;
+  const KEYDOWN_BEFOREINPUT_DEDUPE_MS = 80;
+  let lastKeydownSeq = "";
+  let lastKeydownSeqAt = 0;
   let nextBlinkTime = performance.now() + CURSOR_BLINK_MS;
   const ptyTransport: PtyTransport = options.ptyTransport ?? createWebSocketPtyTransport();
   let lastCursorForCpr = { row: 1, col: 1 };
@@ -1348,6 +1351,19 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
         const text = inputHandler.encodeBeforeInput(event);
 
         if (text) {
+          // Safari may emit both keydown and beforeinput for control keys.
+          // If we just sent the same sequence from keydown, drop this duplicate.
+          const now = performance.now();
+          if (
+            lastKeydownSeq &&
+            text === lastKeydownSeq &&
+            now - lastKeydownSeqAt <= KEYDOWN_BEFOREINPUT_DEDUPE_MS
+          ) {
+            event.preventDefault();
+            suppressNextInput = true;
+            imeInput.value = "";
+            return;
+          }
           event.preventDefault();
           suppressNextInput = true;
           sendKeyInput(text);
@@ -6124,7 +6140,6 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       if (target === imeInput) {
         if (imeState.composing || event.isComposing) return true;
         if (!event.ctrlKey && !event.metaKey && event.key.length === 1) return true;
-        if (event.type === "keydown" && ["Backspace", "Enter"].includes(event.key)) return true;
       }
       if (
         imeInput &&
@@ -6170,6 +6185,10 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
       const seq = inputHandler.encodeKeyEvent(event);
       if (seq) {
+        if (event.type === "keydown" && ["Backspace", "Delete", "Del", "Enter"].includes(event.key)) {
+          lastKeydownSeq = seq;
+          lastKeydownSeqAt = performance.now();
+        }
         event.preventDefault();
         sendKeyInput(seq);
       }

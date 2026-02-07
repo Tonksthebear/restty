@@ -34,6 +34,7 @@ const KITTY_SPECIAL_KEYS: Record<string, KittyKey> = {
   Backspace: { code: 127, final: "u" },
   Insert: { code: 2, final: "~" },
   Delete: { code: 3, final: "~" },
+  Del: { code: 3, final: "~" },
   ArrowLeft: { code: 1, final: "D" },
   ArrowRight: { code: 1, final: "C" },
   ArrowUp: { code: 1, final: "A" },
@@ -191,6 +192,7 @@ export function encodeKeyEvent(
         seq = sequences.backspace;
         break;
       case "Delete":
+      case "Del":
         seq = sequences.delete;
         break;
       case "Tab":
