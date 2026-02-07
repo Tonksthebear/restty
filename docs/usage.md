@@ -32,21 +32,6 @@ await app.init();
 app.connectPty("ws://localhost:8787/pty");
 ```
 
-Advanced override (inject your own `textShaper` implementation):
-
-```ts
-import { createResttyApp } from "restty";
-import * as textShaper from "text-shaper";
-
-const app = createResttyApp({
-  canvas: document.getElementById("screen") as HTMLCanvasElement,
-  textShaper: {
-    ...textShaper,
-    // Optional overrides/hooks can go here.
-  },
-});
-```
-
 Useful methods:
 
 - `app.setRenderer("webgpu" | "webgl2" | "auto")`

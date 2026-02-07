@@ -45,18 +45,6 @@ const app = createResttyApp({
 });
 ```
 
-Advanced usage (override `textShaper` explicitly):
-
-```ts
-import { createResttyApp } from "restty";
-import * as textShaper from "text-shaper";
-
-const app = createResttyApp({
-  canvas: document.getElementById("screen") as HTMLCanvasElement,
-  textShaper,
-});
-```
-
 ## Repository layout
 
 - `src/` - Main library/runtime code (renderer, input, PTY bridge, app integration).

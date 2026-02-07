@@ -1,45 +1,6 @@
 import type { InputHandler } from "../input";
 import type { GhosttyTheme } from "../theme";
 
-export type TextShaper = {
-  Font: {
-    loadAsync: (buffer: ArrayBuffer) => Promise<any>;
-    collection?: (buffer: ArrayBuffer) => {
-      names: () => Array<{
-        index: number;
-        fullName?: string;
-        family?: string;
-        postScriptName?: string;
-      }>;
-      get: (index: number) => any;
-    } | null;
-  };
-  UnicodeBuffer: new () => { addStr: (text: string) => void };
-  shape: (font: any, buffer: any) => any;
-  glyphBufferToShapedGlyphs: (glyphBuffer: any) => Array<{
-    glyphId: number;
-    xAdvance: number;
-    xOffset: number;
-    yOffset: number;
-  }>;
-  buildAtlas: (font: any, glyphIds: number[], options: any) => any;
-  atlasToRGBA: (atlas: any) => Uint8Array | null;
-  rasterizeGlyph?: (
-    font: any,
-    glyphId: number,
-    fontSize: number,
-    options?: any,
-  ) => { bitmap: any; bearingX: number; bearingY: number } | null;
-  rasterizeGlyphWithTransform?: (
-    font: any,
-    glyphId: number,
-    fontSize: number,
-    matrix: number[] | number[][],
-    options?: any,
-  ) => { bitmap: any; bearingX: number; bearingY: number } | null;
-  PixelMode: { Gray: any; RGBA?: any };
-};
-
 export type ResttyAppElements = {
   backendEl?: HTMLElement | null;
   fpsEl?: HTMLElement | null;
@@ -85,7 +46,6 @@ export type FontSource = {
 export type ResttyAppOptions = {
   canvas: HTMLCanvasElement;
   imeInput?: HTMLTextAreaElement | null;
-  textShaper?: TextShaper;
   elements?: ResttyAppElements;
   callbacks?: ResttyAppCallbacks;
   renderer?: "auto" | "webgpu" | "webgl2";

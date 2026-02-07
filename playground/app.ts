@@ -1,16 +1,4 @@
 import {
-  Font,
-  UnicodeBuffer,
-  shape,
-  glyphBufferToShapedGlyphs,
-  buildAtlas,
-  atlasToRGBA,
-  rasterizeGlyph,
-  rasterizeGlyphWithTransform,
-  PixelMode,
-} from "./public/text-shaper.js";
-
-import {
   createResttyApp,
   listBuiltinThemeNames,
   getBuiltinTheme,
@@ -81,17 +69,6 @@ const initialFontSize = fontSizeInput?.value ? Number(fontSizeInput.value) : 18;
 const app = createResttyApp({
   canvas,
   imeInput,
-  textShaper: {
-    Font,
-    UnicodeBuffer,
-    shape,
-    glyphBufferToShapedGlyphs,
-    buildAtlas,
-    atlasToRGBA,
-    rasterizeGlyph,
-    rasterizeGlyphWithTransform,
-    PixelMode,
-  },
   elements: {
     backendEl,
     fpsEl,
