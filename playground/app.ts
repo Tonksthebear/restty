@@ -183,7 +183,7 @@ let selectedFontFamily = fontFamilySelect?.value ?? DEFAULT_FONT_FAMILY;
 let selectedLocalFontMatcher = "";
 
 function supportsLocalFontPicker() {
-  return typeof navigator !== "undefined" && "queryLocalFonts" in navigator;
+  return typeof window !== "undefined" && "queryLocalFonts" in window;
 }
 
 function setFontFamilyHint(text: string) {
@@ -299,7 +299,7 @@ async function detectLocalFonts() {
         }
       }
     }
-    const fonts = await (navigator as any).queryLocalFonts();
+    const fonts = await (window as any).queryLocalFonts();
     const seen = new Set<string>();
     let added = 0;
     for (let i = 0; i < fonts.length; i += 1) {

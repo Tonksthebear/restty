@@ -51908,10 +51908,10 @@ function createResttyApp(options) {
     return null;
   }
   async function tryLocalFontBuffer(matchers) {
-    if (!("queryLocalFonts" in navigator))
+    if (typeof window === "undefined" || !("queryLocalFonts" in window))
       return null;
     try {
-      const fonts = await navigator.queryLocalFonts();
+      const fonts = await window.queryLocalFonts();
       const match = fonts.find((font) => {
         const name = `${font.family ?? ""} ${font.fullName ?? ""} ${font.postscriptName ?? ""}`.toLowerCase();
         return matchers.some((matcher) => name.includes(matcher));
@@ -56322,7 +56322,7 @@ var initialFontSize = fontSizeInput?.value ? Number(fontSizeInput.value) : 18;
 var selectedFontFamily = fontFamilySelect?.value ?? DEFAULT_FONT_FAMILY;
 var selectedLocalFontMatcher = "";
 function supportsLocalFontPicker() {
-  return typeof navigator !== "undefined" && "queryLocalFonts" in navigator;
+  return typeof window !== "undefined" && "queryLocalFonts" in window;
 }
 function setFontFamilyHint(text) {
   if (fontFamilyHintEl)
@@ -56430,7 +56430,7 @@ async function detectLocalFonts() {
         }
       }
     }
-    const fonts = await navigator.queryLocalFonts();
+    const fonts = await window.queryLocalFonts();
     const seen = new Set;
     let added = 0;
     for (let i3 = 0;i3 < fonts.length; i3 += 1) {
@@ -57119,5 +57119,5 @@ var firstPane = manager2.createInitialPane({ focus: true });
 activePaneId = firstPane.id;
 queueResizeAllPanes();
 
-//# debugId=EF15E2E6AAB8BD5764756E2164756E21
+//# debugId=235050062BD8C95164756E2164756E21
 //# sourceMappingURL=app.js.map

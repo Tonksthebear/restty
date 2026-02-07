@@ -3015,9 +3015,20 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   function bindFocusEvents() {
     if (!attachCanvasEvents) return;
     canvas.tabIndex = 0;
+    const focusTypingInput = () => {
+      canvas.focus({ preventScroll: true });
+      if (!imeInput) return;
+      imeInput.focus({ preventScroll: true });
+      // Safari can occasionally drop scripted IME focus; retry once on next frame.
+      if (typeof document !== "undefined" && document.activeElement !== imeInput) {
+        requestAnimationFrame(() => {
+          if (document.activeElement === canvas) imeInput.focus({ preventScroll: true });
+        });
+      }
+    };
     const handleFocus = () => {
       isFocused = true;
-      imeInput?.focus();
+      focusTypingInput();
       if (inputHandler?.isFocusReporting?.()) {
         sendKeyInput("\x1b[I");
       }
@@ -3031,8 +3042,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       }
     };
     const handlePointerFocus = () => {
-      canvas.focus();
-      imeInput?.focus();
+      focusTypingInput();
     };
     canvas.addEventListener("pointerdown", handlePointerFocus);
     canvas.addEventListener("focus", handleFocus);
@@ -3246,9 +3256,9 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   }
 
   async function tryLocalFontBuffer(matchers) {
-    if (!("queryLocalFonts" in navigator)) return null;
+    if (typeof window === "undefined" || !("queryLocalFonts" in window)) return null;
     try {
-      const fonts = await navigator.queryLocalFonts();
+      const fonts = await (window as any).queryLocalFonts();
       const match = fonts.find((font) => {
         const name =
           `${font.family ?? ""} ${font.fullName ?? ""} ${font.postscriptName ?? ""}`.toLowerCase();
@@ -6186,6 +6196,8 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       (event.code === "Space" || event.key === " " || event.key === "Spacebar");
 
     const shouldSkipKeyEvent = (event: KeyboardEvent) => {
+      const imeActive =
+        typeof document !== "undefined" && imeInput ? document.activeElement === imeInput : false;
       const target = event.target as HTMLElement | null;
       if (
         target &&
@@ -6196,14 +6208,17 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       }
       if (target === imeInput) {
         if (imeState.composing || event.isComposing) return true;
-        if (!event.ctrlKey && !event.metaKey && event.key.length === 1) return true;
+        if (!event.ctrlKey && !event.metaKey && event.key.length === 1 && !event.repeat)
+          return true;
       }
       if (
         imeInput &&
+        imeActive &&
         !event.ctrlKey &&
         !event.metaKey &&
         !event.altKey &&
         event.key.length === 1 &&
+        !event.repeat &&
         !event.isComposing &&
         !imeState.composing
       ) {
