@@ -53,6 +53,7 @@ export function createWebContainerPtyTransport(options: WebContainerPtyOptions =
   let outputReader: ReadableStreamDefaultReader<string> | null = null;
   let connected = false;
   let connectionToken = 0;
+  let activeCommand = "";
 
   const log = (line: string) => {
     options.onLog?.(`[webcontainer] ${line}`);
@@ -78,6 +79,7 @@ export function createWebContainerPtyTransport(options: WebContainerPtyOptions =
     callbacks = null;
     connected = false;
     connectionToken += 1;
+    activeCommand = "";
 
     try {
       outputReader?.cancel();
@@ -126,6 +128,15 @@ export function createWebContainerPtyTransport(options: WebContainerPtyOptions =
     })();
   };
 
+  const mapInputForCommand = (data: string): string => {
+    if (activeCommand === "jsh") {
+      // jsh line editing expects ^H for backward erase and does not reliably
+      // handle DEL in this bridge path.
+      if (data === "\x7f") return "\x08";
+    }
+    return data;
+  };
+
   return {
     connect: async ({ cols = 80, rows = 24, callbacks: cb }: PtyConnectOptions) => {
       stopProcess(false);
@@ -145,7 +156,13 @@ export function createWebContainerPtyTransport(options: WebContainerPtyOptions =
         if (connectionToken !== token) return;
 
         const cwd = normalizeCwd(options.getCwd?.());
-        const env = options.getEnv?.();
+        const env = {
+          TERM: "xterm-256color",
+          COLORTERM: "truecolor",
+          COLUMNS: String(cols),
+          LINES: String(rows),
+          ...options.getEnv?.(),
+        };
         const spawned = await webcontainer.spawn(spec.command, spec.args, {
           terminal: { cols, rows },
           cwd,
@@ -162,6 +179,7 @@ export function createWebContainerPtyTransport(options: WebContainerPtyOptions =
         }
 
         proc = spawned;
+        activeCommand = spec.command;
         inputWriter = spawned.input.getWriter();
         outputReader = spawned.output.getReader();
         connected = true;
@@ -201,7 +219,8 @@ export function createWebContainerPtyTransport(options: WebContainerPtyOptions =
     },
     sendInput: (data: string) => {
       if (!connected || !inputWriter) return false;
-      void inputWriter.write(data).catch(() => {
+      const payload = mapInputForCommand(data);
+      void inputWriter.write(payload).catch(() => {
         // ignore async write failures here; lifecycle callbacks handle disconnect
       });
       return true;
