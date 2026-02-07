@@ -1,6 +1,8 @@
 import {
   createDefaultResttyPaneContextMenuItems,
   createResttyPaneManager,
+  type ResttyPaneStyleOptions,
+  type ResttyPaneStylesOptions,
   type ResttyPaneContextMenuOptions,
   type ResttyPaneManager,
   type ResttyPaneShortcutsOptions,
@@ -22,6 +24,9 @@ export type ResttyPaneDomDefaults = {
   imeInputClassName?: string;
   termDebugClassName?: string;
 };
+
+export type ResttyManagedPaneStyleOptions = ResttyPaneStyleOptions;
+export type ResttyManagedPaneStylesOptions = ResttyPaneStylesOptions;
 
 export type ResttyPaneAppOptionsInput = Omit<ResttyAppOptions, "canvas" | "imeInput" | "session">;
 
@@ -47,6 +52,7 @@ export type CreateResttyAppPaneManagerOptions = {
   paneDom?: ResttyPaneDomDefaults;
   autoInit?: boolean;
   minPaneSize?: number;
+  paneStyles?: boolean | ResttyManagedPaneStylesOptions;
   shortcuts?: boolean | ResttyPaneShortcutsOptions;
   contextMenu?: ResttyPaneContextMenuOptions<ResttyManagedAppPane> | null;
   defaultContextMenu?: boolean | ResttyDefaultPaneContextMenuOptions;
@@ -140,6 +146,7 @@ export function createResttyAppPaneManager(
   const manager = createResttyPaneManager<ResttyManagedAppPane>({
     root: options.root,
     minPaneSize: options.minPaneSize,
+    styles: options.paneStyles,
     shortcuts,
     contextMenu,
     createPane: ({ id, sourcePane }) => {

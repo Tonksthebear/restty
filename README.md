@@ -109,6 +109,7 @@ await restty.setFontSources([
 
 `restty` ships a pane manager and a default terminal context menu so you can add split panes quickly.
 It auto-creates pane DOM, canvas, and hidden IME inputs for you.
+Pane/split/divider styles are injected by the library (no separate CSS file required).
 
 ```ts
 import {
@@ -131,6 +132,10 @@ const restty = new Restty({
   defaultContextMenu: {
     getPtyUrl: () => "ws://localhost:8787/pty",
   },
+  paneStyles: {
+    inactivePaneOpacity: 0.82,
+    dividerThicknessPx: 1,
+  },
   shortcuts: true,
 });
 
@@ -150,6 +155,7 @@ Main methods:
 - `destroy()`
 - `getPanes()` / `getActivePane()` / `getFocusedPane()`
 - `splitActivePane("vertical" | "horizontal")` / `splitPane(id, direction)` / `closePane(id)`
+- `getPaneStyleOptions()` / `setPaneStyleOptions({...})`
 - `connectPty(url)` / `disconnectPty()` / `isPtyConnected()`
 - `setRenderer("auto" | "webgpu" | "webgl2")`
 - `setFontSize(number)`

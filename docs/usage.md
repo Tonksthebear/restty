@@ -72,6 +72,7 @@ Useful methods:
 
 `Restty` supports split panes with default shortcuts/context-menu out of the box.
 It auto-creates each pane container, canvas, and hidden IME textarea.
+Pane, divider, and context-menu styles are injected automatically by the library.
 
 ```ts
 import {
@@ -80,12 +81,17 @@ import {
 
 const restty = new Restty({
   root: document.getElementById("paneRoot") as HTMLElement,
+  paneStyles: {
+    inactivePaneOpacity: 0.82,
+    dividerThicknessPx: 1,
+  },
   defaultContextMenu: true,
   shortcuts: true,
 });
 
 restty.splitActivePane("vertical");
 restty.splitActivePane("horizontal");
+restty.setPaneStyleOptions({ inactivePaneOpacity: 0.72, dividerThicknessPx: 2 });
 ```
 
 ## Low-level integration (`loadResttyWasm`)

@@ -201,6 +201,8 @@ export type { ResttyOptions } from "./app/restty";
 export type {
   ResttyManagedAppPane,
   ResttyPaneDomDefaults,
+  ResttyManagedPaneStyleOptions,
+  ResttyManagedPaneStylesOptions,
   ResttyPaneAppOptionsInput,
 } from "./app/pane-app-manager";
 export type {

@@ -80,6 +80,8 @@ export type {
   ResttyPaneSplitDirection,
   ResttyPaneContextMenuItem,
   ResttyPaneDefinition,
+  ResttyPaneStyleOptions,
+  ResttyPaneStylesOptions,
   ResttyPaneShortcutsOptions,
   ResttyPaneContextMenuOptions,
   CreateResttyPaneManagerOptions,

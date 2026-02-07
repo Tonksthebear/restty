@@ -3,6 +3,7 @@ import type { InputHandler } from "../input";
 import {
   createResttyAppPaneManager,
   type CreateResttyAppPaneManagerOptions,
+  type ResttyManagedPaneStyleOptions,
   type ResttyPaneAppOptionsInput,
   type ResttyManagedAppPane,
 } from "./pane-app-manager";
@@ -73,6 +74,14 @@ export class Restty {
 
   closePane(id: number): boolean {
     return this.paneManager.closePane(id);
+  }
+
+  getPaneStyleOptions(): Readonly<Required<ResttyManagedPaneStyleOptions>> {
+    return this.paneManager.getStyleOptions();
+  }
+
+  setPaneStyleOptions(options: ResttyManagedPaneStyleOptions): void {
+    this.paneManager.setStyleOptions(options);
   }
 
   setActivePane(id: number, options?: { focus?: boolean }): void {
