@@ -56993,7 +56993,7 @@ function createPaneState(id, sourcePane) {
     id,
     renderer: sourceState?.renderer ?? (isRendererChoice(rendererSelect?.value) ? rendererSelect.value : "auto"),
     fontSize: sourceState?.fontSize ?? parseFontSize(fontSizeInput?.value, Number.isFinite(initialFontSize) ? initialFontSize : 18),
-    mouseMode: sourceState?.mouseMode ?? (mouseModeEl?.value || "on"),
+    mouseMode: sourceState?.mouseMode ?? (mouseModeEl?.value || "auto"),
     paused: sourceState?.paused ?? false,
     theme: sourceState ? {
       selectValue: sourceState.theme.selectValue,
@@ -57438,5 +57438,5 @@ if (firstState) {
 }
 queueResizeAllPanes();
 
-//# debugId=FE06CAAAF4AAFD6364756E2164756E21
+//# debugId=8B1297501663D63664756E2164756E21
 //# sourceMappingURL=app.js.map

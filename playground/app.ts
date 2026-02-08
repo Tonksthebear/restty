@@ -357,7 +357,7 @@ function createPaneState(id: number, sourcePane: ResttyManagedAppPane | null): P
     fontSize:
       sourceState?.fontSize ??
       parseFontSize(fontSizeInput?.value, Number.isFinite(initialFontSize) ? initialFontSize : 18),
-    mouseMode: sourceState?.mouseMode ?? (mouseModeEl?.value || "on"),
+    mouseMode: sourceState?.mouseMode ?? (mouseModeEl?.value || "auto"),
     paused: sourceState?.paused ?? false,
     theme: sourceState
       ? {
