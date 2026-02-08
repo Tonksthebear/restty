@@ -539,7 +539,6 @@ export class ResttyWasm {
     if (!stride) return [];
 
     const view = new DataView(this.memory.buffer, ptr, count * stride);
-    // eslint-disable-next-line unicorn/no-new-array
     const placements: KittyPlacement[] = new Array(count);
     for (let i = 0; i < count; i += 1) {
       const base = i * stride;

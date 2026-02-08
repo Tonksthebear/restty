@@ -1,4 +1,5 @@
 import type { CellPosition, MouseMode, MouseStatus } from "./types";
+import { parsePrivateModeSeq } from "./ansi";
 
 export type MouseControllerOptions = {
   sendReply: (data: string) => void;
@@ -8,26 +9,6 @@ export type MouseControllerOptions = {
 
 type MotionMode = "none" | "drag" | "any";
 type MouseFormat = "x10" | "utf8" | "sgr" | "urxvt" | "sgr_pixels";
-
-const ESC = "\x1b";
-
-function parsePrivateModeSeq(seq: string): { codes: number[]; enabled: boolean } | null {
-  if (!seq.startsWith(`${ESC}[?`) || seq.length < 5) return null;
-  const final = seq[seq.length - 1];
-  if (final !== "h" && final !== "l") return null;
-  const body = seq.slice(3, -1);
-  if (!body || /[^0-9;]/.test(body)) return null;
-  const parts = body.split(";");
-  const codes: number[] = [];
-  for (let i = 0; i < parts.length; i += 1) {
-    const part = parts[i];
-    if (!part) return null;
-    const code = Number(part);
-    if (!Number.isFinite(code)) return null;
-    codes.push(code);
-  }
-  return { codes, enabled: final === "h" };
-}
 
 export class MouseController {
   private mode: MouseMode = "auto";

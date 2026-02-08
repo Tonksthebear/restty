@@ -8,7 +8,7 @@ import {
   type PtyTransport,
   type ResttyFontSource,
   type ResttyManagedAppPane,
-} from "../src/index.ts";
+} from "../src/internal.ts";
 import { createDemoController, type PlaygroundDemoKind } from "./lib/demos.ts";
 import { createWebContainerPtyTransport } from "./lib/webcontainer-pty.ts";
 

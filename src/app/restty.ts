@@ -1,11 +1,11 @@
+import type { InputHandler, MouseMode } from "../input";
 import type { GhosttyTheme } from "../theme";
-import type { InputHandler } from "../input";
 import {
   createResttyAppPaneManager,
   type CreateResttyAppPaneManagerOptions,
+  type ResttyManagedAppPane,
   type ResttyManagedPaneStyleOptions,
   type ResttyPaneAppOptionsInput,
-  type ResttyManagedAppPane,
 } from "./pane-app-manager";
 import type { ResttyPaneManager, ResttyPaneSplitDirection } from "./panes";
 import type { ResttyFontSource } from "./types";
@@ -15,6 +15,122 @@ export type ResttyOptions = Omit<CreateResttyAppPaneManagerOptions, "appOptions"
   fontSources?: ResttyPaneAppOptionsInput["fontSources"];
   createInitialPane?: boolean | { focus?: boolean };
 };
+
+export type ResttyPaneApi = {
+  id: number;
+  setRenderer: (value: "auto" | "webgpu" | "webgl2") => void;
+  setPaused: (value: boolean) => void;
+  togglePause: () => void;
+  setFontSize: (value: number) => void;
+  applyTheme: (theme: GhosttyTheme, sourceLabel?: string) => void;
+  resetTheme: () => void;
+  sendInput: (text: string, source?: string) => void;
+  sendKeyInput: (text: string, source?: string) => void;
+  clearScreen: () => void;
+  connectPty: (url?: string) => void;
+  disconnectPty: () => void;
+  isPtyConnected: () => boolean;
+  setMouseMode: (value: MouseMode) => void;
+  getMouseStatus: () => ReturnType<InputHandler["getMouseStatus"]>;
+  copySelectionToClipboard: () => Promise<boolean>;
+  pasteFromClipboard: () => Promise<boolean>;
+  dumpAtlasForCodepoint: (cp: number) => void;
+  updateSize: (force?: boolean) => void;
+  getBackend: () => string;
+  getRawPane: () => ResttyManagedAppPane;
+};
+
+export class ResttyPaneHandle implements ResttyPaneApi {
+  private readonly resolvePane: () => ResttyManagedAppPane;
+
+  constructor(resolvePane: () => ResttyManagedAppPane) {
+    this.resolvePane = resolvePane;
+  }
+
+  get id(): number {
+    return this.resolvePane().id;
+  }
+
+  setRenderer(value: "auto" | "webgpu" | "webgl2"): void {
+    this.resolvePane().app.setRenderer(value);
+  }
+
+  setPaused(value: boolean): void {
+    this.resolvePane().app.setPaused(value);
+  }
+
+  togglePause(): void {
+    this.resolvePane().app.togglePause();
+  }
+
+  setFontSize(value: number): void {
+    this.resolvePane().app.setFontSize(value);
+  }
+
+  applyTheme(theme: GhosttyTheme, sourceLabel?: string): void {
+    this.resolvePane().app.applyTheme(theme, sourceLabel);
+  }
+
+  resetTheme(): void {
+    this.resolvePane().app.resetTheme();
+  }
+
+  sendInput(text: string, source?: string): void {
+    this.resolvePane().app.sendInput(text, source);
+  }
+
+  sendKeyInput(text: string, source?: string): void {
+    this.resolvePane().app.sendKeyInput(text, source);
+  }
+
+  clearScreen(): void {
+    this.resolvePane().app.clearScreen();
+  }
+
+  connectPty(url = ""): void {
+    this.resolvePane().app.connectPty(url);
+  }
+
+  disconnectPty(): void {
+    this.resolvePane().app.disconnectPty();
+  }
+
+  isPtyConnected(): boolean {
+    return this.resolvePane().app.isPtyConnected();
+  }
+
+  setMouseMode(value: MouseMode): void {
+    this.resolvePane().app.setMouseMode(value);
+  }
+
+  getMouseStatus(): ReturnType<InputHandler["getMouseStatus"]> {
+    return this.resolvePane().app.getMouseStatus();
+  }
+
+  copySelectionToClipboard(): Promise<boolean> {
+    return this.resolvePane().app.copySelectionToClipboard();
+  }
+
+  pasteFromClipboard(): Promise<boolean> {
+    return this.resolvePane().app.pasteFromClipboard();
+  }
+
+  dumpAtlasForCodepoint(cp: number): void {
+    this.resolvePane().app.dumpAtlasForCodepoint(cp);
+  }
+
+  updateSize(force?: boolean): void {
+    this.resolvePane().app.updateSize(force);
+  }
+
+  getBackend(): string {
+    return this.resolvePane().app.getBackend();
+  }
+
+  getRawPane(): ResttyManagedAppPane {
+    return this.resolvePane();
+  }
+}
 
 export class Restty {
   readonly paneManager: ResttyPaneManager<ResttyManagedAppPane>;
@@ -58,6 +174,44 @@ export class Restty {
 
   getFocusedPane(): ResttyManagedAppPane | null {
     return this.paneManager.getFocusedPane();
+  }
+
+  panes(): ResttyPaneHandle[] {
+    return this.getPanes().map((pane) => this.makePaneHandle(pane.id));
+  }
+
+  pane(id: number): ResttyPaneHandle | null {
+    if (!this.getPaneById(id)) return null;
+    return this.makePaneHandle(id);
+  }
+
+  activePane(): ResttyPaneHandle | null {
+    const pane = this.getActivePane();
+    if (!pane) return null;
+    return this.makePaneHandle(pane.id);
+  }
+
+  focusedPane(): ResttyPaneHandle | null {
+    const pane = this.getFocusedPane();
+    if (!pane) return null;
+    return this.makePaneHandle(pane.id);
+  }
+
+  forEachPane(visitor: (pane: ResttyPaneHandle) => void): void {
+    const panes = this.getPanes();
+    for (let i = 0; i < panes.length; i += 1) {
+      visitor(this.makePaneHandle(panes[i].id));
+    }
+  }
+
+  async setFontSources(sources: ResttyFontSource[]): Promise<void> {
+    this.fontSources = sources.length ? [...sources] : undefined;
+    const panes = this.getPanes();
+    const updates: Array<Promise<void>> = new Array(panes.length);
+    for (let i = 0; i < panes.length; i += 1) {
+      updates[i] = panes[i].app.setFontSources(this.fontSources ?? []);
+    }
+    await Promise.all(updates);
   }
 
   createInitialPane(options?: { focus?: boolean }): ResttyManagedAppPane {
@@ -105,97 +259,100 @@ export class Restty {
   }
 
   connectPty(url = ""): void {
-    this.requireActivePane().app.connectPty(url);
+    this.requireActivePaneHandle().connectPty(url);
   }
 
   disconnectPty(): void {
-    this.requireActivePane().app.disconnectPty();
+    this.requireActivePaneHandle().disconnectPty();
   }
 
   isPtyConnected(): boolean {
-    return this.requireActivePane().app.isPtyConnected();
+    return this.requireActivePaneHandle().isPtyConnected();
   }
 
   setRenderer(value: "auto" | "webgpu" | "webgl2"): void {
-    this.requireActivePane().app.setRenderer(value);
+    this.requireActivePaneHandle().setRenderer(value);
   }
 
   setPaused(value: boolean): void {
-    this.requireActivePane().app.setPaused(value);
+    this.requireActivePaneHandle().setPaused(value);
   }
 
   togglePause(): void {
-    this.requireActivePane().app.togglePause();
+    this.requireActivePaneHandle().togglePause();
   }
 
   setFontSize(value: number): void {
-    this.requireActivePane().app.setFontSize(value);
-  }
-
-  async setFontSources(sources: ResttyFontSource[]): Promise<void> {
-    this.fontSources = sources.length ? [...sources] : undefined;
-    const panes = this.getPanes();
-    // eslint-disable-next-line unicorn/no-new-array
-    const updates: Array<Promise<void>> = new Array(panes.length);
-    for (let i = 0; i < panes.length; i += 1) {
-      updates[i] = panes[i].app.setFontSources(this.fontSources ?? []);
-    }
-    await Promise.all(updates);
+    this.requireActivePaneHandle().setFontSize(value);
   }
 
   applyTheme(theme: GhosttyTheme, sourceLabel?: string): void {
-    this.requireActivePane().app.applyTheme(theme, sourceLabel);
+    this.requireActivePaneHandle().applyTheme(theme, sourceLabel);
   }
 
   resetTheme(): void {
-    this.requireActivePane().app.resetTheme();
+    this.requireActivePaneHandle().resetTheme();
   }
 
   sendInput(text: string, source?: string): void {
-    this.requireActivePane().app.sendInput(text, source);
+    this.requireActivePaneHandle().sendInput(text, source);
   }
 
   sendKeyInput(text: string, source?: string): void {
-    this.requireActivePane().app.sendKeyInput(text, source);
+    this.requireActivePaneHandle().sendKeyInput(text, source);
   }
 
   clearScreen(): void {
-    this.requireActivePane().app.clearScreen();
+    this.requireActivePaneHandle().clearScreen();
   }
 
-  setMouseMode(value: string): void {
-    this.requireActivePane().app.setMouseMode(value);
+  setMouseMode(value: MouseMode): void {
+    this.requireActivePaneHandle().setMouseMode(value);
   }
 
   getMouseStatus(): ReturnType<InputHandler["getMouseStatus"]> {
-    return this.requireActivePane().app.getMouseStatus();
+    return this.requireActivePaneHandle().getMouseStatus();
   }
 
   copySelectionToClipboard(): Promise<boolean> {
-    return this.requireActivePane().app.copySelectionToClipboard();
+    return this.requireActivePaneHandle().copySelectionToClipboard();
   }
 
   pasteFromClipboard(): Promise<boolean> {
-    return this.requireActivePane().app.pasteFromClipboard();
+    return this.requireActivePaneHandle().pasteFromClipboard();
   }
 
   dumpAtlasForCodepoint(cp: number): void {
-    this.requireActivePane().app.dumpAtlasForCodepoint(cp);
+    this.requireActivePaneHandle().dumpAtlasForCodepoint(cp);
   }
 
   updateSize(force?: boolean): void {
-    this.requireActivePane().app.updateSize(force);
+    this.requireActivePaneHandle().updateSize(force);
   }
 
   getBackend(): string {
-    return this.requireActivePane().app.getBackend();
+    return this.requireActivePaneHandle().getBackend();
   }
 
-  private requireActivePane(): ResttyManagedAppPane {
+  private makePaneHandle(id: number): ResttyPaneHandle {
+    return new ResttyPaneHandle(() => this.requirePaneById(id));
+  }
+
+  private requirePaneById(id: number): ResttyManagedAppPane {
+    const pane = this.getPaneById(id);
+    if (!pane) throw new Error(`Restty pane ${id} does not exist`);
+    return pane;
+  }
+
+  private requireActivePaneHandle(): ResttyPaneHandle {
     const pane = this.getActivePane();
     if (!pane) {
       throw new Error("Restty has no active pane. Create or focus a pane first.");
     }
-    return pane;
+    return this.makePaneHandle(pane.id);
   }
+}
+
+export function createRestty(options: ResttyOptions): Restty {
+  return new Restty(options);
 }

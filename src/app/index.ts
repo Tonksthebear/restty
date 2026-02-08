@@ -1,4 +1,4 @@
-import { createInputHandler, type InputHandler } from "../input";
+import { createInputHandler, type InputHandler, type MouseMode } from "../input";
 import {
   isNerdSymbolCodepoint,
   getNerdConstraint,
@@ -53,6 +53,7 @@ import {
   type GlyphConstraintMeta,
   type AtlasConstraintContext,
 } from "./atlas-builder";
+import { normalizeFontSources } from "./font-sources";
 import * as bundledTextShaper from "text-shaper";
 import type { ResttyFontSource, ResttyApp, ResttyAppOptions } from "./types";
 import { getDefaultResttyAppSession } from "./session";
@@ -90,25 +91,6 @@ export type {
   CreateDefaultResttyPaneContextMenuItemsOptions,
 } from "./panes";
 export type { ResttyOptions } from "./restty";
-
-const DEFAULT_FONT_SOURCES: ResttyFontSource[] = [
-  {
-    type: "url",
-    url: "https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono@v2.304/fonts/ttf/JetBrainsMono-Regular.ttf",
-  },
-  {
-    type: "url",
-    url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf",
-  },
-  {
-    type: "url",
-    url: "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf",
-  },
-  {
-    type: "url",
-    url: "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji@master/font/OpenMoji-black-glyf/OpenMoji-black-glyf.ttf",
-  },
-];
 
 export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   const { canvas: canvasInput, imeInput: imeInputInput, elements, callbacks } = options;
@@ -2702,54 +2684,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     };
   }
 
-  const validateFontSource = (source: ResttyFontSource, index: number): ResttyFontSource => {
-    if (!source || typeof source !== "object" || !("type" in source)) {
-      throw new Error(`fontSources[${index}] must be a typed source object`);
-    }
-    if (source.type === "url") {
-      if (typeof source.url !== "string" || !source.url.trim()) {
-        throw new Error(`fontSources[${index}] url source requires a non-empty url`);
-      }
-      return source;
-    }
-    if (source.type === "buffer") {
-      const data = source.data;
-      if (!(data instanceof ArrayBuffer) && !ArrayBuffer.isView(data)) {
-        throw new Error(
-          `fontSources[${index}] buffer source requires ArrayBuffer or ArrayBufferView`,
-        );
-      }
-      return source;
-    }
-    if (source.type === "local") {
-      if (!Array.isArray(source.matchers)) {
-        throw new Error(`fontSources[${index}] local source requires at least one matcher`);
-      }
-      let hasMatcher = false;
-      for (let i = 0; i < source.matchers.length; i += 1) {
-        if (source.matchers[i]) {
-          hasMatcher = true;
-          break;
-        }
-      }
-      if (!hasMatcher) {
-        throw new Error(`fontSources[${index}] local source requires at least one matcher`);
-      }
-      return source;
-    }
-    throw new Error(`fontSources[${index}] has unsupported source type`);
-  };
-
-  const normalizeFontSources = (sources: ResttyFontSource[] | undefined): ResttyFontSource[] => {
-    if (!sources || !sources.length) return [...DEFAULT_FONT_SOURCES];
-    // eslint-disable-next-line unicorn/no-new-array
-    const normalized: ResttyFontSource[] = new Array(sources.length);
-    for (let i = 0; i < sources.length; i += 1) {
-      normalized[i] = validateFontSource(sources[i], i);
-    }
-    return normalized;
-  };
-  let configuredFontSources = normalizeFontSources(options.fontSources);
+  let configuredFontSources = normalizeFontSources(options.fontSources, options.fontPreset);
 
   const gridState = {
     cols: 0,
@@ -3359,7 +3294,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   }
 
   async function setFontSources(sources: ResttyFontSource[]) {
-    configuredFontSources = normalizeFontSources(sources);
+    configuredFontSources = normalizeFontSources(sources, undefined);
     fontPromise = null;
     fontError = null;
 
@@ -6435,7 +6370,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     paused = !paused;
   }
 
-  function setMouseMode(value: string) {
+  function setMouseMode(value: MouseMode) {
     inputHandler.setMouseMode(value);
     updateMouseStatus();
   }

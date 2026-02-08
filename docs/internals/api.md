@@ -1,46 +1,52 @@
-# Public API (Draft)
+# API Surface Map
 
-This file captures a target high-level API shape that is still evolving.
+This page documents the current module boundaries.
 
-Current exported surfaces in `src/index.ts` are centered on:
+## Stable entry point
 
-- `new Restty(...)` for app-level integration.
-- `loadResttyWasm(...)` / `ResttyWasm` for low-level ABI access.
-- `createInputHandler(...)` and PTY helpers in `src/input` + `src/pty`.
+Use `restty` unless you explicitly need lower-level control.
 
-For practical usage examples, see `docs/usage.md`.
+```ts
+import { Restty, createRestty } from "restty";
+```
 
-## Core
-- `createTerminal({ cols, rows, scrollback }) -> Terminal`
-- `terminal.write(data: Uint8Array)`
-- `terminal.resize({ cols, rows, pxWidth, pxHeight })`
-- `terminal.scroll({ delta | top | bottom })`
-- `terminal.destroy()`
+Primary exports:
+- `Restty`
+- `createRestty(options)`
+- `ResttyPaneHandle`
+- Theme helpers: `getBuiltinTheme`, `parseGhosttyTheme`, `listBuiltinThemeNames`, ...
+- Font source types: `ResttyFontSource`, `ResttyFontPreset`, ...
 
-## Rendering
-- `terminal.render(frameInfo)`
-  - `frameInfo` provides target canvas and device (WebGPU/WebGL2).
-- `terminal.setRenderer('webgpu' | 'webgl2')`
+## Advanced subpath exports
 
-## Fonts
-- `terminal.setFont({ source, name?, data? })`
-- `terminal.setFontSize(px)`
-- `terminal.setFontFeatures({ liga, calt, kern, ... })`
-- `terminal.listLocalFonts()` (Chromium only; user gesture required)
+These are available for specialized integrations.
 
-## Input
-- `terminal.encodeKey(event: KeyboardEvent) -> Uint8Array`
-- `terminal.onInput(cb)` (used by host to send bytes to PTY)
-- `terminal.sendText(text)` (IME / paste)
+- `restty/wasm`
+  - `loadResttyWasm`, `ResttyWasm`
+  - `RenderState`, `CursorInfo`, ABI types
+- `restty/pty`
+  - `createPtyConnection`, `connectPty`, `disconnectPty`, `createWebSocketPtyTransport`
+  - PTY transport/types
+- `restty/input`
+  - `createInputHandler`
+  - key/mouse/input-related types
+- `restty/theme`
+  - Ghostty theme parser and built-in theme catalog
+- `restty/app`
+  - `createResttyApp`, pane manager utilities, app/session types
+- `restty/fonts`, `restty/renderer`, `restty/grid`, `restty/selection`, `restty/ime`
+  - lower-level building blocks used by app/runtime code
+- `restty/internal`
+  - broad internal barrel exposing most implementation modules
 
-## Output (Responses)
-- `terminal.onOutput(cb)` (device status replies, etc.)
+## Compatibility expectations
 
-## Selection / Clipboard
-- `terminal.getSelection()`
-- `terminal.setSelection(start, end)`
-- `terminal.copySelection()` (delegates to JS clipboard)
-- `terminal.paste(text)`
+- `restty` (root entry) is the primary API and should change the slowest.
+- Subpath modules are for advanced users and may evolve faster.
+- `restty/internal` is intentionally internal and least stable.
 
-## Events
-- `onResize`, `onScroll`, `onTitle`, `onBell`, `onHyperlink`
+## Design intent
+
+- Keep common app integration ergonomic through `new Restty({ root })`.
+- Keep low-level control possible through subpath modules.
+- Avoid forcing users to wire canvas/IME/PTY primitives for common cases.

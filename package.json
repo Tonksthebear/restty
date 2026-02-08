@@ -41,13 +41,68 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./internal": {
+      "types": "./dist/internal.d.ts",
+      "import": "./dist/internal.js",
+      "default": "./dist/internal.js"
+    },
+    "./app": {
+      "types": "./dist/app/index.d.ts",
+      "import": "./dist/app/index.js",
+      "default": "./dist/app/index.js"
+    },
+    "./pty": {
+      "types": "./dist/pty/index.d.ts",
+      "import": "./dist/pty/index.js",
+      "default": "./dist/pty/index.js"
+    },
+    "./input": {
+      "types": "./dist/input/index.d.ts",
+      "import": "./dist/input/index.js",
+      "default": "./dist/input/index.js"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme/index.js",
+      "default": "./dist/theme/index.js"
+    },
+    "./wasm": {
+      "types": "./dist/wasm/index.d.ts",
+      "import": "./dist/wasm/index.js",
+      "default": "./dist/wasm/index.js"
+    },
+    "./fonts": {
+      "types": "./dist/fonts/index.d.ts",
+      "import": "./dist/fonts/index.js",
+      "default": "./dist/fonts/index.js"
+    },
+    "./renderer": {
+      "types": "./dist/renderer/index.d.ts",
+      "import": "./dist/renderer/index.js",
+      "default": "./dist/renderer/index.js"
+    },
+    "./grid": {
+      "types": "./dist/grid/index.d.ts",
+      "import": "./dist/grid/index.js",
+      "default": "./dist/grid/index.js"
+    },
+    "./selection": {
+      "types": "./dist/selection/index.d.ts",
+      "import": "./dist/selection/index.js",
+      "default": "./dist/selection/index.js"
+    },
+    "./ime": {
+      "types": "./dist/ime/index.d.ts",
+      "import": "./dist/ime/index.js",
+      "default": "./dist/ime/index.js"
     }
   },
   "scripts": {
     "setup:wgpu-polyfill": "bun run scripts/setup-wgpu-polyfill.ts",
     "clean:dist": "rm -rf dist && mkdir -p dist",
     "build:themes": "bun run scripts/generate-builtin-themes.ts",
-    "build:lib": "bun build ./src/index.ts --outdir ./dist --target browser --format esm",
+    "build:lib": "bun build ./src/index.ts ./src/internal.ts ./src/app/index.ts ./src/pty/index.ts ./src/input/index.ts ./src/theme/index.ts ./src/wasm/index.ts ./src/fonts/index.ts ./src/renderer/index.ts ./src/grid/index.ts ./src/selection/index.ts ./src/ime/index.ts --root ./src --outdir ./dist --target browser --format esm",
     "build:types": "tsc -p tsconfig.build.json",
     "build": "bun run build:themes && bun run clean:dist && bun run build:lib && bun run build:types",
     "build:text-shaper": "bun run playground/build-text-shaper.ts",
@@ -56,8 +111,8 @@
     "build:playground-app": "bun run playground/build-playground-app.ts",
     "build:assets": "bun run build:text-shaper && bun run build:restty-input && bun run build:restty-wasm && bun run build:playground-app",
     "check:themes": "bun run build:themes && git diff --exit-code -- src/theme/builtin-themes.ts",
-    "lint": "oxlint src playground scripts tests --ignore-pattern 'playground/public/**' --ignore-pattern 'src/theme/builtin-themes.ts'",
-    "format:base": "oxfmt src --ignore-path .gitignore --ignore-path .oxfmtignore",
+    "lint": "oxlint src playground scripts tests",
+    "format:base": "oxfmt src --config .oxfmtrc.json --ignore-path .gitignore --ignore-path .oxfmtignore",
     "format": "bun run format:base --write",
     "format:check": "bun run format:base --check",
     "prepublishOnly": "bun run build",

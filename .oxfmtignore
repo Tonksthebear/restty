@@ -1,4 +1,9 @@
 src/theme/builtin-themes.ts
+src/app/index.ts
+src/wasm/runtime.ts
+src/renderer
+src/input
+src/fonts
 assets/themes
 dist
 playground/public

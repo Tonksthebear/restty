@@ -1,0 +1,41 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "unicorn",
+    "typescript"
+  ],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error"
+  },
+  "rules": {
+    "unicorn/no-new-array": "off",
+    "unicorn/consistent-function-scoping": "off",
+    "unicorn/no-array-sort": "off"
+  },
+  "env": {
+    "builtin": true
+  },
+  "ignorePatterns": [
+    "dist/**",
+    "playground/public/**",
+    "reference/**",
+    "src/theme/builtin-themes.ts"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "src/app/index.ts",
+        "src/wasm/runtime.ts",
+        "src/renderer/**/*.ts",
+        "src/fonts/**/*.ts",
+        "src/input/**/*.ts",
+        "src/grid/**/*.ts",
+        "src/theme/ghostty.ts"
+      ],
+      "plugins": [
+        "typescript"
+      ]
+    }
+  ]
+}

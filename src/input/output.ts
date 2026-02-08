@@ -1,5 +1,6 @@
 import type { CursorPosition, WindowOp } from "./types";
 import type { MouseController } from "./mouse";
+import { isDeviceAttributesQuery, parsePrivateModeSeq, parseWindowOpSeq } from "./ansi";
 
 export type OutputFilterOptions = {
   getCursorPosition: () => CursorPosition;
@@ -25,45 +26,6 @@ export type OutputFilterOptions = {
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
-const ESC = "\x1b";
-
-function parsePrivateModeSeq(seq: string): { codes: number[]; enabled: boolean } | null {
-  if (!seq.startsWith(`${ESC}[?`) || seq.length < 5) return null;
-  const final = seq[seq.length - 1];
-  if (final !== "h" && final !== "l") return null;
-  const body = seq.slice(3, -1);
-  if (!body || /[^0-9;]/.test(body)) return null;
-  const parts = body.split(";");
-  const codes: number[] = [];
-  for (let i = 0; i < parts.length; i += 1) {
-    const part = parts[i];
-    if (!part) return null;
-    const code = Number(part);
-    if (!Number.isFinite(code)) return null;
-    codes.push(code);
-  }
-  return { codes, enabled: final === "h" };
-}
-
-function parseWindowOpSeq(seq: string): number[] | null {
-  if (!seq.startsWith(`${ESC}[`) || !seq.endsWith("t")) return null;
-  const body = seq.slice(2, -1);
-  if (/[^0-9;]/.test(body)) return null;
-  return body ? body.split(";").map((part) => Number(part)) : [];
-}
-
-function isDeviceAttributesQuery(seq: string): boolean {
-  if (!seq.startsWith(`${ESC}[`) || !seq.endsWith("c")) return false;
-  const body = seq.slice(2, -1);
-  let i = 0;
-  while (i < body.length && (body[i] === "?" || body[i] === ">")) i += 1;
-  while (i < body.length && body.charCodeAt(i) >= 48 && body.charCodeAt(i) <= 57) i += 1;
-  if (i < body.length && body[i] === ";") {
-    i += 1;
-    while (i < body.length && body.charCodeAt(i) >= 48 && body.charCodeAt(i) <= 57) i += 1;
-  }
-  return i === body.length;
-}
 
 function decodeBase64(data: string): Uint8Array {
   if (!data) return new Uint8Array();

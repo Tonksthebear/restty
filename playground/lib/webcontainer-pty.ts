@@ -1,5 +1,5 @@
 import { WebContainer, type WebContainerProcess } from "@webcontainer/api";
-import type { PtyCallbacks, PtyConnectOptions, PtyTransport } from "../../src/index.ts";
+import type { PtyCallbacks, PtyConnectOptions, PtyTransport } from "../../src/internal.ts";
 
 type WebContainerPtyOptions = {
   getCommand?: () => string;
@@ -21,32 +21,32 @@ const FALLBACK_DEMO_SCRIPT = `#!/usr/bin/env sh
 set -eu
 ESC=$(printf '\\033')
 CSI="\${ESC}["
-printf '%s?25l%s2J%sH' "\$CSI" "\$CSI" "\$CSI"
+printf '%s?25l%s2J%sH' "$CSI" "$CSI" "$CSI"
 printf 'restty demo fallback\\n\\n'
 i=0
-while [ "\$i" -le 20 ]; do
-  pct=\$(( i * 100 / 20 ))
-  printf '\\rloading... %3s%%' "\$pct"
+while [ "$i" -le 20 ]; do
+  pct=$(( i * 100 / 20 ))
+  printf '\\rloading... %3s%%' "$pct"
   sleep 0.03
-  i=\$((i + 1))
+  i=$((i + 1))
 done
 printf '\\n\\n'
-printf '%s1mstyles:%s0m %s1mBold%s0m %s3mItalic%s0m\\n' "\$CSI" "\$CSI" "\$CSI" "\$CSI" "\$CSI" "\$CSI"
-printf '%s1mtruecolor:%s0m %s38;2;255;100;0mOrange%s0m\\n' "\$CSI" "\$CSI" "\$CSI" "\$CSI"
+printf '%s1mstyles:%s0m %s1mBold%s0m %s3mItalic%s0m\\n' "$CSI" "$CSI" "$CSI" "$CSI" "$CSI" "$CSI"
+printf '%s1mtruecolor:%s0m %s38;2;255;100;0mOrange%s0m\\n' "$CSI" "$CSI" "$CSI" "$CSI"
 printf '\\nrun ./test.sh for static checks.\\n'
-printf '%s0m%s?25h\\n' "\$CSI" "\$CSI"
+printf '%s0m%s?25h\\n' "$CSI" "$CSI"
 `;
 
 const FALLBACK_TEST_SCRIPT = `#!/usr/bin/env sh
 set -eu
 ESC=$(printf '\\033')
 CSI="\${ESC}["
-printf '%s?25l%s2J%sH' "\$CSI" "\$CSI" "\$CSI"
+printf '%s?25l%s2J%sH' "$CSI" "$CSI" "$CSI"
 printf 'restty quick test\\n\\n'
-printf '%s1mBold%s0m %s3mItalic%s0m %s4mUnderline%s0m\\n' "\$CSI" "\$CSI" "\$CSI" "\$CSI" "\$CSI" "\$CSI"
-printf '%s38;2;255;100;0mOrange%s0m %s38;2;120;200;255mSky%s0m\\n\\n' "\$CSI" "\$CSI" "\$CSI" "\$CSI"
+printf '%s1mBold%s0m %s3mItalic%s0m %s4mUnderline%s0m\\n' "$CSI" "$CSI" "$CSI" "$CSI" "$CSI" "$CSI"
+printf '%s38;2;255;100;0mOrange%s0m %s38;2;120;200;255mSky%s0m\\n\\n' "$CSI" "$CSI" "$CSI" "$CSI"
 printf 'Done.\\n'
-printf '%s0m%s?25h\\n' "\$CSI" "\$CSI"
+printf '%s0m%s?25h\\n' "$CSI" "$CSI"
 `;
 
 type SeedScriptSpec = {

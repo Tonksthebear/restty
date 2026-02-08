@@ -6671,52 +6671,90 @@ function decodePtyBinary(decoder, payload, stream = true) {
 function createPtyConnection() {
   return {
     socket: null,
-    connected: false,
+    status: "idle",
     url: "",
-    decoder: null
+    decoder: null,
+    connectId: 0
   };
 }
-function connectPty(state, url, callbacks) {
-  if (state.connected)
-    return;
+function setConnectionStatus(state, status) {
+  state.status = status;
+}
+function connectPty(state, options, callbacks) {
+  if (state.status === "connecting" || state.status === "connected" || state.status === "closing") {
+    return false;
+  }
+  const url = options.url?.trim?.() ?? "";
   if (!url)
-    return;
-  state.url = url;
+    return false;
   const ws = new WebSocket(url);
   const decoder = new TextDecoder;
+  const connectId = state.connectId + 1;
+  state.connectId = connectId;
+  state.url = url;
+  state.socket = ws;
   state.decoder = decoder;
+  setConnectionStatus(state, "connecting");
   ws.binaryType = "arraybuffer";
   const flushDecoder = () => {
-    if (!state.decoder)
+    if (state.connectId !== connectId)
       return;
-    const tail = state.decoder.decode();
-    state.decoder = null;
+    if (!decoder)
+      return;
+    const tail = decoder.decode();
+    if (state.decoder === decoder) {
+      state.decoder = null;
+    }
     if (tail)
       callbacks.onData?.(tail);
   };
+  let disconnectedNotified = false;
+  const notifyDisconnected = () => {
+    if (disconnectedNotified)
+      return;
+    disconnectedNotified = true;
+    callbacks.onDisconnect?.();
+  };
+  const clearCurrentSocket = () => {
+    if (state.connectId !== connectId)
+      return;
+    if (state.socket === ws) {
+      state.socket = null;
+    }
+    setConnectionStatus(state, "idle");
+    if (state.decoder === decoder) {
+      state.decoder = null;
+    }
+  };
   ws.addEventListener("open", () => {
-    state.connected = true;
-    state.socket = ws;
+    if (state.connectId !== connectId) {
+      try {
+        ws.close();
+      } catch {}
+      return;
+    }
+    if (state.socket !== ws)
+      return;
+    setConnectionStatus(state, "connected");
     callbacks.onConnect?.();
+    if (Number.isFinite(options.cols) && Number.isFinite(options.rows)) {
+      const cols = Math.max(0, Number(options.cols));
+      const rows = Math.max(0, Number(options.rows));
+      sendPtyResize(state, cols, rows);
+    }
   });
   ws.addEventListener("close", () => {
     flushDecoder();
-    if (state.socket === ws) {
-      state.socket = null;
-      state.connected = false;
-    }
-    callbacks.onDisconnect?.();
+    clearCurrentSocket();
+    notifyDisconnected();
   });
   ws.addEventListener("error", () => {
     flushDecoder();
-    if (state.socket === ws) {
-      state.socket = null;
-      state.connected = false;
-    }
-    callbacks.onDisconnect?.();
+    clearCurrentSocket();
+    notifyDisconnected();
   });
   ws.addEventListener("message", (event) => {
-    if (state.socket !== ws)
+    if (state.connectId !== connectId || state.socket !== ws)
       return;
     const payload = event.data;
     if (payload instanceof ArrayBuffer) {
@@ -6727,6 +6765,8 @@ function connectPty(state, url, callbacks) {
     }
     if (payload instanceof Blob) {
       payload.arrayBuffer().then((buf) => {
+        if (state.connectId !== connectId || state.socket !== ws)
+          return;
         const text = decodePtyBinary(decoder, buf, true);
         if (text)
           callbacks.onData?.(text);
@@ -6739,21 +6779,35 @@ function connectPty(state, url, callbacks) {
       callbacks.onData?.(payload);
     }
   });
+  return true;
 }
 function disconnectPty(state) {
-  if (state.decoder) {
+  const socket = state.socket;
+  if (state.decoder && !socket) {
     state.decoder.decode();
     state.decoder = null;
   }
-  const socket = state.socket;
-  state.socket = null;
-  state.connected = false;
+  if (!socket) {
+    setConnectionStatus(state, "idle");
+    return;
+  }
+  setConnectionStatus(state, "closing");
   if (socket) {
     try {
       if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
         socket.close();
+      } else {
+        if (state.socket === socket) {
+          state.socket = null;
+        }
+        setConnectionStatus(state, "idle");
       }
-    } catch {}
+    } catch {
+      if (state.socket === socket) {
+        state.socket = null;
+      }
+      setConnectionStatus(state, "idle");
+    }
   }
 }
 function sendPtyInput(state, data) {
@@ -6789,7 +6843,7 @@ function handleServerMessage(payload, callbacks) {
   return false;
 }
 function isPtyConnected(state) {
-  return state.connected && state.socket?.readyState === WebSocket.OPEN;
+  return state.status === "connected" && state.socket?.readyState === WebSocket.OPEN;
 }
 function createWebSocketPtyTransport(state = createPtyConnection()) {
   return {
@@ -6798,7 +6852,10 @@ function createWebSocketPtyTransport(state = createPtyConnection()) {
       if (!url) {
         throw new Error("PTY URL is required for WebSocket transport");
       }
-      connectPty(state, url, options.callbacks);
+      const connected = connectPty(state, options, options.callbacks);
+      if (!connected && state.status !== "connected") {
+        throw new Error(`PTY connection is busy (${state.status})`);
+      }
     },
     disconnect: () => {
       disconnectPty(state);
@@ -7267,7 +7324,7 @@ function mapKeyForPty(seq) {
   return seq;
 }
 
-// src/input/mouse.ts
+// src/input/ansi.ts
 var ESC = "\x1B";
 function parsePrivateModeSeq(seq) {
   if (!seq.startsWith(`${ESC}[?`) || seq.length < 5)
@@ -7291,7 +7348,32 @@ function parsePrivateModeSeq(seq) {
   }
   return { codes, enabled: final === "h" };
 }
+function parseWindowOpSeq(seq) {
+  if (!seq.startsWith(`${ESC}[`) || !seq.endsWith("t"))
+    return null;
+  const body = seq.slice(2, -1);
+  if (/[^0-9;]/.test(body))
+    return null;
+  return body ? body.split(";").map((part) => Number(part)) : [];
+}
+function isDeviceAttributesQuery(seq) {
+  if (!seq.startsWith(`${ESC}[`) || !seq.endsWith("c"))
+    return false;
+  const body = seq.slice(2, -1);
+  let i = 0;
+  while (i < body.length && (body[i] === "?" || body[i] === ">"))
+    i += 1;
+  while (i < body.length && body.charCodeAt(i) >= 48 && body.charCodeAt(i) <= 57)
+    i += 1;
+  if (i < body.length && body[i] === ";") {
+    i += 1;
+    while (i < body.length && body.charCodeAt(i) >= 48 && body.charCodeAt(i) <= 57)
+      i += 1;
+  }
+  return i === body.length;
+}
 
+// src/input/mouse.ts
 class MouseController {
   mode = "auto";
   enabled = false;
@@ -7494,53 +7576,6 @@ class MouseController {
 // src/input/output.ts
 var textDecoder = new TextDecoder;
 var textEncoder = new TextEncoder;
-var ESC2 = "\x1B";
-function parsePrivateModeSeq2(seq) {
-  if (!seq.startsWith(`${ESC2}[?`) || seq.length < 5)
-    return null;
-  const final = seq[seq.length - 1];
-  if (final !== "h" && final !== "l")
-    return null;
-  const body = seq.slice(3, -1);
-  if (!body || /[^0-9;]/.test(body))
-    return null;
-  const parts = body.split(";");
-  const codes = [];
-  for (let i = 0;i < parts.length; i += 1) {
-    const part = parts[i];
-    if (!part)
-      return null;
-    const code = Number(part);
-    if (!Number.isFinite(code))
-      return null;
-    codes.push(code);
-  }
-  return { codes, enabled: final === "h" };
-}
-function parseWindowOpSeq(seq) {
-  if (!seq.startsWith(`${ESC2}[`) || !seq.endsWith("t"))
-    return null;
-  const body = seq.slice(2, -1);
-  if (/[^0-9;]/.test(body))
-    return null;
-  return body ? body.split(";").map((part) => Number(part)) : [];
-}
-function isDeviceAttributesQuery(seq) {
-  if (!seq.startsWith(`${ESC2}[`) || !seq.endsWith("c"))
-    return false;
-  const body = seq.slice(2, -1);
-  let i = 0;
-  while (i < body.length && (body[i] === "?" || body[i] === ">"))
-    i += 1;
-  while (i < body.length && body.charCodeAt(i) >= 48 && body.charCodeAt(i) <= 57)
-    i += 1;
-  if (i < body.length && body[i] === ";") {
-    i += 1;
-    while (i < body.length && body.charCodeAt(i) >= 48 && body.charCodeAt(i) <= 57)
-      i += 1;
-  }
-  return i === body.length;
-}
 function decodeBase64(data) {
   if (!data)
     return new Uint8Array;
@@ -7667,7 +7702,7 @@ class OutputFilter {
     return false;
   }
   handleModeSeq(seq) {
-    const mode = parsePrivateModeSeq2(seq);
+    const mode = parsePrivateModeSeq(seq);
     if (!mode)
       return false;
     const { enabled, codes } = mode;
@@ -7777,7 +7812,7 @@ class OutputFilter {
         break;
       }
       const seq = data.slice(i, j + 1);
-      const altMode = parsePrivateModeSeq2(seq);
+      const altMode = parsePrivateModeSeq(seq);
       if (altMode) {
         const { enabled, codes } = altMode;
         if (codes.some((code) => code === 47 || code === 1047 || code === 1048 || code === 1049)) {
@@ -13728,7 +13763,8 @@ class ResttyWasm {
     if (!stride)
       return [];
     const view = new DataView(this.memory.buffer, ptr, count * stride);
-    const placements = new Array(count);
+    const placements = [];
+    placements.length = count;
     for (let i = 0;i < count; i += 1) {
       const base = i * stride;
       placements[i] = {
@@ -13964,7 +14000,7 @@ function colorToRgbU32(color) {
 }
 function parseGhosttyTheme(text) {
   const raw = {};
-  const palette = new Array(256).fill(undefined);
+  const palette = Array.from({ length: 256 });
   const colors = { palette };
   for (const line of text.split(/\r?\n/)) {
     const trimmed = line.trim();
@@ -25045,7 +25081,80 @@ function getBuiltinTheme(name) {
   parsedThemeCache.set(name, parsed);
   return parsed;
 }
-// src/app/panes.ts
+// src/app/panes-context-menu.ts
+function createPaneContextMenuController(options) {
+  const contextMenuEl = options.doc.createElement("div");
+  contextMenuEl.className = "pane-context-menu";
+  contextMenuEl.hidden = true;
+  options.doc.body.appendChild(contextMenuEl);
+  const hide = () => {
+    contextMenuEl.hidden = true;
+    contextMenuEl.innerHTML = "";
+  };
+  const addSeparator = () => {
+    const separator = options.doc.createElement("div");
+    separator.className = "pane-context-menu-separator";
+    contextMenuEl.appendChild(separator);
+  };
+  const render = (items) => {
+    contextMenuEl.innerHTML = "";
+    for (const item of items) {
+      if (item === "separator") {
+        addSeparator();
+        continue;
+      }
+      const button = options.doc.createElement("button");
+      button.type = "button";
+      button.className = "pane-context-menu-item";
+      if (item.danger)
+        button.classList.add("is-danger");
+      if (item.enabled === false)
+        button.disabled = true;
+      const label = options.doc.createElement("span");
+      label.className = "pane-context-menu-label";
+      label.textContent = item.label;
+      button.appendChild(label);
+      if (item.shortcut) {
+        const shortcut = options.doc.createElement("span");
+        shortcut.className = "pane-context-menu-shortcut";
+        shortcut.textContent = item.shortcut;
+        button.appendChild(shortcut);
+      }
+      button.addEventListener("click", () => {
+        hide();
+        item.action();
+      });
+      contextMenuEl.appendChild(button);
+    }
+  };
+  const show = (pane, clientX, clientY, manager2) => {
+    const items = options.contextMenu.getItems(pane, manager2);
+    render(items);
+    contextMenuEl.hidden = false;
+    const margin = 8;
+    const rect = contextMenuEl.getBoundingClientRect();
+    const maxX = Math.max(margin, options.win.innerWidth - rect.width - margin);
+    const maxY = Math.max(margin, options.win.innerHeight - rect.height - margin);
+    const left = Math.min(Math.max(clientX, margin), maxX);
+    const top = Math.min(Math.max(clientY, margin), maxY);
+    contextMenuEl.style.left = `${left}px`;
+    contextMenuEl.style.top = `${top}px`;
+  };
+  const destroy = () => {
+    hide();
+    contextMenuEl.remove();
+  };
+  return {
+    element: contextMenuEl,
+    isOpen: () => !contextMenuEl.hidden,
+    containsTarget: (target) => target instanceof Node && contextMenuEl.contains(target),
+    show,
+    hide,
+    destroy
+  };
+}
+
+// src/app/panes-styles.ts
 var RESTTY_PANE_ROOT_CLASS = "restty-pane-root";
 var RESTTY_PANE_STYLE_MARKER = "data-restty-pane-styles";
 var RESTTY_PANE_STYLE_TEXT = `
@@ -25270,6 +25379,8 @@ function clearPaneStyleOptionsFromRoot(root) {
   root.style.removeProperty("--restty-pane-opacity-transition");
   root.style.removeProperty("--restty-pane-divider-thickness");
 }
+
+// src/app/panes.ts
 function getResttyShortcutModifierLabel() {
   const isMac = typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
   return isMac ? "Cmd" : "Ctrl";
@@ -25372,12 +25483,13 @@ function createResttyPaneManager(options) {
   let focusedPaneId = null;
   let resizeRaf = 0;
   let splitResizeState = null;
-  const contextMenuEl = options.contextMenu ? document.createElement("div") : null;
-  if (contextMenuEl) {
-    contextMenuEl.className = "pane-context-menu";
-    contextMenuEl.hidden = true;
-    document.body.appendChild(contextMenuEl);
-  }
+  const ownerDoc = root.ownerDocument ?? document;
+  const ownerWin = ownerDoc.defaultView ?? window;
+  const contextMenuController = options.contextMenu ? createPaneContextMenuController({
+    contextMenu: options.contextMenu,
+    doc: ownerDoc,
+    win: ownerWin
+  }) : null;
   const requestLayoutSync = () => {
     if (resizeRaf)
       return;
@@ -25492,65 +25604,7 @@ function createResttyPaneManager(options) {
     return closestPane;
   };
   const hideContextMenu = () => {
-    if (!contextMenuEl)
-      return;
-    contextMenuEl.hidden = true;
-    contextMenuEl.innerHTML = "";
-  };
-  const addContextMenuSeparator = () => {
-    if (!contextMenuEl)
-      return;
-    const separator = document.createElement("div");
-    separator.className = "pane-context-menu-separator";
-    contextMenuEl.appendChild(separator);
-  };
-  const renderContextMenu = (items) => {
-    if (!contextMenuEl)
-      return;
-    contextMenuEl.innerHTML = "";
-    for (const item of items) {
-      if (item === "separator") {
-        addContextMenuSeparator();
-        continue;
-      }
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "pane-context-menu-item";
-      if (item.danger)
-        button.classList.add("is-danger");
-      if (item.enabled === false)
-        button.disabled = true;
-      const label = document.createElement("span");
-      label.className = "pane-context-menu-label";
-      label.textContent = item.label;
-      button.appendChild(label);
-      if (item.shortcut) {
-        const shortcut = document.createElement("span");
-        shortcut.className = "pane-context-menu-shortcut";
-        shortcut.textContent = item.shortcut;
-        button.appendChild(shortcut);
-      }
-      button.addEventListener("click", () => {
-        hideContextMenu();
-        item.action();
-      });
-      contextMenuEl.appendChild(button);
-    }
-  };
-  const showContextMenu = (pane, clientX, clientY) => {
-    if (!contextMenuEl || !options.contextMenu)
-      return;
-    const items = options.contextMenu.getItems(pane, api);
-    renderContextMenu(items);
-    contextMenuEl.hidden = false;
-    const margin = 8;
-    const rect = contextMenuEl.getBoundingClientRect();
-    const maxX = Math.max(margin, window.innerWidth - rect.width - margin);
-    const maxY = Math.max(margin, window.innerHeight - rect.height - margin);
-    const left = Math.min(Math.max(clientX, margin), maxX);
-    const top = Math.min(Math.max(clientY, margin), maxY);
-    contextMenuEl.style.left = `${left}px`;
-    contextMenuEl.style.top = `${top}px`;
+    contextMenuController?.hide();
   };
   const bindPaneInteractions = (pane) => {
     const cleanupFns = [];
@@ -25580,7 +25634,7 @@ function createResttyPaneManager(options) {
         event.preventDefault();
         event.stopPropagation();
         markPaneFocused(id);
-        showContextMenu(pane, event.clientX, event.clientY);
+        contextMenuController?.show(pane, event.clientX, event.clientY, api);
       };
       container.addEventListener("contextmenu", onContextMenu);
       cleanupFns.push(() => {
@@ -25774,9 +25828,9 @@ function createResttyPaneManager(options) {
     return first;
   };
   const onWindowPointerDown = (event) => {
-    if (!contextMenuEl || contextMenuEl.hidden)
+    if (!contextMenuController?.isOpen())
       return;
-    if (event.target instanceof Node && contextMenuEl.contains(event.target))
+    if (contextMenuController.containsTarget(event.target))
       return;
     hideContextMenu();
   };
@@ -25784,7 +25838,7 @@ function createResttyPaneManager(options) {
     hideContextMenu();
   };
   const onWindowKeyDown = (event) => {
-    if (contextMenuEl && !contextMenuEl.hidden && event.key === "Escape") {
+    if (contextMenuController?.isOpen() && event.key === "Escape") {
       hideContextMenu();
       return;
     }
@@ -25832,7 +25886,7 @@ function createResttyPaneManager(options) {
     focusedPaneId = null;
     root.replaceChildren();
     hideContextMenu();
-    contextMenuEl?.remove();
+    contextMenuController?.destroy();
     if (stylesEnabled) {
       clearPaneStyleOptionsFromRoot(root);
     }
@@ -26064,6 +26118,69 @@ function buildFontAtlasIfNeeded(params) {
     colorGlyphs,
     preferNearest: resolvePreferNearest({ fontIndex, isSymbol, atlasScale })
   };
+}
+
+// src/app/font-sources.ts
+var DEFAULT_FONT_SOURCES = [
+  {
+    type: "url",
+    url: "https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono@v2.304/fonts/ttf/JetBrainsMono-Regular.ttf"
+  },
+  {
+    type: "url",
+    url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf"
+  },
+  {
+    type: "url",
+    url: "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf"
+  },
+  {
+    type: "url",
+    url: "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji@master/font/OpenMoji-black-glyf/OpenMoji-black-glyf.ttf"
+  }
+];
+function validateFontSource(source, index) {
+  if (!source || typeof source !== "object" || !("type" in source)) {
+    throw new Error(`fontSources[${index}] must be a typed source object`);
+  }
+  if (source.type === "url") {
+    if (typeof source.url !== "string" || !source.url.trim()) {
+      throw new Error(`fontSources[${index}] url source requires a non-empty url`);
+    }
+    return source;
+  }
+  if (source.type === "buffer") {
+    const data = source.data;
+    if (!(data instanceof ArrayBuffer) && !ArrayBuffer.isView(data)) {
+      throw new Error(`fontSources[${index}] buffer source requires ArrayBuffer or ArrayBufferView`);
+    }
+    return source;
+  }
+  if (source.type === "local") {
+    if (!Array.isArray(source.matchers)) {
+      throw new Error(`fontSources[${index}] local source requires at least one matcher`);
+    }
+    let hasMatcher = false;
+    for (let i = 0;i < source.matchers.length; i += 1) {
+      if (source.matchers[i]) {
+        hasMatcher = true;
+        break;
+      }
+    }
+    if (!hasMatcher) {
+      throw new Error(`fontSources[${index}] local source requires at least one matcher`);
+    }
+    return source;
+  }
+  throw new Error(`fontSources[${index}] has unsupported source type`);
+}
+function normalizeFontSources(sources, preset) {
+  if (sources && sources.length) {
+    return sources.map((source, index) => validateFontSource(source, index));
+  }
+  if (preset === "none")
+    return [];
+  return [...DEFAULT_FONT_SOURCES];
 }
 
 // node_modules/text-shaper/dist/index.js
@@ -49448,24 +49565,6 @@ function eG($) {
 }
 
 // src/app/index.ts
-var DEFAULT_FONT_SOURCES = [
-  {
-    type: "url",
-    url: "https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono@v2.304/fonts/ttf/JetBrainsMono-Regular.ttf"
-  },
-  {
-    type: "url",
-    url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf"
-  },
-  {
-    type: "url",
-    url: "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf"
-  },
-  {
-    type: "url",
-    url: "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji@master/font/OpenMoji-black-glyf/OpenMoji-black-glyf.ttf"
-  }
-];
 function createResttyApp(options) {
   const { canvas: canvasInput, imeInput: imeInputInput, elements, callbacks } = options;
   const session = options.session ?? getDefaultResttyAppSession();
@@ -51694,51 +51793,7 @@ function createResttyApp(options) {
       return image;
     };
   }
-  const validateFontSource = (source, index) => {
-    if (!source || typeof source !== "object" || !("type" in source)) {
-      throw new Error(`fontSources[${index}] must be a typed source object`);
-    }
-    if (source.type === "url") {
-      if (typeof source.url !== "string" || !source.url.trim()) {
-        throw new Error(`fontSources[${index}] url source requires a non-empty url`);
-      }
-      return source;
-    }
-    if (source.type === "buffer") {
-      const data = source.data;
-      if (!(data instanceof ArrayBuffer) && !ArrayBuffer.isView(data)) {
-        throw new Error(`fontSources[${index}] buffer source requires ArrayBuffer or ArrayBufferView`);
-      }
-      return source;
-    }
-    if (source.type === "local") {
-      if (!Array.isArray(source.matchers)) {
-        throw new Error(`fontSources[${index}] local source requires at least one matcher`);
-      }
-      let hasMatcher = false;
-      for (let i3 = 0;i3 < source.matchers.length; i3 += 1) {
-        if (source.matchers[i3]) {
-          hasMatcher = true;
-          break;
-        }
-      }
-      if (!hasMatcher) {
-        throw new Error(`fontSources[${index}] local source requires at least one matcher`);
-      }
-      return source;
-    }
-    throw new Error(`fontSources[${index}] has unsupported source type`);
-  };
-  const normalizeFontSources = (sources) => {
-    if (!sources || !sources.length)
-      return [...DEFAULT_FONT_SOURCES];
-    const normalized = new Array(sources.length);
-    for (let i3 = 0;i3 < sources.length; i3 += 1) {
-      normalized[i3] = validateFontSource(sources[i3], i3);
-    }
-    return normalized;
-  };
-  let configuredFontSources = normalizeFontSources(options.fontSources);
+  let configuredFontSources = normalizeFontSources(options.fontSources, options.fontPreset);
   const gridState = {
     cols: 0,
     rows: 0,
@@ -52265,7 +52320,7 @@ function createResttyApp(options) {
     return [];
   }
   async function setFontSources(sources) {
-    configuredFontSources = normalizeFontSources(sources);
+    configuredFontSources = normalizeFontSources(sources, undefined);
     fontPromise = null;
     fontError = null;
     for (let i3 = 0;i3 < fontState.fonts.length; i3 += 1) {
@@ -55015,6 +55070,76 @@ function createResttyAppPaneManager(options) {
 }
 
 // src/app/restty.ts
+class ResttyPaneHandle {
+  resolvePane;
+  constructor(resolvePane) {
+    this.resolvePane = resolvePane;
+  }
+  get id() {
+    return this.resolvePane().id;
+  }
+  setRenderer(value) {
+    this.resolvePane().app.setRenderer(value);
+  }
+  setPaused(value) {
+    this.resolvePane().app.setPaused(value);
+  }
+  togglePause() {
+    this.resolvePane().app.togglePause();
+  }
+  setFontSize(value) {
+    this.resolvePane().app.setFontSize(value);
+  }
+  applyTheme(theme, sourceLabel) {
+    this.resolvePane().app.applyTheme(theme, sourceLabel);
+  }
+  resetTheme() {
+    this.resolvePane().app.resetTheme();
+  }
+  sendInput(text, source) {
+    this.resolvePane().app.sendInput(text, source);
+  }
+  sendKeyInput(text, source) {
+    this.resolvePane().app.sendKeyInput(text, source);
+  }
+  clearScreen() {
+    this.resolvePane().app.clearScreen();
+  }
+  connectPty(url = "") {
+    this.resolvePane().app.connectPty(url);
+  }
+  disconnectPty() {
+    this.resolvePane().app.disconnectPty();
+  }
+  isPtyConnected() {
+    return this.resolvePane().app.isPtyConnected();
+  }
+  setMouseMode(value) {
+    this.resolvePane().app.setMouseMode(value);
+  }
+  getMouseStatus() {
+    return this.resolvePane().app.getMouseStatus();
+  }
+  copySelectionToClipboard() {
+    return this.resolvePane().app.copySelectionToClipboard();
+  }
+  pasteFromClipboard() {
+    return this.resolvePane().app.pasteFromClipboard();
+  }
+  dumpAtlasForCodepoint(cp) {
+    this.resolvePane().app.dumpAtlasForCodepoint(cp);
+  }
+  updateSize(force) {
+    this.resolvePane().app.updateSize(force);
+  }
+  getBackend() {
+    return this.resolvePane().app.getBackend();
+  }
+  getRawPane() {
+    return this.resolvePane();
+  }
+}
+
 class Restty {
   paneManager;
   fontSources;
@@ -55051,6 +55176,37 @@ class Restty {
   getFocusedPane() {
     return this.paneManager.getFocusedPane();
   }
+  panes() {
+    return this.getPanes().map((pane) => this.makePaneHandle(pane.id));
+  }
+  pane(id) {
+    if (!this.getPaneById(id))
+      return null;
+    return this.makePaneHandle(id);
+  }
+  activePane() {
+    const pane = this.getActivePane();
+    if (!pane)
+      return null;
+    return this.makePaneHandle(pane.id);
+  }
+  focusedPane() {
+    const pane = this.getFocusedPane();
+    if (!pane)
+      return null;
+    return this.makePaneHandle(pane.id);
+  }
+  forEachPane(visitor) {
+    const panes = this.getPanes();
+    for (let i3 = 0;i3 < panes.length; i3 += 1) {
+      visitor(this.makePaneHandle(panes[i3].id));
+    }
+  }
+  async setFontSources(sources) {
+    this.fontSources = sources.length ? [...sources] : undefined;
+    const updates = this.getPanes().map((pane) => pane.app.setFontSources(this.fontSources ?? []));
+    await Promise.all(updates);
+  }
   createInitialPane(options) {
     return this.paneManager.createInitialPane(options);
   }
@@ -55085,77 +55241,77 @@ class Restty {
     this.paneManager.destroy();
   }
   connectPty(url = "") {
-    this.requireActivePane().app.connectPty(url);
+    this.requireActivePaneHandle().connectPty(url);
   }
   disconnectPty() {
-    this.requireActivePane().app.disconnectPty();
+    this.requireActivePaneHandle().disconnectPty();
   }
   isPtyConnected() {
-    return this.requireActivePane().app.isPtyConnected();
+    return this.requireActivePaneHandle().isPtyConnected();
   }
   setRenderer(value) {
-    this.requireActivePane().app.setRenderer(value);
+    this.requireActivePaneHandle().setRenderer(value);
   }
   setPaused(value) {
-    this.requireActivePane().app.setPaused(value);
+    this.requireActivePaneHandle().setPaused(value);
   }
   togglePause() {
-    this.requireActivePane().app.togglePause();
+    this.requireActivePaneHandle().togglePause();
   }
   setFontSize(value) {
-    this.requireActivePane().app.setFontSize(value);
-  }
-  async setFontSources(sources) {
-    this.fontSources = sources.length ? [...sources] : undefined;
-    const panes = this.getPanes();
-    const updates = new Array(panes.length);
-    for (let i3 = 0;i3 < panes.length; i3 += 1) {
-      updates[i3] = panes[i3].app.setFontSources(this.fontSources ?? []);
-    }
-    await Promise.all(updates);
+    this.requireActivePaneHandle().setFontSize(value);
   }
   applyTheme(theme, sourceLabel) {
-    this.requireActivePane().app.applyTheme(theme, sourceLabel);
+    this.requireActivePaneHandle().applyTheme(theme, sourceLabel);
   }
   resetTheme() {
-    this.requireActivePane().app.resetTheme();
+    this.requireActivePaneHandle().resetTheme();
   }
   sendInput(text, source) {
-    this.requireActivePane().app.sendInput(text, source);
+    this.requireActivePaneHandle().sendInput(text, source);
   }
   sendKeyInput(text, source) {
-    this.requireActivePane().app.sendKeyInput(text, source);
+    this.requireActivePaneHandle().sendKeyInput(text, source);
   }
   clearScreen() {
-    this.requireActivePane().app.clearScreen();
+    this.requireActivePaneHandle().clearScreen();
   }
   setMouseMode(value) {
-    this.requireActivePane().app.setMouseMode(value);
+    this.requireActivePaneHandle().setMouseMode(value);
   }
   getMouseStatus() {
-    return this.requireActivePane().app.getMouseStatus();
+    return this.requireActivePaneHandle().getMouseStatus();
   }
   copySelectionToClipboard() {
-    return this.requireActivePane().app.copySelectionToClipboard();
+    return this.requireActivePaneHandle().copySelectionToClipboard();
   }
   pasteFromClipboard() {
-    return this.requireActivePane().app.pasteFromClipboard();
+    return this.requireActivePaneHandle().pasteFromClipboard();
   }
   dumpAtlasForCodepoint(cp) {
-    this.requireActivePane().app.dumpAtlasForCodepoint(cp);
+    this.requireActivePaneHandle().dumpAtlasForCodepoint(cp);
   }
   updateSize(force) {
-    this.requireActivePane().app.updateSize(force);
+    this.requireActivePaneHandle().updateSize(force);
   }
   getBackend() {
-    return this.requireActivePane().app.getBackend();
+    return this.requireActivePaneHandle().getBackend();
   }
-  requireActivePane() {
+  makePaneHandle(id) {
+    return new ResttyPaneHandle(() => this.requirePaneById(id));
+  }
+  requirePaneById(id) {
+    const pane = this.getPaneById(id);
+    if (!pane)
+      throw new Error(`Restty pane ${id} does not exist`);
+    return pane;
+  }
+  requireActivePaneHandle() {
     const pane = this.getActivePane();
     if (!pane) {
       throw new Error("Restty has no active pane. Create or focus a pane first.");
     }
-    return pane;
+    return this.makePaneHandle(pane.id);
   }
 }
 // playground/lib/demos.ts
@@ -57438,5 +57594,5 @@ if (firstState) {
 }
 queueResizeAllPanes();
 
-//# debugId=8B1297501663D63664756E2164756E21
+//# debugId=51BEEC41B1944D3964756E2164756E21
 //# sourceMappingURL=app.js.map

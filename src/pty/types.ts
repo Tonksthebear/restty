@@ -8,11 +8,14 @@ export type PtyExitMessage = { type: "exit"; code?: number };
 
 export type PtyServerMessage = PtyStatusMessage | PtyErrorMessage | PtyExitMessage;
 
+export type PtyLifecycleState = "idle" | "connecting" | "connected" | "closing";
+
 export type PtyConnectionState = {
   socket: WebSocket | null;
-  connected: boolean;
+  status: PtyLifecycleState;
   url: string;
   decoder: TextDecoder | null;
+  connectId: number;
 };
 
 export type PtyCallbacks = {

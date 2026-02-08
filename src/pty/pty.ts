@@ -2,6 +2,7 @@ import type {
   PtyCallbacks,
   PtyConnectionState,
   PtyConnectOptions,
+  PtyLifecycleState,
   PtyMessage,
   PtyServerMessage,
   PtyTransport,
@@ -19,55 +20,100 @@ export function decodePtyBinary(
 export function createPtyConnection(): PtyConnectionState {
   return {
     socket: null,
-    connected: false,
+    status: "idle",
     url: "",
     decoder: null,
+    connectId: 0,
   };
 }
 
-export function connectPty(state: PtyConnectionState, url: string, callbacks: PtyCallbacks): void {
-  if (state.connected) return;
-  if (!url) return;
+function setConnectionStatus(state: PtyConnectionState, status: PtyLifecycleState): void {
+  state.status = status;
+}
 
-  state.url = url;
+export function connectPty(
+  state: PtyConnectionState,
+  options: Pick<PtyConnectOptions, "url" | "cols" | "rows">,
+  callbacks: PtyCallbacks,
+): boolean {
+  if (state.status === "connecting" || state.status === "connected" || state.status === "closing") {
+    return false;
+  }
+
+  const url = options.url?.trim?.() ?? "";
+  if (!url) return false;
+
   const ws = new WebSocket(url);
   const decoder = new TextDecoder();
+  const connectId = state.connectId + 1;
+  state.connectId = connectId;
+  state.url = url;
+  state.socket = ws;
   state.decoder = decoder;
+  setConnectionStatus(state, "connecting");
   ws.binaryType = "arraybuffer";
 
   const flushDecoder = () => {
-    if (!state.decoder) return;
-    const tail = state.decoder.decode();
-    state.decoder = null;
+    if (state.connectId !== connectId) return;
+    if (!decoder) return;
+    const tail = decoder.decode();
+    if (state.decoder === decoder) {
+      state.decoder = null;
+    }
     if (tail) callbacks.onData?.(tail);
   };
 
+  let disconnectedNotified = false;
+  const notifyDisconnected = () => {
+    if (disconnectedNotified) return;
+    disconnectedNotified = true;
+    callbacks.onDisconnect?.();
+  };
+
+  const clearCurrentSocket = () => {
+    if (state.connectId !== connectId) return;
+    if (state.socket === ws) {
+      state.socket = null;
+    }
+    setConnectionStatus(state, "idle");
+    if (state.decoder === decoder) {
+      state.decoder = null;
+    }
+  };
+
   ws.addEventListener("open", () => {
-    state.connected = true;
-    state.socket = ws;
+    if (state.connectId !== connectId) {
+      try {
+        ws.close();
+      } catch {
+        // ignore stale connection close errors
+      }
+      return;
+    }
+    if (state.socket !== ws) return;
+    setConnectionStatus(state, "connected");
     callbacks.onConnect?.();
+    if (Number.isFinite(options.cols) && Number.isFinite(options.rows)) {
+      const cols = Math.max(0, Number(options.cols));
+      const rows = Math.max(0, Number(options.rows));
+      sendPtyResize(state, cols, rows);
+    }
   });
 
   ws.addEventListener("close", () => {
     flushDecoder();
-    if (state.socket === ws) {
-      state.socket = null;
-      state.connected = false;
-    }
-    callbacks.onDisconnect?.();
+    clearCurrentSocket();
+    notifyDisconnected();
   });
 
   ws.addEventListener("error", () => {
     flushDecoder();
-    if (state.socket === ws) {
-      state.socket = null;
-      state.connected = false;
-    }
-    callbacks.onDisconnect?.();
+    clearCurrentSocket();
+    notifyDisconnected();
   });
 
   ws.addEventListener("message", (event) => {
-    if (state.socket !== ws) return;
+    if (state.connectId !== connectId || state.socket !== ws) return;
     const payload = event.data;
 
     if (payload instanceof ArrayBuffer) {
@@ -78,6 +124,7 @@ export function connectPty(state: PtyConnectionState, url: string, callbacks: Pt
 
     if (payload instanceof Blob) {
       payload.arrayBuffer().then((buf) => {
+        if (state.connectId !== connectId || state.socket !== ws) return;
         const text = decodePtyBinary(decoder, buf, true);
         if (text) callbacks.onData?.(text);
       });
@@ -89,23 +136,38 @@ export function connectPty(state: PtyConnectionState, url: string, callbacks: Pt
       callbacks.onData?.(payload);
     }
   });
+
+  return true;
 }
 
 export function disconnectPty(state: PtyConnectionState): void {
-  if (state.decoder) {
+  const socket = state.socket;
+  if (state.decoder && !socket) {
     state.decoder.decode();
     state.decoder = null;
   }
-  const socket = state.socket;
-  state.socket = null;
-  state.connected = false;
+  if (!socket) {
+    setConnectionStatus(state, "idle");
+    return;
+  }
+
+  setConnectionStatus(state, "closing");
   if (socket) {
     try {
       if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
         socket.close();
+      } else {
+        if (state.socket === socket) {
+          state.socket = null;
+        }
+        setConnectionStatus(state, "idle");
       }
     } catch {
       // Ignore close errors
+      if (state.socket === socket) {
+        state.socket = null;
+      }
+      setConnectionStatus(state, "idle");
     }
   }
 }
@@ -149,7 +211,7 @@ function handleServerMessage(payload: string, callbacks: PtyCallbacks): boolean 
 }
 
 export function isPtyConnected(state: PtyConnectionState): boolean {
-  return state.connected && state.socket?.readyState === WebSocket.OPEN;
+  return state.status === "connected" && state.socket?.readyState === WebSocket.OPEN;
 }
 
 export function createWebSocketPtyTransport(
@@ -161,7 +223,10 @@ export function createWebSocketPtyTransport(
       if (!url) {
         throw new Error("PTY URL is required for WebSocket transport");
       }
-      connectPty(state, url, options.callbacks);
+      const connected = connectPty(state, options, options.callbacks);
+      if (!connected && state.status !== "connected") {
+        throw new Error(`PTY connection is busy (${state.status})`);
+      }
     },
     disconnect: () => {
       disconnectPty(state);

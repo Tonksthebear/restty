@@ -1,4 +1,4 @@
-import type { InputHandler } from "../input";
+import type { InputHandler, MouseMode } from "../input";
 import type { PtyTransport } from "../pty";
 import type { WebGPUCoreState } from "../renderer";
 import type { GhosttyTheme } from "../theme";
@@ -71,6 +71,7 @@ export type ResttyLocalFontSource = {
 
 export type ResttyFontSource = ResttyUrlFontSource | ResttyBufferFontSource | ResttyLocalFontSource;
 export type FontSource = ResttyFontSource;
+export type ResttyFontPreset = "default-cdn" | "none";
 
 export type ResttyAppOptions = {
   canvas: HTMLCanvasElement;
@@ -81,6 +82,7 @@ export type ResttyAppOptions = {
   renderer?: "auto" | "webgpu" | "webgl2";
   fontSize?: number;
   alphaBlending?: "native" | "linear" | "linear-corrected";
+  fontPreset?: ResttyFontPreset;
   fontSources?: ResttyFontSource[];
   maxSymbolAtlasScale?: number;
   fontScaleOverrides?: { match: RegExp; scale: number }[];
@@ -108,7 +110,7 @@ export type ResttyApp = {
   connectPty: (url?: string) => void;
   disconnectPty: () => void;
   isPtyConnected: () => boolean;
-  setMouseMode: (value: string) => void;
+  setMouseMode: (value: MouseMode) => void;
   getMouseStatus: () => ReturnType<InputHandler["getMouseStatus"]>;
   copySelectionToClipboard: () => Promise<boolean>;
   pasteFromClipboard: () => Promise<boolean>;
