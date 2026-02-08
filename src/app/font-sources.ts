@@ -15,7 +15,15 @@ export const DEFAULT_FONT_SOURCES: ResttyFontSource[] = [
   },
   {
     type: "url",
+    url: "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@main/fonts/NotoColorEmoji.ttf",
+  },
+  {
+    type: "url",
     url: "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji@master/font/OpenMoji-black-glyf/OpenMoji-black-glyf.ttf",
+  },
+  {
+    type: "url",
+    url: "https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf",
   },
 ];
 

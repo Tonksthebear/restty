@@ -9,6 +9,15 @@ Powered by:
 - `WebGPU` (with WebGL2 fallback)
 - `text-shaper` (shaping + raster)
 
+## Release Status
+
+`restty` is in an early release stage.
+
+- Known issue: kitty image protocol handling can still fail in some edge cases.
+- API note: high-level APIs are usable now, but some APIs may still change to improve DX.
+
+If you hit an issue, please open one on GitHub with repro steps.
+
 ## Install
 
 ```bash

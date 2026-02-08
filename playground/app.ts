@@ -59,8 +59,12 @@ const FONT_URL_NERD_SYMBOLS =
   "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf";
 const FONT_URL_NOTO_SYMBOLS =
   "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf";
+const FONT_URL_NOTO_COLOR_EMOJI =
+  "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@main/fonts/NotoColorEmoji.ttf";
 const FONT_URL_OPENMOJI =
   "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji@master/font/OpenMoji-black-glyf/OpenMoji-black-glyf.ttf";
+const FONT_URL_NOTO_CJK_SC =
+  "https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf";
 
 type RendererChoice = "auto" | "webgpu" | "webgl2";
 type ConnectionBackend = "ws" | "webcontainer";
@@ -156,8 +160,18 @@ function buildFontSourcesForSelection(value: string, localMatcher: string): Rest
   });
   sources.push({
     type: "url",
+    label: "Noto Color Emoji",
+    url: FONT_URL_NOTO_COLOR_EMOJI,
+  });
+  sources.push({
+    type: "url",
     label: "OpenMoji",
     url: FONT_URL_OPENMOJI,
+  });
+  sources.push({
+    type: "url",
+    label: "Noto Sans CJK SC",
+    url: FONT_URL_NOTO_CJK_SC,
   });
 
   return sources;

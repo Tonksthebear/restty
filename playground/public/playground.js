@@ -1595,7 +1595,6 @@ var COLOR_EMOJI_FONT_HINTS = [
   /apple color emoji/i,
   /noto color emoji/i,
   /segoe ui emoji/i,
-  /openmoji/i,
   /twemoji/i
 ];
 var WIDE_FONT_HINTS = [
@@ -13763,8 +13762,7 @@ class ResttyWasm {
     if (!stride)
       return [];
     const view = new DataView(this.memory.buffer, ptr, count * stride);
-    const placements = [];
-    placements.length = count;
+    const placements = new Array(count);
     for (let i = 0;i < count; i += 1) {
       const base = i * stride;
       placements[i] = {
@@ -14000,7 +13998,7 @@ function colorToRgbU32(color) {
 }
 function parseGhosttyTheme(text) {
   const raw = {};
-  const palette = Array.from({ length: 256 });
+  const palette = new Array(256).fill(undefined);
   const colors = { palette };
   for (const line of text.split(/\r?\n/)) {
     const trimmed = line.trim();
@@ -26136,7 +26134,15 @@ var DEFAULT_FONT_SOURCES = [
   },
   {
     type: "url",
+    url: "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@main/fonts/NotoColorEmoji.ttf"
+  },
+  {
+    type: "url",
     url: "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji@master/font/OpenMoji-black-glyf/OpenMoji-black-glyf.ttf"
+  },
+  {
+    type: "url",
+    url: "https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf"
   }
 ];
 function validateFontSource(source, index) {
@@ -26176,7 +26182,11 @@ function validateFontSource(source, index) {
 }
 function normalizeFontSources(sources, preset) {
   if (sources && sources.length) {
-    return sources.map((source, index) => validateFontSource(source, index));
+    const normalized = new Array(sources.length);
+    for (let i = 0;i < sources.length; i += 1) {
+      normalized[i] = validateFontSource(sources[i], i);
+    }
+    return normalized;
   }
   if (preset === "none")
     return [];
@@ -52448,6 +52458,46 @@ function createResttyApp(options) {
     const firstCp = text.codePointAt(0) ?? 0;
     const nerdSymbol = isNerdSymbolCodepoint(firstCp);
     const preferSymbol = nerdSymbol || isSymbolCp(firstCp);
+    const preferEmoji = text.includes("‍") || chars.some((ch) => {
+      const cp = ch.codePointAt(0) ?? 0;
+      if (cp >= 127462 && cp <= 127487)
+        return true;
+      if (cp >= 127744 && cp <= 129791)
+        return true;
+      return false;
+    });
+    if (preferEmoji) {
+      let bestEmojiIndex = -1;
+      let bestEmojiScore = Number.POSITIVE_INFINITY;
+      for (let i3 = 0;i3 < fontState.fonts.length; i3 += 1) {
+        const entry = fontState.fonts[i3];
+        if (!entry?.font || !isColorEmojiFont(entry))
+          continue;
+        let ok = true;
+        for (const ch of chars) {
+          if (!fontHasGlyph(entry.font, ch)) {
+            ok = false;
+            break;
+          }
+        }
+        if (!ok)
+          continue;
+        const shaped = shapeClusterWithFont(entry, text);
+        let score = shaped.glyphs.length;
+        if (/noto color emoji/i.test(entry.label))
+          score -= 0.25;
+        if (score < bestEmojiScore) {
+          bestEmojiScore = score;
+          bestEmojiIndex = i3;
+          if (score <= 0.75)
+            break;
+        }
+      }
+      if (bestEmojiIndex >= 0) {
+        setBoundedMap(fontState.fontPickCache, cacheKey, bestEmojiIndex, FONT_PICK_CACHE_LIMIT);
+        return bestEmojiIndex;
+      }
+    }
     if (nerdSymbol) {
       const symbolIndex = fontState.fonts.findIndex((entry) => isSymbolFont(entry));
       if (symbolIndex >= 0) {
@@ -52895,6 +52945,29 @@ function createResttyApp(options) {
     } = render;
     if (!codepoints || !fgBytes)
       return;
+    const mergedEmojiSkip = new Uint8Array(codepoints.length);
+    const isRegionalIndicator = (value) => value >= 127462 && value <= 127487;
+    const readCellCluster = (cellIndex) => {
+      const flag = wide ? wide[cellIndex] ?? 0 : 0;
+      if (flag === 2 || flag === 3)
+        return null;
+      const cp = codepoints[cellIndex] ?? 0;
+      if (!cp)
+        return null;
+      let text = String.fromCodePoint(cp);
+      const extra = graphemeLen && graphemeOffset && graphemeBuffer ? graphemeLen[cellIndex] ?? 0 : 0;
+      if (extra > 0 && graphemeOffset && graphemeBuffer) {
+        const start = graphemeOffset[cellIndex] ?? 0;
+        const cps = [cp];
+        for (let j = 0;j < extra; j += 1) {
+          const extraCp = graphemeBuffer[start + j];
+          if (extraCp)
+            cps.push(extraCp);
+        }
+        text = String.fromCodePoint(...cps);
+      }
+      return { cp, text, span: flag === 1 ? 2 : 1 };
+    };
     const { useLinearBlending, useLinearCorrection } = resolveBlendFlags("webgpu", state);
     const clearColor = useLinearBlending ? srgbToLinearColor(defaultBg) : defaultBg;
     reportTermSize(cols, rows);
@@ -53130,28 +53203,43 @@ function createResttyApp(options) {
         }
         if (bgOnly || textHidden)
           continue;
-        const wideFlag = wide ? wide[idx] : 0;
-        if (wideFlag === 2 || wideFlag === 3)
+        if (mergedEmojiSkip[idx])
           continue;
-        const cp = codepoints[idx];
-        if (!cp)
+        const cluster = readCellCluster(idx);
+        if (!cluster)
           continue;
+        const cp = cluster.cp;
         if (cp === KITTY_PLACEHOLDER_CP)
           continue;
-        const extra = graphemeLen && graphemeOffset && graphemeBuffer ? graphemeLen[idx] ?? 0 : 0;
+        let text = cluster.text;
+        let baseSpan = cluster.span;
+        const rowEnd = row * cols + cols;
+        if (isRegionalIndicator(cp)) {
+          const nextIdx = idx + baseSpan;
+          if (nextIdx < rowEnd && !mergedEmojiSkip[nextIdx]) {
+            const next = readCellCluster(nextIdx);
+            if (next && isRegionalIndicator(next.cp)) {
+              text += next.text;
+              baseSpan += next.span;
+              mergedEmojiSkip[nextIdx] = 1;
+            }
+          }
+        }
+        let nextSeqIdx = idx + baseSpan;
+        let guard = 0;
+        while ((text.codePointAt(text.length - 1) ?? 0) === 8205 && nextSeqIdx < rowEnd && guard < 8) {
+          const next = readCellCluster(nextSeqIdx);
+          if (!next || !next.cp || isSpaceCp(next.cp))
+            break;
+          text += next.text;
+          baseSpan += next.span;
+          mergedEmojiSkip[nextSeqIdx] = 1;
+          nextSeqIdx += next.span;
+          guard += 1;
+        }
+        const extra = text.length > String.fromCodePoint(cp).length ? 1 : 0;
         if (extra === 0 && isSpaceCp(cp))
           continue;
-        let text = String.fromCodePoint(cp);
-        if (extra > 0 && graphemeOffset && graphemeBuffer) {
-          const start = graphemeOffset[idx] ?? 0;
-          const cps = [cp];
-          for (let j = 0;j < extra; j += 1) {
-            const extraCp = graphemeBuffer[start + j];
-            if (extraCp)
-              cps.push(extraCp);
-          }
-          text = String.fromCodePoint(...cps);
-        }
         if (cursorBlock && cursorCell && row === cursorCell.row && col >= cursorCell.col && col < cursorCell.col + (cursorCell.wide ? 2 : 1)) {
           fg = [bgForText[0], bgForText[1], bgForText[2], 1];
         }
@@ -53173,7 +53261,6 @@ function createResttyApp(options) {
         }
         if (extra > 0 && text.trim() === "")
           continue;
-        const baseSpan = wideFlag === 1 ? 2 : 1;
         const fontIndex = pickFontIndexForText(text, baseSpan);
         const fontEntry = fontState.fonts[fontIndex] ?? fontState.fonts[0];
         const shaped = shapeClusterWithFont(fontEntry, text);
@@ -53771,6 +53858,29 @@ function createResttyApp(options) {
       clearKittyOverlay();
       return;
     }
+    const mergedEmojiSkip = new Uint8Array(codepoints.length);
+    const isRegionalIndicator = (value) => value >= 127462 && value <= 127487;
+    const readCellCluster = (cellIndex) => {
+      const flag = wide ? wide[cellIndex] ?? 0 : 0;
+      if (flag === 2 || flag === 3)
+        return null;
+      const cp = codepoints[cellIndex] ?? 0;
+      if (!cp)
+        return null;
+      let text = String.fromCodePoint(cp);
+      const extra = graphemeLen && graphemeOffset && graphemeBuffer ? graphemeLen[cellIndex] ?? 0 : 0;
+      if (extra > 0 && graphemeOffset && graphemeBuffer) {
+        const start = graphemeOffset[cellIndex] ?? 0;
+        const cps = [cp];
+        for (let j = 0;j < extra; j += 1) {
+          const extraCp = graphemeBuffer[start + j];
+          if (extraCp)
+            cps.push(extraCp);
+        }
+        text = String.fromCodePoint(...cps);
+      }
+      return { cp, text, span: flag === 1 ? 2 : 1 };
+    };
     const { useLinearBlending, useLinearCorrection } = resolveBlendFlags("webgl2");
     reportTermSize(cols, rows);
     const cursorPos = cursor ? resolveCursorPosition(cursor) : null;
@@ -53991,28 +54101,43 @@ function createResttyApp(options) {
         }
         if (bgOnly || textHidden)
           continue;
-        const wideFlag = wide ? wide[idx] : 0;
-        if (wideFlag === 2 || wideFlag === 3)
+        if (mergedEmojiSkip[idx])
           continue;
-        const cp = codepoints[idx];
-        if (!cp)
+        const cluster = readCellCluster(idx);
+        if (!cluster)
           continue;
+        const cp = cluster.cp;
         if (cp === KITTY_PLACEHOLDER_CP)
           continue;
-        const extra = graphemeLen && graphemeOffset && graphemeBuffer ? graphemeLen[idx] ?? 0 : 0;
+        let text = cluster.text;
+        let baseSpan = cluster.span;
+        const rowEnd = row * cols + cols;
+        if (isRegionalIndicator(cp)) {
+          const nextIdx = idx + baseSpan;
+          if (nextIdx < rowEnd && !mergedEmojiSkip[nextIdx]) {
+            const next = readCellCluster(nextIdx);
+            if (next && isRegionalIndicator(next.cp)) {
+              text += next.text;
+              baseSpan += next.span;
+              mergedEmojiSkip[nextIdx] = 1;
+            }
+          }
+        }
+        let nextSeqIdx = idx + baseSpan;
+        let guard = 0;
+        while ((text.codePointAt(text.length - 1) ?? 0) === 8205 && nextSeqIdx < rowEnd && guard < 8) {
+          const next = readCellCluster(nextSeqIdx);
+          if (!next || !next.cp || isSpaceCp(next.cp))
+            break;
+          text += next.text;
+          baseSpan += next.span;
+          mergedEmojiSkip[nextSeqIdx] = 1;
+          nextSeqIdx += next.span;
+          guard += 1;
+        }
+        const extra = text.length > String.fromCodePoint(cp).length ? 1 : 0;
         if (extra === 0 && isSpaceCp(cp))
           continue;
-        let text = String.fromCodePoint(cp);
-        if (extra > 0 && graphemeOffset && graphemeBuffer) {
-          const start = graphemeOffset[idx] ?? 0;
-          const cps = [cp];
-          for (let j = 0;j < extra; j += 1) {
-            const extraCp = graphemeBuffer[start + j];
-            if (extraCp)
-              cps.push(extraCp);
-          }
-          text = String.fromCodePoint(...cps);
-        }
         if (cursorBlock && cursorCell && row === cursorCell.row && col >= cursorCell.col && col < cursorCell.col + (cursorCell.wide ? 2 : 1)) {
           fg = [bgForText[0], bgForText[1], bgForText[2], 1];
         }
@@ -54034,7 +54159,6 @@ function createResttyApp(options) {
         }
         if (extra > 0 && text.trim() === "")
           continue;
-        const baseSpan = wideFlag === 1 ? 2 : 1;
         const fontIndex = pickFontIndexForText(text, baseSpan);
         const fontEntry = fontState.fonts[fontIndex] ?? fontState.fonts[0];
         const shaped = shapeClusterWithFont(fontEntry, text);
@@ -55204,7 +55328,11 @@ class Restty {
   }
   async setFontSources(sources) {
     this.fontSources = sources.length ? [...sources] : undefined;
-    const updates = this.getPanes().map((pane) => pane.app.setFontSources(this.fontSources ?? []));
+    const panes = this.getPanes();
+    const updates = new Array(panes.length);
+    for (let i3 = 0;i3 < panes.length; i3 += 1) {
+      updates[i3] = panes[i3].app.setFontSources(this.fontSources ?? []);
+    }
     await Promise.all(updates);
   }
   createInitialPane(options) {
@@ -56492,47 +56620,85 @@ function syncSubscription(listener) {
 
 // playground/lib/webcontainer-pty.ts
 var sharedWebContainerPromise = null;
-var sharedSeedPromise = null;
-var FALLBACK_DEMO_SCRIPT = `#!/usr/bin/env sh
-set -eu
-ESC=$(printf '\\033')
-CSI="\${ESC}["
-printf '%s?25l%s2J%sH' "$CSI" "$CSI" "$CSI"
-printf 'restty demo fallback\\n\\n'
-i=0
-while [ "$i" -le 20 ]; do
-  pct=$(( i * 100 / 20 ))
-  printf '\\rloading... %3s%%' "$pct"
-  sleep 0.03
-  i=$((i + 1))
-done
-printf '\\n\\n'
-printf '%s1mstyles:%s0m %s1mBold%s0m %s3mItalic%s0m\\n' "$CSI" "$CSI" "$CSI" "$CSI" "$CSI" "$CSI"
-printf '%s1mtruecolor:%s0m %s38;2;255;100;0mOrange%s0m\\n' "$CSI" "$CSI" "$CSI" "$CSI"
-printf '\\nrun ./test.sh for static checks.\\n'
-printf '%s0m%s?25h\\n' "$CSI" "$CSI"
+var WEB_CONTAINER_WELCOME = (() => {
+  const ESC2 = "\x1B";
+  const CSI = `${ESC2}[`;
+  const lines = [
+    "",
+    `${CSI}1;38;5;81m██████╗ ███████╗███████╗████████╗████████╗██╗   ██╗${CSI}0m`,
+    `${CSI}1;38;5;117m██╔══██╗██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝╚██╗ ██╔╝${CSI}0m`,
+    `${CSI}1;38;5;153m██████╔╝█████╗  ███████╗   ██║      ██║    ╚████╔╝ ${CSI}0m`,
+    `${CSI}1;38;5;189m██╔══██╗██╔══╝  ╚════██║   ██║      ██║     ╚██╔╝  ${CSI}0m`,
+    `${CSI}1;38;5;225m██║  ██║███████╗███████║   ██║      ██║      ██║   ${CSI}0m`,
+    `${CSI}1;38;5;219m╚═╝  ╚═╝╚══════╝╚══════╝   ╚═╝      ╚═╝      ╚═╝   ${CSI}0m`,
+    "",
+    `${CSI}1mWelcome to restty WebContainer mode${CSI}0m`,
+    `GitHub: ${CSI}4;38;5;81mhttps://github.com/wiedymi/restty${CSI}0m`,
+    "",
+    `${CSI}38;5;117mTry:${CSI}0m node demo.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node test.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node ansi-art.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node animation.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node colors.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node kitty.js`,
+    ""
+  ];
+  return `${lines.join(`
+`)}
 `;
-var FALLBACK_TEST_SCRIPT = `#!/usr/bin/env sh
-set -eu
-ESC=$(printf '\\033')
-CSI="\${ESC}["
-printf '%s?25l%s2J%sH' "$CSI" "$CSI" "$CSI"
-printf 'restty quick test\\n\\n'
-printf '%s1mBold%s0m %s3mItalic%s0m %s4mUnderline%s0m\\n' "$CSI" "$CSI" "$CSI" "$CSI" "$CSI" "$CSI"
-printf '%s38;2;255;100;0mOrange%s0m %s38;2;120;200;255mSky%s0m\\n\\n' "$CSI" "$CSI" "$CSI" "$CSI"
-printf 'Done.\\n'
-printf '%s0m%s?25h\\n' "$CSI" "$CSI"
+})();
+var FALLBACK_DEMO_JS = `#!/usr/bin/env node
+console.log("restty demo fallback");
+console.log("Run: node ansi-art.js");
+console.log("Run: node animation.js");
+console.log("Run: node colors.js");
+console.log("Run: node kitty.js");
+console.log("Run: node test.js");
+`;
+var FALLBACK_TEST_JS = `#!/usr/bin/env node
+console.log("restty test fallback");
+console.log("Node is available.");
+console.log("Run: node colors.js");
+console.log("Run: node kitty.js");
 `;
 var seedScripts = [
   {
-    urls: ["/playground/public/demo.sh", "/demo.sh"],
-    target: "demo.sh",
-    fallback: FALLBACK_DEMO_SCRIPT
+    urls: ["/playground/public/demo.js", "/demo.js"],
+    target: "demo.js",
+    fallback: FALLBACK_DEMO_JS
   },
   {
-    urls: ["/playground/public/test.sh", "/test.sh"],
-    target: "test.sh",
-    fallback: FALLBACK_TEST_SCRIPT
+    urls: ["/playground/public/test.js", "/test.js"],
+    target: "test.js",
+    fallback: FALLBACK_TEST_JS
+  },
+  {
+    urls: ["/playground/public/ansi-art.js", "/ansi-art.js"],
+    target: "ansi-art.js",
+    fallback: `#!/usr/bin/env node
+console.log('ansi-art fallback');
+`
+  },
+  {
+    urls: ["/playground/public/animation.js", "/animation.js"],
+    target: "animation.js",
+    fallback: `#!/usr/bin/env node
+console.log('animation fallback');
+`
+  },
+  {
+    urls: ["/playground/public/colors.js", "/colors.js"],
+    target: "colors.js",
+    fallback: `#!/usr/bin/env node
+console.log('colors fallback');
+`
+  },
+  {
+    urls: ["/playground/public/kitty.js", "/kitty.js"],
+    target: "kitty.js",
+    fallback: `#!/usr/bin/env node
+console.log('kitty fallback');
+`
   }
 ];
 async function getSharedWebContainer() {
@@ -56541,63 +56707,13 @@ async function getSharedWebContainer() {
   }
   return sharedWebContainerPromise;
 }
-function firstNonEmptyLine(text) {
-  for (const line of text.split(`
-`)) {
-    if (line.trim().length > 0)
-      return line.trimStart();
-  }
-  return null;
-}
-function isLikelyShellScript(text) {
-  const first = firstNonEmptyLine(text);
-  if (!first)
-    return false;
-  const normalized = first.toLowerCase();
-  if (normalized.startsWith("<!doctype") || normalized.startsWith("<html") || normalized.startsWith("<")) {
-    return false;
-  }
-  if (normalized.startsWith(">"))
-    return false;
-  if (!normalized.startsWith("#!"))
-    return false;
-  return /#!.*\b(?:ba|da|z|k|a)?sh\b/.test(normalized);
-}
-function stripMarkdownQuotePrefix(text) {
-  const lines = text.split(`
-`);
-  const first = lines.find((line) => line.trim().length > 0)?.trimStart() ?? "";
-  if (!first.startsWith(">"))
-    return text;
-  return lines.map((line) => line.replace(/^\s*>\s?/, "")).join(`
-`);
-}
-function extractShellCodeFence(text) {
-  const pattern = /```(?:[^\n`]*)\n([\s\S]*?)```/g;
-  for (const match of text.matchAll(pattern)) {
-    const candidate = stripMarkdownQuotePrefix(match[1] ?? "").trim();
-    if (candidate && isLikelyShellScript(candidate))
-      return candidate;
-  }
-  return null;
-}
 function normalizeFetchedScript(text) {
   const noBom = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, `
 `).trim();
   if (!noBom)
     return null;
-  if (isLikelyShellScript(noBom))
-    return `${noBom}
+  return `${noBom}
 `;
-  const dequoted = stripMarkdownQuotePrefix(noBom).trim();
-  if (dequoted !== noBom && isLikelyShellScript(dequoted))
-    return `${dequoted}
-`;
-  const fenced = extractShellCodeFence(noBom);
-  if (fenced)
-    return `${fenced}
-`;
-  return null;
 }
 async function fetchScriptText(url) {
   try {
@@ -56619,7 +56735,20 @@ async function fetchFirstScript(urls) {
 }
 async function ensureScriptsExecutable(webcontainer) {
   const workdir = webcontainer.workdir;
-  const execPaths = ["demo.sh", "test.sh", `${workdir}/demo.sh`, `${workdir}/test.sh`];
+  const execPaths = [
+    "demo.js",
+    "test.js",
+    "ansi-art.js",
+    "animation.js",
+    "colors.js",
+    "kitty.js",
+    `${workdir}/demo.js`,
+    `${workdir}/test.js`,
+    `${workdir}/ansi-art.js`,
+    `${workdir}/animation.js`,
+    `${workdir}/colors.js`,
+    `${workdir}/kitty.js`
+  ];
   const chmodViaNode = await webcontainer.spawn("node", [
     "-e",
     [
@@ -56645,25 +56774,45 @@ async function ensureScriptsExecutable(webcontainer) {
   const nodeCode = await chmodViaNode.exit.catch(() => 1);
   if (nodeCode === 0)
     return;
-  const chmod = await webcontainer.spawn("chmod", ["+x", "demo.sh", "test.sh"]);
+  const chmod = await webcontainer.spawn("chmod", [
+    "+x",
+    "demo.js",
+    "test.js",
+    "ansi-art.js",
+    "animation.js",
+    "colors.js",
+    "kitty.js"
+  ]);
   const chmodCode = await chmod.exit.catch(() => 1);
   if (chmodCode !== 0) {
-    throw new Error("Failed to set executable permissions for demo scripts");
+    throw new Error("Failed to set executable permissions for node demo scripts");
   }
 }
+async function removeLegacyShellScripts(webcontainer) {
+  const workdir = webcontainer.workdir;
+  const legacyPaths = ["demo.sh", "test.sh", `${workdir}/demo.sh`, `${workdir}/test.sh`];
+  const cleanup = await webcontainer.spawn("node", [
+    "-e",
+    [
+      "const fs = require('node:fs');",
+      "for (const p of process.argv.slice(1)) {",
+      "  try {",
+      "    fs.rmSync(p, { force: true });",
+      "  } catch {",
+      "    // ignore cleanup failures",
+      "  }",
+      "}"
+    ].join(" "),
+    ...legacyPaths
+  ]);
+  await cleanup.exit.catch(() => 1);
+}
 async function ensureSeedScripts(webcontainer) {
-  if (!sharedSeedPromise) {
-    sharedSeedPromise = (async () => {
-      for (const spec of seedScripts) {
-        const text = await fetchFirstScript(spec.urls);
-        await webcontainer.fs.writeFile(spec.target, text ?? spec.fallback);
-      }
-    })().catch((err) => {
-      sharedSeedPromise = null;
-      throw err;
-    });
+  await removeLegacyShellScripts(webcontainer);
+  for (const spec of seedScripts) {
+    const text = await fetchFirstScript(spec.urls);
+    await webcontainer.fs.writeFile(spec.target, text ?? spec.fallback);
   }
-  await sharedSeedPromise;
   await ensureScriptsExecutable(webcontainer);
 }
 function parseCommand(spec) {
@@ -56812,6 +56961,9 @@ function createWebContainerPtyTransport(options = {}) {
         cb.onConnect?.();
         cb.onStatus?.(spec.label || spec.command);
         log(`connected (${spec.label || spec.command})`);
+        if (spec.command === "jsh") {
+          cb.onData?.(WEB_CONTAINER_WELCOME);
+        }
         startOutputPump(token, cb);
         spawned.exit.then((code) => {
           if (connectionToken !== token)
@@ -56903,7 +57055,9 @@ var FONT_FAMILY_LOCAL_PREFIX = "local:";
 var FONT_URL_JETBRAINS_MONO = "https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono@v2.304/fonts/ttf/JetBrainsMono-Regular.ttf";
 var FONT_URL_NERD_SYMBOLS = "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf";
 var FONT_URL_NOTO_SYMBOLS = "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf";
+var FONT_URL_NOTO_COLOR_EMOJI = "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@main/fonts/NotoColorEmoji.ttf";
 var FONT_URL_OPENMOJI = "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji@master/font/OpenMoji-black-glyf/OpenMoji-black-glyf.ttf";
+var FONT_URL_NOTO_CJK_SC = "https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf";
 var paneStates = new Map;
 var activePaneId = null;
 var resizeRaf = 0;
@@ -56963,8 +57117,18 @@ function buildFontSourcesForSelection(value, localMatcher) {
   });
   sources.push({
     type: "url",
+    label: "Noto Color Emoji",
+    url: FONT_URL_NOTO_COLOR_EMOJI
+  });
+  sources.push({
+    type: "url",
     label: "OpenMoji",
     url: FONT_URL_OPENMOJI
+  });
+  sources.push({
+    type: "url",
+    label: "Noto Sans CJK SC",
+    url: FONT_URL_NOTO_CJK_SC
   });
   return sources;
 }
@@ -57594,5 +57758,5 @@ if (firstState) {
 }
 queueResizeAllPanes();
 
-//# debugId=51BEEC41B1944D3964756E2164756E21
+//# debugId=B1B03BA033DE241664756E2164756E21
 //# sourceMappingURL=app.js.map

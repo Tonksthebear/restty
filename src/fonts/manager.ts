@@ -15,7 +15,6 @@ const COLOR_EMOJI_FONT_HINTS = [
   /apple color emoji/i,
   /noto color emoji/i,
   /segoe ui emoji/i,
-  /openmoji/i,
   /twemoji/i,
 ];
 const WIDE_FONT_HINTS = [

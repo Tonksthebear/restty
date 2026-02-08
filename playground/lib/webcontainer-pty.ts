@@ -15,38 +15,47 @@ type CommandSpec = {
 };
 
 let sharedWebContainerPromise: Promise<WebContainer> | null = null;
-let sharedSeedPromise: Promise<void> | null = null;
 
-const FALLBACK_DEMO_SCRIPT = `#!/usr/bin/env sh
-set -eu
-ESC=$(printf '\\033')
-CSI="\${ESC}["
-printf '%s?25l%s2J%sH' "$CSI" "$CSI" "$CSI"
-printf 'restty demo fallback\\n\\n'
-i=0
-while [ "$i" -le 20 ]; do
-  pct=$(( i * 100 / 20 ))
-  printf '\\rloading... %3s%%' "$pct"
-  sleep 0.03
-  i=$((i + 1))
-done
-printf '\\n\\n'
-printf '%s1mstyles:%s0m %s1mBold%s0m %s3mItalic%s0m\\n' "$CSI" "$CSI" "$CSI" "$CSI" "$CSI" "$CSI"
-printf '%s1mtruecolor:%s0m %s38;2;255;100;0mOrange%s0m\\n' "$CSI" "$CSI" "$CSI" "$CSI"
-printf '\\nrun ./test.sh for static checks.\\n'
-printf '%s0m%s?25h\\n' "$CSI" "$CSI"
+const WEB_CONTAINER_WELCOME = (() => {
+  const ESC = "\x1b";
+  const CSI = `${ESC}[`;
+  const lines = [
+    "",
+    `${CSI}1;38;5;81m██████╗ ███████╗███████╗████████╗████████╗██╗   ██╗${CSI}0m`,
+    `${CSI}1;38;5;117m██╔══██╗██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝╚██╗ ██╔╝${CSI}0m`,
+    `${CSI}1;38;5;153m██████╔╝█████╗  ███████╗   ██║      ██║    ╚████╔╝ ${CSI}0m`,
+    `${CSI}1;38;5;189m██╔══██╗██╔══╝  ╚════██║   ██║      ██║     ╚██╔╝  ${CSI}0m`,
+    `${CSI}1;38;5;225m██║  ██║███████╗███████║   ██║      ██║      ██║   ${CSI}0m`,
+    `${CSI}1;38;5;219m╚═╝  ╚═╝╚══════╝╚══════╝   ╚═╝      ╚═╝      ╚═╝   ${CSI}0m`,
+    "",
+    `${CSI}1mWelcome to restty WebContainer mode${CSI}0m`,
+    `GitHub: ${CSI}4;38;5;81mhttps://github.com/wiedymi/restty${CSI}0m`,
+    "",
+    `${CSI}38;5;117mTry:${CSI}0m node demo.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node test.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node ansi-art.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node animation.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node colors.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node kitty.js`,
+    "",
+  ];
+  return `${lines.join("\n")}\n`;
+})();
+
+const FALLBACK_DEMO_JS = `#!/usr/bin/env node
+console.log("restty demo fallback");
+console.log("Run: node ansi-art.js");
+console.log("Run: node animation.js");
+console.log("Run: node colors.js");
+console.log("Run: node kitty.js");
+console.log("Run: node test.js");
 `;
 
-const FALLBACK_TEST_SCRIPT = `#!/usr/bin/env sh
-set -eu
-ESC=$(printf '\\033')
-CSI="\${ESC}["
-printf '%s?25l%s2J%sH' "$CSI" "$CSI" "$CSI"
-printf 'restty quick test\\n\\n'
-printf '%s1mBold%s0m %s3mItalic%s0m %s4mUnderline%s0m\\n' "$CSI" "$CSI" "$CSI" "$CSI" "$CSI" "$CSI"
-printf '%s38;2;255;100;0mOrange%s0m %s38;2;120;200;255mSky%s0m\\n\\n' "$CSI" "$CSI" "$CSI" "$CSI"
-printf 'Done.\\n'
-printf '%s0m%s?25h\\n' "$CSI" "$CSI"
+const FALLBACK_TEST_JS = `#!/usr/bin/env node
+console.log("restty test fallback");
+console.log("Node is available.");
+console.log("Run: node colors.js");
+console.log("Run: node kitty.js");
 `;
 
 type SeedScriptSpec = {
@@ -57,14 +66,34 @@ type SeedScriptSpec = {
 
 const seedScripts: SeedScriptSpec[] = [
   {
-    urls: ["/playground/public/demo.sh", "/demo.sh"],
-    target: "demo.sh",
-    fallback: FALLBACK_DEMO_SCRIPT,
+    urls: ["/playground/public/demo.js", "/demo.js"],
+    target: "demo.js",
+    fallback: FALLBACK_DEMO_JS,
   },
   {
-    urls: ["/playground/public/test.sh", "/test.sh"],
-    target: "test.sh",
-    fallback: FALLBACK_TEST_SCRIPT,
+    urls: ["/playground/public/test.js", "/test.js"],
+    target: "test.js",
+    fallback: FALLBACK_TEST_JS,
+  },
+  {
+    urls: ["/playground/public/ansi-art.js", "/ansi-art.js"],
+    target: "ansi-art.js",
+    fallback: "#!/usr/bin/env node\nconsole.log('ansi-art fallback');\n",
+  },
+  {
+    urls: ["/playground/public/animation.js", "/animation.js"],
+    target: "animation.js",
+    fallback: "#!/usr/bin/env node\nconsole.log('animation fallback');\n",
+  },
+  {
+    urls: ["/playground/public/colors.js", "/colors.js"],
+    target: "colors.js",
+    fallback: "#!/usr/bin/env node\nconsole.log('colors fallback');\n",
+  },
+  {
+    urls: ["/playground/public/kitty.js", "/kitty.js"],
+    target: "kitty.js",
+    fallback: "#!/usr/bin/env node\nconsole.log('kitty fallback');\n",
   },
 ];
 
@@ -75,55 +104,10 @@ async function getSharedWebContainer(): Promise<WebContainer> {
   return sharedWebContainerPromise;
 }
 
-function firstNonEmptyLine(text: string): string | null {
-  for (const line of text.split("\n")) {
-    if (line.trim().length > 0) return line.trimStart();
-  }
-  return null;
-}
-
-function isLikelyShellScript(text: string): boolean {
-  const first = firstNonEmptyLine(text);
-  if (!first) return false;
-
-  const normalized = first.toLowerCase();
-  if (normalized.startsWith("<!doctype") || normalized.startsWith("<html") || normalized.startsWith("<")) {
-    return false;
-  }
-  if (normalized.startsWith(">")) return false;
-  if (!normalized.startsWith("#!")) return false;
-  return /#!.*\b(?:ba|da|z|k|a)?sh\b/.test(normalized);
-}
-
-function stripMarkdownQuotePrefix(text: string): string {
-  const lines = text.split("\n");
-  const first = lines.find((line) => line.trim().length > 0)?.trimStart() ?? "";
-  if (!first.startsWith(">")) return text;
-  return lines.map((line) => line.replace(/^\s*>\s?/, "")).join("\n");
-}
-
-function extractShellCodeFence(text: string): string | null {
-  const pattern = /```(?:[^\n`]*)\n([\s\S]*?)```/g;
-  for (const match of text.matchAll(pattern)) {
-    const candidate = stripMarkdownQuotePrefix(match[1] ?? "").trim();
-    if (candidate && isLikelyShellScript(candidate)) return candidate;
-  }
-  return null;
-}
-
 function normalizeFetchedScript(text: string): string | null {
   const noBom = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n").trim();
   if (!noBom) return null;
-
-  if (isLikelyShellScript(noBom)) return `${noBom}\n`;
-
-  const dequoted = stripMarkdownQuotePrefix(noBom).trim();
-  if (dequoted !== noBom && isLikelyShellScript(dequoted)) return `${dequoted}\n`;
-
-  const fenced = extractShellCodeFence(noBom);
-  if (fenced) return `${fenced}\n`;
-
-  return null;
+  return `${noBom}\n`;
 }
 
 async function fetchScriptText(url: string): Promise<string | null> {
@@ -146,7 +130,20 @@ async function fetchFirstScript(urls: string[]): Promise<string | null> {
 
 async function ensureScriptsExecutable(webcontainer: WebContainer): Promise<void> {
   const workdir = webcontainer.workdir;
-  const execPaths = ["demo.sh", "test.sh", `${workdir}/demo.sh`, `${workdir}/test.sh`];
+  const execPaths = [
+    "demo.js",
+    "test.js",
+    "ansi-art.js",
+    "animation.js",
+    "colors.js",
+    "kitty.js",
+    `${workdir}/demo.js`,
+    `${workdir}/test.js`,
+    `${workdir}/ansi-art.js`,
+    `${workdir}/animation.js`,
+    `${workdir}/colors.js`,
+    `${workdir}/kitty.js`,
+  ];
   const chmodViaNode = await webcontainer.spawn("node", [
     "-e",
     [
@@ -173,26 +170,47 @@ async function ensureScriptsExecutable(webcontainer: WebContainer): Promise<void
   const nodeCode = await chmodViaNode.exit.catch(() => 1);
   if (nodeCode === 0) return;
 
-  const chmod = await webcontainer.spawn("chmod", ["+x", "demo.sh", "test.sh"]);
+  const chmod = await webcontainer.spawn("chmod", [
+    "+x",
+    "demo.js",
+    "test.js",
+    "ansi-art.js",
+    "animation.js",
+    "colors.js",
+    "kitty.js",
+  ]);
   const chmodCode = await chmod.exit.catch(() => 1);
   if (chmodCode !== 0) {
-    throw new Error("Failed to set executable permissions for demo scripts");
+    throw new Error("Failed to set executable permissions for node demo scripts");
   }
 }
 
+async function removeLegacyShellScripts(webcontainer: WebContainer): Promise<void> {
+  const workdir = webcontainer.workdir;
+  const legacyPaths = ["demo.sh", "test.sh", `${workdir}/demo.sh`, `${workdir}/test.sh`];
+  const cleanup = await webcontainer.spawn("node", [
+    "-e",
+    [
+      "const fs = require('node:fs');",
+      "for (const p of process.argv.slice(1)) {",
+      "  try {",
+      "    fs.rmSync(p, { force: true });",
+      "  } catch {",
+      "    // ignore cleanup failures",
+      "  }",
+      "}",
+    ].join(" "),
+    ...legacyPaths,
+  ]);
+  await cleanup.exit.catch(() => 1);
+}
+
 async function ensureSeedScripts(webcontainer: WebContainer): Promise<void> {
-  if (!sharedSeedPromise) {
-    sharedSeedPromise = (async () => {
-      for (const spec of seedScripts) {
-        const text = await fetchFirstScript(spec.urls);
-        await webcontainer.fs.writeFile(spec.target, text ?? spec.fallback);
-      }
-    })().catch((err) => {
-      sharedSeedPromise = null;
-      throw err;
-    });
+  await removeLegacyShellScripts(webcontainer);
+  for (const spec of seedScripts) {
+    const text = await fetchFirstScript(spec.urls);
+    await webcontainer.fs.writeFile(spec.target, text ?? spec.fallback);
   }
-  await sharedSeedPromise;
   await ensureScriptsExecutable(webcontainer);
 }
 
@@ -362,6 +380,9 @@ export function createWebContainerPtyTransport(options: WebContainerPtyOptions =
         cb.onConnect?.();
         cb.onStatus?.(spec.label || spec.command);
         log(`connected (${spec.label || spec.command})`);
+        if (spec.command === "jsh") {
+          cb.onData?.(WEB_CONTAINER_WELCOME);
+        }
 
         startOutputPump(token, cb);
 

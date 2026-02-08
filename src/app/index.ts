@@ -3431,6 +3431,43 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     const firstCp = text.codePointAt(0) ?? 0;
     const nerdSymbol = isNerdSymbolCodepoint(firstCp);
     const preferSymbol = nerdSymbol || isSymbolCp(firstCp);
+    const preferEmoji =
+      text.includes("\u200d") ||
+      chars.some((ch) => {
+        const cp = ch.codePointAt(0) ?? 0;
+        if (cp >= 0x1f1e6 && cp <= 0x1f1ff) return true;
+        if (cp >= 0x1f300 && cp <= 0x1faff) return true;
+        return false;
+      });
+
+    if (preferEmoji) {
+      let bestEmojiIndex = -1;
+      let bestEmojiScore = Number.POSITIVE_INFINITY;
+      for (let i = 0; i < fontState.fonts.length; i += 1) {
+        const entry = fontState.fonts[i];
+        if (!entry?.font || !isColorEmojiFont(entry)) continue;
+        let ok = true;
+        for (const ch of chars) {
+          if (!fontHasGlyph(entry.font, ch)) {
+            ok = false;
+            break;
+          }
+        }
+        if (!ok) continue;
+        const shaped = shapeClusterWithFont(entry, text);
+        let score = shaped.glyphs.length;
+        if (/noto color emoji/i.test(entry.label)) score -= 0.25;
+        if (score < bestEmojiScore) {
+          bestEmojiScore = score;
+          bestEmojiIndex = i;
+          if (score <= 0.75) break;
+        }
+      }
+      if (bestEmojiIndex >= 0) {
+        setBoundedMap(fontState.fontPickCache, cacheKey, bestEmojiIndex, FONT_PICK_CACHE_LIMIT);
+        return bestEmojiIndex;
+      }
+    }
 
     if (nerdSymbol) {
       const symbolIndex = fontState.fonts.findIndex((entry) => isSymbolFont(entry));
@@ -3919,6 +3956,28 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
     if (!codepoints || !fgBytes) return;
 
+    const mergedEmojiSkip = new Uint8Array(codepoints.length);
+    const isRegionalIndicator = (value: number) => value >= 0x1f1e6 && value <= 0x1f1ff;
+    const readCellCluster = (cellIndex: number): { cp: number; text: string; span: number } | null => {
+      const flag = wide ? (wide[cellIndex] ?? 0) : 0;
+      if (flag === 2 || flag === 3) return null;
+      const cp = codepoints[cellIndex] ?? 0;
+      if (!cp) return null;
+      let text = String.fromCodePoint(cp);
+      const extra =
+        graphemeLen && graphemeOffset && graphemeBuffer ? (graphemeLen[cellIndex] ?? 0) : 0;
+      if (extra > 0 && graphemeOffset && graphemeBuffer) {
+        const start = graphemeOffset[cellIndex] ?? 0;
+        const cps = [cp];
+        for (let j = 0; j < extra; j += 1) {
+          const extraCp = graphemeBuffer[start + j];
+          if (extraCp) cps.push(extraCp);
+        }
+        text = String.fromCodePoint(...cps);
+      }
+      return { cp, text, span: flag === 1 ? 2 : 1 };
+    };
+
     const { useLinearBlending, useLinearCorrection } = resolveBlendFlags("webgpu", state);
     const clearColor = useLinearBlending ? srgbToLinearColor(defaultBg) : defaultBg;
 
@@ -4212,25 +4271,41 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
         if (bgOnly || textHidden) continue;
 
-        const wideFlag = wide ? wide[idx] : 0;
-        if (wideFlag === 2 || wideFlag === 3) continue;
-
-        const cp = codepoints[idx];
-        if (!cp) continue;
+        if (mergedEmojiSkip[idx]) continue;
+        const cluster = readCellCluster(idx);
+        if (!cluster) continue;
+        const cp = cluster.cp;
         if (cp === KITTY_PLACEHOLDER_CP) continue;
+        let text = cluster.text;
+        let baseSpan = cluster.span;
+        const rowEnd = row * cols + cols;
 
-        const extra = graphemeLen && graphemeOffset && graphemeBuffer ? (graphemeLen[idx] ?? 0) : 0;
-        if (extra === 0 && isSpaceCp(cp)) continue;
-        let text = String.fromCodePoint(cp);
-        if (extra > 0 && graphemeOffset && graphemeBuffer) {
-          const start = graphemeOffset[idx] ?? 0;
-          const cps = [cp];
-          for (let j = 0; j < extra; j += 1) {
-            const extraCp = graphemeBuffer[start + j];
-            if (extraCp) cps.push(extraCp);
+        if (isRegionalIndicator(cp)) {
+          const nextIdx = idx + baseSpan;
+          if (nextIdx < rowEnd && !mergedEmojiSkip[nextIdx]) {
+            const next = readCellCluster(nextIdx);
+            if (next && isRegionalIndicator(next.cp)) {
+              text += next.text;
+              baseSpan += next.span;
+              mergedEmojiSkip[nextIdx] = 1;
+            }
           }
-          text = String.fromCodePoint(...cps);
         }
+
+        let nextSeqIdx = idx + baseSpan;
+        let guard = 0;
+        while ((text.codePointAt(text.length - 1) ?? 0) === 0x200d && nextSeqIdx < rowEnd && guard < 8) {
+          const next = readCellCluster(nextSeqIdx);
+          if (!next || !next.cp || isSpaceCp(next.cp)) break;
+          text += next.text;
+          baseSpan += next.span;
+          mergedEmojiSkip[nextSeqIdx] = 1;
+          nextSeqIdx += next.span;
+          guard += 1;
+        }
+
+        const extra = text.length > String.fromCodePoint(cp).length ? 1 : 0;
+        if (extra === 0 && isSpaceCp(cp)) continue;
 
         if (
           cursorBlock &&
@@ -4260,7 +4335,6 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
         if (extra > 0 && text.trim() === "") continue;
 
-        const baseSpan = wideFlag === 1 ? 2 : 1;
         const fontIndex = pickFontIndexForText(text, baseSpan);
         const fontEntry = fontState.fonts[fontIndex] ?? fontState.fonts[0];
         const shaped = shapeClusterWithFont(fontEntry, text);
@@ -5010,6 +5084,28 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       return;
     }
 
+    const mergedEmojiSkip = new Uint8Array(codepoints.length);
+    const isRegionalIndicator = (value: number) => value >= 0x1f1e6 && value <= 0x1f1ff;
+    const readCellCluster = (cellIndex: number): { cp: number; text: string; span: number } | null => {
+      const flag = wide ? (wide[cellIndex] ?? 0) : 0;
+      if (flag === 2 || flag === 3) return null;
+      const cp = codepoints[cellIndex] ?? 0;
+      if (!cp) return null;
+      let text = String.fromCodePoint(cp);
+      const extra =
+        graphemeLen && graphemeOffset && graphemeBuffer ? (graphemeLen[cellIndex] ?? 0) : 0;
+      if (extra > 0 && graphemeOffset && graphemeBuffer) {
+        const start = graphemeOffset[cellIndex] ?? 0;
+        const cps = [cp];
+        for (let j = 0; j < extra; j += 1) {
+          const extraCp = graphemeBuffer[start + j];
+          if (extraCp) cps.push(extraCp);
+        }
+        text = String.fromCodePoint(...cps);
+      }
+      return { cp, text, span: flag === 1 ? 2 : 1 };
+    };
+
     const { useLinearBlending, useLinearCorrection } = resolveBlendFlags("webgl2");
 
     reportTermSize(cols, rows);
@@ -5278,25 +5374,41 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
         if (bgOnly || textHidden) continue;
 
-        const wideFlag = wide ? wide[idx] : 0;
-        if (wideFlag === 2 || wideFlag === 3) continue;
-
-        const cp = codepoints[idx];
-        if (!cp) continue;
+        if (mergedEmojiSkip[idx]) continue;
+        const cluster = readCellCluster(idx);
+        if (!cluster) continue;
+        const cp = cluster.cp;
         if (cp === KITTY_PLACEHOLDER_CP) continue;
+        let text = cluster.text;
+        let baseSpan = cluster.span;
+        const rowEnd = row * cols + cols;
 
-        const extra = graphemeLen && graphemeOffset && graphemeBuffer ? (graphemeLen[idx] ?? 0) : 0;
-        if (extra === 0 && isSpaceCp(cp)) continue;
-        let text = String.fromCodePoint(cp);
-        if (extra > 0 && graphemeOffset && graphemeBuffer) {
-          const start = graphemeOffset[idx] ?? 0;
-          const cps = [cp];
-          for (let j = 0; j < extra; j += 1) {
-            const extraCp = graphemeBuffer[start + j];
-            if (extraCp) cps.push(extraCp);
+        if (isRegionalIndicator(cp)) {
+          const nextIdx = idx + baseSpan;
+          if (nextIdx < rowEnd && !mergedEmojiSkip[nextIdx]) {
+            const next = readCellCluster(nextIdx);
+            if (next && isRegionalIndicator(next.cp)) {
+              text += next.text;
+              baseSpan += next.span;
+              mergedEmojiSkip[nextIdx] = 1;
+            }
           }
-          text = String.fromCodePoint(...cps);
         }
+
+        let nextSeqIdx = idx + baseSpan;
+        let guard = 0;
+        while ((text.codePointAt(text.length - 1) ?? 0) === 0x200d && nextSeqIdx < rowEnd && guard < 8) {
+          const next = readCellCluster(nextSeqIdx);
+          if (!next || !next.cp || isSpaceCp(next.cp)) break;
+          text += next.text;
+          baseSpan += next.span;
+          mergedEmojiSkip[nextSeqIdx] = 1;
+          nextSeqIdx += next.span;
+          guard += 1;
+        }
+
+        const extra = text.length > String.fromCodePoint(cp).length ? 1 : 0;
+        if (extra === 0 && isSpaceCp(cp)) continue;
 
         if (
           cursorBlock &&
@@ -5323,7 +5435,6 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
         if (extra > 0 && text.trim() === "") continue;
 
-        const baseSpan = wideFlag === 1 ? 2 : 1;
         const fontIndex = pickFontIndexForText(text, baseSpan);
         const fontEntry = fontState.fonts[fontIndex] ?? fontState.fonts[0];
         const shaped = shapeClusterWithFont(fontEntry, text);
