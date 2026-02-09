@@ -1,7 +1,7 @@
 # restty
 
 [![Version](https://img.shields.io/npm/v/restty?style=flat-square)](https://www.npmjs.com/package/restty)
-[![Gzip Size](https://img.shields.io/bundlephobia/minzip/restty?style=flat-square)](https://bundlephobia.com/package/restty)
+[![Package Size](https://img.shields.io/npm/unpacked-size/restty?style=flat-square)](https://www.npmjs.com/package/restty)
 [![CI](https://img.shields.io/github/actions/workflow/status/wiedymi/restty/ci.yml?branch=main&style=flat-square)](https://github.com/wiedymi/restty/actions/workflows/ci.yml)
 [![Publish](https://img.shields.io/github/actions/workflow/status/wiedymi/restty/publish.yml?style=flat-square&label=publish)](https://github.com/wiedymi/restty/actions/workflows/publish.yml)
 [![Demo](https://img.shields.io/badge/demo-restty.pages.dev-0ea5e9?style=flat-square)](https://restty.pages.dev/)
