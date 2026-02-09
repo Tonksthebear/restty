@@ -1,8 +1,5 @@
 import { expect, test } from "bun:test";
-import {
-  readImagePastePayloadFromClipboardItems,
-  readPastePayloadFromDataTransfer,
-} from "../src/app/clipboard-paste";
+import { readPastePayloadFromDataTransfer } from "../src/app/clipboard-paste";
 
 type MockDataTransfer = {
   getData: (type: string) => string;
@@ -17,73 +14,36 @@ function createDataTransfer(overrides: Partial<MockDataTransfer>): DataTransfer 
   } as unknown as DataTransfer;
 }
 
-test("readPastePayloadFromDataTransfer prefers plain text over image", async () => {
-  const image = new Blob([Uint8Array.of(1, 2, 3)], { type: "image/png" }) as File;
-  const payload = await readPastePayloadFromDataTransfer(
+test("readPastePayloadFromDataTransfer reads text/plain content", () => {
+  const payload = readPastePayloadFromDataTransfer(
     createDataTransfer({
       getData: (type) => (type === "text/plain" ? "hello" : ""),
-      items: [{ kind: "file", type: "image/png", getAsFile: () => image }],
     }),
   );
 
   expect(payload).toEqual({ kind: "text", text: "hello" });
 });
 
-test("readPastePayloadFromDataTransfer reads image from clipboard items", async () => {
+test("readPastePayloadFromDataTransfer ignores non-text payloads", () => {
   const image = new Blob([Uint8Array.of(1, 2, 3)], { type: "image/png" }) as File;
-  const payload = await readPastePayloadFromDataTransfer(
+  const payload = readPastePayloadFromDataTransfer(
     createDataTransfer({
       getData: () => "",
       items: [{ kind: "file", type: "image/png", getAsFile: () => image }],
     }),
   );
 
-  expect(payload?.kind).toBe("image");
-  expect(payload?.mimeType).toBe("image/png");
-  expect(payload?.text).toBe("data:image/png;base64,AQID");
+  expect(payload).toBeNull();
 });
 
-test("readPastePayloadFromDataTransfer falls back to files list", async () => {
+test("readPastePayloadFromDataTransfer returns null when empty", () => {
   const image = new Blob([Uint8Array.of(4, 5, 6)], { type: "image/jpeg" }) as File;
-  const payload = await readPastePayloadFromDataTransfer(
+  const payload = readPastePayloadFromDataTransfer(
     createDataTransfer({
       getData: () => "",
       files: [image],
     }),
   );
 
-  expect(payload?.kind).toBe("image");
-  expect(payload?.mimeType).toBe("image/jpeg");
-  expect(payload?.text).toBe("data:image/jpeg;base64,BAUG");
-});
-
-test("readImagePastePayloadFromClipboardItems reads first image type", async () => {
-  const image = new Blob([Uint8Array.of(7, 8, 9)], { type: "image/webp" });
-  const payload = await readImagePastePayloadFromClipboardItems([
-    {
-      types: ["text/plain", "image/webp"],
-      getType: async (type: string) => {
-        if (type === "image/webp") return image;
-        return new Blob([], { type });
-      },
-    } as unknown as ClipboardItem,
-  ]);
-
-  expect(payload?.kind).toBe("image");
-  expect(payload?.mimeType).toBe("image/webp");
-  expect(payload?.text).toBe("data:image/webp;base64,BwgJ");
-});
-
-test("clipboard paste readers return null when payload is empty", async () => {
-  const fromTransfer = await readPastePayloadFromDataTransfer(
-    createDataTransfer({
-      getData: () => "",
-      items: [],
-      files: [],
-    }),
-  );
-  const fromItems = await readImagePastePayloadFromClipboardItems([]);
-
-  expect(fromTransfer).toBeNull();
-  expect(fromItems).toBeNull();
+  expect(payload).toBeNull();
 });

@@ -55,7 +55,6 @@ import {
   type AtlasConstraintContext,
 } from "./atlas-builder";
 import {
-  readImagePastePayloadFromClipboardItems,
   readPastePayloadFromDataTransfer,
 } from "./clipboard-paste";
 import { normalizeFontSources } from "./font-sources";
@@ -1727,15 +1726,12 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     sendKeyInput(formatPasteText(text));
   }
 
-  async function sendPastePayloadFromDataTransfer(
+  function sendPastePayloadFromDataTransfer(
     dataTransfer: DataTransfer | null | undefined,
-  ): Promise<boolean> {
-    const payload = await readPastePayloadFromDataTransfer(dataTransfer);
+  ): boolean {
+    const payload = readPastePayloadFromDataTransfer(dataTransfer);
     if (!payload) return false;
     sendPasteText(payload.text);
-    if (payload.kind === "image") {
-      appendLog(`[ui] pasted image (${payload.mimeType ?? "unknown"})`);
-    }
     return true;
   }
 
@@ -2094,7 +2090,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
             imeInput.value = "";
             return;
           }
-          void sendPastePayloadFromDataTransfer(event.dataTransfer);
+          sendPastePayloadFromDataTransfer(event.dataTransfer);
           imeInput.value = "";
           return;
         }
@@ -2147,7 +2143,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
           imeInput.value = "";
           return;
         }
-        void sendPastePayloadFromDataTransfer(event.clipboardData);
+        sendPastePayloadFromDataTransfer(event.clipboardData);
         imeInput.value = "";
       };
 
@@ -7178,21 +7174,18 @@ function fontEntryHasBoldStyle(entry: FontEntry | undefined | null) {
         sendPasteText(text);
         return true;
       }
-    } catch {
-      // Continue to rich clipboard fallback.
-    }
-    try {
-      if (typeof navigator.clipboard.read !== "function") return false;
-      const items = await navigator.clipboard.read();
-      const payload = await readImagePastePayloadFromClipboardItems(items);
-      if (!payload) return false;
-      sendPasteText(payload.text);
-      appendLog(`[ui] pasted image (${payload.mimeType ?? "unknown"})`);
-      return true;
     } catch (err) {
       appendLog(`[ui] paste failed: ${err?.message ?? err}`);
     }
     return false;
+  }
+
+  async function handlePasteShortcut(event: KeyboardEvent) {
+    const pasted = await pasteFromClipboard();
+    if (pasted) return;
+    const seq = inputHandler.encodeKeyEvent(event);
+    if (!seq) return;
+    sendKeyInput(seq);
   }
 
   function clearScreen() {
@@ -7267,13 +7260,9 @@ function fontEntryHasBoldStyle(entry: FontEntry | undefined | null) {
         return;
       }
       if (wantsPaste) {
-        if (imeInput) {
-          // Let native paste events deliver rich clipboard payloads (including images).
-          imeInput.focus({ preventScroll: true });
-          return;
-        }
         event.preventDefault();
-        void pasteFromClipboard();
+        if (imeInput) imeInput.focus({ preventScroll: true });
+        void handlePasteShortcut(event);
         return;
       }
 
