@@ -54,6 +54,10 @@ import {
   type GlyphConstraintMeta,
   type AtlasConstraintContext,
 } from "./atlas-builder";
+import {
+  readImagePastePayloadFromClipboardItems,
+  readPastePayloadFromDataTransfer,
+} from "./clipboard-paste";
 import { normalizeFontSources } from "./font-sources";
 import * as bundledTextShaper from "text-shaper";
 import type {
@@ -1723,6 +1727,18 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     sendKeyInput(formatPasteText(text));
   }
 
+  async function sendPastePayloadFromDataTransfer(
+    dataTransfer: DataTransfer | null | undefined,
+  ): Promise<boolean> {
+    const payload = await readPastePayloadFromDataTransfer(dataTransfer);
+    if (!payload) return false;
+    sendPasteText(payload.text);
+    if (payload.kind === "image") {
+      appendLog(`[ui] pasted image (${payload.mimeType ?? "unknown"})`);
+    }
+    return true;
+  }
+
   function openLink(uri: string) {
     if (!uri || typeof window === "undefined") return;
     try {
@@ -2070,13 +2086,16 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
         if (imeState.composing) return;
 
         if (event.inputType === "insertFromPaste") {
+          event.preventDefault();
+          suppressNextInput = true;
           const pasteText = event.dataTransfer?.getData("text/plain") || event.data || "";
           if (pasteText) {
-            event.preventDefault();
-            suppressNextInput = true;
             sendPasteText(pasteText);
             imeInput.value = "";
+            return;
           }
+          void sendPastePayloadFromDataTransfer(event.dataTransfer);
+          imeInput.value = "";
           return;
         }
 
@@ -2120,13 +2139,16 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
       const onPaste = (event: ClipboardEvent) => {
         if (!wasmReady || !wasmHandle) return;
+        event.preventDefault();
+        suppressNextInput = true;
         const text = event.clipboardData?.getData("text/plain") || "";
         if (text) {
-          event.preventDefault();
-          suppressNextInput = true;
           sendPasteText(text);
           imeInput.value = "";
+          return;
         }
+        void sendPastePayloadFromDataTransfer(event.clipboardData);
+        imeInput.value = "";
       };
 
       imeInput.addEventListener("compositionstart", onCompositionStart);
@@ -7149,12 +7171,24 @@ function fontEntryHasBoldStyle(entry: FontEntry | undefined | null) {
   }
 
   async function pasteFromClipboard() {
+    if (typeof navigator === "undefined" || !navigator.clipboard) return false;
     try {
       const text = await navigator.clipboard.readText();
       if (text) {
         sendPasteText(text);
         return true;
       }
+    } catch {
+      // Continue to rich clipboard fallback.
+    }
+    try {
+      if (typeof navigator.clipboard.read !== "function") return false;
+      const items = await navigator.clipboard.read();
+      const payload = await readImagePastePayloadFromClipboardItems(items);
+      if (!payload) return false;
+      sendPasteText(payload.text);
+      appendLog(`[ui] pasted image (${payload.mimeType ?? "unknown"})`);
+      return true;
     } catch (err) {
       appendLog(`[ui] paste failed: ${err?.message ?? err}`);
     }
@@ -7233,8 +7267,13 @@ function fontEntryHasBoldStyle(entry: FontEntry | undefined | null) {
         return;
       }
       if (wantsPaste) {
+        if (imeInput) {
+          // Let native paste events deliver rich clipboard payloads (including images).
+          imeInput.focus({ preventScroll: true });
+          return;
+        }
         event.preventDefault();
-        pasteFromClipboard();
+        void pasteFromClipboard();
         return;
       }
 
