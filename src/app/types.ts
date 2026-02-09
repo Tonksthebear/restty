@@ -165,6 +165,12 @@ export type ResttyAppOptions = {
   /** Font size in CSS pixels. */
   fontSize?: number;
   /**
+   * Font sizing mode used by text-shaper scale resolution.
+   * - em: interpret fontSize as EM size
+   * - height: interpret fontSize as full font height (ascender-descender-lineGap)
+   */
+  fontSizeMode?: "em" | "height";
+  /**
    * Alpha blending strategy.
    * - native: GPU-native premultiplied alpha
    * - linear: linear-space blending

@@ -55,6 +55,12 @@ const DEFAULT_FONT_FAMILY = "jetbrains";
 const FONT_FAMILY_LOCAL_PREFIX = "local:";
 const FONT_URL_JETBRAINS_MONO =
   "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Regular/JetBrainsMonoNLNerdFontMono-Regular.ttf";
+const FONT_URL_JETBRAINS_MONO_BOLD =
+  "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Bold/JetBrainsMonoNLNerdFontMono-Bold.ttf";
+const FONT_URL_JETBRAINS_MONO_ITALIC =
+  "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Italic/JetBrainsMonoNLNerdFontMono-Italic.ttf";
+const FONT_URL_JETBRAINS_MONO_BOLD_ITALIC =
+  "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/BoldItalic/JetBrainsMonoNLNerdFontMono-BoldItalic.ttf";
 const FONT_URL_NERD_SYMBOLS =
   "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf";
 const FONT_URL_NOTO_SYMBOLS =
@@ -140,14 +146,66 @@ function buildFontSourcesForSelection(value: string, localMatcher: string): Rest
     sources.push({
       type: "local",
       label: "local:jetbrains mono",
-      matchers: ["jetbrains mono"],
+      matchers: [
+        "jetbrains mono nl nerd font mono regular",
+        "jetbrains mono nl nerd font mono",
+        "jetbrains mono nl",
+        "jetbrains mono",
+      ],
+    });
+    sources.push({
+      type: "local",
+      label: "local:jetbrains mono bold",
+      matchers: [
+        "jetbrains mono nl nerd font mono bold",
+        "jetbrains mono nl bold",
+        "jetbrains mono bold",
+        "jetbrainsmono nerd font mono bold",
+      ],
+    });
+    sources.push({
+      type: "local",
+      label: "local:jetbrains mono italic",
+      matchers: [
+        "jetbrains mono nl nerd font mono italic",
+        "jetbrains mono nl italic",
+        "jetbrains mono italic",
+        "jetbrainsmono nerd font mono italic",
+      ],
+    });
+    sources.push({
+      type: "local",
+      label: "local:jetbrains mono bold italic",
+      matchers: [
+        "jetbrains mono nl nerd font mono bold italic",
+        "jetbrains mono nl bold italic",
+        "jetbrains mono bold italic",
+        "jetbrains mono nl italic bold",
+        "jetbrains mono italic bold",
+        "jetbrainsmono nerd font mono bold italic",
+      ],
     });
   }
 
   sources.push({
     type: "url",
-    label: "JetBrains Mono",
+    label: "JetBrains Mono Regular",
     url: FONT_URL_JETBRAINS_MONO,
+  });
+  sources.push({
+    type: "url",
+    label: "JetBrains Mono Bold",
+    url: FONT_URL_JETBRAINS_MONO_BOLD,
+  });
+  sources.push({
+    type: "url",
+    label: "JetBrains Mono Italic",
+    url: FONT_URL_JETBRAINS_MONO_ITALIC,
+  });
+  sources.push({
+    type: "url",
+    label: "JetBrains Mono Bold Italic",
+    url: FONT_URL_JETBRAINS_MONO_BOLD_ITALIC,
   });
   sources.push({
     type: "url",
@@ -569,6 +627,9 @@ restty = new Restty({
     return {
       renderer: paneState.renderer,
       fontSize: paneState.fontSize,
+      // Ghostty parity: use EM sizing semantics and native alpha blending.
+      fontSizeMode: "em",
+      alphaBlending: "native",
       fontSources: getCurrentFontSources(),
       ptyTransport: createAdaptivePtyTransport(),
       callbacks: {

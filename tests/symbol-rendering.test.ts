@@ -16,7 +16,7 @@ test("both render loops apply default centered symbol constraint", () => {
   const source = readFileSync(join(process.cwd(), "src/app/index.ts"), "utf8");
   const matches =
     source.match(
-      /const constraint =\s+nerdConstraint \?\? \(colorGlyph \? DEFAULT_EMOJI_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT\);/g,
+      /const constraint =\s+nerdConstraint\s+\?\?\s+\(colorGlyph\s+\?\s+DEFAULT_EMOJI_CONSTRAINT\s+:\s+DEFAULT_SYMBOL_CONSTRAINT\);/g,
     ) ?? [];
   expect(matches.length).toBe(2);
 });

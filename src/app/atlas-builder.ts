@@ -208,7 +208,10 @@ export function buildFontAtlasIfNeeded(params: BuildFontAtlasParams): BuildFontA
     return { rebuilt: false, atlas: null, rgba: null, preferNearest: false };
   }
 
-  const useHinting = fontIndex === 0 && !isSymbol;
+  // Ghostty's visual consistency comes primarily from style/face selection.
+  // In this rasterizer, TT hinting tends to over-thicken terminal glyphs,
+  // so keep atlas glyphs unhinted for closer parity.
+  const useHinting = false;
   const atlasPadding = isSymbol
     ? Math.max(constants.atlasPadding, constants.symbolAtlasPadding)
     : constants.atlasPadding;

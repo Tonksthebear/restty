@@ -11,23 +11,60 @@ export const DEFAULT_FONT_SOURCES: ResttyFontSource[] = [
       "jetbrains mono",
       "jetbrainsmono",
     ],
-    label: "JetBrains Mono Nerd Font (Local)",
+    label: "JetBrains Mono Nerd Font Regular (Local)",
+  },
+  {
+    type: "local",
+    matchers: [
+      "jetbrainsmono nerd font bold",
+      "jetbrains mono nerd font bold",
+      "jetbrains mono nl nerd font mono bold",
+      "jetbrains mono bold",
+      "jetbrainsmono bold",
+    ],
+    label: "JetBrains Mono Nerd Font Bold (Local)",
+  },
+  {
+    type: "local",
+    matchers: [
+      "jetbrainsmono nerd font italic",
+      "jetbrains mono nerd font italic",
+      "jetbrains mono nl nerd font mono italic",
+      "jetbrains mono italic",
+      "jetbrainsmono italic",
+    ],
+    label: "JetBrains Mono Nerd Font Italic (Local)",
+  },
+  {
+    type: "local",
+    matchers: [
+      "jetbrainsmono nerd font bold italic",
+      "jetbrains mono nerd font bold italic",
+      "jetbrains mono nl nerd font mono bold italic",
+      "jetbrains mono bold italic",
+      "jetbrainsmono bold italic",
+    ],
+    label: "JetBrains Mono Nerd Font Bold Italic (Local)",
   },
   {
     type: "url",
     url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Regular/JetBrainsMonoNLNerdFontMono-Regular.ttf",
+    label: "JetBrains Mono Nerd Font Regular",
   },
   {
     type: "url",
     url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Bold/JetBrainsMonoNLNerdFontMono-Bold.ttf",
+    label: "JetBrains Mono Nerd Font Bold",
   },
   {
     type: "url",
     url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Italic/JetBrainsMonoNLNerdFontMono-Italic.ttf",
+    label: "JetBrains Mono Nerd Font Italic",
   },
   {
     type: "url",
     url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/BoldItalic/JetBrainsMonoNLNerdFontMono-BoldItalic.ttf",
+    label: "JetBrains Mono Nerd Font Bold Italic",
   },
   {
     type: "local",

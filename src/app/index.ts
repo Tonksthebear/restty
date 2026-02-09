@@ -727,9 +727,13 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       pushRectBox(out, x0, y0 + radius, width, middleH, color);
     }
     const radiusSq = radius * radius;
+    const maxInset = Math.floor((width - 1) * 0.5);
     for (let row = 0; row < radius; row += 1) {
       const dy = radius - row - 0.5;
-      const inset = Math.max(0, Math.floor(radius - Math.sqrt(Math.max(0, radiusSq - dy * dy))));
+      const inset = Math.min(
+        maxInset,
+        Math.max(0, Math.ceil(radius - Math.sqrt(Math.max(0, radiusSq - dy * dy)))),
+      );
       const rowW = width - inset * 2;
       if (rowW <= 0) continue;
       pushRectBox(out, x0 + inset, y0 + row, rowW, 1, color);
@@ -1881,11 +1885,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
         }
         updateLinkHover(cell);
       }
-      if (
-        !selectionState.active &&
-        event.button === 0 &&
-        linkState.hoverUri
-      ) {
+      if (!selectionState.active && event.button === 0 && linkState.hoverUri) {
         openLink(linkState.hoverUri);
       }
     };
@@ -2074,7 +2074,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     font: null,
     fonts: [],
     fontSizePx: 0,
-    sizeMode: "height",
+    sizeMode: options.fontSizeMode === "em" ? "em" : "height",
     fontPickCache: new Map(),
   };
 
@@ -3862,8 +3862,29 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
           ? nav.queryLocalFonts.bind(nav)
           : null;
     if (!queryLocalFonts) return null;
-    const normalizedMatchers = matchers.map((matcher: string) => matcher.toLowerCase()).filter(Boolean);
+    const normalizedMatchers = matchers
+      .map((matcher: string) => matcher.toLowerCase())
+      .filter(Boolean);
     if (!normalizedMatchers.length) return null;
+    const detectStyleHint = (value: string) => {
+      const text = value.toLowerCase();
+      let weight = 400;
+      if (/\b(thin|hairline)\b/.test(text)) weight = 100;
+      else if (/\b(extra[- ]?light|ultra[- ]?light)\b/.test(text)) weight = 200;
+      else if (/\blight\b/.test(text)) weight = 300;
+      else if (/\bmedium\b/.test(text)) weight = 500;
+      else if (/\b(semi[- ]?bold|demi[- ]?bold)\b/.test(text)) weight = 600;
+      else if (/\bbold\b/.test(text)) weight = 700;
+      else if (/\b(extra[- ]?bold|ultra[- ]?bold)\b/.test(text)) weight = 800;
+      else if (/\b(black|heavy)\b/.test(text)) weight = 900;
+      return {
+        bold: /\b(bold|semi[- ]?bold|demi[- ]?bold|extra[- ]?bold|black|heavy)\b/.test(text),
+        italic: /\b(italic|oblique)\b/.test(text),
+        regular: /\b(regular|book|roman|normal)\b/.test(text),
+        weight,
+      };
+    };
+    const sourceHint = detectStyleHint(`${label} ${normalizedMatchers.join(" ")}`);
     const queryPermission = nav.permissions?.query;
     if (queryPermission) {
       try {
@@ -3876,14 +3897,52 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     }
     try {
       const fonts = await queryLocalFonts();
-      const match = fonts.find((font) => {
+      const matches = fonts.filter((font) => {
         const name =
           `${font.family ?? ""} ${font.fullName ?? ""} ${font.postscriptName ?? ""}`.toLowerCase();
         return normalizedMatchers.some((matcher) => name.includes(matcher));
       });
-      if (match) {
-        const matchedName = `${match.family ?? ""} ${match.fullName ?? ""} ${match.postscriptName ?? ""}`.trim();
-        console.log(`[font] local matched (${label}): ${matchedName || "unnamed"}`);
+      if (matches.length) {
+        const scoreMatch = (font: LocalFontFaceData) => {
+          const name =
+            `${font.family ?? ""} ${font.fullName ?? ""} ${font.postscriptName ?? ""}`.toLowerCase();
+          const hint = detectStyleHint(name);
+          let score = 0;
+          for (let i = 0; i < normalizedMatchers.length; i += 1) {
+            if (name.includes(normalizedMatchers[i])) score += 8;
+          }
+          if (sourceHint.bold || sourceHint.italic) {
+            score += sourceHint.bold === hint.bold ? 40 : -40;
+            score += sourceHint.italic === hint.italic ? 40 : -40;
+          } else {
+            // Unstyled source should strongly prefer an unstyled face.
+            score += !hint.bold && !hint.italic ? 60 : -30;
+          }
+          const targetWeight = sourceHint.bold ? 700 : 400;
+          score -= Math.abs((hint.weight ?? 400) - targetWeight) * 0.25;
+          if (!sourceHint.bold && hint.weight === 400) score += 12;
+          if (!sourceHint.bold && hint.weight < 350) score -= 12;
+          if (!sourceHint.bold && hint.weight > 650) score -= 8;
+          if (sourceHint.regular && !hint.bold && !hint.italic) score += 20;
+          return score;
+        };
+
+        let match = matches[0];
+        let bestScore = Number.NEGATIVE_INFINITY;
+        for (let i = 0; i < matches.length; i += 1) {
+          const candidate = matches[i];
+          const candidateScore = scoreMatch(candidate);
+          if (candidateScore > bestScore) {
+            bestScore = candidateScore;
+            match = candidate;
+          }
+        }
+
+        const matchedName =
+          `${match.family ?? ""} ${match.fullName ?? ""} ${match.postscriptName ?? ""}`.trim();
+        console.log(
+          `[font] local matched (${label}): ${matchedName || "unnamed"} score=${bestScore}`,
+        );
         const blob = await match.blob();
         return blob.arrayBuffer();
       }
@@ -3943,7 +4002,9 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       const buffer = await resolveFontSourceBuffer(source);
       if (!buffer) {
         if (source.type === "local") {
-          const prefix = source.required ? "required local font missing" : "optional local font missing";
+          const prefix = source.required
+            ? "required local font missing"
+            : "optional local font missing";
           console.warn(`[font] ${prefix} (${source.matchers.join(", ")})`);
         }
         continue;
@@ -3961,14 +4022,14 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
     const nerdLocal = await tryLocalFontBuffer(
       [
-      "jetbrainsmono nerd font",
-      "jetbrains mono nerd font",
-      "fira code nerd font",
-      "fira code nerd",
-      "hack nerd font",
-      "meslo lgm nerd font",
-      "monaspace nerd font",
-      "nerd font mono",
+        "jetbrainsmono nerd font",
+        "jetbrains mono nerd font",
+        "fira code nerd font",
+        "fira code nerd",
+        "hack nerd font",
+        "meslo lgm nerd font",
+        "monaspace nerd font",
+        "nerd font mono",
       ],
       "fallback-nerd-font",
     );
@@ -4120,9 +4181,9 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     return "auto";
   }
 
-  function pickFontIndexForText(text, expectedSpan = 1) {
+  function pickFontIndexForText(text, expectedSpan = 1, stylePreference = "regular") {
     if (!fontState.fonts.length) return 0;
-    const cacheKey = `${expectedSpan}:${text}`;
+    const cacheKey = `${expectedSpan}:${stylePreference}:${text}`;
     const cached = fontState.fontPickCache.get(cacheKey);
     if (cached !== undefined) return cached;
 
@@ -4130,6 +4191,26 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     const firstCp = text.codePointAt(0) ?? 0;
     const nerdSymbol = isNerdSymbolCodepoint(firstCp);
     const presentation = resolvePresentationPreference(text, chars);
+    const styleHintsEnabled =
+      stylePreference !== "regular" && presentation !== "emoji" && !nerdSymbol;
+
+    const hasBoldHint = (entry: FontEntry) => /\bbold\b/i.test(entry.label ?? "");
+    const hasItalicHint = (entry: FontEntry) => /\b(italic|oblique)\b/i.test(entry.label ?? "");
+    const stylePredicates: Array<(entry: FontEntry) => boolean> =
+      stylePreference === "bold_italic"
+        ? [
+            (entry) => hasBoldHint(entry) && hasItalicHint(entry),
+            (entry) => hasBoldHint(entry),
+            (entry) => hasItalicHint(entry),
+          ]
+        : stylePreference === "bold"
+          ? [(entry) => hasBoldHint(entry) && !hasItalicHint(entry), (entry) => hasBoldHint(entry)]
+          : stylePreference === "italic"
+            ? [
+                (entry) => hasItalicHint(entry) && !hasBoldHint(entry),
+                (entry) => hasItalicHint(entry),
+              ]
+            : [];
 
     const pickFirstMatch = (predicate?) => {
       for (let i = 0; i < fontState.fonts.length; i += 1) {
@@ -4147,6 +4228,19 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       }
       return -1;
     };
+    const pickWithStyle = (predicate?) => {
+      if (styleHintsEnabled) {
+        for (let i = 0; i < stylePredicates.length; i += 1) {
+          const stylePredicate = stylePredicates[i];
+          const styledIndex = pickFirstMatch((entry) => {
+            if (!stylePredicate(entry)) return false;
+            return predicate ? !!predicate(entry) : true;
+          });
+          if (styledIndex >= 0) return styledIndex;
+        }
+      }
+      return pickFirstMatch(predicate);
+    };
 
     const tryIndex = (index) => {
       if (index < 0) return null;
@@ -4155,7 +4249,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     };
 
     if (nerdSymbol) {
-      const symbolIndex = pickFirstMatch((entry) => isNerdSymbolFont(entry) || isSymbolFont(entry));
+      const symbolIndex = pickWithStyle((entry) => isNerdSymbolFont(entry) || isSymbolFont(entry));
       const result = tryIndex(symbolIndex);
       if (result !== null) return result;
     }
@@ -4170,7 +4264,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       if (result !== null) return result;
     }
 
-    const firstIndex = pickFirstMatch();
+    const firstIndex = pickWithStyle();
     if (firstIndex >= 0) {
       setBoundedMap(fontState.fontPickCache, cacheKey, firstIndex, FONT_PICK_CACHE_LIMIT);
       return firstIndex;
@@ -4178,6 +4272,21 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
     setBoundedMap(fontState.fontPickCache, cacheKey, 0, FONT_PICK_CACHE_LIMIT);
     return 0;
+  }
+
+  function stylePreferenceFromFlags(bold: boolean, italic: boolean) {
+    if (bold && italic) return "bold_italic";
+    if (bold) return "bold";
+    if (italic) return "italic";
+    return "regular";
+  }
+
+  function fontEntryHasBoldStyle(entry: FontEntry | undefined | null) {
+    return !!entry && /\bbold\b/i.test(entry.label ?? "");
+  }
+
+  function fontEntryHasItalicStyle(entry: FontEntry | undefined | null) {
+    return !!entry && /\b(italic|oblique)\b/i.test(entry.label ?? "");
   }
 
   function computeCellMetrics() {
@@ -4994,7 +5103,11 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
         if (extra > 0 && text.trim() === "") continue;
 
-        const fontIndex = pickFontIndexForText(text, baseSpan);
+        const fontIndex = pickFontIndexForText(
+          text,
+          baseSpan,
+          stylePreferenceFromFlags(bold, italic),
+        );
         const fontEntry = fontState.fonts[fontIndex] ?? fontState.fonts[0];
         const shaped = shapeClusterWithFont(fontEntry, text);
         if (!shaped.glyphs.length) continue;
@@ -5308,9 +5421,13 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
             if (!glyphConstrained && symbolLike && item.cp) {
               const nerdConstraint = resolveSymbolConstraint(item.cp);
               const constraint =
-                nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT);
+                nerdConstraint ??
+                (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT);
               const rowY = item.baseY - yPad - baselineOffset;
-              const constraintWidth = Math.max(1, item.constraintWidth ?? Math.round(maxWidth / cellW));
+              const constraintWidth = Math.max(
+                1,
+                item.constraintWidth ?? Math.round(maxWidth / cellW),
+              );
               const adjusted = constrainGlyphBox(
                 {
                   x: x - item.x,
@@ -5322,7 +5439,9 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
                 nerdMetrics,
                 constraintWidth,
               );
-              const tightened = nerdConstraint ? tightenNerdConstraintBox(adjusted, nerdConstraint) : adjusted;
+              const tightened = nerdConstraint
+                ? tightenNerdConstraintBox(adjusted, nerdConstraint)
+                : adjusted;
               x = item.x + tightened.x;
               y = rowY + tightened.y;
               gw = tightened.width;
@@ -5349,8 +5468,11 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
             const glyphData = useNearest ? glyphDataNearest : glyphDataLinear;
             const italic = !!item.italic;
             const bold = !!item.bold;
-            const slant = italic && !colorGlyph ? gh * ITALIC_SLANT : 0;
-            const boldOffset = bold && !colorGlyph ? Math.max(1, Math.round(gw * BOLD_OFFSET)) : 0;
+            const syntheticItalic = italic && !fontEntryHasItalicStyle(entry);
+            const syntheticBold = bold && !fontEntryHasBoldStyle(entry);
+            const slant = syntheticItalic && !colorGlyph ? gh * ITALIC_SLANT : 0;
+            const boldOffset =
+              syntheticBold && !colorGlyph ? Math.max(1, Math.round(gw * BOLD_OFFSET)) : 0;
             const renderMode = colorGlyph ? GLYPH_RENDER_MODE_COLOR : GLYPH_RENDER_MODE_MONO;
             const pushGlyph = (xPos: number) => {
               glyphData.push(
@@ -5376,9 +5498,13 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
             };
             pushGlyph(px);
             if (boldOffset > 0) {
-              const maxX = item.x + maxWidth;
-              const bx = Math.min(px + boldOffset, Math.round(maxX - gw));
-              if (bx !== px) pushGlyph(bx);
+              const minGlyphX = Math.round(item.x);
+              const maxGlyphX = Math.round(item.x + maxWidth - gw);
+              let bx = clamp(px + boldOffset, minGlyphX, maxGlyphX);
+              if (bx === px) bx = clamp(px - boldOffset, minGlyphX, maxGlyphX);
+              // If a glyph fully occupies its cell, we can't offset; reinforce at the same x.
+              if (bx === px) pushGlyph(px);
+              else pushGlyph(bx);
             }
             penX += glyph.xAdvance;
           }
@@ -6053,7 +6179,11 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
         if (extra > 0 && text.trim() === "") continue;
 
-        const fontIndex = pickFontIndexForText(text, baseSpan);
+        const fontIndex = pickFontIndexForText(
+          text,
+          baseSpan,
+          stylePreferenceFromFlags(bold, italic),
+        );
         const fontEntry = fontState.fonts[fontIndex] ?? fontState.fonts[0];
         const shaped = shapeClusterWithFont(fontEntry, text);
         if (!shaped.glyphs.length) continue;
@@ -6505,9 +6635,13 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
             if (!glyphConstrained && symbolLike && item.cp) {
               const nerdConstraint = resolveSymbolConstraint(item.cp);
               const constraint =
-                nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT);
+                nerdConstraint ??
+                (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT);
               const rowY = item.baseY - yPad - baselineOffset;
-              const constraintWidth = Math.max(1, item.constraintWidth ?? Math.round(maxWidth / cellW));
+              const constraintWidth = Math.max(
+                1,
+                item.constraintWidth ?? Math.round(maxWidth / cellW),
+              );
               const adjusted = constrainGlyphBox(
                 {
                   x: x - item.x,
@@ -6519,7 +6653,9 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
                 nerdMetrics,
                 constraintWidth,
               );
-              const tightened = nerdConstraint ? tightenNerdConstraintBox(adjusted, nerdConstraint) : adjusted;
+              const tightened = nerdConstraint
+                ? tightenNerdConstraintBox(adjusted, nerdConstraint)
+                : adjusted;
               x = item.x + tightened.x;
               y = rowY + tightened.y;
               gw = tightened.width;
@@ -6537,8 +6673,11 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
             const v1 = (metrics.atlasY + metrics.height - insetY) / atlasH;
             const italic = !!item.italic;
             const bold = !!item.bold;
-            const slant = italic && !colorGlyph ? gh * ITALIC_SLANT : 0;
-            const boldOffset = bold && !colorGlyph ? Math.max(1, Math.round(gw * BOLD_OFFSET)) : 0;
+            const syntheticItalic = italic && !fontEntryHasItalicStyle(entry);
+            const syntheticBold = bold && !fontEntryHasBoldStyle(entry);
+            const slant = syntheticItalic && !colorGlyph ? gh * ITALIC_SLANT : 0;
+            const boldOffset =
+              syntheticBold && !colorGlyph ? Math.max(1, Math.round(gw * BOLD_OFFSET)) : 0;
             const renderMode = colorGlyph ? GLYPH_RENDER_MODE_COLOR : GLYPH_RENDER_MODE_MONO;
             const pushGlyph = (xPos: number) => {
               glyphData.push(
@@ -6564,9 +6703,13 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
             };
             pushGlyph(px);
             if (boldOffset > 0) {
-              const maxX = item.x + maxWidth;
-              const bx = Math.min(px + boldOffset, Math.round(maxX - gw));
-              if (bx !== px) pushGlyph(bx);
+              const minGlyphX = Math.round(item.x);
+              const maxGlyphX = Math.round(item.x + maxWidth - gw);
+              let bx = clamp(px + boldOffset, minGlyphX, maxGlyphX);
+              if (bx === px) bx = clamp(px - boldOffset, minGlyphX, maxGlyphX);
+              // If a glyph fully occupies its cell, we can't offset; reinforce at the same x.
+              if (bx === px) pushGlyph(px);
+              else pushGlyph(bx);
             }
             penX += glyph.xAdvance;
           }

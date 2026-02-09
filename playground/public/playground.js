@@ -26298,7 +26298,7 @@ function buildFontAtlasIfNeeded(params) {
   if (union.size === 0) {
     return { rebuilt: false, atlas: null, rgba: null, preferNearest: false };
   }
-  const useHinting = fontIndex === 0 && !isSymbol;
+  const useHinting = false;
   const atlasPadding = isSymbol ? Math.max(constants.atlasPadding, constants.symbolAtlasPadding) : constants.atlasPadding;
   const atlasMaxSize = isSymbol ? constants.symbolAtlasMaxSize : constants.defaultAtlasMaxSize;
   const glyphPixelMode = resolveGlyphPixelMode(entry);
@@ -26391,8 +26391,78 @@ function buildFontAtlasIfNeeded(params) {
 // src/app/font-sources.ts
 var DEFAULT_FONT_SOURCES = [
   {
+    type: "local",
+    matchers: [
+      "jetbrainsmono nerd font",
+      "jetbrains mono nerd font",
+      "jetbrains mono nl nerd font mono",
+      "jetbrains mono",
+      "jetbrainsmono"
+    ],
+    label: "JetBrains Mono Nerd Font Regular (Local)"
+  },
+  {
+    type: "local",
+    matchers: [
+      "jetbrainsmono nerd font bold",
+      "jetbrains mono nerd font bold",
+      "jetbrains mono nl nerd font mono bold",
+      "jetbrains mono bold",
+      "jetbrainsmono bold"
+    ],
+    label: "JetBrains Mono Nerd Font Bold (Local)"
+  },
+  {
+    type: "local",
+    matchers: [
+      "jetbrainsmono nerd font italic",
+      "jetbrains mono nerd font italic",
+      "jetbrains mono nl nerd font mono italic",
+      "jetbrains mono italic",
+      "jetbrainsmono italic"
+    ],
+    label: "JetBrains Mono Nerd Font Italic (Local)"
+  },
+  {
+    type: "local",
+    matchers: [
+      "jetbrainsmono nerd font bold italic",
+      "jetbrains mono nerd font bold italic",
+      "jetbrains mono nl nerd font mono bold italic",
+      "jetbrains mono bold italic",
+      "jetbrainsmono bold italic"
+    ],
+    label: "JetBrains Mono Nerd Font Bold Italic (Local)"
+  },
+  {
     type: "url",
-    url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Regular/JetBrainsMonoNLNerdFontMono-Regular.ttf"
+    url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Regular/JetBrainsMonoNLNerdFontMono-Regular.ttf",
+    label: "JetBrains Mono Nerd Font Regular"
+  },
+  {
+    type: "url",
+    url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Bold/JetBrainsMonoNLNerdFontMono-Bold.ttf",
+    label: "JetBrains Mono Nerd Font Bold"
+  },
+  {
+    type: "url",
+    url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Italic/JetBrainsMonoNLNerdFontMono-Italic.ttf",
+    label: "JetBrains Mono Nerd Font Italic"
+  },
+  {
+    type: "url",
+    url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/BoldItalic/JetBrainsMonoNLNerdFontMono-BoldItalic.ttf",
+    label: "JetBrains Mono Nerd Font Bold Italic"
+  },
+  {
+    type: "local",
+    matchers: [
+      "symbols nerd font mono",
+      "symbols nerd font",
+      "nerd fonts symbols",
+      "nerdfontssymbolsonly"
+    ],
+    label: "Symbols Nerd Font (Local)"
   },
   {
     type: "url",
@@ -50337,9 +50407,10 @@ function createResttyApp(options) {
       pushRectBox(out, x02, y02 + radius, width, middleH, color);
     }
     const radiusSq = radius * radius;
+    const maxInset = Math.floor((width - 1) * 0.5);
     for (let row = 0;row < radius; row += 1) {
       const dy = radius - row - 0.5;
-      const inset = Math.max(0, Math.floor(radius - Math.sqrt(Math.max(0, radiusSq - dy * dy))));
+      const inset = Math.min(maxInset, Math.max(0, Math.ceil(radius - Math.sqrt(Math.max(0, radiusSq - dy * dy)))));
       const rowW = width - inset * 2;
       if (rowW <= 0)
         continue;
@@ -51533,7 +51604,7 @@ function createResttyApp(options) {
     font: null,
     fonts: [],
     fontSizePx: 0,
-    sizeMode: "height",
+    sizeMode: options.fontSizeMode === "em" ? "em" : "height",
     fontPickCache: new Map
   };
   const fontConfig = {
@@ -53012,6 +53083,33 @@ function createResttyApp(options) {
     const normalizedMatchers = matchers.map((matcher) => matcher.toLowerCase()).filter(Boolean);
     if (!normalizedMatchers.length)
       return null;
+    const detectStyleHint = (value) => {
+      const text = value.toLowerCase();
+      let weight = 400;
+      if (/\b(thin|hairline)\b/.test(text))
+        weight = 100;
+      else if (/\b(extra[- ]?light|ultra[- ]?light)\b/.test(text))
+        weight = 200;
+      else if (/\blight\b/.test(text))
+        weight = 300;
+      else if (/\bmedium\b/.test(text))
+        weight = 500;
+      else if (/\b(semi[- ]?bold|demi[- ]?bold)\b/.test(text))
+        weight = 600;
+      else if (/\bbold\b/.test(text))
+        weight = 700;
+      else if (/\b(extra[- ]?bold|ultra[- ]?bold)\b/.test(text))
+        weight = 800;
+      else if (/\b(black|heavy)\b/.test(text))
+        weight = 900;
+      return {
+        bold: /\b(bold|semi[- ]?bold|demi[- ]?bold|extra[- ]?bold|black|heavy)\b/.test(text),
+        italic: /\b(italic|oblique)\b/.test(text),
+        regular: /\b(regular|book|roman|normal)\b/.test(text),
+        weight
+      };
+    };
+    const sourceHint = detectStyleHint(`${label} ${normalizedMatchers.join(" ")}`);
     const queryPermission = nav.permissions?.query;
     if (queryPermission) {
       try {
@@ -53023,13 +53121,49 @@ function createResttyApp(options) {
     }
     try {
       const fonts = await queryLocalFonts();
-      const match = fonts.find((font) => {
+      const matches = fonts.filter((font) => {
         const name = `${font.family ?? ""} ${font.fullName ?? ""} ${font.postscriptName ?? ""}`.toLowerCase();
         return normalizedMatchers.some((matcher) => name.includes(matcher));
       });
-      if (match) {
+      if (matches.length) {
+        const scoreMatch = (font) => {
+          const name = `${font.family ?? ""} ${font.fullName ?? ""} ${font.postscriptName ?? ""}`.toLowerCase();
+          const hint = detectStyleHint(name);
+          let score = 0;
+          for (let i3 = 0;i3 < normalizedMatchers.length; i3 += 1) {
+            if (name.includes(normalizedMatchers[i3]))
+              score += 8;
+          }
+          if (sourceHint.bold || sourceHint.italic) {
+            score += sourceHint.bold === hint.bold ? 40 : -40;
+            score += sourceHint.italic === hint.italic ? 40 : -40;
+          } else {
+            score += !hint.bold && !hint.italic ? 60 : -30;
+          }
+          const targetWeight = sourceHint.bold ? 700 : 400;
+          score -= Math.abs((hint.weight ?? 400) - targetWeight) * 0.25;
+          if (!sourceHint.bold && hint.weight === 400)
+            score += 12;
+          if (!sourceHint.bold && hint.weight < 350)
+            score -= 12;
+          if (!sourceHint.bold && hint.weight > 650)
+            score -= 8;
+          if (sourceHint.regular && !hint.bold && !hint.italic)
+            score += 20;
+          return score;
+        };
+        let match = matches[0];
+        let bestScore = Number.NEGATIVE_INFINITY;
+        for (let i3 = 0;i3 < matches.length; i3 += 1) {
+          const candidate = matches[i3];
+          const candidateScore = scoreMatch(candidate);
+          if (candidateScore > bestScore) {
+            bestScore = candidateScore;
+            match = candidate;
+          }
+        }
         const matchedName = `${match.family ?? ""} ${match.fullName ?? ""} ${match.postscriptName ?? ""}`.trim();
-        console.log(`[font] local matched (${label}): ${matchedName || "unnamed"}`);
+        console.log(`[font] local matched (${label}): ${matchedName || "unnamed"} score=${bestScore}`);
         const blob = await match.blob();
         return blob.arrayBuffer();
       }
@@ -53250,10 +53384,10 @@ function createResttyApp(options) {
     }
     return "auto";
   }
-  function pickFontIndexForText(text, expectedSpan = 1) {
+  function pickFontIndexForText(text, expectedSpan = 1, stylePreference = "regular") {
     if (!fontState.fonts.length)
       return 0;
-    const cacheKey = `${expectedSpan}:${text}`;
+    const cacheKey = `${expectedSpan}:${stylePreference}:${text}`;
     const cached = fontState.fontPickCache.get(cacheKey);
     if (cached !== undefined)
       return cached;
@@ -53261,6 +53395,17 @@ function createResttyApp(options) {
     const firstCp = text.codePointAt(0) ?? 0;
     const nerdSymbol = isNerdSymbolCodepoint(firstCp);
     const presentation = resolvePresentationPreference(text, chars);
+    const styleHintsEnabled = stylePreference !== "regular" && presentation !== "emoji" && !nerdSymbol;
+    const hasBoldHint = (entry) => /\bbold\b/i.test(entry.label ?? "");
+    const hasItalicHint = (entry) => /\b(italic|oblique)\b/i.test(entry.label ?? "");
+    const stylePredicates = stylePreference === "bold_italic" ? [
+      (entry) => hasBoldHint(entry) && hasItalicHint(entry),
+      (entry) => hasBoldHint(entry),
+      (entry) => hasItalicHint(entry)
+    ] : stylePreference === "bold" ? [(entry) => hasBoldHint(entry) && !hasItalicHint(entry), (entry) => hasBoldHint(entry)] : stylePreference === "italic" ? [
+      (entry) => hasItalicHint(entry) && !hasBoldHint(entry),
+      (entry) => hasItalicHint(entry)
+    ] : [];
     const pickFirstMatch = (predicate) => {
       for (let i3 = 0;i3 < fontState.fonts.length; i3 += 1) {
         const entry = fontState.fonts[i3];
@@ -53280,6 +53425,21 @@ function createResttyApp(options) {
       }
       return -1;
     };
+    const pickWithStyle = (predicate) => {
+      if (styleHintsEnabled) {
+        for (let i3 = 0;i3 < stylePredicates.length; i3 += 1) {
+          const stylePredicate = stylePredicates[i3];
+          const styledIndex = pickFirstMatch((entry) => {
+            if (!stylePredicate(entry))
+              return false;
+            return predicate ? !!predicate(entry) : true;
+          });
+          if (styledIndex >= 0)
+            return styledIndex;
+        }
+      }
+      return pickFirstMatch(predicate);
+    };
     const tryIndex = (index) => {
       if (index < 0)
         return null;
@@ -53287,7 +53447,7 @@ function createResttyApp(options) {
       return index;
     };
     if (nerdSymbol) {
-      const symbolIndex = pickFirstMatch((entry) => isNerdSymbolFont(entry) || isSymbolFont(entry));
+      const symbolIndex = pickWithStyle((entry) => isNerdSymbolFont(entry) || isSymbolFont(entry));
       const result = tryIndex(symbolIndex);
       if (result !== null)
         return result;
@@ -53303,13 +53463,28 @@ function createResttyApp(options) {
       if (result !== null)
         return result;
     }
-    const firstIndex = pickFirstMatch();
+    const firstIndex = pickWithStyle();
     if (firstIndex >= 0) {
       setBoundedMap(fontState.fontPickCache, cacheKey, firstIndex, FONT_PICK_CACHE_LIMIT);
       return firstIndex;
     }
     setBoundedMap(fontState.fontPickCache, cacheKey, 0, FONT_PICK_CACHE_LIMIT);
     return 0;
+  }
+  function stylePreferenceFromFlags(bold, italic) {
+    if (bold && italic)
+      return "bold_italic";
+    if (bold)
+      return "bold";
+    if (italic)
+      return "italic";
+    return "regular";
+  }
+  function fontEntryHasBoldStyle(entry) {
+    return !!entry && /\bbold\b/i.test(entry.label ?? "");
+  }
+  function fontEntryHasItalicStyle(entry) {
+    return !!entry && /\b(italic|oblique)\b/i.test(entry.label ?? "");
   }
   function computeCellMetrics() {
     const primary = fontState.fonts[0];
@@ -54019,7 +54194,7 @@ function createResttyApp(options) {
         }
         if (extra > 0 && text.trim() === "")
           continue;
-        const fontIndex = pickFontIndexForText(text, baseSpan);
+        const fontIndex = pickFontIndexForText(text, baseSpan, stylePreferenceFromFlags(bold, italic));
         const fontEntry = fontState.fonts[fontIndex] ?? fontState.fonts[0];
         const shaped = shapeClusterWithFont(fontEntry, text);
         if (!shaped.glyphs.length)
@@ -54325,17 +54500,24 @@ function createResttyApp(options) {
             const glyphData = useNearest ? glyphDataNearest : glyphDataLinear;
             const italic = !!item.italic;
             const bold = !!item.bold;
-            const slant = italic && !colorGlyph ? gh * ITALIC_SLANT : 0;
-            const boldOffset = bold && !colorGlyph ? Math.max(1, Math.round(gw * BOLD_OFFSET)) : 0;
+            const syntheticItalic = italic && !fontEntryHasItalicStyle(entry);
+            const syntheticBold = bold && !fontEntryHasBoldStyle(entry);
+            const slant = syntheticItalic && !colorGlyph ? gh * ITALIC_SLANT : 0;
+            const boldOffset = syntheticBold && !colorGlyph ? Math.max(1, Math.round(gw * BOLD_OFFSET)) : 0;
             const renderMode = colorGlyph ? GLYPH_RENDER_MODE_COLOR : GLYPH_RENDER_MODE_MONO;
             const pushGlyph = (xPos) => {
               glyphData.push(xPos, py, gw, gh, u02, v02, u12, v12, item.fg[0], item.fg[1], item.fg[2], item.fg[3], bg[0], bg[1], bg[2], bg[3], slant, renderMode);
             };
             pushGlyph(px);
             if (boldOffset > 0) {
-              const maxX2 = item.x + maxWidth;
-              const bx = Math.min(px + boldOffset, Math.round(maxX2 - gw));
-              if (bx !== px)
+              const minGlyphX = Math.round(item.x);
+              const maxGlyphX = Math.round(item.x + maxWidth - gw);
+              let bx = clamp(px + boldOffset, minGlyphX, maxGlyphX);
+              if (bx === px)
+                bx = clamp(px - boldOffset, minGlyphX, maxGlyphX);
+              if (bx === px)
+                pushGlyph(px);
+              else
                 pushGlyph(bx);
             }
             penX += glyph.xAdvance;
@@ -54877,7 +55059,7 @@ function createResttyApp(options) {
         }
         if (extra > 0 && text.trim() === "")
           continue;
-        const fontIndex = pickFontIndexForText(text, baseSpan);
+        const fontIndex = pickFontIndexForText(text, baseSpan, stylePreferenceFromFlags(bold, italic));
         const fontEntry = fontState.fonts[fontIndex] ?? fontState.fonts[0];
         const shaped = shapeClusterWithFont(fontEntry, text);
         if (!shaped.glyphs.length)
@@ -55276,17 +55458,24 @@ function createResttyApp(options) {
             const v12 = (metrics.atlasY + metrics.height - insetY) / atlasH;
             const italic = !!item.italic;
             const bold = !!item.bold;
-            const slant = italic && !colorGlyph ? gh * ITALIC_SLANT : 0;
-            const boldOffset = bold && !colorGlyph ? Math.max(1, Math.round(gw * BOLD_OFFSET)) : 0;
+            const syntheticItalic = italic && !fontEntryHasItalicStyle(entry);
+            const syntheticBold = bold && !fontEntryHasBoldStyle(entry);
+            const slant = syntheticItalic && !colorGlyph ? gh * ITALIC_SLANT : 0;
+            const boldOffset = syntheticBold && !colorGlyph ? Math.max(1, Math.round(gw * BOLD_OFFSET)) : 0;
             const renderMode = colorGlyph ? GLYPH_RENDER_MODE_COLOR : GLYPH_RENDER_MODE_MONO;
             const pushGlyph = (xPos) => {
               glyphData.push(xPos, py, gw, gh, u02, v02, u12, v12, item.fg[0], item.fg[1], item.fg[2], item.fg[3], bg[0], bg[1], bg[2], bg[3], slant, renderMode);
             };
             pushGlyph(px);
             if (boldOffset > 0) {
-              const maxX2 = item.x + maxWidth;
-              const bx = Math.min(px + boldOffset, Math.round(maxX2 - gw));
-              if (bx !== px)
+              const minGlyphX = Math.round(item.x);
+              const maxGlyphX = Math.round(item.x + maxWidth - gw);
+              let bx = clamp(px + boldOffset, minGlyphX, maxGlyphX);
+              if (bx === px)
+                bx = clamp(px - boldOffset, minGlyphX, maxGlyphX);
+              if (bx === px)
+                pushGlyph(px);
+              else
                 pushGlyph(bx);
             }
             penX += glyph.xAdvance;
@@ -57764,6 +57953,9 @@ var DEFAULT_THEME_NAME = "Aizen Dark";
 var DEFAULT_FONT_FAMILY = "jetbrains";
 var FONT_FAMILY_LOCAL_PREFIX = "local:";
 var FONT_URL_JETBRAINS_MONO = "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Regular/JetBrainsMonoNLNerdFontMono-Regular.ttf";
+var FONT_URL_JETBRAINS_MONO_BOLD = "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Bold/JetBrainsMonoNLNerdFontMono-Bold.ttf";
+var FONT_URL_JETBRAINS_MONO_ITALIC = "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Italic/JetBrainsMonoNLNerdFontMono-Italic.ttf";
+var FONT_URL_JETBRAINS_MONO_BOLD_ITALIC = "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/BoldItalic/JetBrainsMonoNLNerdFontMono-BoldItalic.ttf";
 var FONT_URL_NERD_SYMBOLS = "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf";
 var FONT_URL_NOTO_SYMBOLS = "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf";
 var FONT_URL_SYMBOLA = "https://cdn.jsdelivr.net/gh/ChiefMikeK/ttf-symbola@master/Symbola.ttf";
@@ -57809,13 +58001,65 @@ function buildFontSourcesForSelection(value, localMatcher) {
     sources.push({
       type: "local",
       label: "local:jetbrains mono",
-      matchers: ["jetbrains mono"]
+      matchers: [
+        "jetbrains mono nl nerd font mono regular",
+        "jetbrains mono nl nerd font mono",
+        "jetbrains mono nl",
+        "jetbrains mono"
+      ]
+    });
+    sources.push({
+      type: "local",
+      label: "local:jetbrains mono bold",
+      matchers: [
+        "jetbrains mono nl nerd font mono bold",
+        "jetbrains mono nl bold",
+        "jetbrains mono bold",
+        "jetbrainsmono nerd font mono bold"
+      ]
+    });
+    sources.push({
+      type: "local",
+      label: "local:jetbrains mono italic",
+      matchers: [
+        "jetbrains mono nl nerd font mono italic",
+        "jetbrains mono nl italic",
+        "jetbrains mono italic",
+        "jetbrainsmono nerd font mono italic"
+      ]
+    });
+    sources.push({
+      type: "local",
+      label: "local:jetbrains mono bold italic",
+      matchers: [
+        "jetbrains mono nl nerd font mono bold italic",
+        "jetbrains mono nl bold italic",
+        "jetbrains mono bold italic",
+        "jetbrains mono nl italic bold",
+        "jetbrains mono italic bold",
+        "jetbrainsmono nerd font mono bold italic"
+      ]
     });
   }
   sources.push({
     type: "url",
-    label: "JetBrains Mono",
+    label: "JetBrains Mono Regular",
     url: FONT_URL_JETBRAINS_MONO
+  });
+  sources.push({
+    type: "url",
+    label: "JetBrains Mono Bold",
+    url: FONT_URL_JETBRAINS_MONO_BOLD
+  });
+  sources.push({
+    type: "url",
+    label: "JetBrains Mono Italic",
+    url: FONT_URL_JETBRAINS_MONO_ITALIC
+  });
+  sources.push({
+    type: "url",
+    label: "JetBrains Mono Bold Italic",
+    url: FONT_URL_JETBRAINS_MONO_BOLD_ITALIC
   });
   sources.push({
     type: "url",
@@ -58209,6 +58453,8 @@ restty = new Restty({
     return {
       renderer: paneState.renderer,
       fontSize: paneState.fontSize,
+      fontSizeMode: "em",
+      alphaBlending: "native",
       fontSources: getCurrentFontSources(),
       ptyTransport: createAdaptivePtyTransport(),
       callbacks: {
@@ -58487,5 +58733,5 @@ if (firstState) {
 }
 queueResizeAllPanes();
 
-//# debugId=B31C2410E9AACF3864756E2164756E21
+//# debugId=53CE2A9E2B50510264756E2164756E21
 //# sourceMappingURL=app.js.map
