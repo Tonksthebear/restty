@@ -13,6 +13,7 @@ import {
   resetFontEntry,
   type FontEntry,
   type FontManagerState,
+  type NerdConstraint,
 } from "../fonts";
 import type {
   ResttyWasm,
@@ -116,6 +117,51 @@ function clampFiniteNumber(
   const numeric = round ? Math.round(value as number) : Number(value);
   return Math.min(max, Math.max(min, numeric));
 }
+
+function isRenderSymbolLike(cp: number): boolean {
+  return isSymbolCp(cp);
+}
+
+function resolveSymbolConstraint(cp: number): NerdConstraint | null {
+  return getNerdConstraint(cp);
+}
+
+const DEFAULT_SYMBOL_CONSTRAINT: NerdConstraint = {
+  // For non-Nerd symbol-like glyphs in fallback fonts, center inside the cell
+  // to reduce baseline drift caused by mismatched font metrics.
+  size: "fit",
+  align_horizontal: "center",
+  align_vertical: "center",
+  max_constraint_width: 1,
+};
+
+type LocalFontsPermissionDescriptor = PermissionDescriptor & { name: "local-fonts" };
+type LocalFontFaceData = {
+  family?: string;
+  fullName?: string;
+  postscriptName?: string;
+  blob: () => Promise<Blob>;
+};
+type NavigatorWithLocalFontAccess = Navigator & {
+  queryLocalFonts?: () => Promise<LocalFontFaceData[]>;
+  permissions?: {
+    query?: (permissionDesc: LocalFontsPermissionDescriptor) => Promise<PermissionStatus>;
+  };
+};
+
+type ResttyDebugWindow = Window &
+  typeof globalThis & {
+    diagnoseCodepoint?: (cp: number) => void;
+    dumpGlyphMetrics?: (cp: number) => { fontIndex: number; glyphId: number } | null;
+    dumpAtlasRegion?: (
+      fontIndex: number,
+      x: number,
+      y: number,
+      width: number,
+      height: number,
+    ) => Promise<ImageData | null>;
+    dumpGlyphRender?: (cp: number, constraintWidth?: number) => Promise<unknown>;
+  };
 
 export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   const { canvas: canvasInput, imeInput: imeInputInput, elements, callbacks } = options;
@@ -2914,8 +2960,9 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
   // Expose diagnostic to window for debugging
   if (debugExpose && typeof window !== "undefined") {
-    (window as any).diagnoseCodepoint = diagnoseCodepoint;
-    (window as any).dumpGlyphMetrics = (cp: number) => {
+    const debugWindow = window as ResttyDebugWindow;
+    debugWindow.diagnoseCodepoint = diagnoseCodepoint;
+    debugWindow.dumpGlyphMetrics = (cp: number) => {
       const text = String.fromCodePoint(cp);
       const fontIndex = pickFontIndexForText(text, 1);
       const entry = fontState.fonts[fontIndex];
@@ -2962,7 +3009,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       return { fontIndex, glyphId };
     };
 
-    (window as any).dumpAtlasRegion = async (
+    debugWindow.dumpAtlasRegion = async (
       fontIndex: number,
       x: number,
       y: number,
@@ -3015,7 +3062,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       return image;
     };
 
-    (window as any).dumpGlyphRender = async (cp: number, constraintWidth = 1) => {
+    debugWindow.dumpGlyphRender = async (cp: number, constraintWidth = 1) => {
       const state = activeState;
       if (!state || !("device" in state)) {
         console.warn("WebGPU not active");
@@ -3051,18 +3098,23 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       const baseScale =
         entry.font.scaleForSize(fontSizePx, fontState.sizeMode) *
         fontScaleOverride(entry, FONT_SCALE_OVERRIDES);
-      const baseHeightPx = fontHeightUnits(entry.font) * baseScale;
-      const targetHeightPx = lineHeight;
-      const heightAdjust = baseHeightPx > 0 ? Math.min(1, targetHeightPx / baseHeightPx) : 1;
-      const advanceUnits = fontAdvanceUnits(entry, shapeClusterWithFont);
-      const maxSpan = fontMaxCellSpan(entry);
-      const widthPx = advanceUnits * baseScale;
-      const widthAdjust = widthPx > 0 ? Math.min(1, (cellW * maxSpan) / widthPx) : 1;
-      const fontScale = baseScale * Math.min(heightAdjust, widthAdjust);
+      let fontScale = baseScale;
+      if (!isSymbolFont(entry) && !isColorEmojiFont(entry)) {
+        const advanceUnits = fontAdvanceUnits(entry, shapeClusterWithFont);
+        const maxSpan = fontMaxCellSpan(entry);
+        const widthPx = advanceUnits * baseScale;
+        const widthAdjustRaw = widthPx > 0 ? (cellW * maxSpan) / widthPx : 1;
+        const widthAdjust = clamp(widthAdjustRaw, 0.5, 2);
+        fontScale = baseScale * widthAdjust;
+        const adjustedHeightPx = fontHeightUnits(entry.font) * fontScale;
+        if (adjustedHeightPx > lineHeight && adjustedHeightPx > 0) {
+          fontScale *= lineHeight / adjustedHeightPx;
+        }
+      }
       const baselineAdjust = primaryEntry?.font
         ? primaryEntry.font.ascender * primaryScale - entry.font.ascender * fontScale
         : 0;
-      const atlasScale = Math.min(1, fontScale / (baseScale || 1));
+      const atlasScale = clamp(fontScale / (baseScale || 1), 0.5, 2);
 
       const meta = new Map<number, GlyphConstraintMeta>();
       meta.set(glyphId, {
@@ -3770,9 +3822,20 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   }
 
   async function tryLocalFontBuffer(matchers) {
-    if (typeof window === "undefined" || !("queryLocalFonts" in window)) return null;
+    if (typeof window === "undefined") return null;
+    const nav = navigator as NavigatorWithLocalFontAccess;
+    if (typeof nav.queryLocalFonts !== "function") return null;
+    const queryPermission = nav.permissions?.query;
+    if (queryPermission) {
+      try {
+        const status = await queryPermission({ name: "local-fonts" });
+        if (status?.state !== "granted") return null;
+      } catch {
+        return null;
+      }
+    }
     try {
-      const fonts = await (window as any).queryLocalFonts();
+      const fonts = await nav.queryLocalFonts();
       const match = fonts.find((font) => {
         const name =
           `${font.family ?? ""} ${font.fullName ?? ""} ${font.postscriptName ?? ""}`.toLowerCase();
@@ -3993,6 +4056,23 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     return glyphId !== undefined && glyphId !== null && glyphId !== 0;
   }
 
+  function isLikelyEmojiCodepoint(cp: number) {
+    if (cp >= 0x1f1e6 && cp <= 0x1f1ff) return true;
+    if (cp >= 0x1f300 && cp <= 0x1faff) return true;
+    return false;
+  }
+
+  function resolvePresentationPreference(text: string, chars: string[]) {
+    if (text.includes("\ufe0f")) return "emoji";
+    if (text.includes("\ufe0e")) return "text";
+    if (text.includes("\u200d")) return "emoji";
+    for (const ch of chars) {
+      const cp = ch.codePointAt(0) ?? 0;
+      if (isLikelyEmojiCodepoint(cp)) return "emoji";
+    }
+    return "auto";
+  }
+
   function pickFontIndexForText(text, expectedSpan = 1) {
     if (!fontState.fonts.length) return 0;
     const cacheKey = `${expectedSpan}:${text}`;
@@ -4000,29 +4080,15 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     if (cached !== undefined) return cached;
 
     const chars = Array.from(text);
-    const primary = fontState.fonts[0];
-    const primaryHeight = primary?.font ? fontHeightUnits(primary.font) : 0;
-    const primaryAdvance = primary ? fontAdvanceUnits(primary, shapeClusterWithFont) : 0;
-    const primaryRatio = primaryHeight > 0 ? primaryAdvance / primaryHeight : 0.5;
-    const targetRatio = primaryRatio * expectedSpan;
     const firstCp = text.codePointAt(0) ?? 0;
     const nerdSymbol = isNerdSymbolCodepoint(firstCp);
-    const preferSymbol = nerdSymbol || isSymbolCp(firstCp);
-    const preferEmoji =
-      text.includes("\u200d") ||
-      chars.some((ch) => {
-        const cp = ch.codePointAt(0) ?? 0;
-        if (cp >= 0x1f1e6 && cp <= 0x1f1ff) return true;
-        if (cp >= 0x1f300 && cp <= 0x1faff) return true;
-        return false;
-      });
+    const presentation = resolvePresentationPreference(text, chars);
 
-    if (preferEmoji) {
-      let bestEmojiIndex = -1;
-      let bestEmojiScore = Number.POSITIVE_INFINITY;
+    const pickFirstMatch = (predicate?) => {
       for (let i = 0; i < fontState.fonts.length; i += 1) {
         const entry = fontState.fonts[i];
-        if (!entry?.font || !isColorEmojiFont(entry)) continue;
+        if (!entry?.font) continue;
+        if (predicate && !predicate(entry)) continue;
         let ok = true;
         for (const ch of chars) {
           if (!fontHasGlyph(entry.font, ch)) {
@@ -4030,79 +4096,41 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
             break;
           }
         }
-        if (!ok) continue;
-        const shaped = shapeClusterWithFont(entry, text);
-        let score = shaped.glyphs.length;
-        if (/noto color emoji/i.test(entry.label)) score -= 0.25;
-        if (score < bestEmojiScore) {
-          bestEmojiScore = score;
-          bestEmojiIndex = i;
-          if (score <= 0.75) break;
-        }
+        if (ok) return i;
       }
-      if (bestEmojiIndex >= 0) {
-        setBoundedMap(fontState.fontPickCache, cacheKey, bestEmojiIndex, FONT_PICK_CACHE_LIMIT);
-        return bestEmojiIndex;
-      }
-    }
+      return -1;
+    };
+
+    const tryIndex = (index) => {
+      if (index < 0) return null;
+      setBoundedMap(fontState.fontPickCache, cacheKey, index, FONT_PICK_CACHE_LIMIT);
+      return index;
+    };
 
     if (nerdSymbol) {
-      const symbolIndex = fontState.fonts.findIndex((entry) => isSymbolFont(entry));
-      if (symbolIndex >= 0) {
-        const entry = fontState.fonts[symbolIndex];
-        if (entry?.font) {
-          let ok = true;
-          for (const ch of chars) {
-            if (!fontHasGlyph(entry.font, ch)) {
-              ok = false;
-              break;
-            }
-          }
-          if (ok) {
-            setBoundedMap(fontState.fontPickCache, cacheKey, symbolIndex, FONT_PICK_CACHE_LIMIT);
-            return symbolIndex;
-          } else {
-            console.warn(
-              `[font] Nerd symbol U+${firstCp.toString(16).toUpperCase()} not found in symbol font ${entry.label}`,
-            );
-          }
-        }
-      } else {
-        console.warn(
-          `[font] No symbol font found for nerd symbol U+${firstCp.toString(16).toUpperCase()}`,
-        );
-      }
+      const symbolIndex = pickFirstMatch((entry) => isNerdSymbolFont(entry) || isSymbolFont(entry));
+      const result = tryIndex(symbolIndex);
+      if (result !== null) return result;
     }
 
-    let bestIndex = 0;
-    let bestScore = Number.POSITIVE_INFINITY;
-
-    for (let i = 0; i < fontState.fonts.length; i += 1) {
-      const entry = fontState.fonts[i];
-      if (!entry?.font) continue;
-      let ok = true;
-      for (const ch of chars) {
-        if (!fontHasGlyph(entry.font, ch)) {
-          ok = false;
-          break;
-        }
-      }
-      if (!ok) continue;
-      const height = fontHeightUnits(entry.font);
-      const advance = shapeClusterWithFont(entry, text).advance;
-      const ratio = height > 0 ? advance / height : targetRatio;
-      let score = Math.abs(ratio - targetRatio);
-      if (preferSymbol && isSymbolFont(entry)) score *= nerdSymbol ? 0.2 : 0.6;
-      if (!preferSymbol && isSymbolFont(entry)) score *= 1.4;
-      if (nerdSymbol && !isSymbolFont(entry)) score *= 2.0;
-      if (score < bestScore) {
-        bestScore = score;
-        bestIndex = i;
-      }
+    if (presentation === "emoji") {
+      const emojiIndex = pickFirstMatch((entry) => isColorEmojiFont(entry));
+      const result = tryIndex(emojiIndex);
+      if (result !== null) return result;
+    } else if (presentation === "text") {
+      const textIndex = pickFirstMatch((entry) => !isColorEmojiFont(entry));
+      const result = tryIndex(textIndex);
+      if (result !== null) return result;
     }
 
-    setBoundedMap(fontState.fontPickCache, cacheKey, bestIndex, FONT_PICK_CACHE_LIMIT);
-    return bestIndex;
+    const firstIndex = pickFirstMatch();
+    if (firstIndex >= 0) {
+      setBoundedMap(fontState.fontPickCache, cacheKey, firstIndex, FONT_PICK_CACHE_LIMIT);
+      return firstIndex;
+    }
+
+    setBoundedMap(fontState.fontPickCache, cacheKey, 0, FONT_PICK_CACHE_LIMIT);
+    return 0;
   }
 
   function computeCellMetrics() {
@@ -4630,7 +4658,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     // OpenType underlinePosition is in Y-up font space (negative means below baseline).
     // Screen space is Y-down, so we flip the sign.
     const underlineOffsetPx = -underlinePosition * primaryScale;
-    const underlineThicknessPx = Math.max(1, Math.round(underlineThickness * primaryScale));
+    const underlineThicknessPx = Math.max(1, Math.ceil(underlineThickness * primaryScale));
 
     if (cursorPos && cursorStyle === null) {
       updateImePosition({ row: cursorPos.row, col: cursorPos.col }, cellW, cellH);
@@ -4666,14 +4694,18 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       if (!entry?.font) return primaryScale;
       if (idx === 0) return primaryScale;
       const baseScale = baseScaleByFont[idx] ?? primaryScale;
-      const baseHeightPx = fontHeightUnits(entry.font) * baseScale;
-      const targetHeightPx = lineHeight;
-      const heightAdjust = baseHeightPx > 0 ? Math.min(1, targetHeightPx / baseHeightPx) : 1;
+      if (isSymbolFont(entry) || isColorEmojiFont(entry)) return baseScale;
       const advanceUnits = fontAdvanceUnits(entry, shapeClusterWithFont);
       const maxSpan = fontMaxCellSpan(entry);
       const widthPx = advanceUnits * baseScale;
-      const widthAdjust = widthPx > 0 ? Math.min(1, (cellW * maxSpan) / widthPx) : 1;
-      return baseScale * Math.min(heightAdjust, widthAdjust);
+      const widthAdjustRaw = widthPx > 0 ? (cellW * maxSpan) / widthPx : 1;
+      const widthAdjust = clamp(widthAdjustRaw, 0.5, 2);
+      let adjustedScale = baseScale * widthAdjust;
+      const adjustedHeightPx = fontHeightUnits(entry.font) * adjustedScale;
+      if (adjustedHeightPx > lineHeight && adjustedHeightPx > 0) {
+        adjustedScale *= lineHeight / adjustedHeightPx;
+      }
+      return adjustedScale;
     });
 
     const bitmapScaleByFont = fontState.fonts.map((entry, idx) => {
@@ -4682,7 +4714,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       const baseScale = baseScaleByFont[idx] ?? 0;
       if (baseScale <= 0) return 1;
       const targetScale = scaleByFont[idx] ?? baseScale;
-      return Math.min(1, targetScale / baseScale);
+      return clamp(targetScale / baseScale, 0.5, 2);
     });
 
     const baselineAdjustByFont = fontState.fonts.map((entry, idx) => {
@@ -4901,7 +4933,8 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
         }
 
         if (isBoxDrawing(cp)) {
-          if (drawBoxDrawing(cp, x, rowY, cellW, cellH, fg, fgRectData)) continue;
+          if (drawBoxDrawing(cp, x, rowY, cellW, cellH, fg, fgRectData, underlineThicknessPx))
+            continue;
         }
 
         if (isBraille(cp)) {
@@ -4924,8 +4957,8 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
         const fontScale = scaleByFont[fontIndex] ?? primaryScale;
         let cellSpan = baseSpan;
-        const symbolLike = isSymbolCp(cp);
-        const nerdConstraint = symbolLike && isSymbolFont(fontEntry) ? getNerdConstraint(cp) : null;
+        const symbolLike = isRenderSymbolLike(cp);
+        const nerdConstraint = symbolLike ? resolveSymbolConstraint(cp) : null;
         const symbolConstraint = !!nerdConstraint;
         let constraintWidth = baseSpan;
         let forceFit = false;
@@ -4939,7 +4972,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
               if (col < cols - 1) {
                 if (col > 0) {
                   const prevCp = codepoints[idx - 1];
-                  if (isSymbolCp(prevCp) && !isGraphicsElement(prevCp)) {
+                  if (isRenderSymbolLike(prevCp) && !isGraphicsElement(prevCp)) {
                     constraintWidth = 1;
                   } else {
                     const nextCp = codepoints[idx + 1];
@@ -5178,8 +5211,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
             const metrics = widthMap?.get(glyph.glyphId) ?? atlas.glyphs.get(glyph.glyphId);
             if (!metrics) continue;
             let bitmapScale = scaleFactor;
-            const symbolFont = symbolLike && isSymbolFont(entry);
-            const glyphConstrained = symbolFont && !!widthMap?.has(glyph.glyphId);
+            const glyphConstrained = symbolLike && !!widthMap?.has(glyph.glyphId);
             if (glyphConstrained) bitmapScale = 1;
             if (fontIndex > 0 && !symbolLike) {
               const widthScale = maxWidth > 0 ? maxWidth / metrics.width : 1;
@@ -5196,15 +5228,6 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
                 bitmapScale *= scaleToFit;
                 gw *= scaleToFit;
                 gh *= scaleToFit;
-              } else if (symbolFont && item.shaped.glyphs.length === 1 && gh > 0) {
-                const targetHeight = Math.min(maxHeight, nerdMetrics.iconHeightSingle);
-                const growToHeight = targetHeight > 0 ? targetHeight / gh : 1;
-                const growScale = Math.min(scaleToFit, growToHeight);
-                if (growScale > 1) {
-                  bitmapScale *= growScale;
-                  gw *= growScale;
-                  gh *= growScale;
-                }
               }
               gw = Math.round(gw);
               gh = Math.round(gh);
@@ -5235,47 +5258,27 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
               baselineAdjust -
               metrics.bearingY * bitmapScale -
               glyph.yOffset * itemScale;
-            let constrained = false;
-            if (!glyphConstrained && symbolFont && item.cp) {
-              const constraint = getNerdConstraint(item.cp);
-              if (constraint) {
-                const rowY = item.baseY - yPad - baselineOffset;
-                const constraintWidth = Math.max(
-                  1,
-                  item.constraintWidth ?? Math.round(maxWidth / cellW),
-                );
-                const adjusted = constrainGlyphBox(
-                  {
-                    x: x - item.x,
-                    y: y - rowY,
-                    width: gw,
-                    height: gh,
-                  },
-                  constraint,
-                  nerdMetrics,
-                  constraintWidth,
-                );
-                const tightened = tightenNerdConstraintBox(adjusted, constraint);
-                x = item.x + tightened.x;
-                y = rowY + tightened.y;
-                gw = tightened.width;
-                gh = tightened.height;
-                constrained = true;
-              }
-            }
-            if (
-              !glyphConstrained &&
-              !constrained &&
-              symbolFont &&
-              item.shaped.glyphs.length === 1
-            ) {
+            if (!glyphConstrained && symbolLike && item.cp) {
+              const nerdConstraint = resolveSymbolConstraint(item.cp);
+              const constraint = nerdConstraint ?? DEFAULT_SYMBOL_CONSTRAINT;
               const rowY = item.baseY - yPad - baselineOffset;
-              x = item.x + (maxWidth - gw) * 0.5;
-              y = rowY + (cellH - gh) * 0.5;
-            }
-            if (!constrained && symbolLike && !symbolFont) {
-              const rowY = item.baseY - yPad - baselineOffset;
-              y = rowY + (cellH - gh) * 0.5;
+              const constraintWidth = Math.max(1, item.constraintWidth ?? Math.round(maxWidth / cellW));
+              const adjusted = constrainGlyphBox(
+                {
+                  x: x - item.x,
+                  y: y - rowY,
+                  width: gw,
+                  height: gh,
+                },
+                constraint,
+                nerdMetrics,
+                constraintWidth,
+              );
+              const tightened = nerdConstraint ? tightenNerdConstraintBox(adjusted, nerdConstraint) : adjusted;
+              x = item.x + tightened.x;
+              y = rowY + tightened.y;
+              gw = tightened.width;
+              gh = tightened.height;
             }
             if (gw < 1) gw = 1;
             if (gh < 1) gh = 1;
@@ -5712,7 +5715,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     // OpenType underlinePosition is in Y-up font space (negative means below baseline).
     // Screen space is Y-down, so we flip the sign.
     const underlineOffsetPx = -underlinePosition * primaryScale;
-    const underlineThicknessPx = Math.max(1, Math.round(underlineThickness * primaryScale));
+    const underlineThicknessPx = Math.max(1, Math.ceil(underlineThickness * primaryScale));
 
     if (cursorPos && cursorStyle === null) {
       updateImePosition({ row: cursorPos.row, col: cursorPos.col }, cellW, cellH);
@@ -5747,14 +5750,18 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       if (!entry?.font) return primaryScale;
       if (idx === 0) return primaryScale;
       const baseScale = baseScaleByFont[idx] ?? primaryScale;
-      const baseHeightPx = fontHeightUnits(entry.font) * baseScale;
-      const targetHeightPx = lineHeight;
-      const heightAdjust = baseHeightPx > 0 ? Math.min(1, targetHeightPx / baseHeightPx) : 1;
+      if (isSymbolFont(entry) || isColorEmojiFont(entry)) return baseScale;
       const advanceUnits = fontAdvanceUnits(entry, shapeClusterWithFont);
       const maxSpan = fontMaxCellSpan(entry);
       const widthPx = advanceUnits * baseScale;
-      const widthAdjust = widthPx > 0 ? Math.min(1, (cellW * maxSpan) / widthPx) : 1;
-      return baseScale * Math.min(heightAdjust, widthAdjust);
+      const widthAdjustRaw = widthPx > 0 ? (cellW * maxSpan) / widthPx : 1;
+      const widthAdjust = clamp(widthAdjustRaw, 0.5, 2);
+      let adjustedScale = baseScale * widthAdjust;
+      const adjustedHeightPx = fontHeightUnits(entry.font) * adjustedScale;
+      if (adjustedHeightPx > lineHeight && adjustedHeightPx > 0) {
+        adjustedScale *= lineHeight / adjustedHeightPx;
+      }
+      return adjustedScale;
     });
 
     const bitmapScaleByFont = fontState.fonts.map((entry, idx) => {
@@ -5763,7 +5770,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       const baseScale = baseScaleByFont[idx] ?? 0;
       if (baseScale <= 0) return 1;
       const targetScale = scaleByFont[idx] ?? baseScale;
-      return Math.min(1, targetScale / baseScale);
+      return clamp(targetScale / baseScale, 0.5, 2);
     });
 
     const baselineAdjustByFont = fontState.fonts.map((entry, idx) => {
@@ -5986,7 +5993,8 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
           if (drawBlockElement(cp, x, rowY, cellW, cellH, fg, fgRectData)) continue;
         }
         if (isBoxDrawing(cp)) {
-          if (drawBoxDrawing(cp, x, rowY, cellW, cellH, fg, fgRectData)) continue;
+          if (drawBoxDrawing(cp, x, rowY, cellW, cellH, fg, fgRectData, underlineThicknessPx))
+            continue;
         }
         if (isBraille(cp)) {
           if (drawBraille(cp, x, rowY, cellW, cellH, fg, fgRectData)) continue;
@@ -6007,8 +6015,8 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
         const fontScale = scaleByFont[fontIndex] ?? primaryScale;
         let cellSpan = baseSpan;
-        const symbolLike = isSymbolCp(cp);
-        const nerdConstraint = symbolLike && isSymbolFont(fontEntry) ? getNerdConstraint(cp) : null;
+        const symbolLike = isRenderSymbolLike(cp);
+        const nerdConstraint = symbolLike ? resolveSymbolConstraint(cp) : null;
         const symbolConstraint = !!nerdConstraint;
         let constraintWidth = baseSpan;
         let forceFit = false;
@@ -6022,7 +6030,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
               if (col < cols - 1) {
                 if (col > 0) {
                   const prevCp = codepoints[idx - 1];
-                  if (isSymbolCp(prevCp) && !isGraphicsElement(prevCp)) {
+                  if (isRenderSymbolLike(prevCp) && !isGraphicsElement(prevCp)) {
                     constraintWidth = 1;
                   } else {
                     const nextCp = codepoints[idx + 1];
@@ -6401,8 +6409,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
             const metrics = widthMap?.get(glyph.glyphId) ?? atlas.glyphs.get(glyph.glyphId);
             if (!metrics) continue;
             let bitmapScale = scaleFactor;
-            const symbolFont = symbolLike && isSymbolFont(entry);
-            const glyphConstrained = symbolFont && !!widthMap?.has(glyph.glyphId);
+            const glyphConstrained = symbolLike && !!widthMap?.has(glyph.glyphId);
             if (glyphConstrained) bitmapScale = 1;
             if (fontIndex > 0 && !symbolLike) {
               const widthScale = maxWidth > 0 ? maxWidth / metrics.width : 1;
@@ -6419,15 +6426,6 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
                 bitmapScale *= scaleToFit;
                 gw *= scaleToFit;
                 gh *= scaleToFit;
-              } else if (symbolFont && item.shaped.glyphs.length === 1 && gh > 0) {
-                const targetHeight = Math.min(maxHeight, nerdMetrics.iconHeightSingle);
-                const growToHeight = targetHeight > 0 ? targetHeight / gh : 1;
-                const growScale = Math.min(scaleToFit, growToHeight);
-                if (growScale > 1) {
-                  bitmapScale *= growScale;
-                  gw *= growScale;
-                  gh *= growScale;
-                }
               }
               gw = Math.round(gw);
               gh = Math.round(gh);
@@ -6456,47 +6454,27 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
               baselineAdjust -
               metrics.bearingY * bitmapScale -
               glyph.yOffset * itemScale;
-            let constrained = false;
-            if (!glyphConstrained && symbolFont && item.cp) {
-              const constraint = getNerdConstraint(item.cp);
-              if (constraint) {
-                const rowY = item.baseY - yPad - baselineOffset;
-                const constraintWidth = Math.max(
-                  1,
-                  item.constraintWidth ?? Math.round(maxWidth / cellW),
-                );
-                const adjusted = constrainGlyphBox(
-                  {
-                    x: x - item.x,
-                    y: y - rowY,
-                    width: gw,
-                    height: gh,
-                  },
-                  constraint,
-                  nerdMetrics,
-                  constraintWidth,
-                );
-                const tightened = tightenNerdConstraintBox(adjusted, constraint);
-                x = item.x + tightened.x;
-                y = rowY + tightened.y;
-                gw = tightened.width;
-                gh = tightened.height;
-                constrained = true;
-              }
-            }
-            if (
-              !glyphConstrained &&
-              !constrained &&
-              symbolFont &&
-              item.shaped.glyphs.length === 1
-            ) {
+            if (!glyphConstrained && symbolLike && item.cp) {
+              const nerdConstraint = resolveSymbolConstraint(item.cp);
+              const constraint = nerdConstraint ?? DEFAULT_SYMBOL_CONSTRAINT;
               const rowY = item.baseY - yPad - baselineOffset;
-              x = item.x + (maxWidth - gw) * 0.5;
-              y = rowY + (cellH - gh) * 0.5;
-            }
-            if (!constrained && symbolLike && !symbolFont) {
-              const rowY = item.baseY - yPad - baselineOffset;
-              y = rowY + (cellH - gh) * 0.5;
+              const constraintWidth = Math.max(1, item.constraintWidth ?? Math.round(maxWidth / cellW));
+              const adjusted = constrainGlyphBox(
+                {
+                  x: x - item.x,
+                  y: y - rowY,
+                  width: gw,
+                  height: gh,
+                },
+                constraint,
+                nerdMetrics,
+                constraintWidth,
+              );
+              const tightened = nerdConstraint ? tightenNerdConstraintBox(adjusted, nerdConstraint) : adjusted;
+              x = item.x + tightened.x;
+              y = rowY + tightened.y;
+              gw = tightened.width;
+              gh = tightened.height;
             }
             if (gw < 1) gw = 1;
             if (gh < 1) gh = 1;

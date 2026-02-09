@@ -4,15 +4,30 @@ import type { ResttyFontPreset, ResttyFontSource } from "./types";
 export const DEFAULT_FONT_SOURCES: ResttyFontSource[] = [
   {
     type: "url",
-    url: "https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono@v2.304/fonts/ttf/JetBrainsMono-Regular.ttf",
+    url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Regular/JetBrainsMonoNLNerdFontMono-Regular.ttf",
   },
   {
     type: "url",
     url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf",
   },
+  // Ghostty parity on macOS: prefer system symbols/emoji when available.
+  {
+    type: "local",
+    matchers: ["apple symbols"],
+    label: "Apple Symbols",
+  },
   {
     type: "url",
     url: "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf",
+  },
+  {
+    type: "url",
+    url: "https://cdn.jsdelivr.net/gh/ChiefMikeK/ttf-symbola@master/Symbola.ttf",
+  },
+  {
+    type: "local",
+    matchers: ["apple color emoji"],
+    label: "Apple Color Emoji",
   },
   {
     type: "url",

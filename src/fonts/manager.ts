@@ -7,6 +7,21 @@ import type {
 } from "./types";
 import { isNerdSymbolCodepoint } from "./nerd-ranges";
 import { fontHeightUnits } from "../grid/grid";
+import { isSymbolLikeCodepoint } from "../unicode/symbols";
+
+type LocalFontsPermissionDescriptor = PermissionDescriptor & { name: "local-fonts" };
+type LocalFontFaceData = {
+  family?: string;
+  fullName?: string;
+  postscriptName?: string;
+  blob: () => Promise<Blob>;
+};
+type NavigatorWithLocalFontAccess = Navigator & {
+  queryLocalFonts?: () => Promise<LocalFontFaceData[]>;
+  permissions?: {
+    query?: (permissionDesc: LocalFontsPermissionDescriptor) => Promise<PermissionStatus>;
+  };
+};
 
 // Font classification patterns
 const SYMBOL_FONT_HINTS = [/symbols nerd font/i, /noto sans symbols/i];
@@ -179,23 +194,32 @@ export function glyphWidthUnits(entry: FontEntry, glyphId: number | undefined | 
 }
 
 function isSymbolCp(cp: number): boolean {
-  const isPrivateUse =
-    (cp >= 0xe000 && cp <= 0xf8ff) ||
-    (cp >= 0xf0000 && cp <= 0xffffd) ||
-    (cp >= 0x100000 && cp <= 0x10fffd);
-  const isBoxDrawing = cp >= 0x2500 && cp <= 0x257f;
-  const isBlockElement = cp >= 0x2580 && cp <= 0x259f;
-  const isLegacyComputing = (cp >= 0x1fb00 && cp <= 0x1fbff) || (cp >= 0x1cc00 && cp <= 0x1cebf);
-  const isPowerline = cp >= 0xe0b0 && cp <= 0xe0d7;
-  const isTransportControl = cp >= 0x23e9 && cp <= 0x23fa;
-  const isGraphicsElement = isBoxDrawing || isBlockElement || isLegacyComputing || isPowerline;
-  return isPrivateUse || isGraphicsElement || isTransportControl;
+  return isSymbolLikeCodepoint(cp);
+}
+
+function isLikelyEmojiCodepoint(cp: number): boolean {
+  if (cp >= 0x1f1e6 && cp <= 0x1f1ff) return true;
+  if (cp >= 0x1f300 && cp <= 0x1faff) return true;
+  return false;
+}
+
+function resolvePresentationPreference(
+  text: string,
+  chars: string[],
+): "emoji" | "text" | "auto" {
+  if (text.includes("\ufe0f")) return "emoji";
+  if (text.includes("\ufe0e")) return "text";
+  if (text.includes("\u200d")) return "emoji";
+  for (const ch of chars) {
+    const cp = ch.codePointAt(0) ?? 0;
+    if (isLikelyEmojiCodepoint(cp)) return "emoji";
+  }
+  return "auto";
 }
 
 /**
  * Select the best font index from the manager's font list for rendering the
- * given text cluster, preferring symbol fonts for Nerd/PUA codepoints and
- * scoring candidates by advance-width ratio fit.
+ * given text cluster, searching in fallback order similar to Ghostty.
  */
 export function pickFontIndexForText(
   state: FontManagerState,
@@ -210,69 +234,57 @@ export function pickFontIndexForText(
   if (cached !== undefined) return cached;
 
   const chars = Array.from(text);
-  const primary = state.fonts[0];
-  const primaryHeight = primary?.font ? fontHeightUnits(primary.font) : 0;
-  const primaryAdvance = primary ? fontAdvanceUnits(primary, shapeClusterWithFont) : 0;
-  const primaryRatio = primaryHeight > 0 ? primaryAdvance / primaryHeight : 0.5;
-  const targetRatio = primaryRatio * expectedSpan;
   const firstCp = text.codePointAt(0) ?? 0;
   const nerdSymbol = isNerdSymbolCodepoint(firstCp);
-  const preferSymbol = nerdSymbol || isSymbolCp(firstCp);
+  const presentation = resolvePresentationPreference(text, chars);
 
-  // Prefer nerd symbol font for nerd symbols
+  const pickFirstMatch = (predicate?: (entry: FontEntry) => boolean): number => {
+    for (let i = 0; i < state.fonts.length; i += 1) {
+      const entry = state.fonts[i];
+      if (!entry?.font) continue;
+      if (predicate && !predicate(entry)) continue;
+      let ok = true;
+      for (const ch of chars) {
+        if (!fontHasGlyph(entry.font, ch)) {
+          ok = false;
+          break;
+        }
+      }
+      if (ok) return i;
+    }
+    return -1;
+  };
+
+  const tryIndex = (index: number): number | null => {
+    if (index < 0) return null;
+    state.fontPickCache.set(cacheKey, index);
+    return index;
+  };
+
   if (nerdSymbol) {
-    const symbolIndex = state.fonts.findIndex((entry) => isSymbolFont(entry));
-    if (symbolIndex >= 0) {
-      const entry = state.fonts[symbolIndex];
-      if (entry?.font) {
-        let ok = true;
-        for (const ch of chars) {
-          if (!fontHasGlyph(entry.font, ch)) {
-            ok = false;
-            break;
-          }
-        }
-        if (ok) {
-          state.fontPickCache.set(cacheKey, symbolIndex);
-          return symbolIndex;
-        }
-      }
-    }
+    const symbolIndex = pickFirstMatch((entry) => isNerdSymbolFont(entry) || isSymbolFont(entry));
+    const result = tryIndex(symbolIndex);
+    if (result !== null) return result;
   }
 
-  let bestIndex = 0;
-  let bestScore = Number.POSITIVE_INFINITY;
-
-  for (let i = 0; i < state.fonts.length; i += 1) {
-    const entry = state.fonts[i];
-    if (!entry?.font) continue;
-
-    let ok = true;
-    for (const ch of chars) {
-      if (!fontHasGlyph(entry.font, ch)) {
-        ok = false;
-        break;
-      }
-    }
-    if (!ok) continue;
-
-    const height = fontHeightUnits(entry.font);
-    const advance = shapeClusterWithFont(entry, text).advance;
-    const ratio = height > 0 ? advance / height : targetRatio;
-    let score = Math.abs(ratio - targetRatio);
-
-    if (preferSymbol && isSymbolFont(entry)) score *= nerdSymbol ? 0.2 : 0.6;
-    if (!preferSymbol && isSymbolFont(entry)) score *= 1.4;
-    if (nerdSymbol && !isSymbolFont(entry)) score *= 2.0;
-
-    if (score < bestScore) {
-      bestScore = score;
-      bestIndex = i;
-    }
+  if (presentation === "emoji") {
+    const emojiIndex = pickFirstMatch((entry) => isColorEmojiFont(entry));
+    const result = tryIndex(emojiIndex);
+    if (result !== null) return result;
+  } else if (presentation === "text") {
+    const textIndex = pickFirstMatch((entry) => !isColorEmojiFont(entry));
+    const result = tryIndex(textIndex);
+    if (result !== null) return result;
   }
 
-  state.fontPickCache.set(cacheKey, bestIndex);
-  return bestIndex;
+  const firstIndex = pickFirstMatch();
+  if (firstIndex >= 0) {
+    state.fontPickCache.set(cacheKey, firstIndex);
+    return firstIndex;
+  }
+
+  state.fontPickCache.set(cacheKey, 0);
+  return 0;
 }
 
 /** Fetch a font file from a URL and return its ArrayBuffer, or null on failure. */
@@ -288,10 +300,20 @@ export async function tryFetchFontBuffer(url: string): Promise<ArrayBuffer | nul
 
 /** Query locally installed fonts via the Local Font Access API and return the first match, or null. */
 export async function tryLocalFontBuffer(matchers: string[]): Promise<ArrayBuffer | null> {
-  if (!("queryLocalFonts" in navigator)) return null;
+  const nav = navigator as NavigatorWithLocalFontAccess;
+  if (typeof nav.queryLocalFonts !== "function") return null;
+  const queryPermission = nav.permissions?.query;
+  if (queryPermission) {
+    try {
+      const status = await queryPermission({ name: "local-fonts" });
+      if (status?.state !== "granted") return null;
+    } catch {
+      return null;
+    }
+  }
   try {
-    const fonts = await (navigator as any).queryLocalFonts();
-    const match = fonts.find((font: any) => {
+    const fonts = await nav.queryLocalFonts();
+    const match = fonts.find((font) => {
       const name =
         `${font.family ?? ""} ${font.fullName ?? ""} ${font.postscriptName ?? ""}`.toLowerCase();
       return matchers.some((matcher) => name.includes(matcher));

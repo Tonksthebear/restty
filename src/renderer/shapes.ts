@@ -1,5 +1,6 @@
 import { BOX_LINE_MAP } from "./box-drawing-map";
 import type { NerdConstraint } from "../fonts/nerd-constraints";
+import { isGraphicsElementCodepoint, isSymbolLikeCodepoint } from "../unicode/symbols";
 
 /** RGBA color tuple with components in 0-1 range. */
 export type Color = [number, number, number, number];
@@ -82,19 +83,14 @@ export function isBraille(cp: number): boolean {
   return cp >= 0x2800 && cp <= 0x28ff;
 }
 
-/** Test whether a codepoint is a transport-control symbol commonly used in prompts. */
-export function isTransportControlSymbol(cp: number): boolean {
-  return cp >= 0x23e9 && cp <= 0x23fa;
-}
-
 /** Test whether a codepoint is any GPU-drawable graphics element (box, block, legacy, powerline). */
 export function isGraphicsElement(cp: number): boolean {
-  return isBoxDrawing(cp) || isBlockElement(cp) || isLegacyComputing(cp) || isPowerline(cp);
+  return isGraphicsElementCodepoint(cp);
 }
 
 /** Test whether a codepoint is a symbol that may need special rendering (PUA or graphics). */
 export function isSymbolCp(cp: number): boolean {
-  return isPrivateUse(cp) || isGraphicsElement(cp) || isTransportControlSymbol(cp);
+  return isSymbolLikeCodepoint(cp);
 }
 
 /** Return a new color with its alpha channel multiplied by the given factor. */
@@ -308,13 +304,18 @@ export function drawBoxDrawing(
   cellH: number,
   color: Color,
   out: RectData,
+  boxThicknessPx?: number,
 ): boolean {
+  // Ghostty derives box_thickness from underline thickness.
+  // When callers provide it, use that directly for closer parity.
+  const hasBoxThickness =
+    Number.isFinite(boxThicknessPx) && typeof boxThicknessPx === "number" && boxThicknessPx > 0;
+  const lightStroke = hasBoxThickness ? Math.max(1, Math.round(boxThicknessPx)) : Math.max(1, Math.floor(cellH / 16));
+  const heavyStroke = lightStroke * 2;
   const spec = BOX_LINE_MAP.get(cp);
   if (!spec) {
-    // Prefer height-driven stroke thickness so box-drawing stays stable
-    // across narrow cell widths at the same font size.
-    const light = Math.max(1, Math.round(cellH * 0.08));
-    const heavy = Math.max(light + 1, Math.round(light * 1.8));
+    const light = lightStroke;
+    const heavy = heavyStroke;
 
     const dashedH = (count: number, thickness: number) => {
       const gap = Math.max(1, Math.round(thickness));
@@ -463,16 +464,12 @@ export function drawBoxDrawing(
       );
       if (maxX < minX || maxY < minY) return;
 
-      // Low-res cells are visually more stable with crisp sampling.
-      const antiAlias = Math.min(cellW, cellH) >= 22;
-      const sampleOffsets: ReadonlyArray<readonly [number, number]> = antiAlias
-        ? [
-            [0.25, 0.25],
-            [0.75, 0.25],
-            [0.25, 0.75],
-            [0.75, 0.75],
-          ]
-        : [[0.5, 0.5]];
+      const sampleOffsets: ReadonlyArray<readonly [number, number]> = [
+        [0.25, 0.25],
+        [0.75, 0.25],
+        [0.25, 0.75],
+        [0.75, 0.75],
+      ];
 
       const sampleInsideStroke = (sx: number, sy: number): boolean => {
         for (const seg of segments) {
@@ -583,56 +580,185 @@ export function drawBoxDrawing(
   }
 
   const [up, right, down, left] = spec;
-  const light = Math.max(1, Math.round(cellH * 0.08));
-  const heavy = Math.max(light + 1, Math.round(light * 1.8));
-  const gap = Math.max(1, Math.round(light));
-  const cx = x + cellW * 0.5;
-  const cy = y + cellH * 0.5;
+  const light = lightStroke;
+  const heavy = heavyStroke;
+  const cellWInt = Math.max(1, Math.round(cellW));
+  const cellHInt = Math.max(1, Math.round(cellH));
 
-  const drawH = (style: number, x0: number, x1: number) => {
-    if (style === BOX_STYLE_NONE) return;
-    if (x1 <= x0) return;
-    const thickness = style === BOX_STYLE_HEAVY ? heavy : light;
-    const t = Math.max(1, Math.round(thickness));
-    if (style === BOX_STYLE_DOUBLE) {
-      const offset = (gap + t) * 0.5;
-      const y0 = cy - offset - t * 0.5;
-      const y1 = cy + offset - t * 0.5;
-      pushRectSnapped(out, x0, y0, x1 - x0, t, color);
-      pushRectSnapped(out, x0, y1, x1 - x0, t, color);
-      return;
-    }
-    const y0 = cy - t * 0.5;
-    pushRectSnapped(out, x0, y0, x1 - x0, t, color);
+  const satSub = (a: number, b: number) => (a > b ? a - b : 0);
+  const hLightTop = Math.floor(satSub(cellHInt, light) / 2);
+  const hLightBottom = hLightTop + light;
+  const hHeavyTop = Math.floor(satSub(cellHInt, heavy) / 2);
+  const hHeavyBottom = hHeavyTop + heavy;
+  const hDoubleTop = satSub(hLightTop, light);
+  const hDoubleBottom = hLightBottom + light;
+
+  const vLightLeft = Math.floor(satSub(cellWInt, light) / 2);
+  const vLightRight = vLightLeft + light;
+  const vHeavyLeft = Math.floor(satSub(cellWInt, heavy) / 2);
+  const vHeavyRight = vHeavyLeft + heavy;
+  const vDoubleLeft = satSub(vLightLeft, light);
+  const vDoubleRight = vLightRight + light;
+
+  const upBottom =
+    left === BOX_STYLE_HEAVY || right === BOX_STYLE_HEAVY
+      ? hHeavyBottom
+      : left !== right || down === up
+        ? left === BOX_STYLE_DOUBLE || right === BOX_STYLE_DOUBLE
+          ? hDoubleBottom
+          : hLightBottom
+        : left === BOX_STYLE_NONE && right === BOX_STYLE_NONE
+          ? hLightBottom
+          : hLightTop;
+
+  const downTop =
+    left === BOX_STYLE_HEAVY || right === BOX_STYLE_HEAVY
+      ? hHeavyTop
+      : left !== right || up === down
+        ? left === BOX_STYLE_DOUBLE || right === BOX_STYLE_DOUBLE
+          ? hDoubleTop
+          : hLightTop
+        : left === BOX_STYLE_NONE && right === BOX_STYLE_NONE
+          ? hLightTop
+          : hLightBottom;
+
+  const leftRight =
+    up === BOX_STYLE_HEAVY || down === BOX_STYLE_HEAVY
+      ? vHeavyRight
+      : up !== down || left === right
+        ? up === BOX_STYLE_DOUBLE || down === BOX_STYLE_DOUBLE
+          ? vDoubleRight
+          : vLightRight
+        : up === BOX_STYLE_NONE && down === BOX_STYLE_NONE
+          ? vLightRight
+          : vLightLeft;
+
+  const rightLeft =
+    up === BOX_STYLE_HEAVY || down === BOX_STYLE_HEAVY
+      ? vHeavyLeft
+      : up !== down || right === left
+        ? up === BOX_STYLE_DOUBLE || down === BOX_STYLE_DOUBLE
+          ? vDoubleLeft
+          : vLightLeft
+        : up === BOX_STYLE_NONE && down === BOX_STYLE_NONE
+          ? vLightLeft
+          : vLightRight;
+
+  const drawBox = (x0: number, y0: number, x1: number, y1: number) => {
+    if (x1 <= x0 || y1 <= y0) return;
+    pushRectSnapped(out, x + x0, y + y0, x1 - x0, y1 - y0, color);
   };
 
-  const drawV = (style: number, y0: number, y1: number) => {
-    if (style === BOX_STYLE_NONE) return;
-    if (y1 <= y0) return;
-    const thickness = style === BOX_STYLE_HEAVY ? heavy : light;
-    const t = Math.max(1, Math.round(thickness));
-    if (style === BOX_STYLE_DOUBLE) {
-      const offset = (gap + t) * 0.5;
-      const x0 = cx - offset - t * 0.5;
-      const x1 = cx + offset - t * 0.5;
-      pushRectSnapped(out, x0, y0, t, y1 - y0, color);
-      pushRectSnapped(out, x1, y0, t, y1 - y0, color);
+  const drawHorizontalBand = (style: number) => {
+    if (style === BOX_STYLE_LIGHT) {
+      drawBox(0, hLightTop, cellWInt, hLightBottom);
       return;
     }
-    const x0 = cx - t * 0.5;
-    pushRectSnapped(out, x0, y0, t, y1 - y0, color);
+    if (style === BOX_STYLE_HEAVY) {
+      drawBox(0, hHeavyTop, cellWInt, hHeavyBottom);
+      return;
+    }
+    if (style === BOX_STYLE_DOUBLE) {
+      drawBox(0, hDoubleTop, cellWInt, hLightTop);
+      drawBox(0, hLightBottom, cellWInt, hDoubleBottom);
+    }
   };
 
-  if (left !== BOX_STYLE_NONE && left === right) drawH(left, x, x + cellW);
-  else {
-    drawH(left, x, cx);
-    drawH(right, cx, x + cellW);
+  const drawVerticalBand = (style: number) => {
+    if (style === BOX_STYLE_LIGHT) {
+      drawBox(vLightLeft, 0, vLightRight, cellHInt);
+      return;
+    }
+    if (style === BOX_STYLE_HEAVY) {
+      drawBox(vHeavyLeft, 0, vHeavyRight, cellHInt);
+      return;
+    }
+    if (style === BOX_STYLE_DOUBLE) {
+      drawBox(vDoubleLeft, 0, vLightLeft, cellHInt);
+      drawBox(vLightRight, 0, vDoubleRight, cellHInt);
+    }
+  };
+
+  // Fast path for pure straight lines to avoid overlapping rects in instance output.
+  if (up === BOX_STYLE_NONE && down === BOX_STYLE_NONE && left !== BOX_STYLE_NONE && left === right) {
+    drawHorizontalBand(left);
+    return true;
+  }
+  if (left === BOX_STYLE_NONE && right === BOX_STYLE_NONE && up !== BOX_STYLE_NONE && up === down) {
+    drawVerticalBand(up);
+    return true;
   }
 
-  if (up !== BOX_STYLE_NONE && up === down) drawV(up, y, y + cellH);
-  else {
-    drawV(up, y, cy);
-    drawV(down, cy, y + cellH);
+  switch (up) {
+    case BOX_STYLE_NONE:
+      break;
+    case BOX_STYLE_LIGHT:
+      drawBox(vLightLeft, 0, vLightRight, upBottom);
+      break;
+    case BOX_STYLE_HEAVY:
+      drawBox(vHeavyLeft, 0, vHeavyRight, upBottom);
+      break;
+    case BOX_STYLE_DOUBLE: {
+      const leftBottom = left === BOX_STYLE_DOUBLE ? hLightTop : upBottom;
+      const rightBottom = right === BOX_STYLE_DOUBLE ? hLightTop : upBottom;
+      drawBox(vDoubleLeft, 0, vLightLeft, leftBottom);
+      drawBox(vLightRight, 0, vDoubleRight, rightBottom);
+      break;
+    }
+  }
+
+  switch (right) {
+    case BOX_STYLE_NONE:
+      break;
+    case BOX_STYLE_LIGHT:
+      drawBox(rightLeft, hLightTop, cellWInt, hLightBottom);
+      break;
+    case BOX_STYLE_HEAVY:
+      drawBox(rightLeft, hHeavyTop, cellWInt, hHeavyBottom);
+      break;
+    case BOX_STYLE_DOUBLE: {
+      const topLeft = up === BOX_STYLE_DOUBLE ? vLightRight : rightLeft;
+      const bottomLeft = down === BOX_STYLE_DOUBLE ? vLightRight : rightLeft;
+      drawBox(topLeft, hDoubleTop, cellWInt, hLightTop);
+      drawBox(bottomLeft, hLightBottom, cellWInt, hDoubleBottom);
+      break;
+    }
+  }
+
+  switch (down) {
+    case BOX_STYLE_NONE:
+      break;
+    case BOX_STYLE_LIGHT:
+      drawBox(vLightLeft, downTop, vLightRight, cellHInt);
+      break;
+    case BOX_STYLE_HEAVY:
+      drawBox(vHeavyLeft, downTop, vHeavyRight, cellHInt);
+      break;
+    case BOX_STYLE_DOUBLE: {
+      const leftTop = left === BOX_STYLE_DOUBLE ? hLightBottom : downTop;
+      const rightTop = right === BOX_STYLE_DOUBLE ? hLightBottom : downTop;
+      drawBox(vDoubleLeft, leftTop, vLightLeft, cellHInt);
+      drawBox(vLightRight, rightTop, vDoubleRight, cellHInt);
+      break;
+    }
+  }
+
+  switch (left) {
+    case BOX_STYLE_NONE:
+      break;
+    case BOX_STYLE_LIGHT:
+      drawBox(0, hLightTop, leftRight, hLightBottom);
+      break;
+    case BOX_STYLE_HEAVY:
+      drawBox(0, hHeavyTop, leftRight, hHeavyBottom);
+      break;
+    case BOX_STYLE_DOUBLE: {
+      const topRight = up === BOX_STYLE_DOUBLE ? vLightLeft : leftRight;
+      const bottomRight = down === BOX_STYLE_DOUBLE ? vLightLeft : leftRight;
+      drawBox(0, hDoubleTop, topRight, hLightTop);
+      drawBox(0, hLightBottom, bottomRight, hDoubleBottom);
+      break;
+    }
   }
 
   return true;
