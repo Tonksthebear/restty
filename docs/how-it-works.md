@@ -50,6 +50,6 @@ restty drains that output (`wasm.drainOutput(...)`) and forwards it to the PTY t
 
 ## Local dev runtime
 
-- `bun run build:assets`: builds browser bundles into `playground/public/`.
-- `bun run pty`: starts local websocket PTY server (`ws://localhost:8787/pty`).
-- `bun run playground`: starts dev server (`http://localhost:5173`).
+- `bun run build:assets`: builds static playground app bundle into `playground/public/playground.js`.
+- `bun run playground`: starts local dev stack (PTY websocket server + dev server).
+- `bun run pty`: PTY websocket server only (`ws://localhost:8787/pty`).

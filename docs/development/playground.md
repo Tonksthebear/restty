@@ -3,21 +3,23 @@
 Hosted demo: `https://restty.pages.dev/`
 
 ## Quick Start (Bun)
-1. Build browser assets:
-   - `bun run build:assets`
-2. Start the PTY websocket server:
-   - `bun run pty` (default `ws://localhost:8787/pty`)
-3. Start the playground dev server:
-   - `bun run playground` (default `http://localhost:5173`)
-4. Open the URL shown in the console.
+1. Start local playground stack:
+   - `bun run playground`
+   - Starts PTY websocket server (`ws://localhost:8787/pty`) and playground dev server (`http://localhost:5173`).
+2. Open the URL shown in the console.
+
+Run components separately when needed:
+
+- `bun run pty`
 
 Static-file-only option:
 
+- `bun run build:assets`
 - `bun run playground:static`
 
 WebContainer mode note:
 
-- When using the in-browser WebContainer backend, `/demo.sh` and `/test.sh` are auto-seeded so you can run `./demo.sh` or `./test.sh` directly in the shell.
+- In-browser WebContainer mode seeds `/demo.js`, `/test.js`, and related demo scripts automatically.
 
 Cloudflare Pages static deploy:
 
@@ -37,14 +39,6 @@ Requires Zig 0.15.2+ (matches Ghostty's minimum).
 If you need to refresh the embedded library wasm blob (`src/wasm/embedded.ts`):
 
 - `bun run playground/scripts/embed-wasm.ts`
-
-## Build text-shaper bundle
-From repo root:
-- `bun run playground/build-text-shaper.ts`
-
-This bundles `reference/text-shaper/src/index.ts` to `playground/public/text-shaper.js`.
-
-`bun run build:assets` already runs this, plus the restty input/wasm browser bundles.
 
 ## Fetch default font
 From repo root:

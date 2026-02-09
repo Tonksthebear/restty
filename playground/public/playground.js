@@ -9,836 +9,6 @@ var __export = (target, all) => {
     });
 };
 
-// src/app/panes-context-menu.ts
-function createPaneContextMenuController(options) {
-  const contextMenuEl = options.doc.createElement("div");
-  contextMenuEl.className = "pane-context-menu";
-  contextMenuEl.hidden = true;
-  options.doc.body.appendChild(contextMenuEl);
-  const hide = () => {
-    contextMenuEl.hidden = true;
-    contextMenuEl.innerHTML = "";
-  };
-  const addSeparator = () => {
-    const separator = options.doc.createElement("div");
-    separator.className = "pane-context-menu-separator";
-    contextMenuEl.appendChild(separator);
-  };
-  const render = (items) => {
-    contextMenuEl.innerHTML = "";
-    for (const item of items) {
-      if (item === "separator") {
-        addSeparator();
-        continue;
-      }
-      const button = options.doc.createElement("button");
-      button.type = "button";
-      button.className = "pane-context-menu-item";
-      if (item.danger)
-        button.classList.add("is-danger");
-      if (item.enabled === false)
-        button.disabled = true;
-      const label = options.doc.createElement("span");
-      label.className = "pane-context-menu-label";
-      label.textContent = item.label;
-      button.appendChild(label);
-      if (item.shortcut) {
-        const shortcut = options.doc.createElement("span");
-        shortcut.className = "pane-context-menu-shortcut";
-        shortcut.textContent = item.shortcut;
-        button.appendChild(shortcut);
-      }
-      button.addEventListener("click", () => {
-        hide();
-        item.action();
-      });
-      contextMenuEl.appendChild(button);
-    }
-  };
-  const show = (pane, clientX, clientY, manager) => {
-    const items = options.contextMenu.getItems(pane, manager);
-    render(items);
-    contextMenuEl.hidden = false;
-    const margin = 8;
-    const rect = contextMenuEl.getBoundingClientRect();
-    const maxX = Math.max(margin, options.win.innerWidth - rect.width - margin);
-    const maxY = Math.max(margin, options.win.innerHeight - rect.height - margin);
-    const left = Math.min(Math.max(clientX, margin), maxX);
-    const top = Math.min(Math.max(clientY, margin), maxY);
-    contextMenuEl.style.left = `${left}px`;
-    contextMenuEl.style.top = `${top}px`;
-  };
-  const destroy = () => {
-    hide();
-    contextMenuEl.remove();
-  };
-  return {
-    element: contextMenuEl,
-    isOpen: () => !contextMenuEl.hidden,
-    containsTarget: (target) => target instanceof Node && contextMenuEl.contains(target),
-    show,
-    hide,
-    destroy
-  };
-}
-
-// src/app/panes-styles.ts
-var RESTTY_PANE_ROOT_CLASS = "restty-pane-root";
-var RESTTY_PANE_STYLE_MARKER = "data-restty-pane-styles";
-var RESTTY_PANE_STYLE_TEXT = `
-.${RESTTY_PANE_ROOT_CLASS} {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane-split {
-  display: flex;
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 0;
-  gap: 0;
-  padding: 0;
-  background: var(--restty-pane-split-background, #000);
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane-split.is-vertical {
-  flex-direction: row;
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane-split.is-horizontal {
-  flex-direction: column;
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane {
-  position: relative;
-  flex: 1 1 0;
-  min-width: 0;
-  min-height: 0;
-  background: var(--restty-pane-background, #000);
-  border: 0;
-  overflow: hidden;
-  opacity: var(--restty-pane-inactive-opacity, 0.9);
-  transition: opacity var(--restty-pane-opacity-transition, 140ms) ease-out;
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane.is-active {
-  opacity: var(--restty-pane-active-opacity, 1);
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane-divider {
-  position: relative;
-  z-index: 2;
-  flex: 0 0 var(--restty-pane-divider-thickness, 1px);
-  touch-action: none;
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane-divider.is-vertical {
-  cursor: col-resize;
-  background: transparent;
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane-divider.is-horizontal {
-  cursor: row-resize;
-  background: transparent;
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane-divider.is-vertical:hover,
-.${RESTTY_PANE_ROOT_CLASS} .pane-divider.is-vertical.is-dragging {
-  background:
-    radial-gradient(
-      100px 46% at 50% 50%,
-      rgba(235, 235, 235, 0.92) 0%,
-      rgba(200, 200, 200, 0.48) 46%,
-      rgba(155, 155, 155, 0.12) 68%,
-      rgba(120, 120, 120, 0) 100%
-    ),
-    rgba(185, 185, 185, 0.24);
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane-divider.is-horizontal:hover,
-.${RESTTY_PANE_ROOT_CLASS} .pane-divider.is-horizontal.is-dragging {
-  background:
-    radial-gradient(
-      46% 100px at 50% 50%,
-      rgba(235, 235, 235, 0.92) 0%,
-      rgba(200, 200, 200, 0.48) 46%,
-      rgba(155, 155, 155, 0.12) 68%,
-      rgba(120, 120, 120, 0) 100%
-    ),
-    rgba(185, 185, 185, 0.24);
-}
-
-body.is-resizing-split {
-  user-select: none;
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane-canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-  outline: none;
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane-ime-input {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.${RESTTY_PANE_ROOT_CLASS} .pane-term-debug {
-  display: none;
-}
-
-.pane-context-menu {
-  position: fixed;
-  z-index: 9999;
-  min-width: 200px;
-  padding: 6px;
-  border: 1px solid #2a2a2a;
-  border-radius: 8px;
-  background: #161616;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
-}
-
-.pane-context-menu-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 7px 9px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
-  color: #d6d6d6;
-  text-align: left;
-  cursor: pointer;
-}
-
-.pane-context-menu-item:hover {
-  background: #252525;
-}
-
-.pane-context-menu-item:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-.pane-context-menu-item.is-danger {
-  color: #f1a1a1;
-}
-
-.pane-context-menu-label {
-  font-size: 12px;
-}
-
-.pane-context-menu-shortcut {
-  font-size: 10px;
-  color: #868686;
-}
-
-.pane-context-menu-separator {
-  height: 1px;
-  margin: 6px 4px;
-  background: #2a2a2a;
-}
-`;
-var DEFAULT_RESTTY_PANE_STYLE_OPTIONS = {
-  splitBackground: "#000",
-  paneBackground: "#000",
-  inactivePaneOpacity: 0.9,
-  activePaneOpacity: 1,
-  opacityTransitionMs: 140,
-  dividerThicknessPx: 1
-};
-function clampNumber(value, min, max) {
-  return Math.min(max, Math.max(min, value));
-}
-function normalizeColor(value, fallback) {
-  if (typeof value !== "string")
-    return fallback;
-  const trimmed = value.trim();
-  return trimmed ? trimmed : fallback;
-}
-function normalizePaneStyleOptions(options) {
-  const inactivePaneOpacity = Number.isFinite(options.inactivePaneOpacity) ? clampNumber(Number(options.inactivePaneOpacity), 0, 1) : DEFAULT_RESTTY_PANE_STYLE_OPTIONS.inactivePaneOpacity;
-  const activePaneOpacity = Number.isFinite(options.activePaneOpacity) ? clampNumber(Number(options.activePaneOpacity), 0, 1) : DEFAULT_RESTTY_PANE_STYLE_OPTIONS.activePaneOpacity;
-  const opacityTransitionMs = Number.isFinite(options.opacityTransitionMs) ? clampNumber(Number(options.opacityTransitionMs), 0, 5000) : DEFAULT_RESTTY_PANE_STYLE_OPTIONS.opacityTransitionMs;
-  const dividerThicknessPx = Number.isFinite(options.dividerThicknessPx) ? clampNumber(Number(options.dividerThicknessPx), 1, 32) : DEFAULT_RESTTY_PANE_STYLE_OPTIONS.dividerThicknessPx;
-  return {
-    splitBackground: normalizeColor(options.splitBackground, DEFAULT_RESTTY_PANE_STYLE_OPTIONS.splitBackground),
-    paneBackground: normalizeColor(options.paneBackground, DEFAULT_RESTTY_PANE_STYLE_OPTIONS.paneBackground),
-    inactivePaneOpacity,
-    activePaneOpacity,
-    opacityTransitionMs,
-    dividerThicknessPx
-  };
-}
-function ensureResttyPaneStylesDocument(doc) {
-  if (doc.querySelector(`style[${RESTTY_PANE_STYLE_MARKER}="1"]`))
-    return;
-  const style = doc.createElement("style");
-  style.setAttribute(RESTTY_PANE_STYLE_MARKER, "1");
-  style.textContent = RESTTY_PANE_STYLE_TEXT;
-  doc.head.appendChild(style);
-}
-function applyPaneStyleOptionsToRoot(root, options) {
-  root.classList.add(RESTTY_PANE_ROOT_CLASS);
-  root.style.setProperty("--restty-pane-split-background", options.splitBackground);
-  root.style.setProperty("--restty-pane-background", options.paneBackground);
-  root.style.setProperty("--restty-pane-inactive-opacity", options.inactivePaneOpacity.toFixed(3));
-  root.style.setProperty("--restty-pane-active-opacity", options.activePaneOpacity.toFixed(3));
-  root.style.setProperty("--restty-pane-opacity-transition", `${options.opacityTransitionMs}ms`);
-  root.style.setProperty("--restty-pane-divider-thickness", `${options.dividerThicknessPx}px`);
-}
-function clearPaneStyleOptionsFromRoot(root) {
-  root.classList.remove(RESTTY_PANE_ROOT_CLASS);
-  root.style.removeProperty("--restty-pane-split-background");
-  root.style.removeProperty("--restty-pane-background");
-  root.style.removeProperty("--restty-pane-inactive-opacity");
-  root.style.removeProperty("--restty-pane-active-opacity");
-  root.style.removeProperty("--restty-pane-opacity-transition");
-  root.style.removeProperty("--restty-pane-divider-thickness");
-}
-
-// src/app/panes.ts
-function getResttyShortcutModifierLabel() {
-  const isMac = typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
-  return isMac ? "Cmd" : "Ctrl";
-}
-function createDefaultResttyPaneContextMenuItems(options) {
-  const { pane, manager, getPtyUrl } = options;
-  const mod = options.modKeyLabel ?? getResttyShortcutModifierLabel();
-  const closeEnabled = manager.getPanes().length > 1;
-  const pauseLabel = typeof pane.paused === "boolean" ? pane.paused ? "Resume Renderer" : "Pause Renderer" : "Toggle Renderer Pause";
-  return [
-    {
-      label: "Copy",
-      shortcut: `${mod}+C`,
-      action: async () => {
-        await pane.app.copySelectionToClipboard();
-      }
-    },
-    {
-      label: "Paste",
-      shortcut: `${mod}+V`,
-      action: async () => {
-        await pane.app.pasteFromClipboard();
-      }
-    },
-    "separator",
-    {
-      label: "Split Right",
-      shortcut: `${mod}+D`,
-      action: () => {
-        manager.splitPane(pane.id, "vertical");
-      }
-    },
-    {
-      label: "Split Down",
-      shortcut: `${mod}+Shift+D`,
-      action: () => {
-        manager.splitPane(pane.id, "horizontal");
-      }
-    },
-    {
-      label: "Close Pane",
-      enabled: closeEnabled,
-      danger: true,
-      action: () => {
-        manager.closePane(pane.id);
-      }
-    },
-    "separator",
-    {
-      label: "Clear Screen",
-      action: () => {
-        pane.app.clearScreen();
-      }
-    },
-    {
-      label: pane.app.isPtyConnected() ? "Disconnect PTY" : "Connect PTY",
-      action: () => {
-        if (pane.app.isPtyConnected()) {
-          pane.app.disconnectPty();
-          return;
-        }
-        const url = (getPtyUrl?.() ?? "").trim();
-        pane.app.connectPty(url);
-      }
-    },
-    {
-      label: pauseLabel,
-      action: () => {
-        if (typeof pane.setPaused === "function") {
-          pane.setPaused(!(pane.paused ?? false));
-          return;
-        }
-        pane.app.togglePause();
-      }
-    }
-  ];
-}
-function createResttyPaneManager(options) {
-  const { root, createPane } = options;
-  if (!(root instanceof HTMLElement)) {
-    throw new Error("createResttyPaneManager requires a root HTMLElement");
-  }
-  const panes = new Map;
-  const paneCleanupFns = new Map;
-  const minPaneSize = Number.isFinite(options.minPaneSize) ? Math.max(24, Number(options.minPaneSize)) : 96;
-  const shortcutOptions = typeof options.shortcuts === "object" ? options.shortcuts : { enabled: options.shortcuts !== false };
-  const stylesInput = typeof options.styles === "object" && options.styles ? options.styles : undefined;
-  const stylesEnabled = options.styles === false ? false : stylesInput?.enabled ?? true;
-  let styleOptions = normalizePaneStyleOptions({
-    ...DEFAULT_RESTTY_PANE_STYLE_OPTIONS,
-    ...stylesInput
-  });
-  if (stylesEnabled) {
-    const doc = root.ownerDocument ?? document;
-    ensureResttyPaneStylesDocument(doc);
-    applyPaneStyleOptionsToRoot(root, styleOptions);
-  }
-  let nextPaneId = 1;
-  let activePaneId = null;
-  let focusedPaneId = null;
-  let resizeRaf = 0;
-  let splitResizeState = null;
-  const ownerDoc = root.ownerDocument ?? document;
-  const ownerWin = ownerDoc.defaultView ?? window;
-  const contextMenuController = options.contextMenu ? createPaneContextMenuController({
-    contextMenu: options.contextMenu,
-    doc: ownerDoc,
-    win: ownerWin
-  }) : null;
-  const requestLayoutSync = () => {
-    if (resizeRaf)
-      return;
-    resizeRaf = requestAnimationFrame(() => {
-      resizeRaf = 0;
-      options.onLayoutChanged?.();
-    });
-  };
-  const getStyleOptions = () => ({
-    ...styleOptions
-  });
-  const setStyleOptions = (next) => {
-    styleOptions = normalizePaneStyleOptions({
-      ...styleOptions,
-      ...next
-    });
-    if (!stylesEnabled)
-      return;
-    applyPaneStyleOptionsToRoot(root, styleOptions);
-  };
-  const getPanes = () => Array.from(panes.values());
-  const getPaneById = (id) => {
-    return panes.get(id) ?? null;
-  };
-  const findPaneByElement = (element) => {
-    if (!(element instanceof HTMLElement))
-      return null;
-    const host = element.closest(".pane");
-    if (!host)
-      return null;
-    const id = Number(host.dataset.paneId ?? "");
-    if (!Number.isFinite(id))
-      return null;
-    return panes.get(id) ?? null;
-  };
-  const getActivePane = () => {
-    if (activePaneId === null)
-      return null;
-    return panes.get(activePaneId) ?? null;
-  };
-  const getFocusedPane = () => {
-    if (focusedPaneId !== null) {
-      const focused = panes.get(focusedPaneId);
-      if (focused)
-        return focused;
-    }
-    if (typeof document === "undefined")
-      return null;
-    return findPaneByElement(document.activeElement);
-  };
-  const setActivePane = (id, config) => {
-    const pane = panes.get(id);
-    if (!pane)
-      return;
-    activePaneId = id;
-    for (const current of panes.values()) {
-      current.container.classList.toggle("is-active", current.id === id);
-    }
-    options.onActivePaneChange?.(pane);
-    if (config?.focus) {
-      const target = pane.focusTarget ?? pane.container;
-      if (target instanceof HTMLElement) {
-        target.focus({ preventScroll: true });
-      }
-    }
-  };
-  const markPaneFocused = (id, config) => {
-    focusedPaneId = id;
-    setActivePane(id, config);
-  };
-  const getSplitBranches = (split) => {
-    const branches = [];
-    for (const child of Array.from(split.children)) {
-      if (!(child instanceof HTMLElement))
-        continue;
-      if (child.classList.contains("pane-divider"))
-        continue;
-      branches.push(child);
-    }
-    return branches;
-  };
-  const getRectEdgeDistanceSquared = (sourceRect, targetRect) => {
-    const dx = Math.max(targetRect.left - sourceRect.right, sourceRect.left - targetRect.right, 0);
-    const dy = Math.max(targetRect.top - sourceRect.bottom, sourceRect.top - targetRect.bottom, 0);
-    return dx ** 2 + dy ** 2;
-  };
-  const getRectCenterDistanceSquared = (sourceRect, targetRect) => {
-    const sourceCenterX = sourceRect.left + sourceRect.width * 0.5;
-    const sourceCenterY = sourceRect.top + sourceRect.height * 0.5;
-    const targetCenterX = targetRect.left + targetRect.width * 0.5;
-    const targetCenterY = targetRect.top + targetRect.height * 0.5;
-    const dx = targetCenterX - sourceCenterX;
-    const dy = targetCenterY - sourceCenterY;
-    return dx ** 2 + dy ** 2;
-  };
-  const findClosestPaneToRect = (sourceRect) => {
-    if (!sourceRect)
-      return null;
-    let closestPane = null;
-    let closestEdgeDistance = Number.POSITIVE_INFINITY;
-    let closestCenterDistance = Number.POSITIVE_INFINITY;
-    for (const candidate of panes.values()) {
-      const targetRect = candidate.container.getBoundingClientRect();
-      const edgeDistance = getRectEdgeDistanceSquared(sourceRect, targetRect);
-      const centerDistance = getRectCenterDistanceSquared(sourceRect, targetRect);
-      if (edgeDistance < closestEdgeDistance || edgeDistance === closestEdgeDistance && centerDistance < closestCenterDistance) {
-        closestPane = candidate;
-        closestEdgeDistance = edgeDistance;
-        closestCenterDistance = centerDistance;
-      }
-    }
-    return closestPane;
-  };
-  const hideContextMenu = () => {
-    contextMenuController?.hide();
-  };
-  const bindPaneInteractions = (pane) => {
-    const cleanupFns = [];
-    const { id, container } = pane;
-    const onPointerDown = () => {
-      markPaneFocused(id);
-    };
-    container.addEventListener("pointerdown", onPointerDown);
-    cleanupFns.push(() => {
-      container.removeEventListener("pointerdown", onPointerDown);
-    });
-    const focusTarget = pane.focusTarget;
-    if (focusTarget) {
-      const onFocus = () => {
-        markPaneFocused(id);
-      };
-      focusTarget.addEventListener("focus", onFocus);
-      cleanupFns.push(() => {
-        focusTarget.removeEventListener("focus", onFocus);
-      });
-    }
-    if (options.contextMenu) {
-      const onContextMenu = (event) => {
-        if (options.contextMenu?.canOpen && !options.contextMenu.canOpen(event, pane)) {
-          return;
-        }
-        event.preventDefault();
-        event.stopPropagation();
-        markPaneFocused(id);
-        contextMenuController?.show(pane, event.clientX, event.clientY, api);
-      };
-      container.addEventListener("contextmenu", onContextMenu);
-      cleanupFns.push(() => {
-        container.removeEventListener("contextmenu", onContextMenu);
-      });
-    }
-    paneCleanupFns.set(id, cleanupFns);
-  };
-  const createSplitDivider = (direction) => {
-    const divider = document.createElement("div");
-    divider.className = `pane-divider ${direction === "vertical" ? "is-vertical" : "is-horizontal"}`;
-    divider.setAttribute("role", "separator");
-    divider.setAttribute("aria-orientation", direction === "vertical" ? "vertical" : "horizontal");
-    const onPointerMove = (event) => {
-      const state = splitResizeState;
-      if (!state || event.pointerId !== state.pointerId)
-        return;
-      event.preventDefault();
-      const coord = state.axis === "x" ? event.clientX : event.clientY;
-      const delta = coord - state.startCoord;
-      const maxFirst = Math.max(minPaneSize, state.total - minPaneSize);
-      const nextFirst = Math.min(maxFirst, Math.max(minPaneSize, state.startFirst + delta));
-      const nextSecond = Math.max(minPaneSize, state.total - nextFirst);
-      const firstPercent = nextFirst / (nextFirst + nextSecond) * 100;
-      const secondPercent = 100 - firstPercent;
-      state.first.style.flex = `0 0 ${firstPercent.toFixed(5)}%`;
-      state.second.style.flex = `0 0 ${secondPercent.toFixed(5)}%`;
-      requestLayoutSync();
-    };
-    const endResize = () => {
-      if (!splitResizeState)
-        return;
-      splitResizeState.divider.classList.remove("is-dragging");
-      document.body.classList.remove("is-resizing-split");
-      splitResizeState = null;
-    };
-    const onPointerEnd = (event) => {
-      if (!splitResizeState || event.pointerId !== splitResizeState.pointerId)
-        return;
-      try {
-        divider.releasePointerCapture(splitResizeState.pointerId);
-      } catch {}
-      divider.removeEventListener("pointermove", onPointerMove);
-      divider.removeEventListener("pointerup", onPointerEnd);
-      divider.removeEventListener("pointercancel", onPointerEnd);
-      endResize();
-    };
-    divider.addEventListener("pointerdown", (event) => {
-      if (event.button !== 0)
-        return;
-      const first = divider.previousElementSibling;
-      const second = divider.nextElementSibling;
-      const split = divider.parentElement;
-      if (!first || !second || !split)
-        return;
-      const splitRect = split.getBoundingClientRect();
-      const firstRect = first.getBoundingClientRect();
-      const axis = direction === "vertical" ? "x" : "y";
-      const total = axis === "x" ? splitRect.width : splitRect.height;
-      if (total <= 0)
-        return;
-      endResize();
-      event.preventDefault();
-      event.stopPropagation();
-      splitResizeState = {
-        pointerId: event.pointerId,
-        axis,
-        divider,
-        first,
-        second,
-        startCoord: axis === "x" ? event.clientX : event.clientY,
-        startFirst: axis === "x" ? firstRect.width : firstRect.height,
-        total
-      };
-      divider.classList.add("is-dragging");
-      document.body.classList.add("is-resizing-split");
-      divider.setPointerCapture(event.pointerId);
-      divider.addEventListener("pointermove", onPointerMove);
-      divider.addEventListener("pointerup", onPointerEnd);
-      divider.addEventListener("pointercancel", onPointerEnd);
-    });
-    return divider;
-  };
-  const createPaneInternal = (sourcePane) => {
-    const id = nextPaneId;
-    nextPaneId += 1;
-    const pane = createPane({ id, sourcePane, manager: api });
-    if (pane.id !== id) {
-      throw new Error(`createResttyPaneManager expected pane.id=${id}, received ${pane.id}`);
-    }
-    if (!(pane.container instanceof HTMLDivElement)) {
-      throw new Error("createResttyPaneManager createPane() must return { container: HTMLDivElement }");
-    }
-    pane.container.classList.add("pane");
-    pane.container.dataset.paneId = `${id}`;
-    panes.set(id, pane);
-    bindPaneInteractions(pane);
-    options.onPaneCreated?.(pane);
-    return pane;
-  };
-  const collapseSplitAncestors = (start) => {
-    let current = start;
-    while (current && current.classList.contains("pane-split")) {
-      const branches = getSplitBranches(current);
-      if (branches.length > 1)
-        return;
-      const onlyChild = branches[0];
-      const parent = current.parentElement;
-      if (!parent || !onlyChild)
-        return;
-      const inheritedFlex = current.style.flex;
-      if (inheritedFlex) {
-        onlyChild.style.flex = inheritedFlex;
-      } else {
-        onlyChild.style.flex = "";
-      }
-      parent.replaceChild(onlyChild, current);
-      current = parent;
-    }
-  };
-  const splitPane = (id, direction) => {
-    const target = panes.get(id);
-    if (!target)
-      return null;
-    const parent = target.container.parentElement;
-    if (!parent)
-      return null;
-    const split = document.createElement("div");
-    split.className = `pane-split ${direction === "vertical" ? "is-vertical" : "is-horizontal"}`;
-    const inheritedFlex = target.container.style.flex;
-    if (inheritedFlex) {
-      split.style.flex = inheritedFlex;
-    }
-    parent.replaceChild(split, target.container);
-    target.container.style.flex = "0 0 50%";
-    split.appendChild(target.container);
-    split.appendChild(createSplitDivider(direction));
-    const created = createPaneInternal(target);
-    created.container.style.flex = "0 0 50%";
-    split.appendChild(created.container);
-    markPaneFocused(created.id, { focus: true });
-    requestLayoutSync();
-    options.onPaneSplit?.(target, created, direction);
-    return created;
-  };
-  const splitActivePane = (direction) => {
-    const target = getFocusedPane() ?? getActivePane();
-    if (!target)
-      return null;
-    return splitPane(target.id, direction);
-  };
-  const closePane = (id) => {
-    if (panes.size <= 1)
-      return false;
-    const pane = panes.get(id);
-    if (!pane)
-      return false;
-    const closingRect = pane.container.getBoundingClientRect();
-    const cleanupFns = paneCleanupFns.get(id) ?? [];
-    paneCleanupFns.delete(id);
-    for (const cleanup of cleanupFns) {
-      cleanup();
-    }
-    options.destroyPane?.(pane);
-    panes.delete(id);
-    if (activePaneId === id)
-      activePaneId = null;
-    if (focusedPaneId === id)
-      focusedPaneId = null;
-    const parent = pane.container.parentElement;
-    pane.container.remove();
-    collapseSplitAncestors(parent);
-    const fallback = getActivePane() ?? findClosestPaneToRect(closingRect) ?? getPanes()[0] ?? null;
-    if (fallback) {
-      markPaneFocused(fallback.id, { focus: true });
-    } else {
-      options.onActivePaneChange?.(null);
-    }
-    options.onPaneClosed?.(pane);
-    requestLayoutSync();
-    return true;
-  };
-  const createInitialPane = (config) => {
-    if (panes.size) {
-      return getPanes()[0];
-    }
-    const first = createPaneInternal(null);
-    root.appendChild(first.container);
-    markPaneFocused(first.id, { focus: config?.focus !== false });
-    requestLayoutSync();
-    return first;
-  };
-  const onWindowPointerDown = (event) => {
-    if (!contextMenuController?.isOpen())
-      return;
-    if (contextMenuController.containsTarget(event.target))
-      return;
-    hideContextMenu();
-  };
-  const onWindowBlur = () => {
-    hideContextMenu();
-  };
-  const onWindowKeyDown = (event) => {
-    if (contextMenuController?.isOpen() && event.key === "Escape") {
-      hideContextMenu();
-      return;
-    }
-    if (shortcutOptions.enabled === false)
-      return;
-    if (shortcutOptions.canHandleEvent && !shortcutOptions.canHandleEvent(event)) {
-      return;
-    }
-    const target = event.target;
-    if (target && ["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(target.tagName)) {
-      const allowed = shortcutOptions.isAllowedInputTarget?.(target) ?? false;
-      if (!allowed)
-        return;
-    }
-    const isMac = typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
-    const hasCommandModifier = isMac ? event.metaKey : event.ctrlKey;
-    if (!hasCommandModifier || event.altKey || event.code !== "KeyD" || event.repeat) {
-      return;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-    splitActivePane(event.shiftKey ? "horizontal" : "vertical");
-  };
-  window.addEventListener("pointerdown", onWindowPointerDown);
-  window.addEventListener("blur", onWindowBlur);
-  window.addEventListener("keydown", onWindowKeyDown, { capture: true });
-  const destroy = () => {
-    window.removeEventListener("pointerdown", onWindowPointerDown);
-    window.removeEventListener("blur", onWindowBlur);
-    window.removeEventListener("keydown", onWindowKeyDown, { capture: true });
-    if (resizeRaf) {
-      cancelAnimationFrame(resizeRaf);
-      resizeRaf = 0;
-    }
-    for (const pane of getPanes()) {
-      const cleanupFns = paneCleanupFns.get(pane.id) ?? [];
-      for (const cleanup of cleanupFns) {
-        cleanup();
-      }
-      paneCleanupFns.delete(pane.id);
-      options.destroyPane?.(pane);
-    }
-    panes.clear();
-    activePaneId = null;
-    focusedPaneId = null;
-    root.replaceChildren();
-    hideContextMenu();
-    contextMenuController?.destroy();
-    if (stylesEnabled) {
-      clearPaneStyleOptionsFromRoot(root);
-    }
-  };
-  const api = {
-    getPanes,
-    getPaneById,
-    getActivePane,
-    getFocusedPane,
-    createInitialPane,
-    setActivePane,
-    markPaneFocused,
-    splitPane,
-    splitActivePane,
-    closePane,
-    getStyleOptions,
-    setStyleOptions,
-    requestLayoutSync,
-    hideContextMenu,
-    destroy
-  };
-  return api;
-}
-
 // src/renderer/box-drawing-map.ts
 var BOX_LINE_MAP = new Map([
   [9472, [0, 1, 0, 1]],
@@ -2600,6 +1770,6371 @@ function ensureGLInstanceBuffer(state, kind, byteLength) {
   gl.bufferData(gl.ARRAY_BUFFER, newSize, gl.DYNAMIC_DRAW);
   state[capKey] = newSize;
   gl.bindVertexArray(null);
+}
+// src/grid/grid.ts
+function fontHeightUnits(font) {
+  if (!font)
+    return 0;
+  const height = font.height;
+  if (height !== undefined && Number.isFinite(height) && height > 0)
+    return height;
+  const asc = font.ascender ?? 0;
+  const desc = font.descender ?? 0;
+  const fallback = asc - desc;
+  if (Number.isFinite(fallback) && fallback > 0)
+    return fallback;
+  return font.upem || 1000;
+}
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+// src/fonts/nerd-ranges.ts
+var NERD_SYMBOL_RANGES = [
+  [57344, 57354],
+  [57504, 57507],
+  [57520, 57544],
+  [57546, 57546],
+  [57548, 57559],
+  [57856, 58025],
+  [58112, 58339],
+  [58874, 59063],
+  [59136, 59631],
+  [60000, 60446],
+  [60672, 62207],
+  [60928, 60939],
+  [62208, 62337],
+  [62464, 62771],
+  [983041, 989936]
+];
+function isNerdSymbolCodepoint(cp) {
+  for (const [start, end] of NERD_SYMBOL_RANGES) {
+    if (cp >= start && cp <= end)
+      return true;
+  }
+  return false;
+}
+
+// src/fonts/manager.ts
+var SYMBOL_FONT_HINTS = [/symbols nerd font/i, /noto sans symbols/i];
+var NERD_SYMBOL_FONT_HINTS = [/symbols nerd font/i, /nerd fonts symbols/i];
+var COLOR_EMOJI_FONT_HINTS = [
+  /apple color emoji/i,
+  /noto color emoji/i,
+  /segoe ui emoji/i,
+  /twemoji/i
+];
+var WIDE_FONT_HINTS = [
+  /cjk/i,
+  /emoji/i,
+  /openmoji/i,
+  /source han/i,
+  /pingfang/i,
+  /hiragino/i,
+  /yu gothic/i,
+  /meiryo/i,
+  /yahei/i,
+  /ms gothic/i,
+  /simhei/i,
+  /simsun/i,
+  /nanum/i,
+  /apple sd gothic/i
+];
+function isSymbolFont(entry) {
+  if (!entry?.label)
+    return false;
+  const label = String(entry.label).toLowerCase();
+  return SYMBOL_FONT_HINTS.some((rule) => rule.test(label));
+}
+function isNerdSymbolFont(entry) {
+  if (!entry?.label)
+    return false;
+  const label = String(entry.label).toLowerCase();
+  return NERD_SYMBOL_FONT_HINTS.some((rule) => rule.test(label));
+}
+function isColorEmojiFont(entry) {
+  if (!entry?.label)
+    return false;
+  const label = String(entry.label).toLowerCase();
+  return COLOR_EMOJI_FONT_HINTS.some((rule) => rule.test(label));
+}
+function fontMaxCellSpan(entry) {
+  if (!entry?.label)
+    return 1;
+  const label = String(entry.label).toLowerCase();
+  for (const rule of WIDE_FONT_HINTS) {
+    if (rule.test(label))
+      return 2;
+  }
+  return 1;
+}
+function fontScaleOverride(entry, overrides = []) {
+  if (!entry?.label)
+    return 1;
+  const label = String(entry.label).toLowerCase();
+  for (const rule of overrides) {
+    if (rule.match.test(label))
+      return rule.scale;
+  }
+  return 1;
+}
+function createFontEntry(font, label) {
+  return {
+    font,
+    label,
+    glyphCache: new Map,
+    boundsCache: new Map,
+    colorGlyphTexts: new Map,
+    glyphIds: new Set,
+    atlas: null,
+    fontSizePx: 0,
+    atlasScale: 1,
+    advanceUnits: 0,
+    constraintSignature: ""
+  };
+}
+function resetFontEntry(entry) {
+  entry.glyphCache.clear();
+  entry.boundsCache.clear();
+  entry.colorGlyphTexts.clear();
+  entry.glyphIds.clear();
+  entry.atlas = null;
+  entry.fontSizePx = 0;
+  entry.atlasScale = 1;
+  entry.advanceUnits = 0;
+  entry.constraintSignature = "";
+}
+function fontAdvanceUnits(entry, shapeClusterWithFont) {
+  if (!entry?.font)
+    return 0;
+  if (entry.advanceUnits)
+    return entry.advanceUnits;
+  const glyphId = entry.font.glyphIdForChar("M");
+  let advance = 0;
+  if (glyphId !== undefined && glyphId !== null) {
+    advance = entry.font.advanceWidth(glyphId);
+  }
+  if (!advance) {
+    advance = shapeClusterWithFont(entry, "M").advance;
+  }
+  if (!advance) {
+    advance = fontHeightUnits(entry.font) || entry.font.upem || 1000;
+  }
+  entry.advanceUnits = advance;
+  return advance;
+}
+function glyphWidthUnits(entry, glyphId) {
+  if (!entry?.font || glyphId === undefined || glyphId === null)
+    return 0;
+  if (!entry.boundsCache)
+    entry.boundsCache = new Map;
+  if (entry.boundsCache.has(glyphId))
+    return entry.boundsCache.get(glyphId);
+  const bounds = entry.font.getGlyphBounds(glyphId);
+  let width = 0;
+  if (bounds) {
+    width = bounds.xMax - bounds.xMin;
+  }
+  if (!Number.isFinite(width) || width <= 0) {
+    width = entry.font.advanceWidth(glyphId) || 0;
+  }
+  entry.boundsCache.set(glyphId, width);
+  return width;
+}
+// src/fonts/nerd-constraints.ts
+var NERD_CONSTRAINTS = [
+  {
+    start: 9211,
+    end: 9214,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 9776,
+    end: 9776,
+    constraint: {
+      size: "cover",
+      height: "icon",
+      max_constraint_width: 1,
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      pad_left: 0.05,
+      pad_right: 0.05,
+      pad_top: 0.05,
+      pad_bottom: 0.05
+    }
+  },
+  {
+    start: 9829,
+    end: 9829,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 9889,
+    end: 9889,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 10092,
+    end: 10093,
+    constraint: {
+      size: "cover",
+      max_constraint_width: 1,
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.7142857142857143,
+      relative_height: 0.8910614525139665,
+      relative_x: 0.1428571428571428,
+      relative_y: 0.0349162011173184,
+      pad_top: 0.15,
+      pad_bottom: 0.15
+    }
+  },
+  {
+    start: 10094,
+    end: 10095,
+    constraint: {
+      size: "cover",
+      max_constraint_width: 1,
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.9885714285714285,
+      relative_height: 0.8910614525139665,
+      relative_x: 0.0057142857142857,
+      relative_y: 0.0125698324022346,
+      pad_top: 0.15,
+      pad_bottom: 0.15
+    }
+  },
+  {
+    start: 10096,
+    end: 10097,
+    constraint: {
+      size: "cover",
+      max_constraint_width: 1,
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      pad_top: 0.15,
+      pad_bottom: 0.15
+    }
+  },
+  {
+    start: 11096,
+    end: 11096,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 57344,
+    end: 57354,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 57504,
+    end: 57507,
+    constraint: {
+      size: "fit_cover1",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 57520,
+    end: 57520,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "start",
+      align_vertical: "center1",
+      pad_left: -0.03,
+      pad_right: -0.03,
+      pad_top: -0.005,
+      pad_bottom: -0.005,
+      max_xy_ratio: 0.7
+    }
+  },
+  {
+    start: 57521,
+    end: 57521,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "start",
+      align_vertical: "center1",
+      max_xy_ratio: 0.7
+    }
+  },
+  {
+    start: 57522,
+    end: 57522,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "end",
+      align_vertical: "center1",
+      pad_left: -0.03,
+      pad_right: -0.03,
+      pad_top: -0.005,
+      pad_bottom: -0.005,
+      max_xy_ratio: 0.7
+    }
+  },
+  {
+    start: 57523,
+    end: 57523,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "end",
+      align_vertical: "center1",
+      max_xy_ratio: 0.7
+    }
+  },
+  {
+    start: 57524,
+    end: 57524,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "start",
+      align_vertical: "center1",
+      pad_left: -0.03,
+      pad_right: -0.03,
+      pad_top: -0.005,
+      pad_bottom: -0.005,
+      max_xy_ratio: 0.59
+    }
+  },
+  {
+    start: 57525,
+    end: 57525,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "start",
+      align_vertical: "center1",
+      max_xy_ratio: 0.5
+    }
+  },
+  {
+    start: 57526,
+    end: 57526,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "end",
+      align_vertical: "center1",
+      pad_left: -0.03,
+      pad_right: -0.03,
+      pad_top: -0.005,
+      pad_bottom: -0.005,
+      max_xy_ratio: 0.59
+    }
+  },
+  {
+    start: 57527,
+    end: 57527,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "end",
+      align_vertical: "center1",
+      max_xy_ratio: 0.5
+    }
+  },
+  {
+    start: 57528,
+    end: 57528,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "start",
+      align_vertical: "center1",
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 57529,
+    end: 57529,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "start",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 57530,
+    end: 57530,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "end",
+      align_vertical: "center1",
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 57531,
+    end: 57531,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "end",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 57532,
+    end: 57532,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "start",
+      align_vertical: "center1",
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 57533,
+    end: 57533,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "start",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 57534,
+    end: 57534,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "end",
+      align_vertical: "center1",
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 57535,
+    end: 57535,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "end",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 57536,
+    end: 57536,
+    constraint: {
+      size: "stretch",
+      align_horizontal: "start",
+      align_vertical: "center1",
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 57537,
+    end: 57537,
+    constraint: {
+      size: "stretch",
+      align_horizontal: "start",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 57538,
+    end: 57538,
+    constraint: {
+      size: "stretch",
+      align_horizontal: "end",
+      align_vertical: "center1",
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 57539,
+    end: 57539,
+    constraint: {
+      size: "stretch",
+      align_horizontal: "end",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 57540,
+    end: 57540,
+    constraint: {
+      size: "stretch",
+      align_horizontal: "start",
+      align_vertical: "center1",
+      pad_left: 0.015,
+      pad_right: 0.015,
+      pad_top: 0.015,
+      pad_bottom: 0.015,
+      max_xy_ratio: 0.86
+    }
+  },
+  {
+    start: 57541,
+    end: 57541,
+    constraint: {
+      size: "stretch",
+      align_horizontal: "end",
+      align_vertical: "center1",
+      pad_left: 0.015,
+      pad_right: 0.015,
+      pad_top: 0.015,
+      pad_bottom: 0.015,
+      max_xy_ratio: 0.86
+    }
+  },
+  {
+    start: 57542,
+    end: 57542,
+    constraint: {
+      size: "stretch",
+      align_horizontal: "start",
+      align_vertical: "center1",
+      pad_left: 0.015,
+      pad_right: 0.015,
+      pad_top: 0.015,
+      pad_bottom: 0.015,
+      max_xy_ratio: 0.78
+    }
+  },
+  {
+    start: 57543,
+    end: 57543,
+    constraint: {
+      size: "stretch",
+      align_horizontal: "end",
+      align_vertical: "center1",
+      pad_left: 0.015,
+      pad_right: 0.015,
+      pad_top: 0.015,
+      pad_bottom: 0.015,
+      max_xy_ratio: 0.78
+    }
+  },
+  {
+    start: 57544,
+    end: 57544,
+    constraint: {
+      size: "stretch",
+      align_horizontal: "start",
+      align_vertical: "center1",
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 57546,
+    end: 57546,
+    constraint: {
+      size: "stretch",
+      align_horizontal: "end",
+      align_vertical: "center1",
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 57548,
+    end: 57548,
+    constraint: {
+      size: "stretch",
+      align_horizontal: "start",
+      align_vertical: "center1",
+      pad_left: -0.01,
+      pad_right: -0.01,
+      pad_top: -0.005,
+      pad_bottom: -0.005,
+      max_xy_ratio: 0.85
+    }
+  },
+  {
+    start: 57549,
+    end: 57549,
+    constraint: {
+      size: "stretch",
+      align_horizontal: "start",
+      align_vertical: "center1",
+      max_xy_ratio: 0.865
+    }
+  },
+  {
+    start: 57550,
+    end: 57550,
+    constraint: {
+      size: "fit_cover1",
+      align_horizontal: "start",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 57551,
+    end: 57551,
+    constraint: {
+      size: "fit_cover1",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 57552,
+    end: 57553,
+    constraint: {
+      size: "fit_cover1",
+      align_horizontal: "start",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 57554,
+    end: 57554,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "start",
+      align_vertical: "center1",
+      pad_left: -0.01,
+      pad_right: -0.01,
+      pad_top: -0.005,
+      pad_bottom: -0.005,
+      max_xy_ratio: 0.7
+    }
+  },
+  {
+    start: 57556,
+    end: 57556,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "end",
+      align_vertical: "center1",
+      pad_left: -0.01,
+      pad_right: -0.01,
+      pad_top: -0.005,
+      pad_bottom: -0.005,
+      max_xy_ratio: 0.7
+    }
+  },
+  {
+    start: 57558,
+    end: 57558,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "start",
+      align_vertical: "center1",
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005,
+      max_xy_ratio: 0.7
+    }
+  },
+  {
+    start: 57559,
+    end: 57559,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "end",
+      align_vertical: "center1",
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005,
+      max_xy_ratio: 0.7
+    }
+  },
+  {
+    start: 57856,
+    end: 58025,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58112,
+    end: 58112,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8984375,
+      relative_y: 0.0986328125
+    }
+  },
+  {
+    start: 58113,
+    end: 58113,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8798828125,
+      relative_y: 0.1171875
+    }
+  },
+  {
+    start: 58114,
+    end: 58114,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7646484375,
+      relative_y: 0.2314453125
+    }
+  },
+  {
+    start: 58115,
+    end: 58115,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.87890625,
+      relative_y: 0.1171875
+    }
+  },
+  {
+    start: 58116,
+    end: 58116,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9755859375,
+      relative_y: 0.0244140625
+    }
+  },
+  {
+    start: 58117,
+    end: 58117,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.99609375,
+      relative_y: 0.001953125
+    }
+  },
+  {
+    start: 58118,
+    end: 58118,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.986328125,
+      relative_y: 0.009765625
+    }
+  },
+  {
+    start: 58119,
+    end: 58119,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9951171875,
+      relative_y: 0.00390625
+    }
+  },
+  {
+    start: 58120,
+    end: 58120,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.978515625,
+      relative_y: 0.01953125
+    }
+  },
+  {
+    start: 58121,
+    end: 58121,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9736328125,
+      relative_y: 0.021484375
+    }
+  },
+  {
+    start: 58122,
+    end: 58122,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.96484375,
+      relative_y: 0.0302734375
+    }
+  },
+  {
+    start: 58123,
+    end: 58123,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.84375,
+      relative_y: 0.1513671875
+    }
+  },
+  {
+    start: 58124,
+    end: 58124,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.802734375,
+      relative_y: 0.18359375
+    }
+  },
+  {
+    start: 58125,
+    end: 58125,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.775390625,
+      relative_y: 0.1083984375
+    }
+  },
+  {
+    start: 58126,
+    end: 58126,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9833984375,
+      relative_y: 0.0166015625
+    }
+  },
+  {
+    start: 58127,
+    end: 58127,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9716796875,
+      relative_y: 0.0263671875
+    }
+  },
+  {
+    start: 58128,
+    end: 58128,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.662109375,
+      relative_y: 0.0986328125
+    }
+  },
+  {
+    start: 58129,
+    end: 58129,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.642578125,
+      relative_y: 0.1171875
+    }
+  },
+  {
+    start: 58130,
+    end: 58130,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5322265625,
+      relative_y: 0.2314453125
+    }
+  },
+  {
+    start: 58131,
+    end: 58131,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.6416015625,
+      relative_y: 0.1181640625
+    }
+  },
+  {
+    start: 58132,
+    end: 58132,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.73828125,
+      relative_y: 0.01953125
+    }
+  },
+  {
+    start: 58133,
+    end: 58133,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.6787109375,
+      relative_y: 0.1357421875
+    }
+  },
+  {
+    start: 58134,
+    end: 58134,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.748046875,
+      relative_y: 0.009765625
+    }
+  },
+  {
+    start: 58135,
+    end: 58135,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7529296875,
+      relative_y: 0.0048828125
+    }
+  },
+  {
+    start: 58136,
+    end: 58136,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7314453125,
+      relative_y: 0.0263671875
+    }
+  },
+  {
+    start: 58137,
+    end: 58137,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.740234375,
+      relative_y: 0.01953125
+    }
+  },
+  {
+    start: 58138,
+    end: 58138,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7294921875,
+      relative_y: 0.0283203125
+    }
+  },
+  {
+    start: 58139,
+    end: 58139,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.607421875,
+      relative_y: 0.150390625
+    }
+  },
+  {
+    start: 58140,
+    end: 58140,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.736328125,
+      relative_y: 0.0224609375
+    }
+  },
+  {
+    start: 58141,
+    end: 58141,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.74609375,
+      relative_y: 0.0126953125
+    }
+  },
+  {
+    start: 58142,
+    end: 58142,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.267578125,
+      relative_y: 0.3310546875
+    }
+  },
+  {
+    start: 58143,
+    end: 58143,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.736328125,
+      relative_y: 0.0986328125
+    }
+  },
+  {
+    start: 58144,
+    end: 58144,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7177734375,
+      relative_y: 0.1171875
+    }
+  },
+  {
+    start: 58145,
+    end: 58145,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.80859375,
+      relative_y: 0.025390625
+    }
+  },
+  {
+    start: 58146,
+    end: 58146,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7509765625,
+      relative_y: 0.083984375
+    }
+  },
+  {
+    start: 58147,
+    end: 58147,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.828125,
+      relative_y: 0.009765625
+    }
+  },
+  {
+    start: 58148,
+    end: 58148,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8349609375
+    }
+  },
+  {
+    start: 58149,
+    end: 58149,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8154296875,
+      relative_y: 0.021484375
+    }
+  },
+  {
+    start: 58150,
+    end: 58150,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.814453125,
+      relative_y: 0.01953125
+    }
+  },
+  {
+    start: 58151,
+    end: 58151,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8076171875,
+      relative_y: 0.02734375
+    }
+  },
+  {
+    start: 58152,
+    end: 58152,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.6845703125,
+      relative_y: 0.150390625
+    }
+  },
+  {
+    start: 58153,
+    end: 58153,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8173828125,
+      relative_y: 0.017578125
+    }
+  },
+  {
+    start: 58154,
+    end: 58154,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.810546875,
+      relative_y: 0.0263671875
+    }
+  },
+  {
+    start: 58155,
+    end: 58155,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.517578125,
+      relative_y: 0.2421875
+    }
+  },
+  {
+    start: 58156,
+    end: 58156,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.69921875,
+      relative_y: 0.1005859375
+    }
+  },
+  {
+    start: 58157,
+    end: 58157,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.6787109375,
+      relative_y: 0.1201171875
+    }
+  },
+  {
+    start: 58158,
+    end: 58158,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5654296875,
+      relative_y: 0.232421875
+    }
+  },
+  {
+    start: 58159,
+    end: 58159,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.771484375,
+      relative_y: 0.02734375
+    }
+  },
+  {
+    start: 58160,
+    end: 58160,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.71484375,
+      relative_y: 0.0830078125
+    }
+  },
+  {
+    start: 58161,
+    end: 58161,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7919921875,
+      relative_y: 0.009765625
+    }
+  },
+  {
+    start: 58162,
+    end: 58162,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.787109375,
+      relative_y: 0.0126953125
+    }
+  },
+  {
+    start: 58163,
+    end: 58163,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.771484375,
+      relative_y: 0.0263671875
+    }
+  },
+  {
+    start: 58164,
+    end: 58164,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.77734375,
+      relative_y: 0.01953125
+    }
+  },
+  {
+    start: 58165,
+    end: 58165,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.771484375,
+      relative_y: 0.0283203125
+    }
+  },
+  {
+    start: 58166,
+    end: 58166,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.650390625,
+      relative_y: 0.150390625
+    }
+  },
+  {
+    start: 58167,
+    end: 58167,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.775390625,
+      relative_y: 0.0234375
+    }
+  },
+  {
+    start: 58168,
+    end: 58168,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.779296875,
+      relative_y: 0.0185546875
+    }
+  },
+  {
+    start: 58169,
+    end: 58169,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8445945945945946
+    }
+  },
+  {
+    start: 58170,
+    end: 58170,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5283203125,
+      relative_y: 0.232421875
+    }
+  },
+  {
+    start: 58171,
+    end: 58171,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.544921875,
+      relative_y: 0.21484375
+    }
+  },
+  {
+    start: 58172,
+    end: 58173,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.52734375,
+      relative_y: 0.232421875
+    }
+  },
+  {
+    start: 58174,
+    end: 58174,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.3293918918918919,
+      relative_y: 0.6706081081081081
+    }
+  },
+  {
+    start: 58175,
+    end: 58175,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.52,
+      relative_y: 0.2707692307692308
+    }
+  },
+  {
+    start: 58176,
+    end: 58176,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8307692307692308,
+      relative_y: 0.0861538461538462
+    }
+  },
+  {
+    start: 58177,
+    end: 58177,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8327702702702703,
+      relative_y: 0.0050675675675676
+    }
+  },
+  {
+    start: 58178,
+    end: 58179,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58180,
+    end: 58180,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5307692307692308,
+      relative_y: 0.2092307692307692
+    }
+  },
+  {
+    start: 58181,
+    end: 58181,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5332112630208333,
+      relative_y: 0.2040934244791667
+    }
+  },
+  {
+    start: 58182,
+    end: 58182,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58183,
+    end: 58183,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8307692307692308,
+      relative_y: 0.1246153846153846
+    }
+  },
+  {
+    start: 58184,
+    end: 58184,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58185,
+    end: 58185,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5307967032967034,
+      relative_y: 0.2615384615384616
+    }
+  },
+  {
+    start: 58186,
+    end: 58187,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58188,
+    end: 58188,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8659995118379302,
+      relative_y: 0.1340004881620698
+    }
+  },
+  {
+    start: 58189,
+    end: 58189,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9890163534293386,
+      relative_y: 0.0002440810349036
+    }
+  },
+  {
+    start: 58190,
+    end: 58190,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58191,
+    end: 58191,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5751953125,
+      relative_y: 0.1142578125
+    }
+  },
+  {
+    start: 58192,
+    end: 58192,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58193,
+    end: 58193,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.6533203125,
+      relative_y: 0.1328125
+    }
+  },
+  {
+    start: 58194,
+    end: 58194,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5215384615384615,
+      relative_y: 0.2846153846153846
+    }
+  },
+  {
+    start: 58195,
+    end: 58195,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8308012820512821,
+      relative_y: 0.1230448717948718
+    }
+  },
+  {
+    start: 58196,
+    end: 58198,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9935233160621761,
+      relative_y: 0.0025906735751295
+    }
+  },
+  {
+    start: 58199,
+    end: 58199,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9961139896373057
+    }
+  },
+  {
+    start: 58200,
+    end: 58201,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9935233160621761,
+      relative_y: 0.0025906735751295
+    }
+  },
+  {
+    start: 58202,
+    end: 58202,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9935233160621761,
+      relative_y: 0.0012953367875648
+    }
+  },
+  {
+    start: 58203,
+    end: 58203,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9987046632124352,
+      relative_y: 0.0012953367875648
+    }
+  },
+  {
+    start: 58204,
+    end: 58205,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58206,
+    end: 58206,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7294921875,
+      relative_y: 0.0283203125
+    }
+  },
+  {
+    start: 58207,
+    end: 58207,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.96484375,
+      relative_y: 0.0302734375
+    }
+  },
+  {
+    start: 58208,
+    end: 58208,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.76953125,
+      relative_y: 0.0302734375
+    }
+  },
+  {
+    start: 58209,
+    end: 58209,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8076171875,
+      relative_y: 0.02734375
+    }
+  },
+  {
+    start: 58210,
+    end: 58210,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.990234375,
+      relative_y: 0.009765625
+    }
+  },
+  {
+    start: 58211,
+    end: 58211,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7900390625,
+      relative_y: 0.009765625
+    }
+  },
+  {
+    start: 58212,
+    end: 58212,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8251953125,
+      relative_y: 0.009765625
+    }
+  },
+  {
+    start: 58213,
+    end: 58213,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9833984375,
+      relative_y: 0.0166015625
+    }
+  },
+  {
+    start: 58214,
+    end: 58214,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.783203125,
+      relative_y: 0.0166015625
+    }
+  },
+  {
+    start: 58215,
+    end: 58215,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8173828125,
+      relative_y: 0.017578125
+    }
+  },
+  {
+    start: 58216,
+    end: 58216,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58217,
+    end: 58217,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.490234375,
+      relative_y: 0.2548828125
+    }
+  },
+  {
+    start: 58218,
+    end: 58218,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58219,
+    end: 58219,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9333658774713205,
+      relative_y: 0.0266048328044911
+    }
+  },
+  {
+    start: 58220,
+    end: 58220,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7076171875,
+      relative_y: 0.1083984375
+    }
+  },
+  {
+    start: 58221,
+    end: 58221,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8427734375,
+      relative_y: 0.0625
+    }
+  },
+  {
+    start: 58222,
+    end: 58222,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7529721467391304,
+      relative_y: 0.0956606657608696
+    }
+  },
+  {
+    start: 58223,
+    end: 58223,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.68359375,
+      relative_y: 0.125
+    }
+  },
+  {
+    start: 58224,
+    end: 58224,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8642578125,
+      relative_y: 0.0625
+    }
+  },
+  {
+    start: 58225,
+    end: 58225,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.6103515625,
+      relative_y: 0.193359375
+    }
+  },
+  {
+    start: 58226,
+    end: 58226,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.794921875,
+      relative_y: 0.0576171875
+    }
+  },
+  {
+    start: 58227,
+    end: 58227,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.865234375,
+      relative_y: 0.005859375
+    }
+  },
+  {
+    start: 58228,
+    end: 58228,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.3154296875,
+      relative_y: 0.2861328125
+    }
+  },
+  {
+    start: 58229,
+    end: 58229,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.67724609375,
+      relative_y: 0.13037109375
+    }
+  },
+  {
+    start: 58230,
+    end: 58230,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.69921875,
+      relative_y: 0.1337890625
+    }
+  },
+  {
+    start: 58231,
+    end: 58231,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7314453125,
+      relative_y: 0.1552734375
+    }
+  },
+  {
+    start: 58232,
+    end: 58232,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7314453125,
+      relative_y: 0.154296875
+    }
+  },
+  {
+    start: 58233,
+    end: 58233,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5751953125,
+      relative_y: 0.1826171875
+    }
+  },
+  {
+    start: 58234,
+    end: 58234,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5263671875,
+      relative_y: 0.228515625
+    }
+  },
+  {
+    start: 58235,
+    end: 58235,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5751953125,
+      relative_y: 0.18359375
+    }
+  },
+  {
+    start: 58236,
+    end: 58236,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58237,
+    end: 58237,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.900390625,
+      relative_y: 0.095703125
+    }
+  },
+  {
+    start: 58238,
+    end: 58238,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.6015625,
+      relative_y: 0.232421875
+    }
+  },
+  {
+    start: 58239,
+    end: 58239,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.52,
+      relative_y: 0.2784615384615385
+    }
+  },
+  {
+    start: 58240,
+    end: 58240,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.52,
+      relative_y: 0.2630769230769231
+    }
+  },
+  {
+    start: 58241,
+    end: 58253,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58254,
+    end: 58257,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4990253411306043,
+      relative_height: 0.9987012987012988,
+      relative_x: 0.4996751137102014
+    }
+  },
+  {
+    start: 58258,
+    end: 58259,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4996751137102014,
+      relative_height: 0.9987012987012988,
+      relative_x: 0.4990253411306043
+    }
+  },
+  {
+    start: 58260,
+    end: 58260,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4990253411306043,
+      relative_height: 0.9987012987012988,
+      relative_x: 0.4996751137102014
+    }
+  },
+  {
+    start: 58261,
+    end: 58261,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.5471085120207927,
+      relative_height: 0.9987012987012988,
+      relative_x: 0.451591942820013
+    }
+  },
+  {
+    start: 58262,
+    end: 58262,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.594541910331384,
+      relative_height: 0.9987012987012988,
+      relative_x: 0.4041585445094217
+    }
+  },
+  {
+    start: 58263,
+    end: 58263,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.6426250812215725,
+      relative_x: 0.3573749187784275
+    }
+  },
+  {
+    start: 58264,
+    end: 58264,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.6900584795321637,
+      relative_x: 0.3099415204678362
+    }
+  },
+  {
+    start: 58265,
+    end: 58265,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.7381416504223521,
+      relative_x: 0.2618583495776478
+    }
+  },
+  {
+    start: 58266,
+    end: 58266,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.7855750487329435,
+      relative_x: 0.2144249512670565
+    }
+  },
+  {
+    start: 58267,
+    end: 58267,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.9987004548408057,
+      relative_height: 0.9987012987012988
+    }
+  },
+  {
+    start: 58268,
+    end: 58268,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.8323586744639376,
+      relative_height: 0.9935064935064936
+    }
+  },
+  {
+    start: 58269,
+    end: 58269,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.7855750487329435,
+      relative_height: 0.9948051948051948
+    }
+  },
+  {
+    start: 58270,
+    end: 58270,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.7381416504223521,
+      relative_height: 0.9961038961038962
+    }
+  },
+  {
+    start: 58271,
+    end: 58271,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.6907082521117609,
+      relative_height: 0.9961038961038962
+    }
+  },
+  {
+    start: 58272,
+    end: 58272,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.6426250812215725,
+      relative_height: 0.9961038961038962
+    }
+  },
+  {
+    start: 58273,
+    end: 58273,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.594541910331384,
+      relative_height: 0.9974025974025974
+    }
+  },
+  {
+    start: 58274,
+    end: 58275,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4990253411306043,
+      relative_height: 0.9987012987012988
+    }
+  },
+  {
+    start: 58276,
+    end: 58276,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4996751137102014,
+      relative_height: 0.9987012987012988
+    }
+  },
+  {
+    start: 58277,
+    end: 58277,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4990253411306043,
+      relative_height: 0.9987012987012988
+    }
+  },
+  {
+    start: 58278,
+    end: 58278,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4996751137102014,
+      relative_height: 0.9987012987012988
+    }
+  },
+  {
+    start: 58279,
+    end: 58280,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4990253411306043,
+      relative_height: 0.9987012987012988
+    }
+  },
+  {
+    start: 58281,
+    end: 58281,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9961139896373057
+    }
+  },
+  {
+    start: 58282,
+    end: 58282,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.990234375,
+      relative_y: 0.0078125
+    }
+  },
+  {
+    start: 58283,
+    end: 58283,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7900390625,
+      relative_y: 0.005859375
+    }
+  },
+  {
+    start: 58284,
+    end: 58284,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8251953125,
+      relative_y: 0.0078125
+    }
+  },
+  {
+    start: 58285,
+    end: 58285,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.751953125,
+      relative_y: 0.0068359375
+    }
+  },
+  {
+    start: 58286,
+    end: 58286,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.615234375,
+      relative_y: 0.232421875
+    }
+  },
+  {
+    start: 58287,
+    end: 58287,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9986072423398329,
+      relative_y: 0.0013927576601671
+    }
+  },
+  {
+    start: 58288,
+    end: 58290,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9958217270194986,
+      relative_y: 0.0041782729805014
+    }
+  },
+  {
+    start: 58291,
+    end: 58291,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9986072423398329,
+      relative_y: 0.0013927576601671
+    }
+  },
+  {
+    start: 58292,
+    end: 58292,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58293,
+    end: 58299,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9986072423398329,
+      relative_y: 0.0013927576601671
+    }
+  },
+  {
+    start: 58300,
+    end: 58304,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58305,
+    end: 58305,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.6590187942396876,
+      relative_y: 0.1349768123016842
+    }
+  },
+  {
+    start: 58306,
+    end: 58306,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7939956065413717
+    }
+  },
+  {
+    start: 58307,
+    end: 58339,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 58874,
+    end: 59064,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 59136,
+    end: 59631,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60000,
+    end: 60000,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60001,
+    end: 60001,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.7513020833333334,
+      relative_height: 0.9291573452647278,
+      relative_x: 0.0846354166666667,
+      relative_y: 0.0708426547352722
+    }
+  },
+  {
+    start: 60002,
+    end: 60028,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60029,
+    end: 60029,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.8394854586129754,
+      relative_height: 0.8751387347391787,
+      relative_x: 0.0917225950782998,
+      relative_y: 0.0416204217536071
+    }
+  },
+  {
+    start: 60030,
+    end: 60040,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60042,
+    end: 60044,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60047,
+    end: 60056,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60057,
+    end: 60057,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.9395973154362416,
+      relative_height: 0.4778024417314096,
+      relative_x: 0.0302013422818792,
+      relative_y: 0.2269700332963374
+    }
+  },
+  {
+    start: 60058,
+    end: 60058,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.767337807606264,
+      relative_height: 0.8523862375138734,
+      relative_x: 0.1526845637583893,
+      relative_y: 0.0754716981132075
+    }
+  },
+  {
+    start: 60059,
+    end: 60059,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.8590604026845637,
+      relative_height: 0.7613762486126526,
+      relative_x: 0.0721476510067114,
+      relative_y: 0.0871254162042175
+    }
+  },
+  {
+    start: 60060,
+    end: 60060,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.8590604026845637,
+      relative_height: 0.7574916759156493,
+      relative_x: 0.0721476510067114,
+      relative_y: 0.0832408435072142
+    }
+  },
+  {
+    start: 60061,
+    end: 60061,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4082774049217002,
+      relative_height: 0.5077691453940066,
+      relative_x: 0.2863534675615212,
+      relative_y: 0.2763596004439512
+    }
+  },
+  {
+    start: 60062,
+    end: 60063,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.511744966442953,
+      relative_height: 0.4051054384017758,
+      relative_x: 0.2136465324384788,
+      relative_y: 0.306881243063263
+    }
+  },
+  {
+    start: 60064,
+    end: 60064,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4082774049217002,
+      relative_height: 0.5077691453940066,
+      relative_x: 0.2863534675615212,
+      relative_y: 0.2763596004439512
+    }
+  },
+  {
+    start: 60065,
+    end: 60065,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.767337807606264,
+      relative_height: 0.8523862375138734,
+      relative_x: 0.1526845637583893,
+      relative_y: 0.0754716981132075
+    }
+  },
+  {
+    start: 60066,
+    end: 60066,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.8061116965226555,
+      relative_height: 0.9438247156716689,
+      relative_x: 0.0679662802950474,
+      relative_y: 0.0147523709167545
+    }
+  },
+  {
+    start: 60067,
+    end: 60083,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60084,
+    end: 60084,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.9945482866043613,
+      relative_height: 0.5264797507788161,
+      relative_y: 0.2024922118380062
+    }
+  },
+  {
+    start: 60085,
+    end: 60085,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.5264797507788161,
+      relative_height: 0.9945482866043613,
+      relative_x: 0.2024922118380062,
+      relative_y: 0.0054517133956386
+    }
+  },
+  {
+    start: 60086,
+    end: 60086,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.5264797507788161,
+      relative_height: 0.9945482866043613,
+      relative_x: 0.2710280373831775
+    }
+  },
+  {
+    start: 60087,
+    end: 60087,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.9945482866043613,
+      relative_height: 0.5264797507788161,
+      relative_x: 0.0054517133956386,
+      relative_y: 0.2710280373831775
+    }
+  },
+  {
+    start: 60088,
+    end: 60103,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60105,
+    end: 60105,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60108,
+    end: 60115,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60116,
+    end: 60117,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.7069825436408977,
+      relative_x: 0.1483790523690773
+    }
+  },
+  {
+    start: 60118,
+    end: 60118,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8780760626398211,
+      relative_y: 0.0687919463087248
+    }
+  },
+  {
+    start: 60119,
+    end: 60169,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60171,
+    end: 60226,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60227,
+    end: 60227,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.7335766423357665,
+      relative_height: 0.9996188152778837,
+      relative_x: 0.1991657977059437,
+      relative_y: 0.0003811847221163
+    }
+  },
+  {
+    start: 60228,
+    end: 60238,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60240,
+    end: 60269,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60270,
+    end: 60270,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.4954604409857328,
+      relative_y: 0.2522697795071336
+    }
+  },
+  {
+    start: 60271,
+    end: 60271,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4973958333333333,
+      relative_x: 0.2493489583333333
+    }
+  },
+  {
+    start: 60272,
+    end: 60272,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4973958333333333,
+      relative_height: 0.9961089494163424,
+      relative_x: 0.2493489583333333,
+      relative_y: 0.0038910505836576
+    }
+  },
+  {
+    start: 60273,
+    end: 60273,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.4954604409857328,
+      relative_y: 0.2522697795071336
+    }
+  },
+  {
+    start: 60274,
+    end: 60297,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60298,
+    end: 60298,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.3468834688346883,
+      relative_height: 0.335361578525641,
+      relative_x: 0.2642276422764228,
+      relative_y: 0.3313050881410256
+    }
+  },
+  {
+    start: 60299,
+    end: 60313,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60314,
+    end: 60314,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.8740779768177028,
+      relative_height: 0.9438247156716689,
+      relative_x: 0.0679662802950474,
+      relative_y: 0.0147523709167545
+    }
+  },
+  {
+    start: 60315,
+    end: 60372,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60373,
+    end: 60373,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.9322210636079249,
+      relative_height: 0.9318897917604415,
+      relative_y: 0.0681102082395584
+    }
+  },
+  {
+    start: 60374,
+    end: 60374,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9996446423917936,
+      relative_y: 0.0003553576082064
+    }
+  },
+  {
+    start: 60375,
+    end: 60422,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60423,
+    end: 60423,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.3495911047345768,
+      relative_height: 0.3355179398148149,
+      relative_x: 0.2615335565120357,
+      relative_y: 0.3311487268518519
+    }
+  },
+  {
+    start: 60424,
+    end: 60426,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60427,
+    end: 60427,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.9327424400417101,
+      relative_height: 0.9996188152778837,
+      relative_y: 0.0003811847221163
+    }
+  },
+  {
+    start: 60428,
+    end: 60428,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.8008342022940563,
+      relative_x: 0.1991657977059437
+    }
+  },
+  {
+    start: 60429,
+    end: 60446,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60672,
+    end: 60927,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 60928,
+    end: 60928,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "end",
+      align_vertical: "center1",
+      relative_width: 0.8681172291296625,
+      relative_height: 0.8626692456479691,
+      relative_x: 0.1314387211367673,
+      relative_y: 0.0686653771760155,
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 60929,
+    end: 60929,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8626692456479691,
+      relative_y: 0.0686653771760155,
+      pad_left: -0.05,
+      pad_right: -0.05,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 60930,
+    end: 60930,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "start",
+      align_vertical: "center1",
+      relative_width: 0.8685612788632326,
+      relative_height: 0.8626692456479691,
+      relative_y: 0.0686653771760155,
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 60931,
+    end: 60931,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "end",
+      align_vertical: "center1",
+      relative_width: 0.8681172291296625,
+      relative_height: 0.8626692456479691,
+      relative_x: 0.1314387211367673,
+      relative_y: 0.0686653771760155,
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 60932,
+    end: 60932,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8626692456479691,
+      relative_y: 0.0686653771760155,
+      pad_left: -0.05,
+      pad_right: -0.05,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 60933,
+    end: 60933,
+    constraint: {
+      size: "stretch",
+      max_constraint_width: 1,
+      align_horizontal: "start",
+      align_vertical: "center1",
+      relative_width: 0.8685612788632326,
+      relative_height: 0.8626692456479691,
+      relative_y: 0.0686653771760155,
+      pad_left: -0.025,
+      pad_right: -0.025,
+      pad_top: -0.005,
+      pad_bottom: -0.005
+    }
+  },
+  {
+    start: 60934,
+    end: 60934,
+    constraint: {
+      size: "cover",
+      max_constraint_width: 1,
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.7059415911379657,
+      relative_height: 0.2234524408656266,
+      relative_x: 0.1470292044310171,
+      relative_y: 0.7765475591343735,
+      pad_left: 0.015,
+      pad_right: 0.015,
+      pad_top: 0.015,
+      pad_bottom: 0.015
+    }
+  },
+  {
+    start: 60935,
+    end: 60935,
+    constraint: {
+      size: "cover",
+      max_constraint_width: 1,
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.5,
+      relative_height: 0.7498741821841973,
+      relative_x: 0.5,
+      relative_y: 0.2501258178158027,
+      pad_left: 0.015,
+      pad_right: 0.015,
+      pad_top: 0.015,
+      pad_bottom: 0.015
+    }
+  },
+  {
+    start: 60936,
+    end: 60936,
+    constraint: {
+      size: "cover",
+      max_constraint_width: 1,
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.6299093655589124,
+      relative_height: 0.8535480624056366,
+      relative_x: 0.3700906344410876,
+      pad_left: 0.015,
+      pad_right: 0.015,
+      pad_top: 0.015,
+      pad_bottom: 0.015
+    }
+  },
+  {
+    start: 60937,
+    end: 60937,
+    constraint: {
+      size: "cover",
+      max_constraint_width: 1,
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.4997483643683945,
+      pad_left: 0.015,
+      pad_right: 0.015,
+      pad_top: 0.015,
+      pad_bottom: 0.015
+    }
+  },
+  {
+    start: 60938,
+    end: 60938,
+    constraint: {
+      size: "cover",
+      max_constraint_width: 1,
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.6299093655589124,
+      relative_height: 0.8535480624056366,
+      pad_left: 0.015,
+      pad_right: 0.015,
+      pad_top: 0.015,
+      pad_bottom: 0.015
+    }
+  },
+  {
+    start: 60939,
+    end: 60939,
+    constraint: {
+      size: "cover",
+      max_constraint_width: 1,
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.5,
+      relative_height: 0.7498741821841973,
+      relative_y: 0.2501258178158027,
+      pad_left: 0.015,
+      pad_right: 0.015,
+      pad_top: 0.015,
+      pad_bottom: 0.015
+    }
+  },
+  {
+    start: 60940,
+    end: 61390,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61440,
+    end: 61444,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61445,
+    end: 61445,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9999664113932554,
+      relative_y: 0.0000335886067446
+    }
+  },
+  {
+    start: 61446,
+    end: 61477,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61478,
+    end: 61479,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.978618435460558,
+      relative_y: 0.0103951316192896
+    }
+  },
+  {
+    start: 61480,
+    end: 61482,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61483,
+    end: 61483,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9758052740827267,
+      relative_y: 0.0238869355863696
+    }
+  },
+  {
+    start: 61484,
+    end: 61488,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61489,
+    end: 61491,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.998792270531401,
+      relative_y: 0.0006038647342995
+    }
+  },
+  {
+    start: 61492,
+    end: 61492,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61493,
+    end: 61493,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9989935587761675,
+      relative_y: 0.000402576489533
+    }
+  },
+  {
+    start: 61494,
+    end: 61507,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61508,
+    end: 61508,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9925925925925926
+    }
+  },
+  {
+    start: 61509,
+    end: 61509,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61510,
+    end: 61510,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8751322751322751,
+      relative_y: 0.0624338624338624
+    }
+  },
+  {
+    start: 61511,
+    end: 61511,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61512,
+    end: 61512,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8577706898990622,
+      relative_y: 0.0711892586341537
+    }
+  },
+  {
+    start: 61513,
+    end: 61513,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8579450878868969,
+      relative_y: 0.0710148606463189
+    }
+  },
+  {
+    start: 61514,
+    end: 61514,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8577706898990622,
+      relative_y: 0.0711892586341537
+    }
+  },
+  {
+    start: 61515,
+    end: 61515,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9997041418532618,
+      relative_y: 0.0002958581467381
+    }
+  },
+  {
+    start: 61516,
+    end: 61517,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8572940020656472,
+      relative_y: 0.0713404035569438
+    }
+  },
+  {
+    start: 61518,
+    end: 61518,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8577706898990622,
+      relative_y: 0.0711892586341537
+    }
+  },
+  {
+    start: 61519,
+    end: 61519,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7138835298072554,
+      relative_y: 0.14334792953172
+    }
+  },
+  {
+    start: 61520,
+    end: 61520,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8579450878868969,
+      relative_y: 0.0710148606463189
+    }
+  },
+  {
+    start: 61521,
+    end: 61521,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8577706898990622,
+      relative_y: 0.0711892586341537
+    }
+  },
+  {
+    start: 61522,
+    end: 61522,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.999974809179535
+    }
+  },
+  {
+    start: 61523,
+    end: 61535,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61536,
+    end: 61537,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.856797583081571,
+      relative_y: 0.0719033232628399
+    }
+  },
+  {
+    start: 61538,
+    end: 61538,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61539,
+    end: 61539,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9987915407854985,
+      relative_y: 0.0006042296072508
+    }
+  },
+  {
+    start: 61540,
+    end: 61558,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61559,
+    end: 61559,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5700483091787439,
+      relative_y: 0.286231884057971
+    }
+  },
+  {
+    start: 61560,
+    end: 61560,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5700483091787439,
+      relative_y: 0.143719806763285
+    }
+  },
+  {
+    start: 61561,
+    end: 61565,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61566,
+    end: 61566,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.4989429175475687,
+      relative_y: 0.2505285412262157
+    }
+  },
+  {
+    start: 61567,
+    end: 61576,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61577,
+    end: 61577,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9998488512696494,
+      relative_y: 0.0001511487303507
+    }
+  },
+  {
+    start: 61578,
+    end: 61603,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61604,
+    end: 61605,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7502645502645503,
+      relative_y: 0.1248677248677249
+    }
+  },
+  {
+    start: 61606,
+    end: 61654,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61655,
+    end: 61655,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.4281400966183575,
+      relative_y: 0.2053140096618357
+    }
+  },
+  {
+    start: 61656,
+    end: 61656,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.4281400966183575,
+      relative_y: 0.3472222222222222
+    }
+  },
+  {
+    start: 61657,
+    end: 61657,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7140772371750631,
+      relative_y: 0.1333462732919255
+    }
+  },
+  {
+    start: 61658,
+    end: 61658,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7140396210163651,
+      relative_y: 0.1333838894506235
+    }
+  },
+  {
+    start: 61659,
+    end: 61659,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61660,
+    end: 61660,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1"
+    }
+  },
+  {
+    start: 61661,
+    end: 61661,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      relative_height: 0.427536231884058,
+      relative_y: 0.001207729468599
+    }
+  },
+  {
+    start: 61662,
+    end: 61662,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      relative_height: 0.428743961352657,
+      relative_y: 0.571256038647343
+    }
+  },
+  {
+    start: 61663,
+    end: 61695,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61696,
+    end: 61697,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8573155985489722,
+      relative_y: 0.0713422007255139
+    }
+  },
+  {
+    start: 61698,
+    end: 61698,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9286577992744861,
+      relative_y: 0.0713422007255139
+    }
+  },
+  {
+    start: 61699,
+    end: 61699,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9286577992744861
+    }
+  },
+  {
+    start: 61700,
+    end: 61701,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8573155985489722,
+      relative_y: 0.0713422007255139
+    }
+  },
+  {
+    start: 61702,
+    end: 61703,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.5,
+      relative_y: 0.2853688029020556
+    }
+  },
+  {
+    start: 61704,
+    end: 61743,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61744,
+    end: 61744,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9998602571268865
+    }
+  },
+  {
+    start: 61745,
+    end: 61760,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61761,
+    end: 61761,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.2593984962406015,
+      relative_y: 0.3696741854636592
+    }
+  },
+  {
+    start: 61762,
+    end: 61778,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61779,
+    end: 61780,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8751322751322751,
+      relative_y: 0.0624338624338624
+    }
+  },
+  {
+    start: 61781,
+    end: 61781,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61782,
+    end: 61782,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8752505446623093,
+      relative_y: 0.0623155929038282
+    }
+  },
+  {
+    start: 61783,
+    end: 61783,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8756468797564688,
+      relative_y: 0.0624338624338624
+    }
+  },
+  {
+    start: 61784,
+    end: 61784,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8751322751322751,
+      relative_y: 0.0624338624338624
+    }
+  },
+  {
+    start: 61785,
+    end: 61785,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.8756067947646895,
+      relative_y: 0.0623492063492063
+    }
+  },
+  {
+    start: 61786,
+    end: 61812,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61813,
+    end: 61813,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9989423585404548,
+      relative_y: 0.0005288207297726
+    }
+  },
+  {
+    start: 61814,
+    end: 61814,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61815,
+    end: 61816,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.6250661025912215,
+      relative_y: 0.1877313590692755
+    }
+  },
+  {
+    start: 61817,
+    end: 61825,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61826,
+    end: 61826,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.9998046921689268
+    }
+  },
+  {
+    start: 61827,
+    end: 61984,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61985,
+    end: 61985,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9994854643684076
+    }
+  },
+  {
+    start: 61986,
+    end: 61986,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.874681988394363,
+      relative_y: 0.0624017379870223
+    }
+  },
+  {
+    start: 61987,
+    end: 61987,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 61988,
+    end: 61990,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9994854643684076
+    }
+  },
+  {
+    start: 61991,
+    end: 61991,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.874681988394363,
+      relative_y: 0.0624017379870223
+    }
+  },
+  {
+    start: 61992,
+    end: 61992,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9994854643684076
+    }
+  },
+  {
+    start: 61993,
+    end: 61993,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9370837263813853,
+      relative_y: 0.0624017379870223
+    }
+  },
+  {
+    start: 61994,
+    end: 61994,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9994854643684076
+    }
+  },
+  {
+    start: 61995,
+    end: 61995,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.6874767744332962,
+      relative_y: 0.1560043449675557
+    }
+  },
+  {
+    start: 61996,
+    end: 61996,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9994854643684076
+    }
+  },
+  {
+    start: 61997,
+    end: 61997,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.6874767744332962,
+      relative_y: 0.1560043449675557
+    }
+  },
+  {
+    start: 61998,
+    end: 62036,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62037,
+    end: 62038,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9993997599039616
+    }
+  },
+  {
+    start: 62039,
+    end: 62039,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7810124049619848,
+      relative_y: 0.0935945806894186
+    }
+  },
+  {
+    start: 62040,
+    end: 62040,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.7498142113988452,
+      relative_y: 0.1247927742525582
+    }
+  },
+  {
+    start: 62041,
+    end: 62041,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62042,
+    end: 62042,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9993997599039616
+    }
+  },
+  {
+    start: 62043,
+    end: 62043,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.9975006099019084
+    }
+  },
+  {
+    start: 62044,
+    end: 62337,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62464,
+    end: 62485,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62486,
+    end: 62486,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_height: 0.6090604026845637,
+      relative_y: 0.2119686800894855
+    }
+  },
+  {
+    start: 62487,
+    end: 62499,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62500,
+    end: 62500,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.501953125,
+      relative_height: 0.575503355704698,
+      relative_x: 0.248046875,
+      relative_y: 0.2108501118568233
+    }
+  },
+  {
+    start: 62501,
+    end: 62512,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62513,
+    end: 62513,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.6240234375,
+      relative_height: 0.7695749440715883,
+      relative_x: 0.203125,
+      relative_y: 0.1420581655480984
+    }
+  },
+  {
+    start: 62514,
+    end: 62514,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.671875,
+      relative_height: 0.714765100671141,
+      relative_x: 0.1875,
+      relative_y: 0.1610738255033557
+    }
+  },
+  {
+    start: 62515,
+    end: 62515,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.6240234375,
+      relative_height: 0.7695749440715883,
+      relative_x: 0.2041015625,
+      relative_y: 0.0883668903803132
+    }
+  },
+  {
+    start: 62516,
+    end: 62516,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.671875,
+      relative_height: 0.714765100671141,
+      relative_x: 0.140625,
+      relative_y: 0.1599552572706935
+    }
+  },
+  {
+    start: 62517,
+    end: 62519,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62520,
+    end: 62520,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.24365234375,
+      relative_height: 0.4560546875,
+      relative_x: 0.38134765625,
+      relative_y: 0.27197265625
+    }
+  },
+  {
+    start: 62521,
+    end: 62525,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62526,
+    end: 62526,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.5029296875,
+      relative_height: 0.575503355704698,
+      relative_x: 0.25,
+      relative_y: 0.2136465324384788
+    }
+  },
+  {
+    start: 62527,
+    end: 62530,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62531,
+    end: 62531,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.75,
+      relative_x: 0.125
+    }
+  },
+  {
+    start: 62532,
+    end: 62533,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.5,
+      relative_height: 0.5,
+      relative_x: 0.25,
+      relative_y: 0.25
+    }
+  },
+  {
+    start: 62534,
+    end: 62537,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62538,
+    end: 62538,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.24365234375,
+      relative_height: 0.4560546875,
+      relative_x: 0.375,
+      relative_y: 0.27197265625
+    }
+  },
+  {
+    start: 62539,
+    end: 62539,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4560546875,
+      relative_height: 0.24365234375,
+      relative_x: 0.27197265625,
+      relative_y: 0.31884765625
+    }
+  },
+  {
+    start: 62540,
+    end: 62555,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62556,
+    end: 62556,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.501953125,
+      relative_height: 0.5749440715883669,
+      relative_x: 0.248046875,
+      relative_y: 0.2114093959731544
+    }
+  },
+  {
+    start: 62557,
+    end: 62559,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62560,
+    end: 62560,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.359375,
+      relative_height: 0.6240234375,
+      relative_x: 0.375,
+      relative_y: 0.1884765625
+    }
+  },
+  {
+    start: 62561,
+    end: 62561,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.6237816764132553,
+      relative_height: 0.9988851727982163,
+      relative_x: 0.1881091617933723
+    }
+  },
+  {
+    start: 62562,
+    end: 62566,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62567,
+    end: 62567,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.56396484375,
+      relative_height: 0.56494140625,
+      relative_x: 0.21875,
+      relative_y: 0.2177734375
+    }
+  },
+  {
+    start: 62568,
+    end: 62571,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62572,
+    end: 62572,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.50390625,
+      relative_height: 0.5771812080536913,
+      relative_x: 0.2490234375,
+      relative_y: 0.20917225950783
+    }
+  },
+  {
+    start: 62573,
+    end: 62575,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62576,
+    end: 62576,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.99267578125,
+      relative_height: 0.26904296875,
+      relative_y: 0.6865234375
+    }
+  },
+  {
+    start: 62577,
+    end: 62581,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62582,
+    end: 62582,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.8732325694783033,
+      relative_x: 0.0633837152608484
+    }
+  },
+  {
+    start: 62583,
+    end: 62585,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62586,
+    end: 62586,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.584307992202729,
+      relative_height: 0.9509476031215162,
+      relative_x: 0.2066276803118908,
+      relative_y: 0.0234113712374582
+    }
+  },
+  {
+    start: 62587,
+    end: 62588,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.625,
+      relative_height: 0.359375,
+      relative_x: 0.1875,
+      relative_y: 0.328125
+    }
+  },
+  {
+    start: 62589,
+    end: 62589,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.359375,
+      relative_height: 0.6240234375,
+      relative_x: 0.265625,
+      relative_y: 0.1875
+    }
+  },
+  {
+    start: 62590,
+    end: 62590,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.4560546875,
+      relative_height: 0.24365234375,
+      relative_x: 0.27197265625,
+      relative_y: 0.375
+    }
+  },
+  {
+    start: 62591,
+    end: 62602,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62603,
+    end: 62603,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.71875,
+      relative_height: 0.09375,
+      relative_x: 0.125,
+      relative_y: 0.46875
+    }
+  },
+  {
+    start: 62604,
+    end: 62610,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62611,
+    end: 62611,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.8313840155945419,
+      relative_height: 0.9509476031215162,
+      relative_x: 0.084307992202729,
+      relative_y: 0.0234113712374582
+    }
+  },
+  {
+    start: 62612,
+    end: 62617,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62618,
+    end: 62618,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.8727450024378351,
+      relative_x: 0.0633837152608484
+    }
+  },
+  {
+    start: 62619,
+    end: 62658,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62659,
+    end: 62659,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.5,
+      relative_height: 0.5,
+      relative_x: 0.25,
+      relative_y: 0.25
+    }
+  },
+  {
+    start: 62660,
+    end: 62702,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62703,
+    end: 62703,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.7142857142857143,
+      relative_x: 0.1428571428571428
+    }
+  },
+  {
+    start: 62704,
+    end: 62704,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.9642857142857143,
+      relative_height: 0.7407407407407407,
+      relative_y: 0.1111111111111111
+    }
+  },
+  {
+    start: 62705,
+    end: 62705,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.9642857142857143,
+      relative_height: 0.7407407407407407,
+      relative_x: 0.0357142857142857,
+      relative_y: 0.1111111111111111
+    }
+  },
+  {
+    start: 62706,
+    end: 62706,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.7142857142857143,
+      relative_x: 0.1428571428571428
+    }
+  },
+  {
+    start: 62707,
+    end: 62748,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 62749,
+    end: 62749,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1",
+      relative_width: 0.5,
+      relative_height: 0.5,
+      relative_x: 0.25,
+      relative_y: 0.25
+    }
+  },
+  {
+    start: 62750,
+    end: 62771,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  },
+  {
+    start: 983041,
+    end: 989936,
+    constraint: {
+      size: "fit_cover1",
+      height: "icon",
+      align_horizontal: "center1",
+      align_vertical: "center1"
+    }
+  }
+];
+function getNerdConstraint(cp) {
+  let lo = 0;
+  let hi = NERD_CONSTRAINTS.length - 1;
+  while (lo <= hi) {
+    const mid = lo + hi >> 1;
+    const entry = NERD_CONSTRAINTS[mid];
+    if (cp < entry.start) {
+      hi = mid - 1;
+    } else if (cp > entry.end) {
+      lo = mid + 1;
+    } else {
+      return entry.constraint;
+    }
+  }
+  return null;
+}
+// src/ime/ime.ts
+var PREEDIT_BG = [0.16, 0.16, 0.2, 0.9];
+var PREEDIT_ACTIVE_BG = [0.3, 0.32, 0.42, 0.95];
+var PREEDIT_FG = [0.95, 0.95, 0.98, 1];
+var PREEDIT_UL = [0.7, 0.7, 0.8, 0.9];
+var PREEDIT_CARET = [0.95, 0.95, 0.98, 1];
+// src/pty/pty.ts
+function decodePtyBinary(decoder, payload, stream = true) {
+  const bytes = payload instanceof Uint8Array ? payload : new Uint8Array(payload);
+  return decoder.decode(bytes, { stream });
+}
+function createPtyConnection() {
+  return {
+    socket: null,
+    status: "idle",
+    url: "",
+    decoder: null,
+    connectId: 0
+  };
+}
+function setConnectionStatus(state, status) {
+  state.status = status;
+}
+function connectPty(state, options, callbacks) {
+  if (state.status === "connecting" || state.status === "connected" || state.status === "closing") {
+    return false;
+  }
+  const url = options.url?.trim?.() ?? "";
+  if (!url)
+    return false;
+  const ws = new WebSocket(url);
+  const decoder = new TextDecoder;
+  const connectId = state.connectId + 1;
+  state.connectId = connectId;
+  state.url = url;
+  state.socket = ws;
+  state.decoder = decoder;
+  setConnectionStatus(state, "connecting");
+  ws.binaryType = "arraybuffer";
+  const flushDecoder = () => {
+    if (state.connectId !== connectId)
+      return;
+    if (!decoder)
+      return;
+    const tail = decoder.decode();
+    if (state.decoder === decoder) {
+      state.decoder = null;
+    }
+    if (tail)
+      callbacks.onData?.(tail);
+  };
+  let disconnectedNotified = false;
+  const notifyDisconnected = () => {
+    if (disconnectedNotified)
+      return;
+    disconnectedNotified = true;
+    callbacks.onDisconnect?.();
+  };
+  const clearCurrentSocket = () => {
+    if (state.connectId !== connectId)
+      return;
+    if (state.socket === ws) {
+      state.socket = null;
+    }
+    setConnectionStatus(state, "idle");
+    if (state.decoder === decoder) {
+      state.decoder = null;
+    }
+  };
+  ws.addEventListener("open", () => {
+    if (state.connectId !== connectId) {
+      try {
+        ws.close();
+      } catch {}
+      return;
+    }
+    if (state.socket !== ws)
+      return;
+    setConnectionStatus(state, "connected");
+    callbacks.onConnect?.();
+    if (Number.isFinite(options.cols) && Number.isFinite(options.rows)) {
+      const cols = Math.max(0, Number(options.cols));
+      const rows = Math.max(0, Number(options.rows));
+      sendPtyResize(state, cols, rows);
+    }
+  });
+  ws.addEventListener("close", () => {
+    flushDecoder();
+    clearCurrentSocket();
+    notifyDisconnected();
+  });
+  ws.addEventListener("error", () => {
+    flushDecoder();
+    clearCurrentSocket();
+    notifyDisconnected();
+  });
+  ws.addEventListener("message", (event) => {
+    if (state.connectId !== connectId || state.socket !== ws)
+      return;
+    const payload = event.data;
+    if (payload instanceof ArrayBuffer) {
+      const text = decodePtyBinary(decoder, payload, true);
+      if (text)
+        callbacks.onData?.(text);
+      return;
+    }
+    if (payload instanceof Blob) {
+      payload.arrayBuffer().then((buf) => {
+        if (state.connectId !== connectId || state.socket !== ws)
+          return;
+        const text = decodePtyBinary(decoder, buf, true);
+        if (text)
+          callbacks.onData?.(text);
+      });
+      return;
+    }
+    if (typeof payload === "string") {
+      if (handleServerMessage(payload, callbacks))
+        return;
+      callbacks.onData?.(payload);
+    }
+  });
+  return true;
+}
+function disconnectPty(state) {
+  const socket = state.socket;
+  if (state.decoder && !socket) {
+    state.decoder.decode();
+    state.decoder = null;
+  }
+  if (!socket) {
+    setConnectionStatus(state, "idle");
+    return;
+  }
+  setConnectionStatus(state, "closing");
+  if (socket) {
+    try {
+      if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+        socket.close();
+      } else {
+        if (state.socket === socket) {
+          state.socket = null;
+        }
+        setConnectionStatus(state, "idle");
+      }
+    } catch {
+      if (state.socket === socket) {
+        state.socket = null;
+      }
+      setConnectionStatus(state, "idle");
+    }
+  }
+}
+function sendPtyInput(state, data) {
+  if (!state.socket || state.socket.readyState !== WebSocket.OPEN)
+    return false;
+  const message = { type: "input", data };
+  state.socket.send(JSON.stringify(message));
+  return true;
+}
+function sendPtyResize(state, cols, rows) {
+  if (!state.socket || state.socket.readyState !== WebSocket.OPEN)
+    return false;
+  const message = { type: "resize", cols, rows };
+  state.socket.send(JSON.stringify(message));
+  return true;
+}
+function handleServerMessage(payload, callbacks) {
+  try {
+    const msg = JSON.parse(payload);
+    if (msg.type === "status") {
+      callbacks.onStatus?.(msg.shell ?? "");
+      return true;
+    }
+    if (msg.type === "error") {
+      callbacks.onError?.(msg.message ?? "", msg.errors);
+      return true;
+    }
+    if (msg.type === "exit") {
+      callbacks.onExit?.(msg.code ?? 0);
+      return true;
+    }
+  } catch {}
+  return false;
+}
+function isPtyConnected(state) {
+  return state.status === "connected" && state.socket?.readyState === WebSocket.OPEN;
+}
+function createWebSocketPtyTransport(state = createPtyConnection()) {
+  return {
+    connect: (options) => {
+      const url = options.url?.trim?.() ?? "";
+      if (!url) {
+        throw new Error("PTY URL is required for WebSocket transport");
+      }
+      const connected = connectPty(state, options, options.callbacks);
+      if (!connected && state.status !== "connected") {
+        throw new Error(`PTY connection is busy (${state.status})`);
+      }
+    },
+    disconnect: () => {
+      disconnectPty(state);
+    },
+    sendInput: (data) => {
+      return sendPtyInput(state, data);
+    },
+    resize: (cols, rows) => {
+      return sendPtyResize(state, cols, rows);
+    },
+    isConnected: () => {
+      return isPtyConnected(state);
+    },
+    destroy: () => {
+      disconnectPty(state);
+    }
+  };
+}
+// src/input/keymap.ts
+var sequences = {
+  enter: "\r",
+  backspace: "",
+  delete: "\x1B[3~",
+  tab: "\t",
+  shiftTab: "\x1B[Z",
+  escape: "\x1B"
+};
+var DEFAULT_CONFIG = {
+  enableCtrlCombos: true
+};
+var KITTY_FLAG_DISAMBIGUATE = 1 << 0;
+var KITTY_FLAG_REPORT_EVENTS = 1 << 1;
+var KITTY_FLAG_REPORT_ALTERNATE = 1 << 2;
+var KITTY_FLAG_REPORT_ALL = 1 << 3;
+var KITTY_FLAG_REPORT_ASSOCIATED_TEXT = 1 << 4;
+var KITTY_SPECIAL_KEYS = {
+  Escape: { code: 27, final: "u" },
+  Enter: { code: 13, final: "u" },
+  Tab: { code: 9, final: "u" },
+  Backspace: { code: 127, final: "u" },
+  Insert: { code: 2, final: "~" },
+  Delete: { code: 3, final: "~" },
+  Del: { code: 3, final: "~" },
+  ArrowLeft: { code: 1, final: "D" },
+  ArrowRight: { code: 1, final: "C" },
+  ArrowUp: { code: 1, final: "A" },
+  ArrowDown: { code: 1, final: "B" },
+  PageUp: { code: 5, final: "~" },
+  PageDown: { code: 6, final: "~" },
+  Home: { code: 1, final: "H" },
+  End: { code: 1, final: "F" },
+  CapsLock: { code: 57358, final: "u" },
+  ScrollLock: { code: 57359, final: "u" },
+  NumLock: { code: 57360, final: "u" },
+  PrintScreen: { code: 57361, final: "u" },
+  Pause: { code: 57362, final: "u" },
+  ContextMenu: { code: 57363, final: "u" },
+  Menu: { code: 57363, final: "u" },
+  F1: { code: 1, final: "P" },
+  F2: { code: 1, final: "Q" },
+  F3: { code: 13, final: "~" },
+  F4: { code: 1, final: "S" },
+  F5: { code: 15, final: "~" },
+  F6: { code: 17, final: "~" },
+  F7: { code: 18, final: "~" },
+  F8: { code: 19, final: "~" },
+  F9: { code: 20, final: "~" },
+  F10: { code: 21, final: "~" },
+  F11: { code: 23, final: "~" },
+  F12: { code: 24, final: "~" },
+  F13: { code: 57376, final: "u" },
+  F14: { code: 57377, final: "u" },
+  F15: { code: 57378, final: "u" },
+  F16: { code: 57379, final: "u" },
+  F17: { code: 57380, final: "u" },
+  F18: { code: 57381, final: "u" },
+  F19: { code: 57382, final: "u" },
+  F20: { code: 57383, final: "u" },
+  F21: { code: 57384, final: "u" },
+  F22: { code: 57385, final: "u" },
+  F23: { code: 57386, final: "u" },
+  F24: { code: 57387, final: "u" }
+};
+var KITTY_KEYPAD_BY_CODE = {
+  Numpad0: { code: 57399, final: "u" },
+  Numpad1: { code: 57400, final: "u" },
+  Numpad2: { code: 57401, final: "u" },
+  Numpad3: { code: 57402, final: "u" },
+  Numpad4: { code: 57403, final: "u" },
+  Numpad5: { code: 57404, final: "u" },
+  Numpad6: { code: 57405, final: "u" },
+  Numpad7: { code: 57406, final: "u" },
+  Numpad8: { code: 57407, final: "u" },
+  Numpad9: { code: 57408, final: "u" },
+  NumpadDecimal: { code: 57409, final: "u" },
+  NumpadDivide: { code: 57410, final: "u" },
+  NumpadMultiply: { code: 57411, final: "u" },
+  NumpadSubtract: { code: 57412, final: "u" },
+  NumpadAdd: { code: 57413, final: "u" },
+  NumpadEnter: { code: 57414, final: "u" },
+  NumpadEqual: { code: 57415, final: "u" }
+};
+var KITTY_LOCK_KEYS = new Set(["CapsLock", "NumLock", "ScrollLock"]);
+var UN_SHIFTED_CODE_BY_CODE = {
+  Backquote: "`",
+  Minus: "-",
+  Equal: "=",
+  BracketLeft: "[",
+  BracketRight: "]",
+  Backslash: "\\",
+  Semicolon: ";",
+  Quote: "'",
+  Comma: ",",
+  Period: ".",
+  Slash: "/"
+};
+var SHIFTED_CODE_BY_CODE = {
+  Backquote: "~",
+  Digit1: "!",
+  Digit2: "@",
+  Digit3: "#",
+  Digit4: "$",
+  Digit5: "%",
+  Digit6: "^",
+  Digit7: "&",
+  Digit8: "*",
+  Digit9: "(",
+  Digit0: ")",
+  Minus: "_",
+  Equal: "+",
+  BracketLeft: "{",
+  BracketRight: "}",
+  Backslash: "|",
+  Semicolon: ":",
+  Quote: '"',
+  Comma: "<",
+  Period: ">",
+  Slash: "?"
+};
+function ctrlCharForKey(key) {
+  if (key === " ")
+    return "\x00";
+  if (key === "@")
+    return "\x00";
+  if (key === "[")
+    return "\x1B";
+  if (key === "\\")
+    return "\x1C";
+  if (key === "]")
+    return "\x1D";
+  if (key === "^")
+    return "\x1E";
+  if (key === "_")
+    return "\x1F";
+  if (key === "?")
+    return "";
+  if (key.length === 1) {
+    const code = key.toUpperCase().charCodeAt(0);
+    if (code >= 64 && code <= 95) {
+      return String.fromCharCode(code & 31);
+    }
+  }
+  return "";
+}
+function modifierCode(event) {
+  let mod = 1;
+  if (event.shiftKey)
+    mod += 1;
+  if (event.altKey)
+    mod += 2;
+  if (event.ctrlKey)
+    mod += 4;
+  return mod;
+}
+function encodeKeyEvent(event, config = DEFAULT_CONFIG, kittyFlags = 0) {
+  if (!event)
+    return "";
+  if (event.isComposing)
+    return "";
+  if (kittyFlags !== 0) {
+    return encodeKittyKeyEvent(event, kittyFlags);
+  }
+  if (event.metaKey)
+    return "";
+  const cfg = { ...DEFAULT_CONFIG, ...config };
+  let seq = "";
+  if (cfg.enableCtrlCombos && event.ctrlKey) {
+    seq = ctrlCharForKey(event.key);
+    if (event.altKey && seq)
+      seq = `\x1B${seq}`;
+  }
+  if (!seq) {
+    switch (event.key) {
+      case "Enter":
+        seq = sequences.enter;
+        break;
+      case "Backspace":
+        seq = sequences.backspace;
+        break;
+      case "Delete":
+      case "Del":
+        seq = sequences.delete;
+        break;
+      case "Tab":
+        seq = event.shiftKey ? sequences.shiftTab : sequences.tab;
+        break;
+      case "Escape":
+        seq = sequences.escape;
+        break;
+      case "ArrowUp":
+        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}A` : "\x1B[A";
+        break;
+      case "ArrowDown":
+        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}B` : "\x1B[B";
+        break;
+      case "ArrowRight":
+        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}C` : "\x1B[C";
+        break;
+      case "ArrowLeft":
+        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}D` : "\x1B[D";
+        break;
+      case "Home":
+        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}H` : "\x1B[H";
+        break;
+      case "End":
+        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}F` : "\x1B[F";
+        break;
+      case "PageUp":
+        seq = "\x1B[5~";
+        break;
+      case "PageDown":
+        seq = "\x1B[6~";
+        break;
+      case "Insert":
+        seq = "\x1B[2~";
+        break;
+      default:
+        if (event.key?.startsWith("F")) {
+          const fn = Number(event.key.slice(1));
+          const map = {
+            1: "\x1BOP",
+            2: "\x1BOQ",
+            3: "\x1BOR",
+            4: "\x1BOS",
+            5: "\x1B[15~",
+            6: "\x1B[17~",
+            7: "\x1B[18~",
+            8: "\x1B[19~",
+            9: "\x1B[20~",
+            10: "\x1B[21~",
+            11: "\x1B[23~",
+            12: "\x1B[24~"
+          };
+          seq = map[fn] ?? "";
+        } else if (event.key?.length === 1) {
+          seq = event.altKey ? `\x1B${event.key}` : event.key;
+        }
+        break;
+    }
+  }
+  return seq;
+}
+function kittyModifierCode(event, includeLockModifiers) {
+  let code = 1;
+  if (event.shiftKey)
+    code += 1;
+  if (event.altKey)
+    code += 2;
+  if (event.ctrlKey)
+    code += 4;
+  if (event.metaKey)
+    code += 8;
+  if (includeLockModifiers) {
+    if (event.getModifierState?.("CapsLock"))
+      code += 64;
+    if (event.getModifierState?.("NumLock"))
+      code += 128;
+  }
+  return code;
+}
+function deriveUnshiftedCodepoint(event) {
+  const code = event.code || "";
+  if (code.startsWith("Key") && code.length === 4) {
+    return code.slice(3).toLowerCase().codePointAt(0) ?? 0;
+  }
+  if (code.startsWith("Digit") && code.length === 6) {
+    return code.slice(5).codePointAt(0) ?? 0;
+  }
+  const punctuation = UN_SHIFTED_CODE_BY_CODE[code];
+  if (punctuation)
+    return punctuation.codePointAt(0) ?? 0;
+  if (event.key?.length === 1)
+    return event.key.codePointAt(0) ?? 0;
+  return 0;
+}
+function deriveShiftedCodepoint(event, unshiftedCodepoint) {
+  if (!event.shiftKey)
+    return 0;
+  if (event.key?.length === 1) {
+    const cp2 = event.key.codePointAt(0) ?? 0;
+    if (cp2 > 0 && cp2 !== unshiftedCodepoint)
+      return cp2;
+  }
+  const shifted = SHIFTED_CODE_BY_CODE[event.code || ""];
+  if (!shifted)
+    return 0;
+  const cp = shifted.codePointAt(0) ?? 0;
+  return cp !== unshiftedCodepoint ? cp : 0;
+}
+function deriveBaseLayoutCodepoint(event) {
+  const code = event.code || "";
+  if (code.startsWith("Key") && code.length === 4) {
+    return code.slice(3).toLowerCase().codePointAt(0) ?? 0;
+  }
+  if (code.startsWith("Digit") && code.length === 6) {
+    return code.slice(5).codePointAt(0) ?? 0;
+  }
+  const punctuation = UN_SHIFTED_CODE_BY_CODE[code];
+  if (punctuation)
+    return punctuation.codePointAt(0) ?? 0;
+  return 0;
+}
+function toCodepoints(text) {
+  const points = [];
+  for (const ch of text) {
+    points.push(ch.codePointAt(0) ?? 0);
+  }
+  return points.filter((cp) => cp > 0);
+}
+function kittyEventType(event, reportEvents) {
+  if (!reportEvents)
+    return 0;
+  if (event.type === "keyup")
+    return 3;
+  if (event.repeat)
+    return 2;
+  return 1;
+}
+function encodeKittySequence(code, final, modifiers, eventType, alternates, associatedText) {
+  if (final !== "u" && final !== "~") {
+    if (eventType !== 0)
+      return `\x1B[1;${modifiers}:${eventType}${final}`;
+    if (modifiers > 1)
+      return `\x1B[1;${modifiers}${final}`;
+    return `\x1B[${final}`;
+  }
+  let keyPart = `${code}`;
+  if (final === "u" && alternates && (alternates.shifted || alternates.base)) {
+    const shifted = alternates.shifted ? `${alternates.shifted}` : "";
+    const base = alternates.base ? `${alternates.base}` : "";
+    keyPart += `:${shifted}`;
+    if (base)
+      keyPart += `:${base}`;
+  }
+  const hasAssocText = Boolean(associatedText?.length);
+  if (eventType === 0 && modifiers <= 1 && !hasAssocText) {
+    return `\x1B[${keyPart}${final}`;
+  }
+  let seq = `\x1B[${keyPart};${modifiers}`;
+  if (eventType !== 0)
+    seq += `:${eventType}`;
+  if (hasAssocText)
+    seq += `;${associatedText.join(":")}`;
+  seq += final;
+  return seq;
+}
+function encodeKittyKeyEvent(event, kittyFlags) {
+  const reportEvents = (kittyFlags & KITTY_FLAG_REPORT_EVENTS) !== 0;
+  const reportAlternate = (kittyFlags & KITTY_FLAG_REPORT_ALTERNATE) !== 0;
+  const reportAll = (kittyFlags & KITTY_FLAG_REPORT_ALL) !== 0;
+  const reportAssociatedText = (kittyFlags & KITTY_FLAG_REPORT_ASSOCIATED_TEXT) !== 0;
+  const disambiguate = (kittyFlags & KITTY_FLAG_DISAMBIGUATE) !== 0;
+  const key = event.key ?? "";
+  const special = KITTY_KEYPAD_BY_CODE[event.code || ""] ?? KITTY_SPECIAL_KEYS[key];
+  const isLockKey = KITTY_LOCK_KEYS.has(key);
+  const hasText = key.length === 1;
+  const hasTextModifiers = event.altKey || event.ctrlKey || event.metaKey;
+  const eventType = kittyEventType(event, reportEvents);
+  const isRelease = event.type === "keyup";
+  const isLegacyTextKey = !special && hasText && !reportAll && !hasTextModifiers;
+  const isLegacyControlKey = (key === "Enter" || key === "Tab" || key === "Backspace") && !reportAll && !hasTextModifiers && !disambiguate;
+  if (isRelease && !reportEvents)
+    return "";
+  if (isRelease && isLegacyTextKey)
+    return "";
+  if (isRelease && isLegacyControlKey)
+    return "";
+  if (isLockKey && !reportAll)
+    return "";
+  if (isLegacyTextKey) {
+    return key;
+  }
+  if (isLegacyControlKey) {
+    switch (key) {
+      case "Enter":
+        return sequences.enter;
+      case "Tab":
+        return sequences.tab;
+      case "Backspace":
+        return sequences.backspace;
+      default:
+        break;
+    }
+  }
+  const mods = kittyModifierCode(event, reportAll);
+  if (special) {
+    return encodeKittySequence(special.code, special.final, mods, eventType);
+  }
+  const unshifted = deriveUnshiftedCodepoint(event);
+  if (unshifted > 0 && (reportAll || disambiguate || hasTextModifiers || eventType !== 0)) {
+    const alternates = reportAlternate && reportAll ? {
+      shifted: deriveShiftedCodepoint(event, unshifted) || undefined,
+      base: (() => {
+        const base = deriveBaseLayoutCodepoint(event);
+        return base > 0 && base !== unshifted ? base : undefined;
+      })()
+    } : undefined;
+    const associated = reportAll && reportAssociatedText && hasText ? toCodepoints(key) : undefined;
+    return encodeKittySequence(unshifted, "u", mods, eventType, alternates, associated);
+  }
+  if (hasText) {
+    return event.altKey ? `\x1B${key}` : key;
+  }
+  return "";
+}
+function encodeBeforeInput(event) {
+  if (!event)
+    return "";
+  const type = event.inputType;
+  if (type === "insertText")
+    return event.data || "";
+  if (type === "insertLineBreak")
+    return sequences.enter;
+  if (type === "deleteContentBackward")
+    return sequences.backspace;
+  if (type === "deleteContentForward")
+    return sequences.delete;
+  if (type === "insertFromPaste") {
+    return event.dataTransfer?.getData("text/plain") || "";
+  }
+  return "";
+}
+function mapKeyForPty(seq) {
+  const csi = "\x1B[";
+  if (seq.startsWith(csi) && seq.endsWith("u")) {
+    const body = seq.slice(csi.length, -1);
+    const [codeText] = body.split(";");
+    if (codeText && /^[0-9]+$/.test(codeText)) {
+      const code = Number(codeText);
+      if (code === 127)
+        return "";
+      if (code === 13)
+        return "\r";
+      if (code === 9)
+        return "\t";
+    }
+  }
+  if (seq.startsWith(csi) && seq.endsWith("~")) {
+    const body = seq.slice(csi.length, -1);
+    if (body === "3" || body.startsWith("3;"))
+      return "\x1B[3~";
+  }
+  if (seq === sequences.backspace || seq === "\b" || seq === "\b\x1B[P")
+    return "";
+  if (seq === sequences.delete || seq === "\x1B[P")
+    return "\x1B[3~";
+  if (seq === sequences.enter || seq === `\r
+`)
+    return "\r";
+  return seq;
+}
+
+// src/input/ansi.ts
+var ESC = "\x1B";
+function parsePrivateModeSeq(seq) {
+  if (!seq.startsWith(`${ESC}[?`) || seq.length < 5)
+    return null;
+  const final = seq[seq.length - 1];
+  if (final !== "h" && final !== "l")
+    return null;
+  const body = seq.slice(3, -1);
+  if (!body || /[^0-9;]/.test(body))
+    return null;
+  const parts = body.split(";");
+  const codes = [];
+  for (let i = 0;i < parts.length; i += 1) {
+    const part = parts[i];
+    if (!part)
+      return null;
+    const code = Number(part);
+    if (!Number.isFinite(code))
+      return null;
+    codes.push(code);
+  }
+  return { codes, enabled: final === "h" };
+}
+function parseWindowOpSeq(seq) {
+  if (!seq.startsWith(`${ESC}[`) || !seq.endsWith("t"))
+    return null;
+  const body = seq.slice(2, -1);
+  if (/[^0-9;]/.test(body))
+    return null;
+  return body ? body.split(";").map((part) => Number(part)) : [];
+}
+function isDeviceAttributesQuery(seq) {
+  if (!seq.startsWith(`${ESC}[`) || !seq.endsWith("c"))
+    return false;
+  const body = seq.slice(2, -1);
+  let i = 0;
+  while (i < body.length && (body[i] === "?" || body[i] === ">"))
+    i += 1;
+  while (i < body.length && body.charCodeAt(i) >= 48 && body.charCodeAt(i) <= 57)
+    i += 1;
+  if (i < body.length && body[i] === ";") {
+    i += 1;
+    while (i < body.length && body.charCodeAt(i) >= 48 && body.charCodeAt(i) <= 57)
+      i += 1;
+  }
+  return i === body.length;
+}
+
+// src/input/mouse.ts
+class MouseController {
+  mode = "auto";
+  enabled = false;
+  format = "x10";
+  motion = "none";
+  pressed = false;
+  button = 0;
+  flags = { 1000: false, 1002: false, 1003: false };
+  x10Event = false;
+  sendReply;
+  positionToCell;
+  positionToPixel;
+  constructor(options) {
+    this.sendReply = options.sendReply;
+    this.positionToCell = options.positionToCell;
+    this.positionToPixel = options.positionToPixel;
+  }
+  setReplySink(fn) {
+    this.sendReply = fn;
+  }
+  setPositionToCell(fn) {
+    this.positionToCell = fn;
+  }
+  setPositionToPixel(fn) {
+    this.positionToPixel = fn;
+  }
+  setMode(mode) {
+    this.mode = mode;
+    if (mode === "on") {
+      this.enabled = true;
+      this.format = "sgr";
+      this.motion = "drag";
+    } else if (mode === "off") {
+      this.enabled = false;
+      this.format = "x10";
+      this.motion = "none";
+    } else {
+      this.enabled = this.x10Event || this.flags[1000] || this.flags[1002] || this.flags[1003];
+      if (this.flags[1003])
+        this.motion = "any";
+      else if (this.flags[1002])
+        this.motion = "drag";
+      else
+        this.motion = "none";
+    }
+  }
+  handleModeSeq(seq) {
+    const mode = parsePrivateModeSeq(seq);
+    if (!mode)
+      return false;
+    const { enabled, codes } = mode;
+    let handled = false;
+    for (const code of codes) {
+      if (code === 9) {
+        this.x10Event = enabled;
+        handled = true;
+        continue;
+      }
+      if (code === 1006) {
+        this.format = enabled ? "sgr" : "x10";
+        handled = true;
+        continue;
+      }
+      if (code === 1016) {
+        this.format = enabled ? "sgr_pixels" : "x10";
+        handled = true;
+        continue;
+      }
+      if (code === 1005) {
+        this.format = enabled ? "utf8" : "x10";
+        handled = true;
+        continue;
+      }
+      if (code === 1015) {
+        this.format = enabled ? "urxvt" : "x10";
+        handled = true;
+        continue;
+      }
+      if (code === 1000 || code === 1002 || code === 1003) {
+        this.updateFlags(code, enabled);
+        handled = true;
+      }
+    }
+    return handled;
+  }
+  isActive() {
+    if (this.mode === "off")
+      return false;
+    if (this.mode === "on")
+      return true;
+    return this.enabled;
+  }
+  getStatus() {
+    return { mode: this.mode, active: this.isActive(), detail: this.format, enabled: this.enabled };
+  }
+  sendMouseEvent(kind, event) {
+    if (!this.isActive())
+      return false;
+    if (!this.positionToCell)
+      return false;
+    if (this.isX10EventMode() && kind !== "down")
+      return false;
+    const cell = this.positionToCell(event);
+    const col = cell.col + 1;
+    const row = cell.row + 1;
+    const pixel = this.positionToPixel ? this.positionToPixel(event) : null;
+    const isSgr = this.format === "sgr" || this.format === "sgr_pixels";
+    const base = "button" in event && event.button === 1 ? 1 : ("button" in event) && event.button === 2 ? 2 : 0;
+    const mods = this.modifiers(event, !this.isX10EventMode());
+    if (kind === "down") {
+      this.pressed = true;
+      this.button = base;
+      const code = base + mods;
+      return this.sendMouse(code, col, row, pixel, false);
+    }
+    if (kind === "up") {
+      const btn = this.pressed ? this.button : base;
+      this.pressed = false;
+      const code = isSgr ? btn + mods : 3 + mods;
+      return this.sendMouse(code, col, row, pixel, true);
+    }
+    if (kind === "move") {
+      if (this.motion === "none")
+        return false;
+      if (this.motion === "drag" && !this.pressed)
+        return false;
+      const btn = this.pressed ? this.button : 3;
+      const code = btn + mods + 32;
+      return this.sendMouse(code, col, row, pixel, false);
+    }
+    if (kind === "wheel") {
+      const delta = Math.sign(event.deltaY);
+      if (!delta)
+        return false;
+      const code = (delta < 0 ? 64 : 65) + mods;
+      return this.sendMouse(code, col, row, pixel, false);
+    }
+    return false;
+  }
+  updateFlags(code, enabled) {
+    if (!(code in this.flags))
+      return;
+    this.flags[code] = enabled;
+    this.enabled = this.x10Event || this.flags[1000] || this.flags[1002] || this.flags[1003];
+    if (this.flags[1003])
+      this.motion = "any";
+    else if (this.flags[1002])
+      this.motion = "drag";
+    else
+      this.motion = "none";
+  }
+  isX10EventMode() {
+    if (!this.x10Event)
+      return false;
+    return !(this.flags[1000] || this.flags[1002] || this.flags[1003]);
+  }
+  modifiers(event, enabled) {
+    if (!enabled)
+      return 0;
+    let mod = 0;
+    if (event.shiftKey)
+      mod |= 4;
+    if (event.altKey)
+      mod |= 8;
+    if (event.ctrlKey)
+      mod |= 16;
+    return mod;
+  }
+  sendMouse(code, col, row, pixel, release) {
+    if (this.format === "x10") {
+      if (col > 223 || row > 223)
+        return false;
+      const cb = 32 + code;
+      const cx = 32 + col;
+      const cy = 32 + row;
+      this.sendReply(`\x1B[M${String.fromCharCode(cb, cx, cy)}`);
+      return true;
+    }
+    if (this.format === "utf8") {
+      const cb = String.fromCharCode(32 + code);
+      const cx = String.fromCodePoint(32 + col);
+      const cy = String.fromCodePoint(32 + row);
+      this.sendReply(`\x1B[M${cb}${cx}${cy}`);
+      return true;
+    }
+    if (this.format === "urxvt") {
+      this.sendReply(`\x1B[${32 + code};${col};${row}M`);
+      return true;
+    }
+    const suffix = release ? "m" : "M";
+    if (this.format === "sgr_pixels" && pixel) {
+      this.sendReply(`\x1B[<${code};${pixel.x};${pixel.y}${suffix}`);
+      return true;
+    }
+    this.sendReply(`\x1B[<${code};${col};${row}${suffix}`);
+    return true;
+  }
+}
+
+// src/input/output.ts
+var textDecoder = new TextDecoder;
+var textEncoder = new TextEncoder;
+function decodeBase64(data) {
+  if (!data)
+    return new Uint8Array;
+  const cleaned = data.replace(/\s+/g, "");
+  if (typeof atob === "function") {
+    const binary = atob(cleaned);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0;i < binary.length; i += 1) {
+      bytes[i] = binary.charCodeAt(i) & 255;
+    }
+    return bytes;
+  }
+  if (typeof Buffer !== "undefined") {
+    return new Uint8Array(Buffer.from(cleaned, "base64"));
+  }
+  return new Uint8Array;
+}
+function encodeBase64(bytes) {
+  if (typeof btoa === "function") {
+    let binary = "";
+    const chunk = 32768;
+    for (let i = 0;i < bytes.length; i += chunk) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+    }
+    return btoa(binary);
+  }
+  if (typeof Buffer !== "undefined") {
+    return Buffer.from(bytes).toString("base64");
+  }
+  return "";
+}
+
+class OutputFilter {
+  remainder = "";
+  getCursorPosition;
+  sendReply;
+  mouse;
+  altScreen = false;
+  bracketedPaste = false;
+  focusReporting = false;
+  synchronizedOutput = false;
+  windowOpHandler;
+  getWindowMetrics;
+  clipboardWrite;
+  clipboardRead;
+  getDefaultColors;
+  constructor(options) {
+    this.getCursorPosition = options.getCursorPosition;
+    this.sendReply = options.sendReply;
+    this.mouse = options.mouse;
+    this.getDefaultColors = options.getDefaultColors;
+    this.clipboardWrite = options.onClipboardWrite;
+    this.clipboardRead = options.onClipboardRead;
+    this.windowOpHandler = options.onWindowOp;
+    this.getWindowMetrics = options.getWindowMetrics;
+  }
+  setCursorProvider(fn) {
+    this.getCursorPosition = fn;
+  }
+  setReplySink(fn) {
+    this.sendReply = fn;
+  }
+  setWindowOpHandler(fn) {
+    this.windowOpHandler = fn;
+  }
+  isAltScreen() {
+    return this.altScreen;
+  }
+  isBracketedPaste() {
+    return this.bracketedPaste;
+  }
+  isFocusReporting() {
+    return this.focusReporting;
+  }
+  isSynchronizedOutput() {
+    return this.synchronizedOutput;
+  }
+  replyOscColor(code, rgb) {
+    const toHex4 = (value) => Math.round(Math.max(0, Math.min(255, value)) * 257).toString(16).padStart(4, "0");
+    const r = toHex4(rgb[0]);
+    const g = toHex4(rgb[1]);
+    const b = toHex4(rgb[2]);
+    this.sendReply(`\x1B]${code};rgb:${r}/${g}/${b}\x07`);
+  }
+  handleOsc(seq) {
+    const content = seq.slice(2);
+    const parts = content.split(";");
+    const code = parts[0] ?? "";
+    if (code === "52") {
+      const target = parts[1] ?? "c";
+      const payload = parts.slice(2).join(";");
+      if (payload === "?") {
+        if (!this.clipboardRead)
+          return true;
+        Promise.resolve(this.clipboardRead()).then((text2) => {
+          const safeText = text2 ?? "";
+          const bytes2 = textEncoder.encode(safeText);
+          const encoded = encodeBase64(bytes2);
+          this.sendReply(`\x1B]52;${target};${encoded}\x07`);
+        }).catch(() => {});
+        return true;
+      }
+      if (!this.clipboardWrite)
+        return true;
+      const bytes = decodeBase64(payload);
+      const text = textDecoder.decode(bytes);
+      Promise.resolve(this.clipboardWrite(text)).catch(() => {});
+      return true;
+    }
+    const param = parts[1];
+    if (param !== "?")
+      return false;
+    const colors = this.getDefaultColors?.();
+    if (!colors)
+      return false;
+    if (code === "10" && colors.fg) {
+      this.replyOscColor(code, colors.fg);
+      return true;
+    }
+    if (code === "11" && colors.bg) {
+      this.replyOscColor(code, colors.bg);
+      return true;
+    }
+    if (code === "12" && colors.cursor) {
+      this.replyOscColor(code, colors.cursor);
+      return true;
+    }
+    return false;
+  }
+  handleModeSeq(seq) {
+    const mode = parsePrivateModeSeq(seq);
+    if (!mode)
+      return false;
+    const { enabled, codes } = mode;
+    let handled = false;
+    for (const code of codes) {
+      if (code === 2004) {
+        this.bracketedPaste = enabled;
+        handled = true;
+      } else if (code === 1004) {
+        this.focusReporting = enabled;
+        handled = true;
+      } else if (code === 2026) {
+        this.synchronizedOutput = enabled;
+      }
+    }
+    return handled;
+  }
+  handleWindowOp(seq) {
+    const params = parseWindowOpSeq(seq);
+    if (!params)
+      return false;
+    const op = params[0] ?? 0;
+    const metrics = this.getWindowMetrics?.();
+    if (metrics && op === 14 && params.length === 1) {
+      this.sendReply(`\x1B[4;${metrics.heightPx};${metrics.widthPx}t`);
+      return true;
+    }
+    if (metrics && op === 16 && params.length === 1) {
+      this.sendReply(`\x1B[6;${metrics.cellHeightPx};${metrics.cellWidthPx}t`);
+      return true;
+    }
+    if (metrics && op === 18 && params.length === 1) {
+      this.sendReply(`\x1B[8;${metrics.rows};${metrics.cols}t`);
+      return true;
+    }
+    if (!this.windowOpHandler)
+      return false;
+    if (params[0] === 8 && params.length >= 3) {
+      this.windowOpHandler({
+        type: "resize",
+        rows: params[1] ?? 0,
+        cols: params[2] ?? 0,
+        params,
+        raw: seq
+      });
+    } else {
+      this.windowOpHandler({ type: "unknown", params, raw: seq });
+    }
+    return true;
+  }
+  filter(output) {
+    if (!output)
+      return output;
+    let data = this.remainder + output;
+    this.remainder = "";
+    let result = "";
+    let i = 0;
+    while (i < data.length) {
+      const ch = data[i];
+      if (ch !== "\x1B") {
+        result += ch;
+        i += 1;
+        continue;
+      }
+      if (i + 1 >= data.length) {
+        this.remainder = data.slice(i);
+        break;
+      }
+      if (data[i + 1] === "]") {
+        let j2 = i + 2;
+        let terminatorLen = 0;
+        while (j2 < data.length) {
+          const code = data.charCodeAt(j2);
+          if (code === 7) {
+            terminatorLen = 1;
+            break;
+          }
+          if (code === 27 && j2 + 1 < data.length && data[j2 + 1] === "\\") {
+            terminatorLen = 2;
+            break;
+          }
+          j2 += 1;
+        }
+        if (!terminatorLen) {
+          this.remainder = data.slice(i);
+          break;
+        }
+        const seq2 = data.slice(i, j2);
+        if (!this.handleOsc(seq2)) {
+          result += data.slice(i, j2 + terminatorLen);
+        }
+        i = j2 + terminatorLen;
+        continue;
+      }
+      if (data[i + 1] !== "[") {
+        result += ch;
+        i += 1;
+        continue;
+      }
+      let j = i + 2;
+      while (j < data.length) {
+        const code = data.charCodeAt(j);
+        if (code >= 64 && code <= 126)
+          break;
+        j += 1;
+      }
+      if (j >= data.length) {
+        this.remainder = data.slice(i);
+        break;
+      }
+      const seq = data.slice(i, j + 1);
+      const altMode = parsePrivateModeSeq(seq);
+      if (altMode) {
+        const { enabled, codes } = altMode;
+        if (codes.some((code) => code === 47 || code === 1047 || code === 1049)) {
+          this.altScreen = enabled;
+        }
+      }
+      const mouseHandled = this.mouse.handleModeSeq(seq);
+      const modeHandled = this.handleModeSeq(seq);
+      if (mouseHandled || modeHandled) {
+        i = j + 1;
+        continue;
+      }
+      if (seq.endsWith("t") && this.handleWindowOp(seq)) {
+        i = j + 1;
+        continue;
+      }
+      if (seq === "\x1B[6n") {
+        const { row, col } = this.getCursorPosition();
+        this.sendReply(`\x1B[${row};${col}R`);
+      } else if (seq === "\x1B[>q") {
+        this.sendReply("\x1BP>|ghostty 1.0\x1B\\");
+      } else if (isDeviceAttributesQuery(seq)) {
+        this.sendReply("\x1B[?1;2c");
+      } else {
+        result += seq;
+      }
+      i = j + 1;
+    }
+    return result;
+  }
+}
+
+// src/input/index.ts
+function createInputHandler(options = {}) {
+  const config = options.config || {};
+  const cursorProvider = options.getCursorPosition || (() => ({ row: 1, col: 1 }));
+  const replySink = options.sendReply || (() => {});
+  const positionToCell = options.positionToCell || (() => ({ row: 0, col: 0 }));
+  const positionToPixel = options.positionToPixel || null;
+  const mouse = new MouseController({
+    sendReply: replySink,
+    positionToCell,
+    positionToPixel: positionToPixel ?? undefined
+  });
+  const filter = new OutputFilter({
+    getCursorPosition: cursorProvider,
+    sendReply: replySink,
+    mouse,
+    getDefaultColors: options.getDefaultColors,
+    onClipboardRead: options.onClipboardRead,
+    onClipboardWrite: options.onClipboardWrite,
+    onWindowOp: options.onWindowOp,
+    getWindowMetrics: options.getWindowMetrics
+  });
+  return {
+    sequences,
+    encodeKeyEvent: (event) => encodeKeyEvent(event, config, options.getKittyKeyboardFlags?.() ?? 0),
+    encodeBeforeInput,
+    mapKeyForPty,
+    filterOutput: (output) => filter.filter(output),
+    setReplySink: (fn) => {
+      mouse.setReplySink(fn);
+      filter.setReplySink(fn);
+    },
+    setCursorProvider: (fn) => {
+      filter.setCursorProvider(fn);
+    },
+    setPositionToCell: (fn) => {
+      mouse.setPositionToCell(fn);
+    },
+    setPositionToPixel: (fn) => {
+      mouse.setPositionToPixel(fn);
+    },
+    setWindowOpHandler: (fn) => {
+      filter.setWindowOpHandler(fn);
+    },
+    setMouseMode: (mode) => {
+      mouse.setMode(mode);
+    },
+    getMouseStatus: () => mouse.getStatus(),
+    isMouseActive: () => mouse.isActive(),
+    isBracketedPaste: () => filter.isBracketedPaste(),
+    isFocusReporting: () => filter.isFocusReporting(),
+    isAltScreen: () => filter.isAltScreen(),
+    isSynchronizedOutput: () => filter.isSynchronizedOutput(),
+    sendMouseEvent: (kind, event) => mouse.sendMouseEvent(kind, event)
+  };
 }
 // src/wasm/embedded.ts
 var WASM_BASE64 = `
@@ -8150,8 +13685,8 @@ AAAwEBAAGQAAAAgAAAAAAAAAAgAAAAQAAABbAQAAXAEAAFkBAABaAQAA5DQSAOw0EgDqNBIA6DQSAOw0
 `;
 
 // src/wasm/runtime.ts
-var textDecoder = new TextDecoder;
-var textEncoder = new TextEncoder;
+var textDecoder2 = new TextDecoder;
+var textEncoder2 = new TextEncoder;
 function makeViewEntry() {
   return { buffer: null, ptr: 0, len: 0, view: null };
 }
@@ -8195,7 +13730,7 @@ function getCachedView(entry, buffer, ptr, len, Ctor) {
   entry.view = view;
   return view;
 }
-function decodeBase64(base64) {
+function decodeBase642(base64) {
   const cleaned = base64.replace(/\s+/g, "");
   if (typeof atob === "function") {
     const binary = atob(cleaned);
@@ -8358,7 +13893,7 @@ class ResttyWasm {
     this.renderViewCaches = new Map;
   }
   static async load(options = {}) {
-    const bytes = decodeBase64(WASM_BASE64);
+    const bytes = decodeBase642(WASM_BASE64);
     let memory = null;
     const log = options.log;
     const imports = {
@@ -8367,7 +13902,7 @@ class ResttyWasm {
           if (!memory || !ptr || !len)
             return;
           const view = new Uint8Array(memory.buffer, ptr, len);
-          const text = textDecoder.decode(view);
+          const text = textDecoder2.decode(view);
           if (log)
             log(text);
         }
@@ -8443,7 +13978,7 @@ class ResttyWasm {
     if (this.exports.restty_output_consume) {
       this.exports.restty_output_consume(handle, len);
     }
-    return textDecoder.decode(copy);
+    return textDecoder2.decode(copy);
   }
   getKittyKeyboardFlags(handle) {
     if (!this.exports.restty_kitty_keyboard_flags)
@@ -8492,7 +14027,7 @@ class ResttyWasm {
   write(handle, text) {
     if (!text)
       return;
-    const bytes = textEncoder.encode(text);
+    const bytes = textEncoder2.encode(text);
     const ptr = this.exports.restty_alloc(bytes.length);
     if (!ptr)
       return;
@@ -8588,6405 +14123,6 @@ class ResttyWasm {
 }
 async function loadResttyWasm(options = {}) {
   return ResttyWasm.load(options);
-}
-// src/app/session.ts
-function createResttyAppSession() {
-  let wasmPromise = null;
-  let webgpuCorePromise = null;
-  const wasmLogListeners = new Set;
-  const forwardWasmLog = (message) => {
-    for (const listener of wasmLogListeners) {
-      listener(message);
-    }
-  };
-  return {
-    getWasm: () => {
-      if (!wasmPromise) {
-        wasmPromise = loadResttyWasm({ log: forwardWasmLog });
-      }
-      return wasmPromise;
-    },
-    getWebGPUCore: (canvas) => {
-      if (!webgpuCorePromise) {
-        webgpuCorePromise = initWebGPUCore(canvas);
-      }
-      return webgpuCorePromise;
-    },
-    addWasmLogListener: (listener) => {
-      wasmLogListeners.add(listener);
-    },
-    removeWasmLogListener: (listener) => {
-      wasmLogListeners.delete(listener);
-    }
-  };
-}
-var defaultResttyAppSession = null;
-function getDefaultResttyAppSession() {
-  if (!defaultResttyAppSession) {
-    defaultResttyAppSession = createResttyAppSession();
-  }
-  return defaultResttyAppSession;
-}
-
-// src/input/keymap.ts
-var sequences = {
-  enter: "\r",
-  backspace: "",
-  delete: "\x1B[3~",
-  tab: "\t",
-  shiftTab: "\x1B[Z",
-  escape: "\x1B"
-};
-var DEFAULT_CONFIG = {
-  enableCtrlCombos: true
-};
-var KITTY_FLAG_DISAMBIGUATE = 1 << 0;
-var KITTY_FLAG_REPORT_EVENTS = 1 << 1;
-var KITTY_FLAG_REPORT_ALTERNATE = 1 << 2;
-var KITTY_FLAG_REPORT_ALL = 1 << 3;
-var KITTY_FLAG_REPORT_ASSOCIATED_TEXT = 1 << 4;
-var KITTY_SPECIAL_KEYS = {
-  Escape: { code: 27, final: "u" },
-  Enter: { code: 13, final: "u" },
-  Tab: { code: 9, final: "u" },
-  Backspace: { code: 127, final: "u" },
-  Insert: { code: 2, final: "~" },
-  Delete: { code: 3, final: "~" },
-  Del: { code: 3, final: "~" },
-  ArrowLeft: { code: 1, final: "D" },
-  ArrowRight: { code: 1, final: "C" },
-  ArrowUp: { code: 1, final: "A" },
-  ArrowDown: { code: 1, final: "B" },
-  PageUp: { code: 5, final: "~" },
-  PageDown: { code: 6, final: "~" },
-  Home: { code: 1, final: "H" },
-  End: { code: 1, final: "F" },
-  CapsLock: { code: 57358, final: "u" },
-  ScrollLock: { code: 57359, final: "u" },
-  NumLock: { code: 57360, final: "u" },
-  PrintScreen: { code: 57361, final: "u" },
-  Pause: { code: 57362, final: "u" },
-  ContextMenu: { code: 57363, final: "u" },
-  Menu: { code: 57363, final: "u" },
-  F1: { code: 1, final: "P" },
-  F2: { code: 1, final: "Q" },
-  F3: { code: 13, final: "~" },
-  F4: { code: 1, final: "S" },
-  F5: { code: 15, final: "~" },
-  F6: { code: 17, final: "~" },
-  F7: { code: 18, final: "~" },
-  F8: { code: 19, final: "~" },
-  F9: { code: 20, final: "~" },
-  F10: { code: 21, final: "~" },
-  F11: { code: 23, final: "~" },
-  F12: { code: 24, final: "~" },
-  F13: { code: 57376, final: "u" },
-  F14: { code: 57377, final: "u" },
-  F15: { code: 57378, final: "u" },
-  F16: { code: 57379, final: "u" },
-  F17: { code: 57380, final: "u" },
-  F18: { code: 57381, final: "u" },
-  F19: { code: 57382, final: "u" },
-  F20: { code: 57383, final: "u" },
-  F21: { code: 57384, final: "u" },
-  F22: { code: 57385, final: "u" },
-  F23: { code: 57386, final: "u" },
-  F24: { code: 57387, final: "u" }
-};
-var KITTY_KEYPAD_BY_CODE = {
-  Numpad0: { code: 57399, final: "u" },
-  Numpad1: { code: 57400, final: "u" },
-  Numpad2: { code: 57401, final: "u" },
-  Numpad3: { code: 57402, final: "u" },
-  Numpad4: { code: 57403, final: "u" },
-  Numpad5: { code: 57404, final: "u" },
-  Numpad6: { code: 57405, final: "u" },
-  Numpad7: { code: 57406, final: "u" },
-  Numpad8: { code: 57407, final: "u" },
-  Numpad9: { code: 57408, final: "u" },
-  NumpadDecimal: { code: 57409, final: "u" },
-  NumpadDivide: { code: 57410, final: "u" },
-  NumpadMultiply: { code: 57411, final: "u" },
-  NumpadSubtract: { code: 57412, final: "u" },
-  NumpadAdd: { code: 57413, final: "u" },
-  NumpadEnter: { code: 57414, final: "u" },
-  NumpadEqual: { code: 57415, final: "u" }
-};
-var KITTY_LOCK_KEYS = new Set(["CapsLock", "NumLock", "ScrollLock"]);
-var UN_SHIFTED_CODE_BY_CODE = {
-  Backquote: "`",
-  Minus: "-",
-  Equal: "=",
-  BracketLeft: "[",
-  BracketRight: "]",
-  Backslash: "\\",
-  Semicolon: ";",
-  Quote: "'",
-  Comma: ",",
-  Period: ".",
-  Slash: "/"
-};
-var SHIFTED_CODE_BY_CODE = {
-  Backquote: "~",
-  Digit1: "!",
-  Digit2: "@",
-  Digit3: "#",
-  Digit4: "$",
-  Digit5: "%",
-  Digit6: "^",
-  Digit7: "&",
-  Digit8: "*",
-  Digit9: "(",
-  Digit0: ")",
-  Minus: "_",
-  Equal: "+",
-  BracketLeft: "{",
-  BracketRight: "}",
-  Backslash: "|",
-  Semicolon: ":",
-  Quote: '"',
-  Comma: "<",
-  Period: ">",
-  Slash: "?"
-};
-function ctrlCharForKey(key) {
-  if (key === " ")
-    return "\x00";
-  if (key === "@")
-    return "\x00";
-  if (key === "[")
-    return "\x1B";
-  if (key === "\\")
-    return "\x1C";
-  if (key === "]")
-    return "\x1D";
-  if (key === "^")
-    return "\x1E";
-  if (key === "_")
-    return "\x1F";
-  if (key === "?")
-    return "";
-  if (key.length === 1) {
-    const code = key.toUpperCase().charCodeAt(0);
-    if (code >= 64 && code <= 95) {
-      return String.fromCharCode(code & 31);
-    }
-  }
-  return "";
-}
-function modifierCode(event) {
-  let mod = 1;
-  if (event.shiftKey)
-    mod += 1;
-  if (event.altKey)
-    mod += 2;
-  if (event.ctrlKey)
-    mod += 4;
-  return mod;
-}
-function encodeKeyEvent(event, config = DEFAULT_CONFIG, kittyFlags = 0) {
-  if (!event)
-    return "";
-  if (event.isComposing)
-    return "";
-  if (kittyFlags !== 0) {
-    return encodeKittyKeyEvent(event, kittyFlags);
-  }
-  if (event.metaKey)
-    return "";
-  const cfg = { ...DEFAULT_CONFIG, ...config };
-  let seq = "";
-  if (cfg.enableCtrlCombos && event.ctrlKey) {
-    seq = ctrlCharForKey(event.key);
-    if (event.altKey && seq)
-      seq = `\x1B${seq}`;
-  }
-  if (!seq) {
-    switch (event.key) {
-      case "Enter":
-        seq = sequences.enter;
-        break;
-      case "Backspace":
-        seq = sequences.backspace;
-        break;
-      case "Delete":
-      case "Del":
-        seq = sequences.delete;
-        break;
-      case "Tab":
-        seq = event.shiftKey ? sequences.shiftTab : sequences.tab;
-        break;
-      case "Escape":
-        seq = sequences.escape;
-        break;
-      case "ArrowUp":
-        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}A` : "\x1B[A";
-        break;
-      case "ArrowDown":
-        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}B` : "\x1B[B";
-        break;
-      case "ArrowRight":
-        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}C` : "\x1B[C";
-        break;
-      case "ArrowLeft":
-        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}D` : "\x1B[D";
-        break;
-      case "Home":
-        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}H` : "\x1B[H";
-        break;
-      case "End":
-        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}F` : "\x1B[F";
-        break;
-      case "PageUp":
-        seq = "\x1B[5~";
-        break;
-      case "PageDown":
-        seq = "\x1B[6~";
-        break;
-      case "Insert":
-        seq = "\x1B[2~";
-        break;
-      default:
-        if (event.key?.startsWith("F")) {
-          const fn = Number(event.key.slice(1));
-          const map = {
-            1: "\x1BOP",
-            2: "\x1BOQ",
-            3: "\x1BOR",
-            4: "\x1BOS",
-            5: "\x1B[15~",
-            6: "\x1B[17~",
-            7: "\x1B[18~",
-            8: "\x1B[19~",
-            9: "\x1B[20~",
-            10: "\x1B[21~",
-            11: "\x1B[23~",
-            12: "\x1B[24~"
-          };
-          seq = map[fn] ?? "";
-        } else if (event.key?.length === 1) {
-          seq = event.altKey ? `\x1B${event.key}` : event.key;
-        }
-        break;
-    }
-  }
-  return seq;
-}
-function kittyModifierCode(event, includeLockModifiers) {
-  let code = 1;
-  if (event.shiftKey)
-    code += 1;
-  if (event.altKey)
-    code += 2;
-  if (event.ctrlKey)
-    code += 4;
-  if (event.metaKey)
-    code += 8;
-  if (includeLockModifiers) {
-    if (event.getModifierState?.("CapsLock"))
-      code += 64;
-    if (event.getModifierState?.("NumLock"))
-      code += 128;
-  }
-  return code;
-}
-function deriveUnshiftedCodepoint(event) {
-  const code = event.code || "";
-  if (code.startsWith("Key") && code.length === 4) {
-    return code.slice(3).toLowerCase().codePointAt(0) ?? 0;
-  }
-  if (code.startsWith("Digit") && code.length === 6) {
-    return code.slice(5).codePointAt(0) ?? 0;
-  }
-  const punctuation = UN_SHIFTED_CODE_BY_CODE[code];
-  if (punctuation)
-    return punctuation.codePointAt(0) ?? 0;
-  if (event.key?.length === 1)
-    return event.key.codePointAt(0) ?? 0;
-  return 0;
-}
-function deriveShiftedCodepoint(event, unshiftedCodepoint) {
-  if (!event.shiftKey)
-    return 0;
-  if (event.key?.length === 1) {
-    const cp2 = event.key.codePointAt(0) ?? 0;
-    if (cp2 > 0 && cp2 !== unshiftedCodepoint)
-      return cp2;
-  }
-  const shifted = SHIFTED_CODE_BY_CODE[event.code || ""];
-  if (!shifted)
-    return 0;
-  const cp = shifted.codePointAt(0) ?? 0;
-  return cp !== unshiftedCodepoint ? cp : 0;
-}
-function deriveBaseLayoutCodepoint(event) {
-  const code = event.code || "";
-  if (code.startsWith("Key") && code.length === 4) {
-    return code.slice(3).toLowerCase().codePointAt(0) ?? 0;
-  }
-  if (code.startsWith("Digit") && code.length === 6) {
-    return code.slice(5).codePointAt(0) ?? 0;
-  }
-  const punctuation = UN_SHIFTED_CODE_BY_CODE[code];
-  if (punctuation)
-    return punctuation.codePointAt(0) ?? 0;
-  return 0;
-}
-function toCodepoints(text) {
-  const points = [];
-  for (const ch of text) {
-    points.push(ch.codePointAt(0) ?? 0);
-  }
-  return points.filter((cp) => cp > 0);
-}
-function kittyEventType(event, reportEvents) {
-  if (!reportEvents)
-    return 0;
-  if (event.type === "keyup")
-    return 3;
-  if (event.repeat)
-    return 2;
-  return 1;
-}
-function encodeKittySequence(code, final, modifiers, eventType, alternates, associatedText) {
-  if (final !== "u" && final !== "~") {
-    if (eventType !== 0)
-      return `\x1B[1;${modifiers}:${eventType}${final}`;
-    if (modifiers > 1)
-      return `\x1B[1;${modifiers}${final}`;
-    return `\x1B[${final}`;
-  }
-  let keyPart = `${code}`;
-  if (final === "u" && alternates && (alternates.shifted || alternates.base)) {
-    const shifted = alternates.shifted ? `${alternates.shifted}` : "";
-    const base = alternates.base ? `${alternates.base}` : "";
-    keyPart += `:${shifted}`;
-    if (base)
-      keyPart += `:${base}`;
-  }
-  const hasAssocText = Boolean(associatedText?.length);
-  if (eventType === 0 && modifiers <= 1 && !hasAssocText) {
-    return `\x1B[${keyPart}${final}`;
-  }
-  let seq = `\x1B[${keyPart};${modifiers}`;
-  if (eventType !== 0)
-    seq += `:${eventType}`;
-  if (hasAssocText)
-    seq += `;${associatedText.join(":")}`;
-  seq += final;
-  return seq;
-}
-function encodeKittyKeyEvent(event, kittyFlags) {
-  const reportEvents = (kittyFlags & KITTY_FLAG_REPORT_EVENTS) !== 0;
-  const reportAlternate = (kittyFlags & KITTY_FLAG_REPORT_ALTERNATE) !== 0;
-  const reportAll = (kittyFlags & KITTY_FLAG_REPORT_ALL) !== 0;
-  const reportAssociatedText = (kittyFlags & KITTY_FLAG_REPORT_ASSOCIATED_TEXT) !== 0;
-  const disambiguate = (kittyFlags & KITTY_FLAG_DISAMBIGUATE) !== 0;
-  const key = event.key ?? "";
-  const special = KITTY_KEYPAD_BY_CODE[event.code || ""] ?? KITTY_SPECIAL_KEYS[key];
-  const isLockKey = KITTY_LOCK_KEYS.has(key);
-  const hasText = key.length === 1;
-  const hasTextModifiers = event.altKey || event.ctrlKey || event.metaKey;
-  const eventType = kittyEventType(event, reportEvents);
-  const isRelease = event.type === "keyup";
-  const isLegacyTextKey = !special && hasText && !reportAll && !hasTextModifiers;
-  const isLegacyControlKey = (key === "Enter" || key === "Tab" || key === "Backspace") && !reportAll && !hasTextModifiers && !disambiguate;
-  if (isRelease && !reportEvents)
-    return "";
-  if (isRelease && isLegacyTextKey)
-    return "";
-  if (isRelease && isLegacyControlKey)
-    return "";
-  if (isLockKey && !reportAll)
-    return "";
-  if (isLegacyTextKey) {
-    return key;
-  }
-  if (isLegacyControlKey) {
-    switch (key) {
-      case "Enter":
-        return sequences.enter;
-      case "Tab":
-        return sequences.tab;
-      case "Backspace":
-        return sequences.backspace;
-      default:
-        break;
-    }
-  }
-  const mods = kittyModifierCode(event, reportAll);
-  if (special) {
-    return encodeKittySequence(special.code, special.final, mods, eventType);
-  }
-  const unshifted = deriveUnshiftedCodepoint(event);
-  if (unshifted > 0 && (reportAll || disambiguate || hasTextModifiers || eventType !== 0)) {
-    const alternates = reportAlternate && reportAll ? {
-      shifted: deriveShiftedCodepoint(event, unshifted) || undefined,
-      base: (() => {
-        const base = deriveBaseLayoutCodepoint(event);
-        return base > 0 && base !== unshifted ? base : undefined;
-      })()
-    } : undefined;
-    const associated = reportAll && reportAssociatedText && hasText ? toCodepoints(key) : undefined;
-    return encodeKittySequence(unshifted, "u", mods, eventType, alternates, associated);
-  }
-  if (hasText) {
-    return event.altKey ? `\x1B${key}` : key;
-  }
-  return "";
-}
-function encodeBeforeInput(event) {
-  if (!event)
-    return "";
-  const type = event.inputType;
-  if (type === "insertText")
-    return event.data || "";
-  if (type === "insertLineBreak")
-    return sequences.enter;
-  if (type === "deleteContentBackward")
-    return sequences.backspace;
-  if (type === "deleteContentForward")
-    return sequences.delete;
-  if (type === "insertFromPaste") {
-    return event.dataTransfer?.getData("text/plain") || "";
-  }
-  return "";
-}
-function mapKeyForPty(seq) {
-  const csi = "\x1B[";
-  if (seq.startsWith(csi) && seq.endsWith("u")) {
-    const body = seq.slice(csi.length, -1);
-    const [codeText] = body.split(";");
-    if (codeText && /^[0-9]+$/.test(codeText)) {
-      const code = Number(codeText);
-      if (code === 127)
-        return "";
-      if (code === 13)
-        return "\r";
-      if (code === 9)
-        return "\t";
-    }
-  }
-  if (seq.startsWith(csi) && seq.endsWith("~")) {
-    const body = seq.slice(csi.length, -1);
-    if (body === "3" || body.startsWith("3;"))
-      return "\x1B[3~";
-  }
-  if (seq === sequences.backspace || seq === "\b" || seq === "\b\x1B[P")
-    return "";
-  if (seq === sequences.delete || seq === "\x1B[P")
-    return "\x1B[3~";
-  if (seq === sequences.enter || seq === `\r
-`)
-    return "\r";
-  return seq;
-}
-
-// src/input/ansi.ts
-var ESC = "\x1B";
-function parsePrivateModeSeq(seq) {
-  if (!seq.startsWith(`${ESC}[?`) || seq.length < 5)
-    return null;
-  const final = seq[seq.length - 1];
-  if (final !== "h" && final !== "l")
-    return null;
-  const body = seq.slice(3, -1);
-  if (!body || /[^0-9;]/.test(body))
-    return null;
-  const parts = body.split(";");
-  const codes = [];
-  for (let i = 0;i < parts.length; i += 1) {
-    const part = parts[i];
-    if (!part)
-      return null;
-    const code = Number(part);
-    if (!Number.isFinite(code))
-      return null;
-    codes.push(code);
-  }
-  return { codes, enabled: final === "h" };
-}
-function parseWindowOpSeq(seq) {
-  if (!seq.startsWith(`${ESC}[`) || !seq.endsWith("t"))
-    return null;
-  const body = seq.slice(2, -1);
-  if (/[^0-9;]/.test(body))
-    return null;
-  return body ? body.split(";").map((part) => Number(part)) : [];
-}
-function isDeviceAttributesQuery(seq) {
-  if (!seq.startsWith(`${ESC}[`) || !seq.endsWith("c"))
-    return false;
-  const body = seq.slice(2, -1);
-  let i = 0;
-  while (i < body.length && (body[i] === "?" || body[i] === ">"))
-    i += 1;
-  while (i < body.length && body.charCodeAt(i) >= 48 && body.charCodeAt(i) <= 57)
-    i += 1;
-  if (i < body.length && body[i] === ";") {
-    i += 1;
-    while (i < body.length && body.charCodeAt(i) >= 48 && body.charCodeAt(i) <= 57)
-      i += 1;
-  }
-  return i === body.length;
-}
-
-// src/input/mouse.ts
-class MouseController {
-  mode = "auto";
-  enabled = false;
-  format = "x10";
-  motion = "none";
-  pressed = false;
-  button = 0;
-  flags = { 1000: false, 1002: false, 1003: false };
-  x10Event = false;
-  sendReply;
-  positionToCell;
-  positionToPixel;
-  constructor(options) {
-    this.sendReply = options.sendReply;
-    this.positionToCell = options.positionToCell;
-    this.positionToPixel = options.positionToPixel;
-  }
-  setReplySink(fn) {
-    this.sendReply = fn;
-  }
-  setPositionToCell(fn) {
-    this.positionToCell = fn;
-  }
-  setPositionToPixel(fn) {
-    this.positionToPixel = fn;
-  }
-  setMode(mode) {
-    this.mode = mode;
-    if (mode === "on") {
-      this.enabled = true;
-      this.format = "sgr";
-      this.motion = "drag";
-    } else if (mode === "off") {
-      this.enabled = false;
-      this.format = "x10";
-      this.motion = "none";
-    } else {
-      this.enabled = this.x10Event || this.flags[1000] || this.flags[1002] || this.flags[1003];
-      if (this.flags[1003])
-        this.motion = "any";
-      else if (this.flags[1002])
-        this.motion = "drag";
-      else
-        this.motion = "none";
-    }
-  }
-  handleModeSeq(seq) {
-    const mode = parsePrivateModeSeq(seq);
-    if (!mode)
-      return false;
-    const { enabled, codes } = mode;
-    let handled = false;
-    for (const code of codes) {
-      if (code === 9) {
-        this.x10Event = enabled;
-        handled = true;
-        continue;
-      }
-      if (code === 1006) {
-        this.format = enabled ? "sgr" : "x10";
-        handled = true;
-        continue;
-      }
-      if (code === 1016) {
-        this.format = enabled ? "sgr_pixels" : "x10";
-        handled = true;
-        continue;
-      }
-      if (code === 1005) {
-        this.format = enabled ? "utf8" : "x10";
-        handled = true;
-        continue;
-      }
-      if (code === 1015) {
-        this.format = enabled ? "urxvt" : "x10";
-        handled = true;
-        continue;
-      }
-      if (code === 1000 || code === 1002 || code === 1003) {
-        this.updateFlags(code, enabled);
-        handled = true;
-      }
-    }
-    return handled;
-  }
-  isActive() {
-    if (this.mode === "off")
-      return false;
-    if (this.mode === "on")
-      return true;
-    return this.enabled;
-  }
-  getStatus() {
-    return { mode: this.mode, active: this.isActive(), detail: this.format, enabled: this.enabled };
-  }
-  sendMouseEvent(kind, event) {
-    if (!this.isActive())
-      return false;
-    if (!this.positionToCell)
-      return false;
-    if (this.isX10EventMode() && kind !== "down")
-      return false;
-    const cell = this.positionToCell(event);
-    const col = cell.col + 1;
-    const row = cell.row + 1;
-    const pixel = this.positionToPixel ? this.positionToPixel(event) : null;
-    const isSgr = this.format === "sgr" || this.format === "sgr_pixels";
-    const base = "button" in event && event.button === 1 ? 1 : ("button" in event) && event.button === 2 ? 2 : 0;
-    const mods = this.modifiers(event, !this.isX10EventMode());
-    if (kind === "down") {
-      this.pressed = true;
-      this.button = base;
-      const code = base + mods;
-      return this.sendMouse(code, col, row, pixel, false);
-    }
-    if (kind === "up") {
-      const btn = this.pressed ? this.button : base;
-      this.pressed = false;
-      const code = isSgr ? btn + mods : 3 + mods;
-      return this.sendMouse(code, col, row, pixel, true);
-    }
-    if (kind === "move") {
-      if (this.motion === "none")
-        return false;
-      if (this.motion === "drag" && !this.pressed)
-        return false;
-      const btn = this.pressed ? this.button : 3;
-      const code = btn + mods + 32;
-      return this.sendMouse(code, col, row, pixel, false);
-    }
-    if (kind === "wheel") {
-      const delta = Math.sign(event.deltaY);
-      if (!delta)
-        return false;
-      const code = (delta < 0 ? 64 : 65) + mods;
-      return this.sendMouse(code, col, row, pixel, false);
-    }
-    return false;
-  }
-  updateFlags(code, enabled) {
-    if (!(code in this.flags))
-      return;
-    this.flags[code] = enabled;
-    this.enabled = this.x10Event || this.flags[1000] || this.flags[1002] || this.flags[1003];
-    if (this.flags[1003])
-      this.motion = "any";
-    else if (this.flags[1002])
-      this.motion = "drag";
-    else
-      this.motion = "none";
-  }
-  isX10EventMode() {
-    if (!this.x10Event)
-      return false;
-    return !(this.flags[1000] || this.flags[1002] || this.flags[1003]);
-  }
-  modifiers(event, enabled) {
-    if (!enabled)
-      return 0;
-    let mod = 0;
-    if (event.shiftKey)
-      mod |= 4;
-    if (event.altKey)
-      mod |= 8;
-    if (event.ctrlKey)
-      mod |= 16;
-    return mod;
-  }
-  sendMouse(code, col, row, pixel, release) {
-    if (this.format === "x10") {
-      if (col > 223 || row > 223)
-        return false;
-      const cb = 32 + code;
-      const cx = 32 + col;
-      const cy = 32 + row;
-      this.sendReply(`\x1B[M${String.fromCharCode(cb, cx, cy)}`);
-      return true;
-    }
-    if (this.format === "utf8") {
-      const cb = String.fromCharCode(32 + code);
-      const cx = String.fromCodePoint(32 + col);
-      const cy = String.fromCodePoint(32 + row);
-      this.sendReply(`\x1B[M${cb}${cx}${cy}`);
-      return true;
-    }
-    if (this.format === "urxvt") {
-      this.sendReply(`\x1B[${32 + code};${col};${row}M`);
-      return true;
-    }
-    const suffix = release ? "m" : "M";
-    if (this.format === "sgr_pixels" && pixel) {
-      this.sendReply(`\x1B[<${code};${pixel.x};${pixel.y}${suffix}`);
-      return true;
-    }
-    this.sendReply(`\x1B[<${code};${col};${row}${suffix}`);
-    return true;
-  }
-}
-
-// src/input/output.ts
-var textDecoder2 = new TextDecoder;
-var textEncoder2 = new TextEncoder;
-function decodeBase642(data) {
-  if (!data)
-    return new Uint8Array;
-  const cleaned = data.replace(/\s+/g, "");
-  if (typeof atob === "function") {
-    const binary = atob(cleaned);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0;i < binary.length; i += 1) {
-      bytes[i] = binary.charCodeAt(i) & 255;
-    }
-    return bytes;
-  }
-  if (typeof Buffer !== "undefined") {
-    return new Uint8Array(Buffer.from(cleaned, "base64"));
-  }
-  return new Uint8Array;
-}
-function encodeBase64(bytes) {
-  if (typeof btoa === "function") {
-    let binary = "";
-    const chunk = 32768;
-    for (let i = 0;i < bytes.length; i += chunk) {
-      binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
-    }
-    return btoa(binary);
-  }
-  if (typeof Buffer !== "undefined") {
-    return Buffer.from(bytes).toString("base64");
-  }
-  return "";
-}
-
-class OutputFilter {
-  remainder = "";
-  getCursorPosition;
-  sendReply;
-  mouse;
-  altScreen = false;
-  bracketedPaste = false;
-  focusReporting = false;
-  synchronizedOutput = false;
-  windowOpHandler;
-  getWindowMetrics;
-  clipboardWrite;
-  clipboardRead;
-  getDefaultColors;
-  constructor(options) {
-    this.getCursorPosition = options.getCursorPosition;
-    this.sendReply = options.sendReply;
-    this.mouse = options.mouse;
-    this.getDefaultColors = options.getDefaultColors;
-    this.clipboardWrite = options.onClipboardWrite;
-    this.clipboardRead = options.onClipboardRead;
-    this.windowOpHandler = options.onWindowOp;
-    this.getWindowMetrics = options.getWindowMetrics;
-  }
-  setCursorProvider(fn) {
-    this.getCursorPosition = fn;
-  }
-  setReplySink(fn) {
-    this.sendReply = fn;
-  }
-  setWindowOpHandler(fn) {
-    this.windowOpHandler = fn;
-  }
-  isAltScreen() {
-    return this.altScreen;
-  }
-  isBracketedPaste() {
-    return this.bracketedPaste;
-  }
-  isFocusReporting() {
-    return this.focusReporting;
-  }
-  isSynchronizedOutput() {
-    return this.synchronizedOutput;
-  }
-  replyOscColor(code, rgb) {
-    const toHex4 = (value) => Math.round(Math.max(0, Math.min(255, value)) * 257).toString(16).padStart(4, "0");
-    const r = toHex4(rgb[0]);
-    const g = toHex4(rgb[1]);
-    const b = toHex4(rgb[2]);
-    this.sendReply(`\x1B]${code};rgb:${r}/${g}/${b}\x07`);
-  }
-  handleOsc(seq) {
-    const content = seq.slice(2);
-    const parts = content.split(";");
-    const code = parts[0] ?? "";
-    if (code === "52") {
-      const target = parts[1] ?? "c";
-      const payload = parts.slice(2).join(";");
-      if (payload === "?") {
-        if (!this.clipboardRead)
-          return true;
-        Promise.resolve(this.clipboardRead()).then((text2) => {
-          const safeText = text2 ?? "";
-          const bytes2 = textEncoder2.encode(safeText);
-          const encoded = encodeBase64(bytes2);
-          this.sendReply(`\x1B]52;${target};${encoded}\x07`);
-        }).catch(() => {});
-        return true;
-      }
-      if (!this.clipboardWrite)
-        return true;
-      const bytes = decodeBase642(payload);
-      const text = textDecoder2.decode(bytes);
-      Promise.resolve(this.clipboardWrite(text)).catch(() => {});
-      return true;
-    }
-    const param = parts[1];
-    if (param !== "?")
-      return false;
-    const colors = this.getDefaultColors?.();
-    if (!colors)
-      return false;
-    if (code === "10" && colors.fg) {
-      this.replyOscColor(code, colors.fg);
-      return true;
-    }
-    if (code === "11" && colors.bg) {
-      this.replyOscColor(code, colors.bg);
-      return true;
-    }
-    if (code === "12" && colors.cursor) {
-      this.replyOscColor(code, colors.cursor);
-      return true;
-    }
-    return false;
-  }
-  handleModeSeq(seq) {
-    const mode = parsePrivateModeSeq(seq);
-    if (!mode)
-      return false;
-    const { enabled, codes } = mode;
-    let handled = false;
-    for (const code of codes) {
-      if (code === 2004) {
-        this.bracketedPaste = enabled;
-        handled = true;
-      } else if (code === 1004) {
-        this.focusReporting = enabled;
-        handled = true;
-      } else if (code === 2026) {
-        this.synchronizedOutput = enabled;
-      }
-    }
-    return handled;
-  }
-  handleWindowOp(seq) {
-    const params = parseWindowOpSeq(seq);
-    if (!params)
-      return false;
-    const op = params[0] ?? 0;
-    const metrics = this.getWindowMetrics?.();
-    if (metrics && op === 14 && params.length === 1) {
-      this.sendReply(`\x1B[4;${metrics.heightPx};${metrics.widthPx}t`);
-      return true;
-    }
-    if (metrics && op === 16 && params.length === 1) {
-      this.sendReply(`\x1B[6;${metrics.cellHeightPx};${metrics.cellWidthPx}t`);
-      return true;
-    }
-    if (metrics && op === 18 && params.length === 1) {
-      this.sendReply(`\x1B[8;${metrics.rows};${metrics.cols}t`);
-      return true;
-    }
-    if (!this.windowOpHandler)
-      return false;
-    if (params[0] === 8 && params.length >= 3) {
-      this.windowOpHandler({
-        type: "resize",
-        rows: params[1] ?? 0,
-        cols: params[2] ?? 0,
-        params,
-        raw: seq
-      });
-    } else {
-      this.windowOpHandler({ type: "unknown", params, raw: seq });
-    }
-    return true;
-  }
-  filter(output) {
-    if (!output)
-      return output;
-    let data = this.remainder + output;
-    this.remainder = "";
-    let result = "";
-    let i = 0;
-    while (i < data.length) {
-      const ch = data[i];
-      if (ch !== "\x1B") {
-        result += ch;
-        i += 1;
-        continue;
-      }
-      if (i + 1 >= data.length) {
-        this.remainder = data.slice(i);
-        break;
-      }
-      if (data[i + 1] === "]") {
-        let j2 = i + 2;
-        let terminatorLen = 0;
-        while (j2 < data.length) {
-          const code = data.charCodeAt(j2);
-          if (code === 7) {
-            terminatorLen = 1;
-            break;
-          }
-          if (code === 27 && j2 + 1 < data.length && data[j2 + 1] === "\\") {
-            terminatorLen = 2;
-            break;
-          }
-          j2 += 1;
-        }
-        if (!terminatorLen) {
-          this.remainder = data.slice(i);
-          break;
-        }
-        const seq2 = data.slice(i, j2);
-        if (!this.handleOsc(seq2)) {
-          result += data.slice(i, j2 + terminatorLen);
-        }
-        i = j2 + terminatorLen;
-        continue;
-      }
-      if (data[i + 1] !== "[") {
-        result += ch;
-        i += 1;
-        continue;
-      }
-      let j = i + 2;
-      while (j < data.length) {
-        const code = data.charCodeAt(j);
-        if (code >= 64 && code <= 126)
-          break;
-        j += 1;
-      }
-      if (j >= data.length) {
-        this.remainder = data.slice(i);
-        break;
-      }
-      const seq = data.slice(i, j + 1);
-      const altMode = parsePrivateModeSeq(seq);
-      if (altMode) {
-        const { enabled, codes } = altMode;
-        if (codes.some((code) => code === 47 || code === 1047 || code === 1049)) {
-          this.altScreen = enabled;
-        }
-      }
-      const mouseHandled = this.mouse.handleModeSeq(seq);
-      const modeHandled = this.handleModeSeq(seq);
-      if (mouseHandled || modeHandled) {
-        i = j + 1;
-        continue;
-      }
-      if (seq.endsWith("t") && this.handleWindowOp(seq)) {
-        i = j + 1;
-        continue;
-      }
-      if (seq === "\x1B[6n") {
-        const { row, col } = this.getCursorPosition();
-        this.sendReply(`\x1B[${row};${col}R`);
-      } else if (seq === "\x1B[>q") {
-        this.sendReply("\x1BP>|ghostty 1.0\x1B\\");
-      } else if (isDeviceAttributesQuery(seq)) {
-        this.sendReply("\x1B[?1;2c");
-      } else {
-        result += seq;
-      }
-      i = j + 1;
-    }
-    return result;
-  }
-}
-
-// src/input/index.ts
-function createInputHandler(options = {}) {
-  const config = options.config || {};
-  const cursorProvider = options.getCursorPosition || (() => ({ row: 1, col: 1 }));
-  const replySink = options.sendReply || (() => {});
-  const positionToCell = options.positionToCell || (() => ({ row: 0, col: 0 }));
-  const positionToPixel = options.positionToPixel || null;
-  const mouse = new MouseController({
-    sendReply: replySink,
-    positionToCell,
-    positionToPixel: positionToPixel ?? undefined
-  });
-  const filter = new OutputFilter({
-    getCursorPosition: cursorProvider,
-    sendReply: replySink,
-    mouse,
-    getDefaultColors: options.getDefaultColors,
-    onClipboardRead: options.onClipboardRead,
-    onClipboardWrite: options.onClipboardWrite,
-    onWindowOp: options.onWindowOp,
-    getWindowMetrics: options.getWindowMetrics
-  });
-  return {
-    sequences,
-    encodeKeyEvent: (event) => encodeKeyEvent(event, config, options.getKittyKeyboardFlags?.() ?? 0),
-    encodeBeforeInput,
-    mapKeyForPty,
-    filterOutput: (output) => filter.filter(output),
-    setReplySink: (fn) => {
-      mouse.setReplySink(fn);
-      filter.setReplySink(fn);
-    },
-    setCursorProvider: (fn) => {
-      filter.setCursorProvider(fn);
-    },
-    setPositionToCell: (fn) => {
-      mouse.setPositionToCell(fn);
-    },
-    setPositionToPixel: (fn) => {
-      mouse.setPositionToPixel(fn);
-    },
-    setWindowOpHandler: (fn) => {
-      filter.setWindowOpHandler(fn);
-    },
-    setMouseMode: (mode) => {
-      mouse.setMode(mode);
-    },
-    getMouseStatus: () => mouse.getStatus(),
-    isMouseActive: () => mouse.isActive(),
-    isBracketedPaste: () => filter.isBracketedPaste(),
-    isFocusReporting: () => filter.isFocusReporting(),
-    isAltScreen: () => filter.isAltScreen(),
-    isSynchronizedOutput: () => filter.isSynchronizedOutput(),
-    sendMouseEvent: (kind, event) => mouse.sendMouseEvent(kind, event)
-  };
-}
-// src/fonts/nerd-ranges.ts
-var NERD_SYMBOL_RANGES = [
-  [57344, 57354],
-  [57504, 57507],
-  [57520, 57544],
-  [57546, 57546],
-  [57548, 57559],
-  [57856, 58025],
-  [58112, 58339],
-  [58874, 59063],
-  [59136, 59631],
-  [60000, 60446],
-  [60672, 62207],
-  [60928, 60939],
-  [62208, 62337],
-  [62464, 62771],
-  [983041, 989936]
-];
-function isNerdSymbolCodepoint(cp) {
-  for (const [start, end] of NERD_SYMBOL_RANGES) {
-    if (cp >= start && cp <= end)
-      return true;
-  }
-  return false;
-}
-
-// src/grid/grid.ts
-function fontHeightUnits(font) {
-  if (!font)
-    return 0;
-  const height = font.height;
-  if (height !== undefined && Number.isFinite(height) && height > 0)
-    return height;
-  const asc = font.ascender ?? 0;
-  const desc = font.descender ?? 0;
-  const fallback = asc - desc;
-  if (Number.isFinite(fallback) && fallback > 0)
-    return fallback;
-  return font.upem || 1000;
-}
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value));
-}
-
-// src/fonts/manager.ts
-var SYMBOL_FONT_HINTS = [/symbols nerd font/i, /noto sans symbols/i];
-var NERD_SYMBOL_FONT_HINTS = [/symbols nerd font/i, /nerd fonts symbols/i];
-var COLOR_EMOJI_FONT_HINTS = [
-  /apple color emoji/i,
-  /noto color emoji/i,
-  /segoe ui emoji/i,
-  /twemoji/i
-];
-var WIDE_FONT_HINTS = [
-  /cjk/i,
-  /emoji/i,
-  /openmoji/i,
-  /source han/i,
-  /pingfang/i,
-  /hiragino/i,
-  /yu gothic/i,
-  /meiryo/i,
-  /yahei/i,
-  /ms gothic/i,
-  /simhei/i,
-  /simsun/i,
-  /nanum/i,
-  /apple sd gothic/i
-];
-function isSymbolFont(entry) {
-  if (!entry?.label)
-    return false;
-  const label = String(entry.label).toLowerCase();
-  return SYMBOL_FONT_HINTS.some((rule) => rule.test(label));
-}
-function isNerdSymbolFont(entry) {
-  if (!entry?.label)
-    return false;
-  const label = String(entry.label).toLowerCase();
-  return NERD_SYMBOL_FONT_HINTS.some((rule) => rule.test(label));
-}
-function isColorEmojiFont(entry) {
-  if (!entry?.label)
-    return false;
-  const label = String(entry.label).toLowerCase();
-  return COLOR_EMOJI_FONT_HINTS.some((rule) => rule.test(label));
-}
-function fontMaxCellSpan(entry) {
-  if (!entry?.label)
-    return 1;
-  const label = String(entry.label).toLowerCase();
-  for (const rule of WIDE_FONT_HINTS) {
-    if (rule.test(label))
-      return 2;
-  }
-  return 1;
-}
-function fontScaleOverride(entry, overrides = []) {
-  if (!entry?.label)
-    return 1;
-  const label = String(entry.label).toLowerCase();
-  for (const rule of overrides) {
-    if (rule.match.test(label))
-      return rule.scale;
-  }
-  return 1;
-}
-function createFontEntry(font, label) {
-  return {
-    font,
-    label,
-    glyphCache: new Map,
-    boundsCache: new Map,
-    colorGlyphTexts: new Map,
-    glyphIds: new Set,
-    atlas: null,
-    fontSizePx: 0,
-    atlasScale: 1,
-    advanceUnits: 0,
-    constraintSignature: ""
-  };
-}
-function resetFontEntry(entry) {
-  entry.glyphCache.clear();
-  entry.boundsCache.clear();
-  entry.colorGlyphTexts.clear();
-  entry.glyphIds.clear();
-  entry.atlas = null;
-  entry.fontSizePx = 0;
-  entry.atlasScale = 1;
-  entry.advanceUnits = 0;
-  entry.constraintSignature = "";
-}
-function fontAdvanceUnits(entry, shapeClusterWithFont) {
-  if (!entry?.font)
-    return 0;
-  if (entry.advanceUnits)
-    return entry.advanceUnits;
-  const glyphId = entry.font.glyphIdForChar("M");
-  let advance = 0;
-  if (glyphId !== undefined && glyphId !== null) {
-    advance = entry.font.advanceWidth(glyphId);
-  }
-  if (!advance) {
-    advance = shapeClusterWithFont(entry, "M").advance;
-  }
-  if (!advance) {
-    advance = fontHeightUnits(entry.font) || entry.font.upem || 1000;
-  }
-  entry.advanceUnits = advance;
-  return advance;
-}
-function glyphWidthUnits(entry, glyphId) {
-  if (!entry?.font || glyphId === undefined || glyphId === null)
-    return 0;
-  if (!entry.boundsCache)
-    entry.boundsCache = new Map;
-  if (entry.boundsCache.has(glyphId))
-    return entry.boundsCache.get(glyphId);
-  const bounds = entry.font.getGlyphBounds(glyphId);
-  let width = 0;
-  if (bounds) {
-    width = bounds.xMax - bounds.xMin;
-  }
-  if (!Number.isFinite(width) || width <= 0) {
-    width = entry.font.advanceWidth(glyphId) || 0;
-  }
-  entry.boundsCache.set(glyphId, width);
-  return width;
-}
-// src/fonts/nerd-constraints.ts
-var NERD_CONSTRAINTS = [
-  {
-    start: 9211,
-    end: 9214,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 9776,
-    end: 9776,
-    constraint: {
-      size: "cover",
-      height: "icon",
-      max_constraint_width: 1,
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      pad_left: 0.05,
-      pad_right: 0.05,
-      pad_top: 0.05,
-      pad_bottom: 0.05
-    }
-  },
-  {
-    start: 9829,
-    end: 9829,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 9889,
-    end: 9889,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 10092,
-    end: 10093,
-    constraint: {
-      size: "cover",
-      max_constraint_width: 1,
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.7142857142857143,
-      relative_height: 0.8910614525139665,
-      relative_x: 0.1428571428571428,
-      relative_y: 0.0349162011173184,
-      pad_top: 0.15,
-      pad_bottom: 0.15
-    }
-  },
-  {
-    start: 10094,
-    end: 10095,
-    constraint: {
-      size: "cover",
-      max_constraint_width: 1,
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.9885714285714285,
-      relative_height: 0.8910614525139665,
-      relative_x: 0.0057142857142857,
-      relative_y: 0.0125698324022346,
-      pad_top: 0.15,
-      pad_bottom: 0.15
-    }
-  },
-  {
-    start: 10096,
-    end: 10097,
-    constraint: {
-      size: "cover",
-      max_constraint_width: 1,
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      pad_top: 0.15,
-      pad_bottom: 0.15
-    }
-  },
-  {
-    start: 11096,
-    end: 11096,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 57344,
-    end: 57354,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 57504,
-    end: 57507,
-    constraint: {
-      size: "fit_cover1",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 57520,
-    end: 57520,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "start",
-      align_vertical: "center1",
-      pad_left: -0.03,
-      pad_right: -0.03,
-      pad_top: -0.005,
-      pad_bottom: -0.005,
-      max_xy_ratio: 0.7
-    }
-  },
-  {
-    start: 57521,
-    end: 57521,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "start",
-      align_vertical: "center1",
-      max_xy_ratio: 0.7
-    }
-  },
-  {
-    start: 57522,
-    end: 57522,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "end",
-      align_vertical: "center1",
-      pad_left: -0.03,
-      pad_right: -0.03,
-      pad_top: -0.005,
-      pad_bottom: -0.005,
-      max_xy_ratio: 0.7
-    }
-  },
-  {
-    start: 57523,
-    end: 57523,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "end",
-      align_vertical: "center1",
-      max_xy_ratio: 0.7
-    }
-  },
-  {
-    start: 57524,
-    end: 57524,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "start",
-      align_vertical: "center1",
-      pad_left: -0.03,
-      pad_right: -0.03,
-      pad_top: -0.005,
-      pad_bottom: -0.005,
-      max_xy_ratio: 0.59
-    }
-  },
-  {
-    start: 57525,
-    end: 57525,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "start",
-      align_vertical: "center1",
-      max_xy_ratio: 0.5
-    }
-  },
-  {
-    start: 57526,
-    end: 57526,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "end",
-      align_vertical: "center1",
-      pad_left: -0.03,
-      pad_right: -0.03,
-      pad_top: -0.005,
-      pad_bottom: -0.005,
-      max_xy_ratio: 0.59
-    }
-  },
-  {
-    start: 57527,
-    end: 57527,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "end",
-      align_vertical: "center1",
-      max_xy_ratio: 0.5
-    }
-  },
-  {
-    start: 57528,
-    end: 57528,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "start",
-      align_vertical: "center1",
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 57529,
-    end: 57529,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "start",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 57530,
-    end: 57530,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "end",
-      align_vertical: "center1",
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 57531,
-    end: 57531,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "end",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 57532,
-    end: 57532,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "start",
-      align_vertical: "center1",
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 57533,
-    end: 57533,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "start",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 57534,
-    end: 57534,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "end",
-      align_vertical: "center1",
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 57535,
-    end: 57535,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "end",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 57536,
-    end: 57536,
-    constraint: {
-      size: "stretch",
-      align_horizontal: "start",
-      align_vertical: "center1",
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 57537,
-    end: 57537,
-    constraint: {
-      size: "stretch",
-      align_horizontal: "start",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 57538,
-    end: 57538,
-    constraint: {
-      size: "stretch",
-      align_horizontal: "end",
-      align_vertical: "center1",
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 57539,
-    end: 57539,
-    constraint: {
-      size: "stretch",
-      align_horizontal: "end",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 57540,
-    end: 57540,
-    constraint: {
-      size: "stretch",
-      align_horizontal: "start",
-      align_vertical: "center1",
-      pad_left: 0.015,
-      pad_right: 0.015,
-      pad_top: 0.015,
-      pad_bottom: 0.015,
-      max_xy_ratio: 0.86
-    }
-  },
-  {
-    start: 57541,
-    end: 57541,
-    constraint: {
-      size: "stretch",
-      align_horizontal: "end",
-      align_vertical: "center1",
-      pad_left: 0.015,
-      pad_right: 0.015,
-      pad_top: 0.015,
-      pad_bottom: 0.015,
-      max_xy_ratio: 0.86
-    }
-  },
-  {
-    start: 57542,
-    end: 57542,
-    constraint: {
-      size: "stretch",
-      align_horizontal: "start",
-      align_vertical: "center1",
-      pad_left: 0.015,
-      pad_right: 0.015,
-      pad_top: 0.015,
-      pad_bottom: 0.015,
-      max_xy_ratio: 0.78
-    }
-  },
-  {
-    start: 57543,
-    end: 57543,
-    constraint: {
-      size: "stretch",
-      align_horizontal: "end",
-      align_vertical: "center1",
-      pad_left: 0.015,
-      pad_right: 0.015,
-      pad_top: 0.015,
-      pad_bottom: 0.015,
-      max_xy_ratio: 0.78
-    }
-  },
-  {
-    start: 57544,
-    end: 57544,
-    constraint: {
-      size: "stretch",
-      align_horizontal: "start",
-      align_vertical: "center1",
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 57546,
-    end: 57546,
-    constraint: {
-      size: "stretch",
-      align_horizontal: "end",
-      align_vertical: "center1",
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 57548,
-    end: 57548,
-    constraint: {
-      size: "stretch",
-      align_horizontal: "start",
-      align_vertical: "center1",
-      pad_left: -0.01,
-      pad_right: -0.01,
-      pad_top: -0.005,
-      pad_bottom: -0.005,
-      max_xy_ratio: 0.85
-    }
-  },
-  {
-    start: 57549,
-    end: 57549,
-    constraint: {
-      size: "stretch",
-      align_horizontal: "start",
-      align_vertical: "center1",
-      max_xy_ratio: 0.865
-    }
-  },
-  {
-    start: 57550,
-    end: 57550,
-    constraint: {
-      size: "fit_cover1",
-      align_horizontal: "start",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 57551,
-    end: 57551,
-    constraint: {
-      size: "fit_cover1",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 57552,
-    end: 57553,
-    constraint: {
-      size: "fit_cover1",
-      align_horizontal: "start",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 57554,
-    end: 57554,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "start",
-      align_vertical: "center1",
-      pad_left: -0.01,
-      pad_right: -0.01,
-      pad_top: -0.005,
-      pad_bottom: -0.005,
-      max_xy_ratio: 0.7
-    }
-  },
-  {
-    start: 57556,
-    end: 57556,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "end",
-      align_vertical: "center1",
-      pad_left: -0.01,
-      pad_right: -0.01,
-      pad_top: -0.005,
-      pad_bottom: -0.005,
-      max_xy_ratio: 0.7
-    }
-  },
-  {
-    start: 57558,
-    end: 57558,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "start",
-      align_vertical: "center1",
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005,
-      max_xy_ratio: 0.7
-    }
-  },
-  {
-    start: 57559,
-    end: 57559,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "end",
-      align_vertical: "center1",
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005,
-      max_xy_ratio: 0.7
-    }
-  },
-  {
-    start: 57856,
-    end: 58025,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58112,
-    end: 58112,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8984375,
-      relative_y: 0.0986328125
-    }
-  },
-  {
-    start: 58113,
-    end: 58113,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8798828125,
-      relative_y: 0.1171875
-    }
-  },
-  {
-    start: 58114,
-    end: 58114,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7646484375,
-      relative_y: 0.2314453125
-    }
-  },
-  {
-    start: 58115,
-    end: 58115,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.87890625,
-      relative_y: 0.1171875
-    }
-  },
-  {
-    start: 58116,
-    end: 58116,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9755859375,
-      relative_y: 0.0244140625
-    }
-  },
-  {
-    start: 58117,
-    end: 58117,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.99609375,
-      relative_y: 0.001953125
-    }
-  },
-  {
-    start: 58118,
-    end: 58118,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.986328125,
-      relative_y: 0.009765625
-    }
-  },
-  {
-    start: 58119,
-    end: 58119,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9951171875,
-      relative_y: 0.00390625
-    }
-  },
-  {
-    start: 58120,
-    end: 58120,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.978515625,
-      relative_y: 0.01953125
-    }
-  },
-  {
-    start: 58121,
-    end: 58121,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9736328125,
-      relative_y: 0.021484375
-    }
-  },
-  {
-    start: 58122,
-    end: 58122,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.96484375,
-      relative_y: 0.0302734375
-    }
-  },
-  {
-    start: 58123,
-    end: 58123,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.84375,
-      relative_y: 0.1513671875
-    }
-  },
-  {
-    start: 58124,
-    end: 58124,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.802734375,
-      relative_y: 0.18359375
-    }
-  },
-  {
-    start: 58125,
-    end: 58125,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.775390625,
-      relative_y: 0.1083984375
-    }
-  },
-  {
-    start: 58126,
-    end: 58126,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9833984375,
-      relative_y: 0.0166015625
-    }
-  },
-  {
-    start: 58127,
-    end: 58127,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9716796875,
-      relative_y: 0.0263671875
-    }
-  },
-  {
-    start: 58128,
-    end: 58128,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.662109375,
-      relative_y: 0.0986328125
-    }
-  },
-  {
-    start: 58129,
-    end: 58129,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.642578125,
-      relative_y: 0.1171875
-    }
-  },
-  {
-    start: 58130,
-    end: 58130,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5322265625,
-      relative_y: 0.2314453125
-    }
-  },
-  {
-    start: 58131,
-    end: 58131,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.6416015625,
-      relative_y: 0.1181640625
-    }
-  },
-  {
-    start: 58132,
-    end: 58132,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.73828125,
-      relative_y: 0.01953125
-    }
-  },
-  {
-    start: 58133,
-    end: 58133,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.6787109375,
-      relative_y: 0.1357421875
-    }
-  },
-  {
-    start: 58134,
-    end: 58134,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.748046875,
-      relative_y: 0.009765625
-    }
-  },
-  {
-    start: 58135,
-    end: 58135,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7529296875,
-      relative_y: 0.0048828125
-    }
-  },
-  {
-    start: 58136,
-    end: 58136,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7314453125,
-      relative_y: 0.0263671875
-    }
-  },
-  {
-    start: 58137,
-    end: 58137,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.740234375,
-      relative_y: 0.01953125
-    }
-  },
-  {
-    start: 58138,
-    end: 58138,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7294921875,
-      relative_y: 0.0283203125
-    }
-  },
-  {
-    start: 58139,
-    end: 58139,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.607421875,
-      relative_y: 0.150390625
-    }
-  },
-  {
-    start: 58140,
-    end: 58140,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.736328125,
-      relative_y: 0.0224609375
-    }
-  },
-  {
-    start: 58141,
-    end: 58141,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.74609375,
-      relative_y: 0.0126953125
-    }
-  },
-  {
-    start: 58142,
-    end: 58142,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.267578125,
-      relative_y: 0.3310546875
-    }
-  },
-  {
-    start: 58143,
-    end: 58143,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.736328125,
-      relative_y: 0.0986328125
-    }
-  },
-  {
-    start: 58144,
-    end: 58144,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7177734375,
-      relative_y: 0.1171875
-    }
-  },
-  {
-    start: 58145,
-    end: 58145,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.80859375,
-      relative_y: 0.025390625
-    }
-  },
-  {
-    start: 58146,
-    end: 58146,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7509765625,
-      relative_y: 0.083984375
-    }
-  },
-  {
-    start: 58147,
-    end: 58147,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.828125,
-      relative_y: 0.009765625
-    }
-  },
-  {
-    start: 58148,
-    end: 58148,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8349609375
-    }
-  },
-  {
-    start: 58149,
-    end: 58149,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8154296875,
-      relative_y: 0.021484375
-    }
-  },
-  {
-    start: 58150,
-    end: 58150,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.814453125,
-      relative_y: 0.01953125
-    }
-  },
-  {
-    start: 58151,
-    end: 58151,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8076171875,
-      relative_y: 0.02734375
-    }
-  },
-  {
-    start: 58152,
-    end: 58152,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.6845703125,
-      relative_y: 0.150390625
-    }
-  },
-  {
-    start: 58153,
-    end: 58153,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8173828125,
-      relative_y: 0.017578125
-    }
-  },
-  {
-    start: 58154,
-    end: 58154,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.810546875,
-      relative_y: 0.0263671875
-    }
-  },
-  {
-    start: 58155,
-    end: 58155,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.517578125,
-      relative_y: 0.2421875
-    }
-  },
-  {
-    start: 58156,
-    end: 58156,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.69921875,
-      relative_y: 0.1005859375
-    }
-  },
-  {
-    start: 58157,
-    end: 58157,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.6787109375,
-      relative_y: 0.1201171875
-    }
-  },
-  {
-    start: 58158,
-    end: 58158,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5654296875,
-      relative_y: 0.232421875
-    }
-  },
-  {
-    start: 58159,
-    end: 58159,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.771484375,
-      relative_y: 0.02734375
-    }
-  },
-  {
-    start: 58160,
-    end: 58160,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.71484375,
-      relative_y: 0.0830078125
-    }
-  },
-  {
-    start: 58161,
-    end: 58161,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7919921875,
-      relative_y: 0.009765625
-    }
-  },
-  {
-    start: 58162,
-    end: 58162,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.787109375,
-      relative_y: 0.0126953125
-    }
-  },
-  {
-    start: 58163,
-    end: 58163,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.771484375,
-      relative_y: 0.0263671875
-    }
-  },
-  {
-    start: 58164,
-    end: 58164,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.77734375,
-      relative_y: 0.01953125
-    }
-  },
-  {
-    start: 58165,
-    end: 58165,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.771484375,
-      relative_y: 0.0283203125
-    }
-  },
-  {
-    start: 58166,
-    end: 58166,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.650390625,
-      relative_y: 0.150390625
-    }
-  },
-  {
-    start: 58167,
-    end: 58167,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.775390625,
-      relative_y: 0.0234375
-    }
-  },
-  {
-    start: 58168,
-    end: 58168,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.779296875,
-      relative_y: 0.0185546875
-    }
-  },
-  {
-    start: 58169,
-    end: 58169,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8445945945945946
-    }
-  },
-  {
-    start: 58170,
-    end: 58170,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5283203125,
-      relative_y: 0.232421875
-    }
-  },
-  {
-    start: 58171,
-    end: 58171,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.544921875,
-      relative_y: 0.21484375
-    }
-  },
-  {
-    start: 58172,
-    end: 58173,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.52734375,
-      relative_y: 0.232421875
-    }
-  },
-  {
-    start: 58174,
-    end: 58174,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.3293918918918919,
-      relative_y: 0.6706081081081081
-    }
-  },
-  {
-    start: 58175,
-    end: 58175,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.52,
-      relative_y: 0.2707692307692308
-    }
-  },
-  {
-    start: 58176,
-    end: 58176,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8307692307692308,
-      relative_y: 0.0861538461538462
-    }
-  },
-  {
-    start: 58177,
-    end: 58177,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8327702702702703,
-      relative_y: 0.0050675675675676
-    }
-  },
-  {
-    start: 58178,
-    end: 58179,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58180,
-    end: 58180,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5307692307692308,
-      relative_y: 0.2092307692307692
-    }
-  },
-  {
-    start: 58181,
-    end: 58181,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5332112630208333,
-      relative_y: 0.2040934244791667
-    }
-  },
-  {
-    start: 58182,
-    end: 58182,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58183,
-    end: 58183,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8307692307692308,
-      relative_y: 0.1246153846153846
-    }
-  },
-  {
-    start: 58184,
-    end: 58184,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58185,
-    end: 58185,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5307967032967034,
-      relative_y: 0.2615384615384616
-    }
-  },
-  {
-    start: 58186,
-    end: 58187,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58188,
-    end: 58188,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8659995118379302,
-      relative_y: 0.1340004881620698
-    }
-  },
-  {
-    start: 58189,
-    end: 58189,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9890163534293386,
-      relative_y: 0.0002440810349036
-    }
-  },
-  {
-    start: 58190,
-    end: 58190,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58191,
-    end: 58191,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5751953125,
-      relative_y: 0.1142578125
-    }
-  },
-  {
-    start: 58192,
-    end: 58192,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58193,
-    end: 58193,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.6533203125,
-      relative_y: 0.1328125
-    }
-  },
-  {
-    start: 58194,
-    end: 58194,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5215384615384615,
-      relative_y: 0.2846153846153846
-    }
-  },
-  {
-    start: 58195,
-    end: 58195,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8308012820512821,
-      relative_y: 0.1230448717948718
-    }
-  },
-  {
-    start: 58196,
-    end: 58198,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9935233160621761,
-      relative_y: 0.0025906735751295
-    }
-  },
-  {
-    start: 58199,
-    end: 58199,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9961139896373057
-    }
-  },
-  {
-    start: 58200,
-    end: 58201,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9935233160621761,
-      relative_y: 0.0025906735751295
-    }
-  },
-  {
-    start: 58202,
-    end: 58202,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9935233160621761,
-      relative_y: 0.0012953367875648
-    }
-  },
-  {
-    start: 58203,
-    end: 58203,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9987046632124352,
-      relative_y: 0.0012953367875648
-    }
-  },
-  {
-    start: 58204,
-    end: 58205,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58206,
-    end: 58206,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7294921875,
-      relative_y: 0.0283203125
-    }
-  },
-  {
-    start: 58207,
-    end: 58207,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.96484375,
-      relative_y: 0.0302734375
-    }
-  },
-  {
-    start: 58208,
-    end: 58208,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.76953125,
-      relative_y: 0.0302734375
-    }
-  },
-  {
-    start: 58209,
-    end: 58209,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8076171875,
-      relative_y: 0.02734375
-    }
-  },
-  {
-    start: 58210,
-    end: 58210,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.990234375,
-      relative_y: 0.009765625
-    }
-  },
-  {
-    start: 58211,
-    end: 58211,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7900390625,
-      relative_y: 0.009765625
-    }
-  },
-  {
-    start: 58212,
-    end: 58212,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8251953125,
-      relative_y: 0.009765625
-    }
-  },
-  {
-    start: 58213,
-    end: 58213,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9833984375,
-      relative_y: 0.0166015625
-    }
-  },
-  {
-    start: 58214,
-    end: 58214,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.783203125,
-      relative_y: 0.0166015625
-    }
-  },
-  {
-    start: 58215,
-    end: 58215,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8173828125,
-      relative_y: 0.017578125
-    }
-  },
-  {
-    start: 58216,
-    end: 58216,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58217,
-    end: 58217,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.490234375,
-      relative_y: 0.2548828125
-    }
-  },
-  {
-    start: 58218,
-    end: 58218,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58219,
-    end: 58219,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9333658774713205,
-      relative_y: 0.0266048328044911
-    }
-  },
-  {
-    start: 58220,
-    end: 58220,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7076171875,
-      relative_y: 0.1083984375
-    }
-  },
-  {
-    start: 58221,
-    end: 58221,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8427734375,
-      relative_y: 0.0625
-    }
-  },
-  {
-    start: 58222,
-    end: 58222,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7529721467391304,
-      relative_y: 0.0956606657608696
-    }
-  },
-  {
-    start: 58223,
-    end: 58223,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.68359375,
-      relative_y: 0.125
-    }
-  },
-  {
-    start: 58224,
-    end: 58224,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8642578125,
-      relative_y: 0.0625
-    }
-  },
-  {
-    start: 58225,
-    end: 58225,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.6103515625,
-      relative_y: 0.193359375
-    }
-  },
-  {
-    start: 58226,
-    end: 58226,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.794921875,
-      relative_y: 0.0576171875
-    }
-  },
-  {
-    start: 58227,
-    end: 58227,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.865234375,
-      relative_y: 0.005859375
-    }
-  },
-  {
-    start: 58228,
-    end: 58228,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.3154296875,
-      relative_y: 0.2861328125
-    }
-  },
-  {
-    start: 58229,
-    end: 58229,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.67724609375,
-      relative_y: 0.13037109375
-    }
-  },
-  {
-    start: 58230,
-    end: 58230,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.69921875,
-      relative_y: 0.1337890625
-    }
-  },
-  {
-    start: 58231,
-    end: 58231,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7314453125,
-      relative_y: 0.1552734375
-    }
-  },
-  {
-    start: 58232,
-    end: 58232,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7314453125,
-      relative_y: 0.154296875
-    }
-  },
-  {
-    start: 58233,
-    end: 58233,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5751953125,
-      relative_y: 0.1826171875
-    }
-  },
-  {
-    start: 58234,
-    end: 58234,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5263671875,
-      relative_y: 0.228515625
-    }
-  },
-  {
-    start: 58235,
-    end: 58235,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5751953125,
-      relative_y: 0.18359375
-    }
-  },
-  {
-    start: 58236,
-    end: 58236,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58237,
-    end: 58237,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.900390625,
-      relative_y: 0.095703125
-    }
-  },
-  {
-    start: 58238,
-    end: 58238,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.6015625,
-      relative_y: 0.232421875
-    }
-  },
-  {
-    start: 58239,
-    end: 58239,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.52,
-      relative_y: 0.2784615384615385
-    }
-  },
-  {
-    start: 58240,
-    end: 58240,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.52,
-      relative_y: 0.2630769230769231
-    }
-  },
-  {
-    start: 58241,
-    end: 58253,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58254,
-    end: 58257,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4990253411306043,
-      relative_height: 0.9987012987012988,
-      relative_x: 0.4996751137102014
-    }
-  },
-  {
-    start: 58258,
-    end: 58259,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4996751137102014,
-      relative_height: 0.9987012987012988,
-      relative_x: 0.4990253411306043
-    }
-  },
-  {
-    start: 58260,
-    end: 58260,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4990253411306043,
-      relative_height: 0.9987012987012988,
-      relative_x: 0.4996751137102014
-    }
-  },
-  {
-    start: 58261,
-    end: 58261,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.5471085120207927,
-      relative_height: 0.9987012987012988,
-      relative_x: 0.451591942820013
-    }
-  },
-  {
-    start: 58262,
-    end: 58262,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.594541910331384,
-      relative_height: 0.9987012987012988,
-      relative_x: 0.4041585445094217
-    }
-  },
-  {
-    start: 58263,
-    end: 58263,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.6426250812215725,
-      relative_x: 0.3573749187784275
-    }
-  },
-  {
-    start: 58264,
-    end: 58264,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.6900584795321637,
-      relative_x: 0.3099415204678362
-    }
-  },
-  {
-    start: 58265,
-    end: 58265,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.7381416504223521,
-      relative_x: 0.2618583495776478
-    }
-  },
-  {
-    start: 58266,
-    end: 58266,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.7855750487329435,
-      relative_x: 0.2144249512670565
-    }
-  },
-  {
-    start: 58267,
-    end: 58267,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.9987004548408057,
-      relative_height: 0.9987012987012988
-    }
-  },
-  {
-    start: 58268,
-    end: 58268,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.8323586744639376,
-      relative_height: 0.9935064935064936
-    }
-  },
-  {
-    start: 58269,
-    end: 58269,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.7855750487329435,
-      relative_height: 0.9948051948051948
-    }
-  },
-  {
-    start: 58270,
-    end: 58270,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.7381416504223521,
-      relative_height: 0.9961038961038962
-    }
-  },
-  {
-    start: 58271,
-    end: 58271,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.6907082521117609,
-      relative_height: 0.9961038961038962
-    }
-  },
-  {
-    start: 58272,
-    end: 58272,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.6426250812215725,
-      relative_height: 0.9961038961038962
-    }
-  },
-  {
-    start: 58273,
-    end: 58273,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.594541910331384,
-      relative_height: 0.9974025974025974
-    }
-  },
-  {
-    start: 58274,
-    end: 58275,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4990253411306043,
-      relative_height: 0.9987012987012988
-    }
-  },
-  {
-    start: 58276,
-    end: 58276,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4996751137102014,
-      relative_height: 0.9987012987012988
-    }
-  },
-  {
-    start: 58277,
-    end: 58277,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4990253411306043,
-      relative_height: 0.9987012987012988
-    }
-  },
-  {
-    start: 58278,
-    end: 58278,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4996751137102014,
-      relative_height: 0.9987012987012988
-    }
-  },
-  {
-    start: 58279,
-    end: 58280,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4990253411306043,
-      relative_height: 0.9987012987012988
-    }
-  },
-  {
-    start: 58281,
-    end: 58281,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9961139896373057
-    }
-  },
-  {
-    start: 58282,
-    end: 58282,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.990234375,
-      relative_y: 0.0078125
-    }
-  },
-  {
-    start: 58283,
-    end: 58283,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7900390625,
-      relative_y: 0.005859375
-    }
-  },
-  {
-    start: 58284,
-    end: 58284,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8251953125,
-      relative_y: 0.0078125
-    }
-  },
-  {
-    start: 58285,
-    end: 58285,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.751953125,
-      relative_y: 0.0068359375
-    }
-  },
-  {
-    start: 58286,
-    end: 58286,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.615234375,
-      relative_y: 0.232421875
-    }
-  },
-  {
-    start: 58287,
-    end: 58287,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9986072423398329,
-      relative_y: 0.0013927576601671
-    }
-  },
-  {
-    start: 58288,
-    end: 58290,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9958217270194986,
-      relative_y: 0.0041782729805014
-    }
-  },
-  {
-    start: 58291,
-    end: 58291,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9986072423398329,
-      relative_y: 0.0013927576601671
-    }
-  },
-  {
-    start: 58292,
-    end: 58292,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58293,
-    end: 58299,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9986072423398329,
-      relative_y: 0.0013927576601671
-    }
-  },
-  {
-    start: 58300,
-    end: 58304,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58305,
-    end: 58305,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.6590187942396876,
-      relative_y: 0.1349768123016842
-    }
-  },
-  {
-    start: 58306,
-    end: 58306,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7939956065413717
-    }
-  },
-  {
-    start: 58307,
-    end: 58339,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 58874,
-    end: 59064,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 59136,
-    end: 59631,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60000,
-    end: 60000,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60001,
-    end: 60001,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.7513020833333334,
-      relative_height: 0.9291573452647278,
-      relative_x: 0.0846354166666667,
-      relative_y: 0.0708426547352722
-    }
-  },
-  {
-    start: 60002,
-    end: 60028,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60029,
-    end: 60029,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.8394854586129754,
-      relative_height: 0.8751387347391787,
-      relative_x: 0.0917225950782998,
-      relative_y: 0.0416204217536071
-    }
-  },
-  {
-    start: 60030,
-    end: 60040,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60042,
-    end: 60044,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60047,
-    end: 60056,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60057,
-    end: 60057,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.9395973154362416,
-      relative_height: 0.4778024417314096,
-      relative_x: 0.0302013422818792,
-      relative_y: 0.2269700332963374
-    }
-  },
-  {
-    start: 60058,
-    end: 60058,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.767337807606264,
-      relative_height: 0.8523862375138734,
-      relative_x: 0.1526845637583893,
-      relative_y: 0.0754716981132075
-    }
-  },
-  {
-    start: 60059,
-    end: 60059,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.8590604026845637,
-      relative_height: 0.7613762486126526,
-      relative_x: 0.0721476510067114,
-      relative_y: 0.0871254162042175
-    }
-  },
-  {
-    start: 60060,
-    end: 60060,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.8590604026845637,
-      relative_height: 0.7574916759156493,
-      relative_x: 0.0721476510067114,
-      relative_y: 0.0832408435072142
-    }
-  },
-  {
-    start: 60061,
-    end: 60061,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4082774049217002,
-      relative_height: 0.5077691453940066,
-      relative_x: 0.2863534675615212,
-      relative_y: 0.2763596004439512
-    }
-  },
-  {
-    start: 60062,
-    end: 60063,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.511744966442953,
-      relative_height: 0.4051054384017758,
-      relative_x: 0.2136465324384788,
-      relative_y: 0.306881243063263
-    }
-  },
-  {
-    start: 60064,
-    end: 60064,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4082774049217002,
-      relative_height: 0.5077691453940066,
-      relative_x: 0.2863534675615212,
-      relative_y: 0.2763596004439512
-    }
-  },
-  {
-    start: 60065,
-    end: 60065,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.767337807606264,
-      relative_height: 0.8523862375138734,
-      relative_x: 0.1526845637583893,
-      relative_y: 0.0754716981132075
-    }
-  },
-  {
-    start: 60066,
-    end: 60066,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.8061116965226555,
-      relative_height: 0.9438247156716689,
-      relative_x: 0.0679662802950474,
-      relative_y: 0.0147523709167545
-    }
-  },
-  {
-    start: 60067,
-    end: 60083,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60084,
-    end: 60084,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.9945482866043613,
-      relative_height: 0.5264797507788161,
-      relative_y: 0.2024922118380062
-    }
-  },
-  {
-    start: 60085,
-    end: 60085,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.5264797507788161,
-      relative_height: 0.9945482866043613,
-      relative_x: 0.2024922118380062,
-      relative_y: 0.0054517133956386
-    }
-  },
-  {
-    start: 60086,
-    end: 60086,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.5264797507788161,
-      relative_height: 0.9945482866043613,
-      relative_x: 0.2710280373831775
-    }
-  },
-  {
-    start: 60087,
-    end: 60087,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.9945482866043613,
-      relative_height: 0.5264797507788161,
-      relative_x: 0.0054517133956386,
-      relative_y: 0.2710280373831775
-    }
-  },
-  {
-    start: 60088,
-    end: 60103,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60105,
-    end: 60105,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60108,
-    end: 60115,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60116,
-    end: 60117,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.7069825436408977,
-      relative_x: 0.1483790523690773
-    }
-  },
-  {
-    start: 60118,
-    end: 60118,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8780760626398211,
-      relative_y: 0.0687919463087248
-    }
-  },
-  {
-    start: 60119,
-    end: 60169,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60171,
-    end: 60226,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60227,
-    end: 60227,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.7335766423357665,
-      relative_height: 0.9996188152778837,
-      relative_x: 0.1991657977059437,
-      relative_y: 0.0003811847221163
-    }
-  },
-  {
-    start: 60228,
-    end: 60238,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60240,
-    end: 60269,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60270,
-    end: 60270,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.4954604409857328,
-      relative_y: 0.2522697795071336
-    }
-  },
-  {
-    start: 60271,
-    end: 60271,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4973958333333333,
-      relative_x: 0.2493489583333333
-    }
-  },
-  {
-    start: 60272,
-    end: 60272,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4973958333333333,
-      relative_height: 0.9961089494163424,
-      relative_x: 0.2493489583333333,
-      relative_y: 0.0038910505836576
-    }
-  },
-  {
-    start: 60273,
-    end: 60273,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.4954604409857328,
-      relative_y: 0.2522697795071336
-    }
-  },
-  {
-    start: 60274,
-    end: 60297,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60298,
-    end: 60298,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.3468834688346883,
-      relative_height: 0.335361578525641,
-      relative_x: 0.2642276422764228,
-      relative_y: 0.3313050881410256
-    }
-  },
-  {
-    start: 60299,
-    end: 60313,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60314,
-    end: 60314,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.8740779768177028,
-      relative_height: 0.9438247156716689,
-      relative_x: 0.0679662802950474,
-      relative_y: 0.0147523709167545
-    }
-  },
-  {
-    start: 60315,
-    end: 60372,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60373,
-    end: 60373,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.9322210636079249,
-      relative_height: 0.9318897917604415,
-      relative_y: 0.0681102082395584
-    }
-  },
-  {
-    start: 60374,
-    end: 60374,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9996446423917936,
-      relative_y: 0.0003553576082064
-    }
-  },
-  {
-    start: 60375,
-    end: 60422,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60423,
-    end: 60423,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.3495911047345768,
-      relative_height: 0.3355179398148149,
-      relative_x: 0.2615335565120357,
-      relative_y: 0.3311487268518519
-    }
-  },
-  {
-    start: 60424,
-    end: 60426,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60427,
-    end: 60427,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.9327424400417101,
-      relative_height: 0.9996188152778837,
-      relative_y: 0.0003811847221163
-    }
-  },
-  {
-    start: 60428,
-    end: 60428,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.8008342022940563,
-      relative_x: 0.1991657977059437
-    }
-  },
-  {
-    start: 60429,
-    end: 60446,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60672,
-    end: 60927,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 60928,
-    end: 60928,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "end",
-      align_vertical: "center1",
-      relative_width: 0.8681172291296625,
-      relative_height: 0.8626692456479691,
-      relative_x: 0.1314387211367673,
-      relative_y: 0.0686653771760155,
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 60929,
-    end: 60929,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8626692456479691,
-      relative_y: 0.0686653771760155,
-      pad_left: -0.05,
-      pad_right: -0.05,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 60930,
-    end: 60930,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "start",
-      align_vertical: "center1",
-      relative_width: 0.8685612788632326,
-      relative_height: 0.8626692456479691,
-      relative_y: 0.0686653771760155,
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 60931,
-    end: 60931,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "end",
-      align_vertical: "center1",
-      relative_width: 0.8681172291296625,
-      relative_height: 0.8626692456479691,
-      relative_x: 0.1314387211367673,
-      relative_y: 0.0686653771760155,
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 60932,
-    end: 60932,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8626692456479691,
-      relative_y: 0.0686653771760155,
-      pad_left: -0.05,
-      pad_right: -0.05,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 60933,
-    end: 60933,
-    constraint: {
-      size: "stretch",
-      max_constraint_width: 1,
-      align_horizontal: "start",
-      align_vertical: "center1",
-      relative_width: 0.8685612788632326,
-      relative_height: 0.8626692456479691,
-      relative_y: 0.0686653771760155,
-      pad_left: -0.025,
-      pad_right: -0.025,
-      pad_top: -0.005,
-      pad_bottom: -0.005
-    }
-  },
-  {
-    start: 60934,
-    end: 60934,
-    constraint: {
-      size: "cover",
-      max_constraint_width: 1,
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.7059415911379657,
-      relative_height: 0.2234524408656266,
-      relative_x: 0.1470292044310171,
-      relative_y: 0.7765475591343735,
-      pad_left: 0.015,
-      pad_right: 0.015,
-      pad_top: 0.015,
-      pad_bottom: 0.015
-    }
-  },
-  {
-    start: 60935,
-    end: 60935,
-    constraint: {
-      size: "cover",
-      max_constraint_width: 1,
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.5,
-      relative_height: 0.7498741821841973,
-      relative_x: 0.5,
-      relative_y: 0.2501258178158027,
-      pad_left: 0.015,
-      pad_right: 0.015,
-      pad_top: 0.015,
-      pad_bottom: 0.015
-    }
-  },
-  {
-    start: 60936,
-    end: 60936,
-    constraint: {
-      size: "cover",
-      max_constraint_width: 1,
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.6299093655589124,
-      relative_height: 0.8535480624056366,
-      relative_x: 0.3700906344410876,
-      pad_left: 0.015,
-      pad_right: 0.015,
-      pad_top: 0.015,
-      pad_bottom: 0.015
-    }
-  },
-  {
-    start: 60937,
-    end: 60937,
-    constraint: {
-      size: "cover",
-      max_constraint_width: 1,
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.4997483643683945,
-      pad_left: 0.015,
-      pad_right: 0.015,
-      pad_top: 0.015,
-      pad_bottom: 0.015
-    }
-  },
-  {
-    start: 60938,
-    end: 60938,
-    constraint: {
-      size: "cover",
-      max_constraint_width: 1,
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.6299093655589124,
-      relative_height: 0.8535480624056366,
-      pad_left: 0.015,
-      pad_right: 0.015,
-      pad_top: 0.015,
-      pad_bottom: 0.015
-    }
-  },
-  {
-    start: 60939,
-    end: 60939,
-    constraint: {
-      size: "cover",
-      max_constraint_width: 1,
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.5,
-      relative_height: 0.7498741821841973,
-      relative_y: 0.2501258178158027,
-      pad_left: 0.015,
-      pad_right: 0.015,
-      pad_top: 0.015,
-      pad_bottom: 0.015
-    }
-  },
-  {
-    start: 60940,
-    end: 61390,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61440,
-    end: 61444,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61445,
-    end: 61445,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9999664113932554,
-      relative_y: 0.0000335886067446
-    }
-  },
-  {
-    start: 61446,
-    end: 61477,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61478,
-    end: 61479,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.978618435460558,
-      relative_y: 0.0103951316192896
-    }
-  },
-  {
-    start: 61480,
-    end: 61482,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61483,
-    end: 61483,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9758052740827267,
-      relative_y: 0.0238869355863696
-    }
-  },
-  {
-    start: 61484,
-    end: 61488,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61489,
-    end: 61491,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.998792270531401,
-      relative_y: 0.0006038647342995
-    }
-  },
-  {
-    start: 61492,
-    end: 61492,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61493,
-    end: 61493,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9989935587761675,
-      relative_y: 0.000402576489533
-    }
-  },
-  {
-    start: 61494,
-    end: 61507,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61508,
-    end: 61508,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9925925925925926
-    }
-  },
-  {
-    start: 61509,
-    end: 61509,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61510,
-    end: 61510,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8751322751322751,
-      relative_y: 0.0624338624338624
-    }
-  },
-  {
-    start: 61511,
-    end: 61511,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61512,
-    end: 61512,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8577706898990622,
-      relative_y: 0.0711892586341537
-    }
-  },
-  {
-    start: 61513,
-    end: 61513,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8579450878868969,
-      relative_y: 0.0710148606463189
-    }
-  },
-  {
-    start: 61514,
-    end: 61514,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8577706898990622,
-      relative_y: 0.0711892586341537
-    }
-  },
-  {
-    start: 61515,
-    end: 61515,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9997041418532618,
-      relative_y: 0.0002958581467381
-    }
-  },
-  {
-    start: 61516,
-    end: 61517,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8572940020656472,
-      relative_y: 0.0713404035569438
-    }
-  },
-  {
-    start: 61518,
-    end: 61518,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8577706898990622,
-      relative_y: 0.0711892586341537
-    }
-  },
-  {
-    start: 61519,
-    end: 61519,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7138835298072554,
-      relative_y: 0.14334792953172
-    }
-  },
-  {
-    start: 61520,
-    end: 61520,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8579450878868969,
-      relative_y: 0.0710148606463189
-    }
-  },
-  {
-    start: 61521,
-    end: 61521,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8577706898990622,
-      relative_y: 0.0711892586341537
-    }
-  },
-  {
-    start: 61522,
-    end: 61522,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.999974809179535
-    }
-  },
-  {
-    start: 61523,
-    end: 61535,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61536,
-    end: 61537,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.856797583081571,
-      relative_y: 0.0719033232628399
-    }
-  },
-  {
-    start: 61538,
-    end: 61538,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61539,
-    end: 61539,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9987915407854985,
-      relative_y: 0.0006042296072508
-    }
-  },
-  {
-    start: 61540,
-    end: 61558,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61559,
-    end: 61559,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5700483091787439,
-      relative_y: 0.286231884057971
-    }
-  },
-  {
-    start: 61560,
-    end: 61560,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5700483091787439,
-      relative_y: 0.143719806763285
-    }
-  },
-  {
-    start: 61561,
-    end: 61565,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61566,
-    end: 61566,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.4989429175475687,
-      relative_y: 0.2505285412262157
-    }
-  },
-  {
-    start: 61567,
-    end: 61576,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61577,
-    end: 61577,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9998488512696494,
-      relative_y: 0.0001511487303507
-    }
-  },
-  {
-    start: 61578,
-    end: 61603,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61604,
-    end: 61605,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7502645502645503,
-      relative_y: 0.1248677248677249
-    }
-  },
-  {
-    start: 61606,
-    end: 61654,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61655,
-    end: 61655,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.4281400966183575,
-      relative_y: 0.2053140096618357
-    }
-  },
-  {
-    start: 61656,
-    end: 61656,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.4281400966183575,
-      relative_y: 0.3472222222222222
-    }
-  },
-  {
-    start: 61657,
-    end: 61657,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7140772371750631,
-      relative_y: 0.1333462732919255
-    }
-  },
-  {
-    start: 61658,
-    end: 61658,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7140396210163651,
-      relative_y: 0.1333838894506235
-    }
-  },
-  {
-    start: 61659,
-    end: 61659,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61660,
-    end: 61660,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1"
-    }
-  },
-  {
-    start: 61661,
-    end: 61661,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      relative_height: 0.427536231884058,
-      relative_y: 0.001207729468599
-    }
-  },
-  {
-    start: 61662,
-    end: 61662,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      relative_height: 0.428743961352657,
-      relative_y: 0.571256038647343
-    }
-  },
-  {
-    start: 61663,
-    end: 61695,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61696,
-    end: 61697,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8573155985489722,
-      relative_y: 0.0713422007255139
-    }
-  },
-  {
-    start: 61698,
-    end: 61698,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9286577992744861,
-      relative_y: 0.0713422007255139
-    }
-  },
-  {
-    start: 61699,
-    end: 61699,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9286577992744861
-    }
-  },
-  {
-    start: 61700,
-    end: 61701,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8573155985489722,
-      relative_y: 0.0713422007255139
-    }
-  },
-  {
-    start: 61702,
-    end: 61703,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.5,
-      relative_y: 0.2853688029020556
-    }
-  },
-  {
-    start: 61704,
-    end: 61743,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61744,
-    end: 61744,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9998602571268865
-    }
-  },
-  {
-    start: 61745,
-    end: 61760,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61761,
-    end: 61761,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.2593984962406015,
-      relative_y: 0.3696741854636592
-    }
-  },
-  {
-    start: 61762,
-    end: 61778,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61779,
-    end: 61780,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8751322751322751,
-      relative_y: 0.0624338624338624
-    }
-  },
-  {
-    start: 61781,
-    end: 61781,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61782,
-    end: 61782,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8752505446623093,
-      relative_y: 0.0623155929038282
-    }
-  },
-  {
-    start: 61783,
-    end: 61783,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8756468797564688,
-      relative_y: 0.0624338624338624
-    }
-  },
-  {
-    start: 61784,
-    end: 61784,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8751322751322751,
-      relative_y: 0.0624338624338624
-    }
-  },
-  {
-    start: 61785,
-    end: 61785,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.8756067947646895,
-      relative_y: 0.0623492063492063
-    }
-  },
-  {
-    start: 61786,
-    end: 61812,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61813,
-    end: 61813,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9989423585404548,
-      relative_y: 0.0005288207297726
-    }
-  },
-  {
-    start: 61814,
-    end: 61814,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61815,
-    end: 61816,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.6250661025912215,
-      relative_y: 0.1877313590692755
-    }
-  },
-  {
-    start: 61817,
-    end: 61825,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61826,
-    end: 61826,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.9998046921689268
-    }
-  },
-  {
-    start: 61827,
-    end: 61984,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61985,
-    end: 61985,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9994854643684076
-    }
-  },
-  {
-    start: 61986,
-    end: 61986,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.874681988394363,
-      relative_y: 0.0624017379870223
-    }
-  },
-  {
-    start: 61987,
-    end: 61987,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 61988,
-    end: 61990,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9994854643684076
-    }
-  },
-  {
-    start: 61991,
-    end: 61991,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.874681988394363,
-      relative_y: 0.0624017379870223
-    }
-  },
-  {
-    start: 61992,
-    end: 61992,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9994854643684076
-    }
-  },
-  {
-    start: 61993,
-    end: 61993,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9370837263813853,
-      relative_y: 0.0624017379870223
-    }
-  },
-  {
-    start: 61994,
-    end: 61994,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9994854643684076
-    }
-  },
-  {
-    start: 61995,
-    end: 61995,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.6874767744332962,
-      relative_y: 0.1560043449675557
-    }
-  },
-  {
-    start: 61996,
-    end: 61996,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9994854643684076
-    }
-  },
-  {
-    start: 61997,
-    end: 61997,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.6874767744332962,
-      relative_y: 0.1560043449675557
-    }
-  },
-  {
-    start: 61998,
-    end: 62036,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62037,
-    end: 62038,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9993997599039616
-    }
-  },
-  {
-    start: 62039,
-    end: 62039,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7810124049619848,
-      relative_y: 0.0935945806894186
-    }
-  },
-  {
-    start: 62040,
-    end: 62040,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.7498142113988452,
-      relative_y: 0.1247927742525582
-    }
-  },
-  {
-    start: 62041,
-    end: 62041,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62042,
-    end: 62042,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9993997599039616
-    }
-  },
-  {
-    start: 62043,
-    end: 62043,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.9975006099019084
-    }
-  },
-  {
-    start: 62044,
-    end: 62337,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62464,
-    end: 62485,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62486,
-    end: 62486,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_height: 0.6090604026845637,
-      relative_y: 0.2119686800894855
-    }
-  },
-  {
-    start: 62487,
-    end: 62499,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62500,
-    end: 62500,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.501953125,
-      relative_height: 0.575503355704698,
-      relative_x: 0.248046875,
-      relative_y: 0.2108501118568233
-    }
-  },
-  {
-    start: 62501,
-    end: 62512,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62513,
-    end: 62513,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.6240234375,
-      relative_height: 0.7695749440715883,
-      relative_x: 0.203125,
-      relative_y: 0.1420581655480984
-    }
-  },
-  {
-    start: 62514,
-    end: 62514,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.671875,
-      relative_height: 0.714765100671141,
-      relative_x: 0.1875,
-      relative_y: 0.1610738255033557
-    }
-  },
-  {
-    start: 62515,
-    end: 62515,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.6240234375,
-      relative_height: 0.7695749440715883,
-      relative_x: 0.2041015625,
-      relative_y: 0.0883668903803132
-    }
-  },
-  {
-    start: 62516,
-    end: 62516,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.671875,
-      relative_height: 0.714765100671141,
-      relative_x: 0.140625,
-      relative_y: 0.1599552572706935
-    }
-  },
-  {
-    start: 62517,
-    end: 62519,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62520,
-    end: 62520,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.24365234375,
-      relative_height: 0.4560546875,
-      relative_x: 0.38134765625,
-      relative_y: 0.27197265625
-    }
-  },
-  {
-    start: 62521,
-    end: 62525,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62526,
-    end: 62526,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.5029296875,
-      relative_height: 0.575503355704698,
-      relative_x: 0.25,
-      relative_y: 0.2136465324384788
-    }
-  },
-  {
-    start: 62527,
-    end: 62530,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62531,
-    end: 62531,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.75,
-      relative_x: 0.125
-    }
-  },
-  {
-    start: 62532,
-    end: 62533,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.5,
-      relative_height: 0.5,
-      relative_x: 0.25,
-      relative_y: 0.25
-    }
-  },
-  {
-    start: 62534,
-    end: 62537,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62538,
-    end: 62538,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.24365234375,
-      relative_height: 0.4560546875,
-      relative_x: 0.375,
-      relative_y: 0.27197265625
-    }
-  },
-  {
-    start: 62539,
-    end: 62539,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4560546875,
-      relative_height: 0.24365234375,
-      relative_x: 0.27197265625,
-      relative_y: 0.31884765625
-    }
-  },
-  {
-    start: 62540,
-    end: 62555,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62556,
-    end: 62556,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.501953125,
-      relative_height: 0.5749440715883669,
-      relative_x: 0.248046875,
-      relative_y: 0.2114093959731544
-    }
-  },
-  {
-    start: 62557,
-    end: 62559,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62560,
-    end: 62560,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.359375,
-      relative_height: 0.6240234375,
-      relative_x: 0.375,
-      relative_y: 0.1884765625
-    }
-  },
-  {
-    start: 62561,
-    end: 62561,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.6237816764132553,
-      relative_height: 0.9988851727982163,
-      relative_x: 0.1881091617933723
-    }
-  },
-  {
-    start: 62562,
-    end: 62566,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62567,
-    end: 62567,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.56396484375,
-      relative_height: 0.56494140625,
-      relative_x: 0.21875,
-      relative_y: 0.2177734375
-    }
-  },
-  {
-    start: 62568,
-    end: 62571,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62572,
-    end: 62572,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.50390625,
-      relative_height: 0.5771812080536913,
-      relative_x: 0.2490234375,
-      relative_y: 0.20917225950783
-    }
-  },
-  {
-    start: 62573,
-    end: 62575,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62576,
-    end: 62576,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.99267578125,
-      relative_height: 0.26904296875,
-      relative_y: 0.6865234375
-    }
-  },
-  {
-    start: 62577,
-    end: 62581,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62582,
-    end: 62582,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.8732325694783033,
-      relative_x: 0.0633837152608484
-    }
-  },
-  {
-    start: 62583,
-    end: 62585,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62586,
-    end: 62586,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.584307992202729,
-      relative_height: 0.9509476031215162,
-      relative_x: 0.2066276803118908,
-      relative_y: 0.0234113712374582
-    }
-  },
-  {
-    start: 62587,
-    end: 62588,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.625,
-      relative_height: 0.359375,
-      relative_x: 0.1875,
-      relative_y: 0.328125
-    }
-  },
-  {
-    start: 62589,
-    end: 62589,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.359375,
-      relative_height: 0.6240234375,
-      relative_x: 0.265625,
-      relative_y: 0.1875
-    }
-  },
-  {
-    start: 62590,
-    end: 62590,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.4560546875,
-      relative_height: 0.24365234375,
-      relative_x: 0.27197265625,
-      relative_y: 0.375
-    }
-  },
-  {
-    start: 62591,
-    end: 62602,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62603,
-    end: 62603,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.71875,
-      relative_height: 0.09375,
-      relative_x: 0.125,
-      relative_y: 0.46875
-    }
-  },
-  {
-    start: 62604,
-    end: 62610,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62611,
-    end: 62611,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.8313840155945419,
-      relative_height: 0.9509476031215162,
-      relative_x: 0.084307992202729,
-      relative_y: 0.0234113712374582
-    }
-  },
-  {
-    start: 62612,
-    end: 62617,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62618,
-    end: 62618,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.8727450024378351,
-      relative_x: 0.0633837152608484
-    }
-  },
-  {
-    start: 62619,
-    end: 62658,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62659,
-    end: 62659,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.5,
-      relative_height: 0.5,
-      relative_x: 0.25,
-      relative_y: 0.25
-    }
-  },
-  {
-    start: 62660,
-    end: 62702,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62703,
-    end: 62703,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.7142857142857143,
-      relative_x: 0.1428571428571428
-    }
-  },
-  {
-    start: 62704,
-    end: 62704,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.9642857142857143,
-      relative_height: 0.7407407407407407,
-      relative_y: 0.1111111111111111
-    }
-  },
-  {
-    start: 62705,
-    end: 62705,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.9642857142857143,
-      relative_height: 0.7407407407407407,
-      relative_x: 0.0357142857142857,
-      relative_y: 0.1111111111111111
-    }
-  },
-  {
-    start: 62706,
-    end: 62706,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.7142857142857143,
-      relative_x: 0.1428571428571428
-    }
-  },
-  {
-    start: 62707,
-    end: 62748,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 62749,
-    end: 62749,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1",
-      relative_width: 0.5,
-      relative_height: 0.5,
-      relative_x: 0.25,
-      relative_y: 0.25
-    }
-  },
-  {
-    start: 62750,
-    end: 62771,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  },
-  {
-    start: 983041,
-    end: 989936,
-    constraint: {
-      size: "fit_cover1",
-      height: "icon",
-      align_horizontal: "center1",
-      align_vertical: "center1"
-    }
-  }
-];
-function getNerdConstraint(cp) {
-  let lo = 0;
-  let hi = NERD_CONSTRAINTS.length - 1;
-  while (lo <= hi) {
-    const mid = lo + hi >> 1;
-    const entry = NERD_CONSTRAINTS[mid];
-    if (cp < entry.start) {
-      hi = mid - 1;
-    } else if (cp > entry.end) {
-      lo = mid + 1;
-    } else {
-      return entry.constraint;
-    }
-  }
-  return null;
-}
-// src/pty/pty.ts
-function decodePtyBinary(decoder, payload, stream = true) {
-  const bytes = payload instanceof Uint8Array ? payload : new Uint8Array(payload);
-  return decoder.decode(bytes, { stream });
-}
-function createPtyConnection() {
-  return {
-    socket: null,
-    status: "idle",
-    url: "",
-    decoder: null,
-    connectId: 0
-  };
-}
-function setConnectionStatus(state, status) {
-  state.status = status;
-}
-function connectPty(state, options, callbacks) {
-  if (state.status === "connecting" || state.status === "connected" || state.status === "closing") {
-    return false;
-  }
-  const url = options.url?.trim?.() ?? "";
-  if (!url)
-    return false;
-  const ws = new WebSocket(url);
-  const decoder = new TextDecoder;
-  const connectId = state.connectId + 1;
-  state.connectId = connectId;
-  state.url = url;
-  state.socket = ws;
-  state.decoder = decoder;
-  setConnectionStatus(state, "connecting");
-  ws.binaryType = "arraybuffer";
-  const flushDecoder = () => {
-    if (state.connectId !== connectId)
-      return;
-    if (!decoder)
-      return;
-    const tail = decoder.decode();
-    if (state.decoder === decoder) {
-      state.decoder = null;
-    }
-    if (tail)
-      callbacks.onData?.(tail);
-  };
-  let disconnectedNotified = false;
-  const notifyDisconnected = () => {
-    if (disconnectedNotified)
-      return;
-    disconnectedNotified = true;
-    callbacks.onDisconnect?.();
-  };
-  const clearCurrentSocket = () => {
-    if (state.connectId !== connectId)
-      return;
-    if (state.socket === ws) {
-      state.socket = null;
-    }
-    setConnectionStatus(state, "idle");
-    if (state.decoder === decoder) {
-      state.decoder = null;
-    }
-  };
-  ws.addEventListener("open", () => {
-    if (state.connectId !== connectId) {
-      try {
-        ws.close();
-      } catch {}
-      return;
-    }
-    if (state.socket !== ws)
-      return;
-    setConnectionStatus(state, "connected");
-    callbacks.onConnect?.();
-    if (Number.isFinite(options.cols) && Number.isFinite(options.rows)) {
-      const cols = Math.max(0, Number(options.cols));
-      const rows = Math.max(0, Number(options.rows));
-      sendPtyResize(state, cols, rows);
-    }
-  });
-  ws.addEventListener("close", () => {
-    flushDecoder();
-    clearCurrentSocket();
-    notifyDisconnected();
-  });
-  ws.addEventListener("error", () => {
-    flushDecoder();
-    clearCurrentSocket();
-    notifyDisconnected();
-  });
-  ws.addEventListener("message", (event) => {
-    if (state.connectId !== connectId || state.socket !== ws)
-      return;
-    const payload = event.data;
-    if (payload instanceof ArrayBuffer) {
-      const text = decodePtyBinary(decoder, payload, true);
-      if (text)
-        callbacks.onData?.(text);
-      return;
-    }
-    if (payload instanceof Blob) {
-      payload.arrayBuffer().then((buf) => {
-        if (state.connectId !== connectId || state.socket !== ws)
-          return;
-        const text = decodePtyBinary(decoder, buf, true);
-        if (text)
-          callbacks.onData?.(text);
-      });
-      return;
-    }
-    if (typeof payload === "string") {
-      if (handleServerMessage(payload, callbacks))
-        return;
-      callbacks.onData?.(payload);
-    }
-  });
-  return true;
-}
-function disconnectPty(state) {
-  const socket = state.socket;
-  if (state.decoder && !socket) {
-    state.decoder.decode();
-    state.decoder = null;
-  }
-  if (!socket) {
-    setConnectionStatus(state, "idle");
-    return;
-  }
-  setConnectionStatus(state, "closing");
-  if (socket) {
-    try {
-      if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
-        socket.close();
-      } else {
-        if (state.socket === socket) {
-          state.socket = null;
-        }
-        setConnectionStatus(state, "idle");
-      }
-    } catch {
-      if (state.socket === socket) {
-        state.socket = null;
-      }
-      setConnectionStatus(state, "idle");
-    }
-  }
-}
-function sendPtyInput(state, data) {
-  if (!state.socket || state.socket.readyState !== WebSocket.OPEN)
-    return false;
-  const message = { type: "input", data };
-  state.socket.send(JSON.stringify(message));
-  return true;
-}
-function sendPtyResize(state, cols, rows) {
-  if (!state.socket || state.socket.readyState !== WebSocket.OPEN)
-    return false;
-  const message = { type: "resize", cols, rows };
-  state.socket.send(JSON.stringify(message));
-  return true;
-}
-function handleServerMessage(payload, callbacks) {
-  try {
-    const msg = JSON.parse(payload);
-    if (msg.type === "status") {
-      callbacks.onStatus?.(msg.shell ?? "");
-      return true;
-    }
-    if (msg.type === "error") {
-      callbacks.onError?.(msg.message ?? "", msg.errors);
-      return true;
-    }
-    if (msg.type === "exit") {
-      callbacks.onExit?.(msg.code ?? 0);
-      return true;
-    }
-  } catch {}
-  return false;
-}
-function isPtyConnected(state) {
-  return state.status === "connected" && state.socket?.readyState === WebSocket.OPEN;
-}
-function createWebSocketPtyTransport(state = createPtyConnection()) {
-  return {
-    connect: (options) => {
-      const url = options.url?.trim?.() ?? "";
-      if (!url) {
-        throw new Error("PTY URL is required for WebSocket transport");
-      }
-      const connected = connectPty(state, options, options.callbacks);
-      if (!connected && state.status !== "connected") {
-        throw new Error(`PTY connection is busy (${state.status})`);
-      }
-    },
-    disconnect: () => {
-      disconnectPty(state);
-    },
-    sendInput: (data) => {
-      return sendPtyInput(state, data);
-    },
-    resize: (cols, rows) => {
-      return sendPtyResize(state, cols, rows);
-    },
-    isConnected: () => {
-      return isPtyConnected(state);
-    },
-    destroy: () => {
-      disconnectPty(state);
-    }
-  };
 }
 // src/theme/ghostty.ts
 var BASIC_COLOR_NAMES = {
@@ -26180,12 +25316,875 @@ function getBuiltinTheme(name) {
   parsedThemeCache.set(name, parsed);
   return parsed;
 }
-// src/ime/ime.ts
-var PREEDIT_BG = [0.16, 0.16, 0.2, 0.9];
-var PREEDIT_ACTIVE_BG = [0.3, 0.32, 0.42, 0.95];
-var PREEDIT_FG = [0.95, 0.95, 0.98, 1];
-var PREEDIT_UL = [0.7, 0.7, 0.8, 0.9];
-var PREEDIT_CARET = [0.95, 0.95, 0.98, 1];
+// src/app/panes-context-menu.ts
+function createPaneContextMenuController(options) {
+  const contextMenuEl = options.doc.createElement("div");
+  contextMenuEl.className = "pane-context-menu";
+  contextMenuEl.hidden = true;
+  options.doc.body.appendChild(contextMenuEl);
+  const hide = () => {
+    contextMenuEl.hidden = true;
+    contextMenuEl.innerHTML = "";
+  };
+  const addSeparator = () => {
+    const separator = options.doc.createElement("div");
+    separator.className = "pane-context-menu-separator";
+    contextMenuEl.appendChild(separator);
+  };
+  const render = (items) => {
+    contextMenuEl.innerHTML = "";
+    for (const item of items) {
+      if (item === "separator") {
+        addSeparator();
+        continue;
+      }
+      const button = options.doc.createElement("button");
+      button.type = "button";
+      button.className = "pane-context-menu-item";
+      if (item.danger)
+        button.classList.add("is-danger");
+      if (item.enabled === false)
+        button.disabled = true;
+      const label = options.doc.createElement("span");
+      label.className = "pane-context-menu-label";
+      label.textContent = item.label;
+      button.appendChild(label);
+      if (item.shortcut) {
+        const shortcut = options.doc.createElement("span");
+        shortcut.className = "pane-context-menu-shortcut";
+        shortcut.textContent = item.shortcut;
+        button.appendChild(shortcut);
+      }
+      button.addEventListener("click", () => {
+        hide();
+        item.action();
+      });
+      contextMenuEl.appendChild(button);
+    }
+  };
+  const show = (pane, clientX, clientY, manager2) => {
+    const items = options.contextMenu.getItems(pane, manager2);
+    render(items);
+    contextMenuEl.hidden = false;
+    const margin = 8;
+    const rect = contextMenuEl.getBoundingClientRect();
+    const maxX = Math.max(margin, options.win.innerWidth - rect.width - margin);
+    const maxY = Math.max(margin, options.win.innerHeight - rect.height - margin);
+    const left = Math.min(Math.max(clientX, margin), maxX);
+    const top = Math.min(Math.max(clientY, margin), maxY);
+    contextMenuEl.style.left = `${left}px`;
+    contextMenuEl.style.top = `${top}px`;
+  };
+  const destroy = () => {
+    hide();
+    contextMenuEl.remove();
+  };
+  return {
+    element: contextMenuEl,
+    isOpen: () => !contextMenuEl.hidden,
+    containsTarget: (target) => target instanceof Node && contextMenuEl.contains(target),
+    show,
+    hide,
+    destroy
+  };
+}
+
+// src/app/panes-styles.ts
+var RESTTY_PANE_ROOT_CLASS = "restty-pane-root";
+var RESTTY_PANE_STYLE_MARKER = "data-restty-pane-styles";
+var RESTTY_PANE_STYLE_TEXT = `
+.${RESTTY_PANE_ROOT_CLASS} {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane-split {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  gap: 0;
+  padding: 0;
+  background: var(--restty-pane-split-background, #000);
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane-split.is-vertical {
+  flex-direction: row;
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane-split.is-horizontal {
+  flex-direction: column;
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  background: var(--restty-pane-background, #000);
+  border: 0;
+  overflow: hidden;
+  opacity: var(--restty-pane-inactive-opacity, 0.9);
+  transition: opacity var(--restty-pane-opacity-transition, 140ms) ease-out;
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane.is-active {
+  opacity: var(--restty-pane-active-opacity, 1);
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane-divider {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 var(--restty-pane-divider-thickness, 1px);
+  touch-action: none;
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane-divider.is-vertical {
+  cursor: col-resize;
+  background: transparent;
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane-divider.is-horizontal {
+  cursor: row-resize;
+  background: transparent;
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane-divider.is-vertical:hover,
+.${RESTTY_PANE_ROOT_CLASS} .pane-divider.is-vertical.is-dragging {
+  background:
+    radial-gradient(
+      100px 46% at 50% 50%,
+      rgba(235, 235, 235, 0.92) 0%,
+      rgba(200, 200, 200, 0.48) 46%,
+      rgba(155, 155, 155, 0.12) 68%,
+      rgba(120, 120, 120, 0) 100%
+    ),
+    rgba(185, 185, 185, 0.24);
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane-divider.is-horizontal:hover,
+.${RESTTY_PANE_ROOT_CLASS} .pane-divider.is-horizontal.is-dragging {
+  background:
+    radial-gradient(
+      46% 100px at 50% 50%,
+      rgba(235, 235, 235, 0.92) 0%,
+      rgba(200, 200, 200, 0.48) 46%,
+      rgba(155, 155, 155, 0.12) 68%,
+      rgba(120, 120, 120, 0) 100%
+    ),
+    rgba(185, 185, 185, 0.24);
+}
+
+body.is-resizing-split {
+  user-select: none;
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  outline: none;
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane-ime-input {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.${RESTTY_PANE_ROOT_CLASS} .pane-term-debug {
+  display: none;
+}
+
+.pane-context-menu {
+  position: fixed;
+  z-index: 9999;
+  min-width: 200px;
+  padding: 6px;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  background: #161616;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+}
+
+.pane-context-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #d6d6d6;
+  text-align: left;
+  cursor: pointer;
+}
+
+.pane-context-menu-item:hover {
+  background: #252525;
+}
+
+.pane-context-menu-item:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.pane-context-menu-item.is-danger {
+  color: #f1a1a1;
+}
+
+.pane-context-menu-label {
+  font-size: 12px;
+}
+
+.pane-context-menu-shortcut {
+  font-size: 10px;
+  color: #868686;
+}
+
+.pane-context-menu-separator {
+  height: 1px;
+  margin: 6px 4px;
+  background: #2a2a2a;
+}
+`;
+var DEFAULT_RESTTY_PANE_STYLE_OPTIONS = {
+  splitBackground: "#000",
+  paneBackground: "#000",
+  inactivePaneOpacity: 0.9,
+  activePaneOpacity: 1,
+  opacityTransitionMs: 140,
+  dividerThicknessPx: 1
+};
+function clampNumber(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+function normalizeColor(value, fallback) {
+  if (typeof value !== "string")
+    return fallback;
+  const trimmed = value.trim();
+  return trimmed ? trimmed : fallback;
+}
+function normalizePaneStyleOptions(options) {
+  const inactivePaneOpacity = Number.isFinite(options.inactivePaneOpacity) ? clampNumber(Number(options.inactivePaneOpacity), 0, 1) : DEFAULT_RESTTY_PANE_STYLE_OPTIONS.inactivePaneOpacity;
+  const activePaneOpacity = Number.isFinite(options.activePaneOpacity) ? clampNumber(Number(options.activePaneOpacity), 0, 1) : DEFAULT_RESTTY_PANE_STYLE_OPTIONS.activePaneOpacity;
+  const opacityTransitionMs = Number.isFinite(options.opacityTransitionMs) ? clampNumber(Number(options.opacityTransitionMs), 0, 5000) : DEFAULT_RESTTY_PANE_STYLE_OPTIONS.opacityTransitionMs;
+  const dividerThicknessPx = Number.isFinite(options.dividerThicknessPx) ? clampNumber(Number(options.dividerThicknessPx), 1, 32) : DEFAULT_RESTTY_PANE_STYLE_OPTIONS.dividerThicknessPx;
+  return {
+    splitBackground: normalizeColor(options.splitBackground, DEFAULT_RESTTY_PANE_STYLE_OPTIONS.splitBackground),
+    paneBackground: normalizeColor(options.paneBackground, DEFAULT_RESTTY_PANE_STYLE_OPTIONS.paneBackground),
+    inactivePaneOpacity,
+    activePaneOpacity,
+    opacityTransitionMs,
+    dividerThicknessPx
+  };
+}
+function ensureResttyPaneStylesDocument(doc) {
+  if (doc.querySelector(`style[${RESTTY_PANE_STYLE_MARKER}="1"]`))
+    return;
+  const style = doc.createElement("style");
+  style.setAttribute(RESTTY_PANE_STYLE_MARKER, "1");
+  style.textContent = RESTTY_PANE_STYLE_TEXT;
+  doc.head.appendChild(style);
+}
+function applyPaneStyleOptionsToRoot(root, options) {
+  root.classList.add(RESTTY_PANE_ROOT_CLASS);
+  root.style.setProperty("--restty-pane-split-background", options.splitBackground);
+  root.style.setProperty("--restty-pane-background", options.paneBackground);
+  root.style.setProperty("--restty-pane-inactive-opacity", options.inactivePaneOpacity.toFixed(3));
+  root.style.setProperty("--restty-pane-active-opacity", options.activePaneOpacity.toFixed(3));
+  root.style.setProperty("--restty-pane-opacity-transition", `${options.opacityTransitionMs}ms`);
+  root.style.setProperty("--restty-pane-divider-thickness", `${options.dividerThicknessPx}px`);
+}
+function clearPaneStyleOptionsFromRoot(root) {
+  root.classList.remove(RESTTY_PANE_ROOT_CLASS);
+  root.style.removeProperty("--restty-pane-split-background");
+  root.style.removeProperty("--restty-pane-background");
+  root.style.removeProperty("--restty-pane-inactive-opacity");
+  root.style.removeProperty("--restty-pane-active-opacity");
+  root.style.removeProperty("--restty-pane-opacity-transition");
+  root.style.removeProperty("--restty-pane-divider-thickness");
+}
+
+// src/app/panes.ts
+function getResttyShortcutModifierLabel() {
+  const isMac = typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
+  return isMac ? "Cmd" : "Ctrl";
+}
+function createDefaultResttyPaneContextMenuItems(options) {
+  const { pane, manager: manager2, getPtyUrl } = options;
+  const mod = options.modKeyLabel ?? getResttyShortcutModifierLabel();
+  const closeEnabled = manager2.getPanes().length > 1;
+  const pauseLabel = typeof pane.paused === "boolean" ? pane.paused ? "Resume Renderer" : "Pause Renderer" : "Toggle Renderer Pause";
+  return [
+    {
+      label: "Copy",
+      shortcut: `${mod}+C`,
+      action: async () => {
+        await pane.app.copySelectionToClipboard();
+      }
+    },
+    {
+      label: "Paste",
+      shortcut: `${mod}+V`,
+      action: async () => {
+        await pane.app.pasteFromClipboard();
+      }
+    },
+    "separator",
+    {
+      label: "Split Right",
+      shortcut: `${mod}+D`,
+      action: () => {
+        manager2.splitPane(pane.id, "vertical");
+      }
+    },
+    {
+      label: "Split Down",
+      shortcut: `${mod}+Shift+D`,
+      action: () => {
+        manager2.splitPane(pane.id, "horizontal");
+      }
+    },
+    {
+      label: "Close Pane",
+      enabled: closeEnabled,
+      danger: true,
+      action: () => {
+        manager2.closePane(pane.id);
+      }
+    },
+    "separator",
+    {
+      label: "Clear Screen",
+      action: () => {
+        pane.app.clearScreen();
+      }
+    },
+    {
+      label: pane.app.isPtyConnected() ? "Disconnect PTY" : "Connect PTY",
+      action: () => {
+        if (pane.app.isPtyConnected()) {
+          pane.app.disconnectPty();
+          return;
+        }
+        const url = (getPtyUrl?.() ?? "").trim();
+        pane.app.connectPty(url);
+      }
+    },
+    {
+      label: pauseLabel,
+      action: () => {
+        if (typeof pane.setPaused === "function") {
+          pane.setPaused(!(pane.paused ?? false));
+          return;
+        }
+        pane.app.togglePause();
+      }
+    }
+  ];
+}
+function createResttyPaneManager(options) {
+  const { root, createPane } = options;
+  if (!(root instanceof HTMLElement)) {
+    throw new Error("createResttyPaneManager requires a root HTMLElement");
+  }
+  const panes = new Map;
+  const paneCleanupFns = new Map;
+  const minPaneSize = Number.isFinite(options.minPaneSize) ? Math.max(24, Number(options.minPaneSize)) : 96;
+  const shortcutOptions = typeof options.shortcuts === "object" ? options.shortcuts : { enabled: options.shortcuts !== false };
+  const stylesInput = typeof options.styles === "object" && options.styles ? options.styles : undefined;
+  const stylesEnabled = options.styles === false ? false : stylesInput?.enabled ?? true;
+  let styleOptions = normalizePaneStyleOptions({
+    ...DEFAULT_RESTTY_PANE_STYLE_OPTIONS,
+    ...stylesInput
+  });
+  if (stylesEnabled) {
+    const doc = root.ownerDocument ?? document;
+    ensureResttyPaneStylesDocument(doc);
+    applyPaneStyleOptionsToRoot(root, styleOptions);
+  }
+  let nextPaneId = 1;
+  let activePaneId = null;
+  let focusedPaneId = null;
+  let resizeRaf = 0;
+  let splitResizeState = null;
+  const ownerDoc = root.ownerDocument ?? document;
+  const ownerWin = ownerDoc.defaultView ?? window;
+  const contextMenuController = options.contextMenu ? createPaneContextMenuController({
+    contextMenu: options.contextMenu,
+    doc: ownerDoc,
+    win: ownerWin
+  }) : null;
+  const requestLayoutSync = () => {
+    if (resizeRaf)
+      return;
+    resizeRaf = requestAnimationFrame(() => {
+      resizeRaf = 0;
+      options.onLayoutChanged?.();
+    });
+  };
+  const getStyleOptions = () => ({
+    ...styleOptions
+  });
+  const setStyleOptions = (next) => {
+    styleOptions = normalizePaneStyleOptions({
+      ...styleOptions,
+      ...next
+    });
+    if (!stylesEnabled)
+      return;
+    applyPaneStyleOptionsToRoot(root, styleOptions);
+  };
+  const getPanes = () => Array.from(panes.values());
+  const getPaneById = (id) => {
+    return panes.get(id) ?? null;
+  };
+  const findPaneByElement = (element) => {
+    if (!(element instanceof HTMLElement))
+      return null;
+    const host = element.closest(".pane");
+    if (!host)
+      return null;
+    const id = Number(host.dataset.paneId ?? "");
+    if (!Number.isFinite(id))
+      return null;
+    return panes.get(id) ?? null;
+  };
+  const getActivePane = () => {
+    if (activePaneId === null)
+      return null;
+    return panes.get(activePaneId) ?? null;
+  };
+  const getFocusedPane = () => {
+    if (focusedPaneId !== null) {
+      const focused = panes.get(focusedPaneId);
+      if (focused)
+        return focused;
+    }
+    if (typeof document === "undefined")
+      return null;
+    return findPaneByElement(document.activeElement);
+  };
+  const setActivePane = (id, config) => {
+    const pane = panes.get(id);
+    if (!pane)
+      return;
+    activePaneId = id;
+    for (const current of panes.values()) {
+      current.container.classList.toggle("is-active", current.id === id);
+    }
+    options.onActivePaneChange?.(pane);
+    if (config?.focus) {
+      const target = pane.focusTarget ?? pane.container;
+      if (target instanceof HTMLElement) {
+        target.focus({ preventScroll: true });
+      }
+    }
+  };
+  const markPaneFocused = (id, config) => {
+    focusedPaneId = id;
+    setActivePane(id, config);
+  };
+  const getSplitBranches = (split) => {
+    const branches = [];
+    for (const child of Array.from(split.children)) {
+      if (!(child instanceof HTMLElement))
+        continue;
+      if (child.classList.contains("pane-divider"))
+        continue;
+      branches.push(child);
+    }
+    return branches;
+  };
+  const getRectEdgeDistanceSquared = (sourceRect, targetRect) => {
+    const dx = Math.max(targetRect.left - sourceRect.right, sourceRect.left - targetRect.right, 0);
+    const dy = Math.max(targetRect.top - sourceRect.bottom, sourceRect.top - targetRect.bottom, 0);
+    return dx ** 2 + dy ** 2;
+  };
+  const getRectCenterDistanceSquared = (sourceRect, targetRect) => {
+    const sourceCenterX = sourceRect.left + sourceRect.width * 0.5;
+    const sourceCenterY = sourceRect.top + sourceRect.height * 0.5;
+    const targetCenterX = targetRect.left + targetRect.width * 0.5;
+    const targetCenterY = targetRect.top + targetRect.height * 0.5;
+    const dx = targetCenterX - sourceCenterX;
+    const dy = targetCenterY - sourceCenterY;
+    return dx ** 2 + dy ** 2;
+  };
+  const findClosestPaneToRect = (sourceRect) => {
+    if (!sourceRect)
+      return null;
+    let closestPane = null;
+    let closestEdgeDistance = Number.POSITIVE_INFINITY;
+    let closestCenterDistance = Number.POSITIVE_INFINITY;
+    for (const candidate of panes.values()) {
+      const targetRect = candidate.container.getBoundingClientRect();
+      const edgeDistance = getRectEdgeDistanceSquared(sourceRect, targetRect);
+      const centerDistance = getRectCenterDistanceSquared(sourceRect, targetRect);
+      if (edgeDistance < closestEdgeDistance || edgeDistance === closestEdgeDistance && centerDistance < closestCenterDistance) {
+        closestPane = candidate;
+        closestEdgeDistance = edgeDistance;
+        closestCenterDistance = centerDistance;
+      }
+    }
+    return closestPane;
+  };
+  const hideContextMenu = () => {
+    contextMenuController?.hide();
+  };
+  const bindPaneInteractions = (pane) => {
+    const cleanupFns = [];
+    const { id, container } = pane;
+    const onPointerDown = () => {
+      markPaneFocused(id);
+    };
+    container.addEventListener("pointerdown", onPointerDown);
+    cleanupFns.push(() => {
+      container.removeEventListener("pointerdown", onPointerDown);
+    });
+    const focusTarget = pane.focusTarget;
+    if (focusTarget) {
+      const onFocus = () => {
+        markPaneFocused(id);
+      };
+      focusTarget.addEventListener("focus", onFocus);
+      cleanupFns.push(() => {
+        focusTarget.removeEventListener("focus", onFocus);
+      });
+    }
+    if (options.contextMenu) {
+      const onContextMenu = (event) => {
+        if (options.contextMenu?.canOpen && !options.contextMenu.canOpen(event, pane)) {
+          return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        markPaneFocused(id);
+        contextMenuController?.show(pane, event.clientX, event.clientY, api);
+      };
+      container.addEventListener("contextmenu", onContextMenu);
+      cleanupFns.push(() => {
+        container.removeEventListener("contextmenu", onContextMenu);
+      });
+    }
+    paneCleanupFns.set(id, cleanupFns);
+  };
+  const createSplitDivider = (direction) => {
+    const divider = document.createElement("div");
+    divider.className = `pane-divider ${direction === "vertical" ? "is-vertical" : "is-horizontal"}`;
+    divider.setAttribute("role", "separator");
+    divider.setAttribute("aria-orientation", direction === "vertical" ? "vertical" : "horizontal");
+    const onPointerMove = (event) => {
+      const state = splitResizeState;
+      if (!state || event.pointerId !== state.pointerId)
+        return;
+      event.preventDefault();
+      const coord = state.axis === "x" ? event.clientX : event.clientY;
+      const delta = coord - state.startCoord;
+      const maxFirst = Math.max(minPaneSize, state.total - minPaneSize);
+      const nextFirst = Math.min(maxFirst, Math.max(minPaneSize, state.startFirst + delta));
+      const nextSecond = Math.max(minPaneSize, state.total - nextFirst);
+      const firstPercent = nextFirst / (nextFirst + nextSecond) * 100;
+      const secondPercent = 100 - firstPercent;
+      state.first.style.flex = `0 0 ${firstPercent.toFixed(5)}%`;
+      state.second.style.flex = `0 0 ${secondPercent.toFixed(5)}%`;
+      requestLayoutSync();
+    };
+    const endResize = () => {
+      if (!splitResizeState)
+        return;
+      splitResizeState.divider.classList.remove("is-dragging");
+      document.body.classList.remove("is-resizing-split");
+      splitResizeState = null;
+    };
+    const onPointerEnd = (event) => {
+      if (!splitResizeState || event.pointerId !== splitResizeState.pointerId)
+        return;
+      try {
+        divider.releasePointerCapture(splitResizeState.pointerId);
+      } catch {}
+      divider.removeEventListener("pointermove", onPointerMove);
+      divider.removeEventListener("pointerup", onPointerEnd);
+      divider.removeEventListener("pointercancel", onPointerEnd);
+      endResize();
+    };
+    divider.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0)
+        return;
+      const first = divider.previousElementSibling;
+      const second = divider.nextElementSibling;
+      const split = divider.parentElement;
+      if (!first || !second || !split)
+        return;
+      const splitRect = split.getBoundingClientRect();
+      const firstRect = first.getBoundingClientRect();
+      const axis = direction === "vertical" ? "x" : "y";
+      const total = axis === "x" ? splitRect.width : splitRect.height;
+      if (total <= 0)
+        return;
+      endResize();
+      event.preventDefault();
+      event.stopPropagation();
+      splitResizeState = {
+        pointerId: event.pointerId,
+        axis,
+        divider,
+        first,
+        second,
+        startCoord: axis === "x" ? event.clientX : event.clientY,
+        startFirst: axis === "x" ? firstRect.width : firstRect.height,
+        total
+      };
+      divider.classList.add("is-dragging");
+      document.body.classList.add("is-resizing-split");
+      divider.setPointerCapture(event.pointerId);
+      divider.addEventListener("pointermove", onPointerMove);
+      divider.addEventListener("pointerup", onPointerEnd);
+      divider.addEventListener("pointercancel", onPointerEnd);
+    });
+    return divider;
+  };
+  const createPaneInternal = (sourcePane) => {
+    const id = nextPaneId;
+    nextPaneId += 1;
+    const pane = createPane({ id, sourcePane, manager: api });
+    if (pane.id !== id) {
+      throw new Error(`createResttyPaneManager expected pane.id=${id}, received ${pane.id}`);
+    }
+    if (!(pane.container instanceof HTMLDivElement)) {
+      throw new Error("createResttyPaneManager createPane() must return { container: HTMLDivElement }");
+    }
+    pane.container.classList.add("pane");
+    pane.container.dataset.paneId = `${id}`;
+    panes.set(id, pane);
+    bindPaneInteractions(pane);
+    options.onPaneCreated?.(pane);
+    return pane;
+  };
+  const collapseSplitAncestors = (start) => {
+    let current = start;
+    while (current && current.classList.contains("pane-split")) {
+      const branches = getSplitBranches(current);
+      if (branches.length > 1)
+        return;
+      const onlyChild = branches[0];
+      const parent = current.parentElement;
+      if (!parent || !onlyChild)
+        return;
+      const inheritedFlex = current.style.flex;
+      if (inheritedFlex) {
+        onlyChild.style.flex = inheritedFlex;
+      } else {
+        onlyChild.style.flex = "";
+      }
+      parent.replaceChild(onlyChild, current);
+      current = parent;
+    }
+  };
+  const splitPane = (id, direction) => {
+    const target = panes.get(id);
+    if (!target)
+      return null;
+    const parent = target.container.parentElement;
+    if (!parent)
+      return null;
+    const split = document.createElement("div");
+    split.className = `pane-split ${direction === "vertical" ? "is-vertical" : "is-horizontal"}`;
+    const inheritedFlex = target.container.style.flex;
+    if (inheritedFlex) {
+      split.style.flex = inheritedFlex;
+    }
+    parent.replaceChild(split, target.container);
+    target.container.style.flex = "0 0 50%";
+    split.appendChild(target.container);
+    split.appendChild(createSplitDivider(direction));
+    const created = createPaneInternal(target);
+    created.container.style.flex = "0 0 50%";
+    split.appendChild(created.container);
+    markPaneFocused(created.id, { focus: true });
+    requestLayoutSync();
+    options.onPaneSplit?.(target, created, direction);
+    return created;
+  };
+  const splitActivePane = (direction) => {
+    const target = getFocusedPane() ?? getActivePane();
+    if (!target)
+      return null;
+    return splitPane(target.id, direction);
+  };
+  const closePane = (id) => {
+    if (panes.size <= 1)
+      return false;
+    const pane = panes.get(id);
+    if (!pane)
+      return false;
+    const closingRect = pane.container.getBoundingClientRect();
+    const cleanupFns = paneCleanupFns.get(id) ?? [];
+    paneCleanupFns.delete(id);
+    for (const cleanup of cleanupFns) {
+      cleanup();
+    }
+    options.destroyPane?.(pane);
+    panes.delete(id);
+    if (activePaneId === id)
+      activePaneId = null;
+    if (focusedPaneId === id)
+      focusedPaneId = null;
+    const parent = pane.container.parentElement;
+    pane.container.remove();
+    collapseSplitAncestors(parent);
+    const fallback = getActivePane() ?? findClosestPaneToRect(closingRect) ?? getPanes()[0] ?? null;
+    if (fallback) {
+      markPaneFocused(fallback.id, { focus: true });
+    } else {
+      options.onActivePaneChange?.(null);
+    }
+    options.onPaneClosed?.(pane);
+    requestLayoutSync();
+    return true;
+  };
+  const createInitialPane = (config) => {
+    if (panes.size) {
+      return getPanes()[0];
+    }
+    const first = createPaneInternal(null);
+    root.appendChild(first.container);
+    markPaneFocused(first.id, { focus: config?.focus !== false });
+    requestLayoutSync();
+    return first;
+  };
+  const onWindowPointerDown = (event) => {
+    if (!contextMenuController?.isOpen())
+      return;
+    if (contextMenuController.containsTarget(event.target))
+      return;
+    hideContextMenu();
+  };
+  const onWindowBlur = () => {
+    hideContextMenu();
+  };
+  const onWindowKeyDown = (event) => {
+    if (contextMenuController?.isOpen() && event.key === "Escape") {
+      hideContextMenu();
+      return;
+    }
+    if (shortcutOptions.enabled === false)
+      return;
+    if (shortcutOptions.canHandleEvent && !shortcutOptions.canHandleEvent(event)) {
+      return;
+    }
+    const target = event.target;
+    if (target && ["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(target.tagName)) {
+      const allowed = shortcutOptions.isAllowedInputTarget?.(target) ?? false;
+      if (!allowed)
+        return;
+    }
+    const isMac = typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
+    const hasCommandModifier = isMac ? event.metaKey : event.ctrlKey;
+    if (!hasCommandModifier || event.altKey || event.code !== "KeyD" || event.repeat) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    splitActivePane(event.shiftKey ? "horizontal" : "vertical");
+  };
+  window.addEventListener("pointerdown", onWindowPointerDown);
+  window.addEventListener("blur", onWindowBlur);
+  window.addEventListener("keydown", onWindowKeyDown, { capture: true });
+  const destroy = () => {
+    window.removeEventListener("pointerdown", onWindowPointerDown);
+    window.removeEventListener("blur", onWindowBlur);
+    window.removeEventListener("keydown", onWindowKeyDown, { capture: true });
+    if (resizeRaf) {
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = 0;
+    }
+    for (const pane of getPanes()) {
+      const cleanupFns = paneCleanupFns.get(pane.id) ?? [];
+      for (const cleanup of cleanupFns) {
+        cleanup();
+      }
+      paneCleanupFns.delete(pane.id);
+      options.destroyPane?.(pane);
+    }
+    panes.clear();
+    activePaneId = null;
+    focusedPaneId = null;
+    root.replaceChildren();
+    hideContextMenu();
+    contextMenuController?.destroy();
+    if (stylesEnabled) {
+      clearPaneStyleOptionsFromRoot(root);
+    }
+  };
+  const api = {
+    getPanes,
+    getPaneById,
+    getActivePane,
+    getFocusedPane,
+    createInitialPane,
+    setActivePane,
+    markPaneFocused,
+    splitPane,
+    splitActivePane,
+    closePane,
+    getStyleOptions,
+    setStyleOptions,
+    requestLayoutSync,
+    hideContextMenu,
+    destroy
+  };
+  return api;
+}
+
+// src/app/session.ts
+function createResttyAppSession() {
+  let wasmPromise = null;
+  let webgpuCorePromise = null;
+  const wasmLogListeners = new Set;
+  const forwardWasmLog = (message) => {
+    for (const listener of wasmLogListeners) {
+      listener(message);
+    }
+  };
+  return {
+    getWasm: () => {
+      if (!wasmPromise) {
+        wasmPromise = loadResttyWasm({ log: forwardWasmLog });
+      }
+      return wasmPromise;
+    },
+    getWebGPUCore: (canvas) => {
+      if (!webgpuCorePromise) {
+        webgpuCorePromise = initWebGPUCore(canvas);
+      }
+      return webgpuCorePromise;
+    },
+    addWasmLogListener: (listener) => {
+      wasmLogListeners.add(listener);
+    },
+    removeWasmLogListener: (listener) => {
+      wasmLogListeners.delete(listener);
+    }
+  };
+}
+var defaultResttyAppSession = null;
+function getDefaultResttyAppSession() {
+  if (!defaultResttyAppSession) {
+    defaultResttyAppSession = createResttyAppSession();
+  }
+  return defaultResttyAppSession;
+}
+
 // src/app/atlas-builder.ts
 function buildFontAtlasIfNeeded(params) {
   const {
@@ -56187,6 +56186,1487 @@ function createDemoController(app) {
   return { run, stop };
 }
 
+// node_modules/@webcontainer/api/dist/internal/constants.js
+var DEFAULT_EDITOR_ORIGIN = "https://stackblitz.com";
+var STORAGE_TOKENS_NAME = "__wc_api_tokens__";
+
+// node_modules/@webcontainer/api/dist/internal/TypedEventTarget.js
+class TypedEventTarget {
+  _bus = new EventTarget;
+  listen(listener) {
+    function wrappedListener(event) {
+      listener(event.data);
+    }
+    this._bus.addEventListener("message", wrappedListener);
+    return () => this._bus.removeEventListener("message", wrappedListener);
+  }
+  fireEvent(data) {
+    this._bus.dispatchEvent(new MessageEvent("message", { data }));
+  }
+}
+
+// node_modules/@webcontainer/api/dist/internal/tokens.js
+var IGNORED_ERROR = new Error;
+IGNORED_ERROR.stack = "";
+var accessTokenChangedListeners = new TypedEventTarget;
+
+class Tokens {
+  origin;
+  refresh;
+  access;
+  expires;
+  _revoked = new AbortController;
+  constructor(origin, refresh, access, expires) {
+    this.origin = origin;
+    this.refresh = refresh;
+    this.access = access;
+    this.expires = expires;
+  }
+  async activate(onFailedRefresh) {
+    if (this._revoked.signal.aborted) {
+      throw new Error("Token revoked");
+    }
+    if (this.expires < Date.now()) {
+      if (!await this._fetchNewAccessToken()) {
+        return false;
+      }
+    }
+    this._sync();
+    this._startRefreshTokensLoop(onFailedRefresh);
+    return true;
+  }
+  async revoke(clientId, ignoreRevokeError) {
+    this._revoked.abort();
+    try {
+      const response = await fetch(`${this.origin}/oauth/revoke`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({ token: this.refresh, token_type_hint: "refresh_token", client_id: clientId }),
+        mode: "cors"
+      });
+      if (!response.ok) {
+        throw new Error(`Failed to logout`);
+      }
+    } catch (error) {
+      if (!ignoreRevokeError) {
+        throw error;
+      }
+    }
+    clearTokensInStorage();
+  }
+  static fromStorage() {
+    const savedTokens = readTokensFromStorage();
+    if (!savedTokens) {
+      return null;
+    }
+    return new Tokens(savedTokens.origin, savedTokens.refresh, savedTokens.access, savedTokens.expires);
+  }
+  static async fromAuthCode({ editorOrigin, clientId, codeVerifier, authCode, redirectUri }) {
+    const response = await fetch(`${editorOrigin}/oauth/token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        client_id: clientId,
+        code: authCode,
+        code_verifier: codeVerifier,
+        grant_type: "authorization_code",
+        redirect_uri: redirectUri
+      }),
+      mode: "cors"
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch token: ${response.status}`);
+    }
+    const tokenResponse = await response.json();
+    assertTokenResponse(tokenResponse);
+    const { access_token: access, refresh_token: refresh } = tokenResponse;
+    const expires = getExpiresFromTokenResponse(tokenResponse);
+    return new Tokens(editorOrigin, refresh, access, expires);
+  }
+  async _fetchNewAccessToken() {
+    try {
+      const response = await fetch(`${this.origin}/oauth/token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: this.refresh
+        }),
+        mode: "cors",
+        signal: this._revoked.signal
+      });
+      if (!response.ok) {
+        throw IGNORED_ERROR;
+      }
+      const tokenResponse = await response.json();
+      assertTokenResponse(tokenResponse);
+      const { access_token: access, refresh_token: refresh } = tokenResponse;
+      const expires = getExpiresFromTokenResponse(tokenResponse);
+      this.access = access;
+      this.expires = expires;
+      this.refresh = refresh;
+      return true;
+    } catch {
+      clearTokensInStorage();
+      return false;
+    }
+  }
+  _sync() {
+    persistTokensInStorage(this);
+    fireAccessTokenChanged(this.access);
+  }
+  async _startRefreshTokensLoop(onFailedRefresh) {
+    while (true) {
+      const expiresIn = this.expires - Date.now() - 1000;
+      await wait(Math.max(expiresIn, 1000));
+      if (this._revoked.signal.aborted) {
+        return;
+      }
+      if (!this._fetchNewAccessToken()) {
+        onFailedRefresh();
+        return;
+      }
+      this._sync();
+    }
+  }
+}
+function clearTokensInStorage() {
+  localStorage.removeItem(STORAGE_TOKENS_NAME);
+}
+function addAccessTokenChangedListener(listener) {
+  return accessTokenChangedListeners.listen(listener);
+}
+function readTokensFromStorage() {
+  const serializedTokens = localStorage.getItem(STORAGE_TOKENS_NAME);
+  if (!serializedTokens) {
+    return null;
+  }
+  try {
+    return JSON.parse(serializedTokens);
+  } catch {
+    return null;
+  }
+}
+function persistTokensInStorage(tokens) {
+  localStorage.setItem(STORAGE_TOKENS_NAME, JSON.stringify(tokens));
+}
+function getExpiresFromTokenResponse({ created_at, expires_in }) {
+  return (created_at + expires_in) * 1000;
+}
+function assertTokenResponse(token) {
+  if (typeof token !== "object" || !token) {
+    throw new Error("Invalid Token Response");
+  }
+  if (typeof token.access_token !== "string" || typeof token.refresh_token !== "string" || typeof token.created_at !== "number" || typeof token.expires_in !== "number") {
+    throw new Error("Invalid Token Response");
+  }
+}
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+function fireAccessTokenChanged(accessToken) {
+  accessTokenChangedListeners.fireEvent(accessToken);
+}
+
+// node_modules/@webcontainer/api/dist/internal/iframe-url.js
+var params = {};
+var editorOrigin = null;
+var iframeSettings = {
+  get editorOrigin() {
+    if (editorOrigin == null) {
+      editorOrigin = new URL(globalThis.WEBCONTAINER_API_IFRAME_URL ?? DEFAULT_EDITOR_ORIGIN).origin;
+    }
+    return editorOrigin;
+  },
+  set editorOrigin(newOrigin) {
+    editorOrigin = new URL(newOrigin).origin;
+  },
+  setQueryParam(key, value) {
+    params[key] = value;
+  },
+  get url() {
+    const url = new URL(this.editorOrigin);
+    url.pathname = "/headless";
+    for (const param in params) {
+      url.searchParams.set(param, params[param]);
+    }
+    url.searchParams.set("version", "1.6.1");
+    return url;
+  }
+};
+
+// node_modules/@webcontainer/api/dist/internal/reset-promise.js
+function resettablePromise() {
+  let resolve;
+  let promise;
+  function reset() {
+    promise = new Promise((_resolve) => resolve = _resolve);
+  }
+  reset();
+  return {
+    get promise() {
+      return promise;
+    },
+    resolve(value) {
+      return resolve(value);
+    },
+    reset
+  };
+}
+
+// node_modules/@webcontainer/api/dist/internal/auth-state.js
+var authState = {
+  initialized: false,
+  bootCalled: false,
+  authComplete: resettablePromise(),
+  clientId: "",
+  oauthScope: "",
+  broadcastChannel: null,
+  get editorOrigin() {
+    return iframeSettings.editorOrigin;
+  },
+  tokens: null
+};
+var authFailedListeners = new TypedEventTarget;
+var loggedOutListeners = new TypedEventTarget;
+function assertAuthTokens(tokens) {
+  if (!tokens) {
+    throw new Error("Oops! Tokens is not defined when it always should be.");
+  }
+}
+
+// node_modules/@webcontainer/api/dist/preview-message-types.js
+var PreviewMessageType;
+(function(PreviewMessageType2) {
+  PreviewMessageType2["UncaughtException"] = "PREVIEW_UNCAUGHT_EXCEPTION";
+  PreviewMessageType2["UnhandledRejection"] = "PREVIEW_UNHANDLED_REJECTION";
+  PreviewMessageType2["ConsoleError"] = "PREVIEW_CONSOLE_ERROR";
+})(PreviewMessageType || (PreviewMessageType = {}));
+
+// node_modules/@webcontainer/api/dist/vendor/index.js
+var __defProp2 = Object.defineProperty;
+var __export2 = (target, all) => {
+  for (var name in all)
+    __defProp2(target, name, { get: all[name], enumerable: true });
+};
+var comlink_exports = {};
+__export2(comlink_exports, {
+  createEndpoint: () => createEndpoint,
+  expose: () => expose,
+  proxy: () => proxy,
+  proxyMarker: () => proxyMarker,
+  releaseProxy: () => releaseProxy,
+  transfer: () => transfer,
+  transferHandlers: () => transferHandlers,
+  windowEndpoint: () => windowEndpoint,
+  wrap: () => wrap
+});
+var proxyMarker = Symbol("Comlink.proxy");
+var createEndpoint = Symbol("Comlink.endpoint");
+var releaseProxy = Symbol("Comlink.releaseProxy");
+var throwMarker = Symbol("Comlink.thrown");
+var isObject = (val) => typeof val === "object" && val !== null || typeof val === "function";
+var proxyTransferHandler = {
+  canHandle: (val) => isObject(val) && val[proxyMarker],
+  serialize(obj) {
+    const { port1, port2 } = new MessageChannel;
+    expose(obj, port1);
+    return [port2, [port2]];
+  },
+  deserialize(port) {
+    port.start();
+    return wrap(port);
+  }
+};
+var throwTransferHandler = {
+  canHandle: (value) => isObject(value) && (throwMarker in value),
+  serialize({ value }) {
+    let serialized;
+    if (value instanceof Error) {
+      serialized = {
+        isError: true,
+        value: {
+          message: value.message,
+          name: value.name,
+          stack: value.stack
+        }
+      };
+    } else {
+      serialized = { isError: false, value };
+    }
+    return [serialized, []];
+  },
+  deserialize(serialized) {
+    if (serialized.isError) {
+      throw Object.assign(new Error(serialized.value.message), serialized.value);
+    }
+    throw serialized.value;
+  }
+};
+var transferHandlers = /* @__PURE__ */ new Map([
+  ["proxy", proxyTransferHandler],
+  ["throw", throwTransferHandler]
+]);
+function expose(obj, ep = self) {
+  ep.addEventListener("message", function callback(ev) {
+    if (!ev || !ev.data) {
+      return;
+    }
+    const { id, type, path } = Object.assign({ path: [] }, ev.data);
+    const argumentList = (ev.data.argumentList || []).map(fromWireValue);
+    let returnValue;
+    try {
+      const parent = path.slice(0, -1).reduce((obj2, prop) => obj2[prop], obj);
+      const rawValue = path.reduce((obj2, prop) => obj2[prop], obj);
+      switch (type) {
+        case 0:
+          {
+            returnValue = rawValue;
+          }
+          break;
+        case 1:
+          {
+            parent[path.slice(-1)[0]] = fromWireValue(ev.data.value);
+            returnValue = true;
+          }
+          break;
+        case 2:
+          {
+            returnValue = rawValue.apply(parent, argumentList);
+          }
+          break;
+        case 3:
+          {
+            const value = new rawValue(...argumentList);
+            returnValue = proxy(value);
+          }
+          break;
+        case 4:
+          {
+            const { port1, port2 } = new MessageChannel;
+            expose(obj, port2);
+            returnValue = transfer(port1, [port1]);
+          }
+          break;
+        case 5:
+          {
+            returnValue = undefined;
+          }
+          break;
+      }
+    } catch (value) {
+      returnValue = { value, [throwMarker]: 0 };
+    }
+    Promise.resolve(returnValue).catch((value) => {
+      return { value, [throwMarker]: 0 };
+    }).then((returnValue2) => {
+      const [wireValue, transferables] = toWireValue(returnValue2);
+      ep.postMessage(Object.assign(Object.assign({}, wireValue), { id }), transferables);
+      if (type === 5) {
+        ep.removeEventListener("message", callback);
+        closeEndPoint(ep);
+      }
+    });
+  });
+  if (ep.start) {
+    ep.start();
+  }
+}
+function isMessagePort(endpoint) {
+  return endpoint.constructor.name === "MessagePort";
+}
+function closeEndPoint(endpoint) {
+  if (isMessagePort(endpoint))
+    endpoint.close();
+}
+function wrap(ep, target) {
+  return createProxy(ep, [], target);
+}
+function throwIfProxyReleased(isReleased) {
+  if (isReleased) {
+    throw new Error("Proxy has been released and is not useable");
+  }
+}
+function createProxy(ep, path = [], target = function() {}) {
+  let isProxyReleased = false;
+  const proxy2 = new Proxy(target, {
+    get(_target, prop) {
+      throwIfProxyReleased(isProxyReleased);
+      if (prop === releaseProxy) {
+        return () => {
+          return requestResponseMessage(ep, {
+            type: 5,
+            path: path.map((p3) => p3.toString())
+          }).then(() => {
+            closeEndPoint(ep);
+            isProxyReleased = true;
+          });
+        };
+      }
+      if (prop === "then") {
+        if (path.length === 0) {
+          return { then: () => proxy2 };
+        }
+        const r3 = requestResponseMessage(ep, {
+          type: 0,
+          path: path.map((p3) => p3.toString())
+        }).then(fromWireValue);
+        return r3.then.bind(r3);
+      }
+      return createProxy(ep, [...path, prop]);
+    },
+    set(_target, prop, rawValue) {
+      throwIfProxyReleased(isProxyReleased);
+      const [value, transferables] = toWireValue(rawValue);
+      return requestResponseMessage(ep, {
+        type: 1,
+        path: [...path, prop].map((p3) => p3.toString()),
+        value
+      }, transferables).then(fromWireValue);
+    },
+    apply(_target, _thisArg, rawArgumentList) {
+      throwIfProxyReleased(isProxyReleased);
+      const last = path[path.length - 1];
+      if (last === createEndpoint) {
+        return requestResponseMessage(ep, {
+          type: 4
+        }).then(fromWireValue);
+      }
+      if (last === "bind") {
+        return createProxy(ep, path.slice(0, -1));
+      }
+      const [argumentList, transferables] = processArguments(rawArgumentList);
+      return requestResponseMessage(ep, {
+        type: 2,
+        path: path.map((p3) => p3.toString()),
+        argumentList
+      }, transferables).then(fromWireValue);
+    },
+    construct(_target, rawArgumentList) {
+      throwIfProxyReleased(isProxyReleased);
+      const [argumentList, transferables] = processArguments(rawArgumentList);
+      return requestResponseMessage(ep, {
+        type: 3,
+        path: path.map((p3) => p3.toString()),
+        argumentList
+      }, transferables).then(fromWireValue);
+    }
+  });
+  return proxy2;
+}
+function myFlat(arr) {
+  return Array.prototype.concat.apply([], arr);
+}
+function processArguments(argumentList) {
+  const processed = argumentList.map(toWireValue);
+  return [processed.map((v) => v[0]), myFlat(processed.map((v) => v[1]))];
+}
+var transferCache = /* @__PURE__ */ new WeakMap;
+function transfer(obj, transfers) {
+  transferCache.set(obj, transfers);
+  return obj;
+}
+function proxy(obj) {
+  return Object.assign(obj, { [proxyMarker]: true });
+}
+function windowEndpoint(w, context = self, targetOrigin = "*") {
+  return {
+    postMessage: (msg, transferables) => w.postMessage(msg, targetOrigin, transferables),
+    addEventListener: context.addEventListener.bind(context),
+    removeEventListener: context.removeEventListener.bind(context)
+  };
+}
+function toWireValue(value) {
+  for (const [name, handler] of transferHandlers) {
+    if (handler.canHandle(value)) {
+      const [serializedValue, transferables] = handler.serialize(value);
+      return [
+        {
+          type: 3,
+          name,
+          value: serializedValue
+        },
+        transferables
+      ];
+    }
+  }
+  return [
+    {
+      type: 0,
+      value
+    },
+    transferCache.get(value) || []
+  ];
+}
+function fromWireValue(value) {
+  switch (value.type) {
+    case 3:
+      return transferHandlers.get(value.name).deserialize(value.value);
+    case 0:
+      return value.value;
+  }
+}
+function requestResponseMessage(ep, msg, transfers) {
+  return new Promise((resolve) => {
+    const id = generateUUID();
+    ep.addEventListener("message", function l(ev) {
+      if (!ev.data || !ev.data.id || ev.data.id !== id) {
+        return;
+      }
+      ep.removeEventListener("message", l);
+      resolve(ev.data);
+    });
+    if (ep.start) {
+      ep.start();
+    }
+    ep.postMessage(Object.assign({ id }, msg), transfers);
+  });
+}
+function generateUUID() {
+  return new Array(4).fill(0).map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16)).join("-");
+}
+// node_modules/@webcontainer/api/dist/utils/is-preview-message.js
+var PREVIEW_MESSAGE_TYPES = [
+  PreviewMessageType.ConsoleError,
+  PreviewMessageType.UncaughtException,
+  PreviewMessageType.UnhandledRejection
+];
+function isPreviewMessage(data) {
+  if (data == null || typeof data !== "object") {
+    return false;
+  }
+  if (!("type" in data) || !PREVIEW_MESSAGE_TYPES.includes(data.type)) {
+    return false;
+  }
+  return true;
+}
+// node_modules/@webcontainer/api/dist/utils/null-prototype.js
+function nullPrototype(source) {
+  const prototype = Object.create(null);
+  if (!source) {
+    return prototype;
+  }
+  return Object.assign(prototype, source);
+}
+
+// node_modules/@webcontainer/api/dist/utils/file-system.js
+var binaryDecoder = new TextDecoder("latin1");
+function toInternalFileSystemTree(tree) {
+  const newTree = { d: {} };
+  for (const name of Object.keys(tree)) {
+    const entry = tree[name];
+    if ("file" in entry) {
+      if ("symlink" in entry.file) {
+        newTree.d[name] = { f: { l: entry.file.symlink } };
+        continue;
+      }
+      const contents = entry.file.contents;
+      const stringContents = typeof contents === "string" ? contents : binaryDecoder.decode(contents);
+      const binary = typeof contents === "string" ? {} : { b: true };
+      newTree.d[name] = { f: { c: stringContents, ...binary } };
+      continue;
+    }
+    const newEntry = toInternalFileSystemTree(entry.directory);
+    newTree.d[name] = newEntry;
+  }
+  return newTree;
+}
+function toExternalFileSystemTree(tree) {
+  const newTree = nullPrototype();
+  if ("f" in tree) {
+    throw new Error("It is not possible to export a single file in the JSON format.");
+  }
+  if ("d" in tree) {
+    for (const name of Object.keys(tree.d)) {
+      const entry = tree.d[name];
+      if ("d" in entry) {
+        newTree[name] = nullPrototype({
+          directory: toExternalFileSystemTree(entry)
+        });
+      } else if ("f" in entry) {
+        if ("c" in entry.f) {
+          newTree[name] = nullPrototype({
+            file: nullPrototype({
+              contents: entry.f.b ? fromBinaryString(entry.f.c) : entry.f.c
+            })
+          });
+        } else if ("l" in entry.f) {
+          newTree[name] = nullPrototype({
+            file: nullPrototype({
+              symlink: entry.f.l
+            })
+          });
+        }
+      }
+    }
+  }
+  return newTree;
+}
+function fromBinaryString(s3) {
+  const encoded = new Uint8Array(s3.length);
+  for (let i3 = 0;i3 < s3.length; i3++) {
+    encoded[i3] = s3[i3].charCodeAt(0);
+  }
+  return encoded;
+}
+// node_modules/@webcontainer/api/dist/index.js
+var bootPromise = null;
+var cachedServerPromise = null;
+var cachedBootOptions = {};
+var decoder = new TextDecoder;
+var encoder = new TextEncoder;
+
+class WebContainer {
+  _instance;
+  _runtimeInfo;
+  fs;
+  static _instance = null;
+  static _teardownPromise = null;
+  _tornDown = false;
+  _unsubscribeFromTokenChangedListener = () => {};
+  constructor(_instance, fs, previewScript, _runtimeInfo) {
+    this._instance = _instance;
+    this._runtimeInfo = _runtimeInfo;
+    this.fs = new FileSystemAPIClient(fs);
+    if (authState.initialized) {
+      this._unsubscribeFromTokenChangedListener = addAccessTokenChangedListener((accessToken) => {
+        this._instance.setCredentials({ accessToken, editorOrigin: authState.editorOrigin });
+      });
+      (async () => {
+        await authState.authComplete.promise;
+        if (this._tornDown) {
+          return;
+        }
+        assertAuthTokens(authState.tokens);
+        await this._instance.setCredentials({
+          accessToken: authState.tokens.access,
+          editorOrigin: authState.editorOrigin
+        });
+      })().catch((error) => {
+        console.error(error);
+      });
+    }
+  }
+  async spawn(command, optionsOrArgs, options) {
+    let args = [];
+    if (Array.isArray(optionsOrArgs)) {
+      args = optionsOrArgs;
+    } else {
+      options = optionsOrArgs;
+    }
+    let output = undefined;
+    let outputStream = new ReadableStream;
+    if (options?.output !== false) {
+      const result = streamWithPush();
+      output = result.push;
+      outputStream = result.stream;
+    }
+    let stdout = undefined;
+    let stdoutStream;
+    let stderr = undefined;
+    let stderrStream;
+    const wrappedOutput = proxyListener(binaryListener(output));
+    const wrappedStdout = proxyListener(binaryListener(stdout));
+    const wrappedStderr = proxyListener(binaryListener(stderr));
+    const process = await this._instance.run({
+      command,
+      args,
+      cwd: options?.cwd,
+      env: options?.env,
+      terminal: options?.terminal
+    }, wrappedStdout, wrappedStderr, wrappedOutput);
+    return new WebContainerProcessImpl(process, outputStream, stdoutStream, stderrStream);
+  }
+  async export(path, options) {
+    const serializeOptions = {
+      format: options?.format ?? "json",
+      includes: options?.includes,
+      excludes: options?.excludes,
+      external: true
+    };
+    const result = await this._instance.serialize(path, serializeOptions);
+    if (serializeOptions.format === "json") {
+      const data = JSON.parse(decoder.decode(result));
+      return toExternalFileSystemTree(data);
+    }
+    return result;
+  }
+  on(event, listener) {
+    if (event === "preview-message") {
+      const originalListener = listener;
+      listener = (message) => {
+        if (isPreviewMessage(message)) {
+          originalListener(message);
+        }
+      };
+    }
+    const { listener: wrapped, subscribe } = syncSubscription(listener);
+    return subscribe(this._instance.on(event, comlink_exports.proxy(wrapped)));
+  }
+  mount(snapshotOrTree, options) {
+    const payload = snapshotOrTree instanceof Uint8Array ? snapshotOrTree : snapshotOrTree instanceof ArrayBuffer ? new Uint8Array(snapshotOrTree) : encoder.encode(JSON.stringify(toInternalFileSystemTree(snapshotOrTree)));
+    return this._instance.loadFiles(comlink_exports.transfer(payload, [payload.buffer]), {
+      mountPoints: options?.mountPoint
+    });
+  }
+  setPreviewScript(scriptSrc, options) {
+    return this._instance.setPreviewScript(scriptSrc, options);
+  }
+  get path() {
+    return this._runtimeInfo.path;
+  }
+  get workdir() {
+    return this._runtimeInfo.cwd;
+  }
+  teardown() {
+    if (this._tornDown) {
+      throw new Error("WebContainer already torn down");
+    }
+    this._tornDown = true;
+    this._unsubscribeFromTokenChangedListener();
+    const teardownFn = async () => {
+      try {
+        await this.fs._teardown();
+        await this._instance.teardown();
+      } finally {
+        this._instance[comlink_exports.releaseProxy]();
+        if (WebContainer._instance === this) {
+          WebContainer._instance = null;
+        }
+      }
+    };
+    WebContainer._teardownPromise = teardownFn();
+  }
+  static async boot(options = {}) {
+    await this._teardownPromise;
+    WebContainer._teardownPromise = null;
+    const { workdirName } = options;
+    if (window.crossOriginIsolated && options.coep === "none") {
+      console.warn(`A Cross-Origin-Embedder-Policy header is required in cross origin isolated environments.
+Set the 'coep' option to 'require-corp'.`);
+    }
+    if (workdirName?.includes("/") || workdirName === ".." || workdirName === ".") {
+      throw new Error("workdirName should be a valid folder name");
+    }
+    authState.bootCalled = true;
+    while (bootPromise) {
+      await bootPromise;
+    }
+    if (WebContainer._instance) {
+      throw new Error("Only a single WebContainer instance can be booted");
+    }
+    const instancePromise = unsynchronizedBoot(options);
+    bootPromise = instancePromise.catch(() => {});
+    try {
+      const instance = await instancePromise;
+      WebContainer._instance = instance;
+      return instance;
+    } finally {
+      bootPromise = null;
+    }
+  }
+}
+var DIR_ENTRY_TYPE_FILE = 1;
+var DIR_ENTRY_TYPE_DIR = 2;
+
+class DirEntImpl {
+  name;
+  _type;
+  constructor(name, _type) {
+    this.name = name;
+    this._type = _type;
+  }
+  isFile() {
+    return this._type === DIR_ENTRY_TYPE_FILE;
+  }
+  isDirectory() {
+    return this._type === DIR_ENTRY_TYPE_DIR;
+  }
+}
+
+class FSWatcher {
+  _apiClient;
+  _path;
+  _options;
+  _listener;
+  _wrappedListener;
+  _watcher;
+  _closed = false;
+  constructor(_apiClient, _path, _options, _listener) {
+    this._apiClient = _apiClient;
+    this._path = _path;
+    this._options = _options;
+    this._listener = _listener;
+    this._apiClient._watchers.add(this);
+    this._wrappedListener = (event, filename) => {
+      if (this._listener && !this._closed) {
+        this._listener(event, filename);
+      }
+    };
+    this._apiClient._fs.watch(this._path, this._options, proxyListener(this._wrappedListener)).then((_watcher) => {
+      this._watcher = _watcher;
+      if (this._closed) {
+        return this._teardown();
+      }
+      return;
+    }).catch(console.error);
+  }
+  async close() {
+    if (!this._closed) {
+      this._closed = true;
+      this._apiClient._watchers.delete(this);
+      await this._teardown();
+    }
+  }
+  async _teardown() {
+    await this._watcher?.close().finally(() => {
+      this._watcher?.[comlink_exports.releaseProxy]();
+    });
+  }
+}
+
+class WebContainerProcessImpl {
+  output;
+  input;
+  exit;
+  _process;
+  stdout;
+  stderr;
+  constructor(process, output, stdout, stderr) {
+    this.output = output;
+    this._process = process;
+    this.input = new WritableStream({
+      write: (data) => {
+        this._getProcess()?.write(data).catch(() => {});
+      }
+    });
+    this.exit = this._onExit();
+    this.stdout = stdout;
+    this.stderr = stderr;
+  }
+  kill() {
+    this._process?.kill();
+  }
+  resize(dimensions) {
+    this._getProcess()?.resize(dimensions);
+  }
+  async _onExit() {
+    try {
+      return await this._process.onExit;
+    } finally {
+      this._process?.[comlink_exports.releaseProxy]();
+      this._process = null;
+    }
+  }
+  _getProcess() {
+    if (this._process == null) {
+      console.warn("This process already exited");
+    }
+    return this._process;
+  }
+}
+
+class FileSystemAPIClient {
+  _fs;
+  _watchers = new Set([]);
+  constructor(fs) {
+    this._fs = fs;
+  }
+  rm(...args) {
+    return this._fs.rm(...args);
+  }
+  async readFile(path, encoding) {
+    return await this._fs.readFile(path, encoding);
+  }
+  async rename(oldPath, newPath) {
+    return await this._fs.rename(oldPath, newPath);
+  }
+  async writeFile(path, data, options) {
+    if (data instanceof Uint8Array) {
+      const buffer = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
+      data = comlink_exports.transfer(new Uint8Array(buffer), [buffer]);
+    }
+    await this._fs.writeFile(path, data, options);
+  }
+  async readdir(path, options) {
+    const result = await this._fs.readdir(path, options);
+    if (isStringArray(result)) {
+      return result;
+    }
+    if (isTypedArrayCollection(result)) {
+      return result;
+    }
+    const entries = result.map((entry) => new DirEntImpl(entry.name, entry["Symbol(type)"]));
+    return entries;
+  }
+  async mkdir(path, options) {
+    return await this._fs.mkdir(path, options);
+  }
+  watch(path, options, listener) {
+    if (typeof options === "function") {
+      listener = options;
+      options = null;
+    }
+    return new FSWatcher(this, path, options, listener);
+  }
+  async _teardown() {
+    this._fs[comlink_exports.releaseProxy]();
+    await Promise.all([...this._watchers].map((watcher) => watcher.close()));
+  }
+}
+async function unsynchronizedBoot(options) {
+  const { serverPromise } = serverFactory(options);
+  const server = await serverPromise;
+  const instance = await server.build({
+    host: window.location.host,
+    version: "1.6.1",
+    workdirName: options.workdirName,
+    forwardPreviewErrors: options.forwardPreviewErrors
+  });
+  const [fs, previewScript, runtimeInfo] = await Promise.all([
+    instance.fs(),
+    instance.previewScript(),
+    instance.runtimeInfo()
+  ]);
+  return new WebContainer(instance, fs, previewScript, runtimeInfo);
+}
+function binaryListener(listener) {
+  if (listener == null) {
+    return;
+  }
+  return (data) => {
+    if (data instanceof Uint8Array) {
+      listener(decoder.decode(data));
+    } else if (data == null) {
+      listener(null);
+    }
+  };
+}
+function proxyListener(listener) {
+  if (listener == null) {
+    return;
+  }
+  return comlink_exports.proxy(listener);
+}
+function serverFactory(options) {
+  if (cachedServerPromise != null) {
+    if (options.coep !== cachedBootOptions.coep) {
+      console.warn(`Attempting to boot WebContainer with 'coep: ${options.coep}'`);
+      console.warn(`First boot had 'coep: ${cachedBootOptions.coep}', new settings will not take effect!`);
+    }
+    return { serverPromise: cachedServerPromise };
+  }
+  if (options.coep) {
+    iframeSettings.setQueryParam("coep", options.coep);
+  }
+  if (options.experimentalNode) {
+    iframeSettings.setQueryParam("experimental_node", "1");
+  }
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.setAttribute("allow", "cross-origin-isolated");
+  const url = iframeSettings.url;
+  iframe.src = url.toString();
+  const { origin } = url;
+  cachedBootOptions = { ...options };
+  cachedServerPromise = new Promise((resolve) => {
+    const onMessage = (event) => {
+      if (event.origin !== origin) {
+        return;
+      }
+      const { data } = event;
+      if (data.type === "init") {
+        resolve(comlink_exports.wrap(event.ports[0]));
+        return;
+      }
+      if (data.type === "warning") {
+        console[data.level].call(console, data.message);
+        return;
+      }
+    };
+    window.addEventListener("message", onMessage);
+  });
+  document.body.insertBefore(iframe, null);
+  return { serverPromise: cachedServerPromise };
+}
+function isStringArray(list) {
+  return typeof list[0] === "string";
+}
+function isTypedArrayCollection(list) {
+  return list[0] instanceof Uint8Array;
+}
+function streamWithPush() {
+  let controller = null;
+  const stream = new ReadableStream({
+    start(controller_) {
+      controller = controller_;
+    }
+  });
+  const push = (item) => {
+    if (item != null) {
+      controller?.enqueue(item);
+    } else {
+      controller?.close();
+      controller = null;
+    }
+  };
+  return { stream, push };
+}
+function syncSubscription(listener) {
+  let stopped = false;
+  let unsubscribe = () => {};
+  const wrapped = (...args) => {
+    if (stopped) {
+      return;
+    }
+    listener(...args);
+  };
+  return {
+    subscribe(promise) {
+      promise.then((unsubscribe_) => {
+        unsubscribe = unsubscribe_;
+        if (stopped) {
+          unsubscribe();
+        }
+      });
+      return () => {
+        stopped = true;
+        unsubscribe();
+      };
+    },
+    listener: wrapped
+  };
+}
+
+// playground/lib/webcontainer-pty.ts
+var sharedWebContainerPromise = null;
+var WEB_CONTAINER_WELCOME = (() => {
+  const ESC2 = "\x1B";
+  const CSI = `${ESC2}[`;
+  const OSC = `${ESC2}]`;
+  const ST = `${ESC2}\\`;
+  const githubUrl = "https://github.com/wiedymi/restty";
+  const githubLabel = `${CSI}4;38;5;81m${githubUrl}${CSI}0m`;
+  const githubLink = `${OSC}8;;${githubUrl}${ST}${githubLabel}${OSC}8;;${ST}`;
+  const lines = [
+    "",
+    `${CSI}1;38;5;81m██████╗ ███████╗███████╗████████╗████████╗██╗   ██╗${CSI}0m`,
+    `${CSI}1;38;5;117m██╔══██╗██╔════╝██╔════╝╚══██╔══╝╚══██╔══╝╚██╗ ██╔╝${CSI}0m`,
+    `${CSI}1;38;5;153m██████╔╝█████╗  ███████╗   ██║      ██║    ╚████╔╝ ${CSI}0m`,
+    `${CSI}1;38;5;189m██╔══██╗██╔══╝  ╚════██║   ██║      ██║     ╚██╔╝  ${CSI}0m`,
+    `${CSI}1;38;5;225m██║  ██║███████╗███████║   ██║      ██║      ██║   ${CSI}0m`,
+    `${CSI}1;38;5;219m╚═╝  ╚═╝╚══════╝╚══════╝   ╚═╝      ╚═╝      ╚═╝   ${CSI}0m`,
+    "",
+    `${CSI}1mWelcome to restty WebContainer mode${CSI}0m`,
+    `GitHub: ${githubLink}`,
+    "",
+    `${CSI}38;5;117mTry:${CSI}0m node demo.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node test.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node ansi-art.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node animation.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node colors.js`,
+    `${CSI}38;5;117mTry:${CSI}0m node kitty.js`,
+    ""
+  ];
+  return `${lines.join(`\r
+`)}\r
+`;
+})();
+var FALLBACK_DEMO_JS = `#!/usr/bin/env node
+console.log("restty demo fallback");
+console.log("Run: node ansi-art.js");
+console.log("Run: node animation.js");
+console.log("Run: node colors.js");
+console.log("Run: node kitty.js");
+console.log("Run: node test.js");
+`;
+var FALLBACK_TEST_JS = `#!/usr/bin/env node
+console.log("restty test fallback");
+console.log("Node is available.");
+console.log("Run: node colors.js");
+console.log("Run: node kitty.js");
+`;
+var seedScripts = [
+  {
+    urls: ["/demo.js", "/playground/public/demo.js"],
+    target: "demo.js",
+    fallback: FALLBACK_DEMO_JS
+  },
+  {
+    urls: ["/test.js", "/playground/public/test.js"],
+    target: "test.js",
+    fallback: FALLBACK_TEST_JS
+  },
+  {
+    urls: ["/ansi-art.js", "/playground/public/ansi-art.js"],
+    target: "ansi-art.js",
+    fallback: `#!/usr/bin/env node
+console.log('ansi-art fallback');
+`
+  },
+  {
+    urls: ["/animation.js", "/playground/public/animation.js"],
+    target: "animation.js",
+    fallback: `#!/usr/bin/env node
+console.log('animation fallback');
+`
+  },
+  {
+    urls: ["/colors.js", "/playground/public/colors.js"],
+    target: "colors.js",
+    fallback: `#!/usr/bin/env node
+console.log('colors fallback');
+`
+  },
+  {
+    urls: ["/kitty.js", "/playground/public/kitty.js"],
+    target: "kitty.js",
+    fallback: `#!/usr/bin/env node
+console.log('kitty fallback');
+`
+  }
+];
+async function getSharedWebContainer() {
+  if (!sharedWebContainerPromise) {
+    sharedWebContainerPromise = WebContainer.boot({ coep: "require-corp" });
+  }
+  return sharedWebContainerPromise;
+}
+function normalizeFetchedScript(text) {
+  const noBom = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, `
+`).trim();
+  if (!noBom)
+    return null;
+  const firstNonEmpty = noBom.split(`
+`).find((line) => line.trim().length > 0)?.trimStart() ?? "";
+  const lower = firstNonEmpty.toLowerCase();
+  if (lower.startsWith("<!doctype") || lower.startsWith("<html") || lower.startsWith("<head") || lower.startsWith("<body") || lower.startsWith("<")) {
+    return null;
+  }
+  if (firstNonEmpty.startsWith("#!")) {
+    if (!/\b(node|bun|deno|js)\b/i.test(firstNonEmpty))
+      return null;
+    return `${noBom}
+`;
+  }
+  if (!/(?:^|\n)\s*(const|let|var|function|import|export)\b/.test(noBom))
+    return null;
+  return `${noBom}
+`;
+}
+async function fetchScriptText(url) {
+  try {
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok)
+      return null;
+    const contentType = (res.headers.get("content-type") || "").toLowerCase();
+    if (contentType.includes("text/html"))
+      return null;
+    return normalizeFetchedScript(await res.text());
+  } catch {
+    return null;
+  }
+}
+async function fetchFirstScript(urls) {
+  for (const url of urls) {
+    const text = await fetchScriptText(url);
+    if (text)
+      return text;
+  }
+  return null;
+}
+async function ensureScriptsExecutable(webcontainer) {
+  const workdir = webcontainer.workdir;
+  const execPaths = [
+    "demo.js",
+    "test.js",
+    "ansi-art.js",
+    "animation.js",
+    "colors.js",
+    "kitty.js",
+    `${workdir}/demo.js`,
+    `${workdir}/test.js`,
+    `${workdir}/ansi-art.js`,
+    `${workdir}/animation.js`,
+    `${workdir}/colors.js`,
+    `${workdir}/kitty.js`
+  ];
+  const chmodViaNode = await webcontainer.spawn("node", [
+    "-e",
+    [
+      "const fs = require('node:fs');",
+      "const paths = process.argv.slice(1);",
+      "let touched = false;",
+      "let ok = true;",
+      "for (const p of paths) {",
+      "  try {",
+      "    if (!fs.existsSync(p)) continue;",
+      "    touched = true;",
+      "    const mode = fs.statSync(p).mode | 0o111;",
+      "    fs.chmodSync(p, mode);",
+      "    fs.accessSync(p, fs.constants.X_OK);",
+      "  } catch {",
+      "    ok = false;",
+      "  }",
+      "}",
+      "if (!touched || !ok) process.exit(1);"
+    ].join(" "),
+    ...execPaths
+  ]);
+  const nodeCode = await chmodViaNode.exit.catch(() => 1);
+  if (nodeCode === 0)
+    return;
+  const chmod = await webcontainer.spawn("chmod", [
+    "+x",
+    "demo.js",
+    "test.js",
+    "ansi-art.js",
+    "animation.js",
+    "colors.js",
+    "kitty.js"
+  ]);
+  const chmodCode = await chmod.exit.catch(() => 1);
+  if (chmodCode !== 0) {
+    throw new Error("Failed to set executable permissions for node demo scripts");
+  }
+}
+async function removeLegacyShellScripts(webcontainer) {
+  const workdir = webcontainer.workdir;
+  const legacyPaths = ["demo.sh", "test.sh", `${workdir}/demo.sh`, `${workdir}/test.sh`];
+  const cleanup = await webcontainer.spawn("node", [
+    "-e",
+    [
+      "const fs = require('node:fs');",
+      "for (const p of process.argv.slice(1)) {",
+      "  try {",
+      "    fs.rmSync(p, { force: true });",
+      "  } catch {",
+      "    // ignore cleanup failures",
+      "  }",
+      "}"
+    ].join(" "),
+    ...legacyPaths
+  ]);
+  await cleanup.exit.catch(() => 1);
+}
+async function ensureSeedScripts(webcontainer) {
+  await removeLegacyShellScripts(webcontainer);
+  for (const spec of seedScripts) {
+    const text = await fetchFirstScript(spec.urls);
+    await webcontainer.fs.writeFile(spec.target, text ?? spec.fallback);
+  }
+  await ensureScriptsExecutable(webcontainer);
+}
+function parseCommand(spec) {
+  const tokens = spec.match(/(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\\.|\S)+/g) ?? [];
+  const cleaned = tokens.map((token) => {
+    if (token.startsWith('"') && token.endsWith('"') || token.startsWith("'") && token.endsWith("'")) {
+      return token.slice(1, -1);
+    }
+    return token.replace(/\\(.)/g, "$1");
+  });
+  return {
+    command: cleaned[0] ?? "",
+    args: cleaned.slice(1),
+    label: cleaned.join(" ")
+  };
+}
+function normalizeCwd(cwd) {
+  if (!cwd)
+    return;
+  const trimmed = cwd.trim();
+  if (!trimmed)
+    return;
+  if (!trimmed.startsWith("/"))
+    return;
+  return trimmed;
+}
+function createWebContainerPtyTransport(options = {}) {
+  let proc = null;
+  let callbacks = null;
+  let inputWriter = null;
+  let outputReader = null;
+  let connected = false;
+  let connectionToken = 0;
+  let activeCommand = "";
+  const log = (line) => {
+    options.onLog?.(`[webcontainer] ${line}`);
+  };
+  const resetStreams = () => {
+    try {
+      inputWriter?.releaseLock();
+    } catch {}
+    try {
+      outputReader?.releaseLock();
+    } catch {}
+    inputWriter = null;
+    outputReader = null;
+  };
+  const stopProcess = (emitDisconnect) => {
+    const cb = callbacks;
+    callbacks = null;
+    connected = false;
+    connectionToken += 1;
+    activeCommand = "";
+    try {
+      outputReader?.cancel();
+    } catch {}
+    resetStreams();
+    if (proc) {
+      try {
+        proc.kill();
+      } catch {}
+      proc = null;
+    }
+    if (emitDisconnect)
+      cb?.onDisconnect?.();
+  };
+  const handleConnectError = (cb, err) => {
+    connected = false;
+    proc = null;
+    resetStreams();
+    const message = err instanceof Error ? err.message : String(err);
+    cb.onError?.("Failed to start WebContainer process", [message]);
+    cb.onDisconnect?.();
+  };
+  const startOutputPump = (token, cb) => {
+    const reader = outputReader;
+    if (!reader)
+      return;
+    (async () => {
+      try {
+        while (connectionToken === token) {
+          const { value, done } = await reader.read();
+          if (done || connectionToken !== token)
+            break;
+          if (value)
+            cb.onData?.(value);
+        }
+      } catch (err) {
+        if (connectionToken !== token)
+          return;
+        const message = err instanceof Error ? err.message : String(err);
+        cb.onError?.("WebContainer output stream failed", [message]);
+      }
+    })();
+  };
+  const mapInputForCommand = (data) => {
+    if (activeCommand === "jsh") {
+      if (data === "")
+        return "\b";
+    }
+    return data;
+  };
+  return {
+    connect: async ({ cols = 80, rows = 24, callbacks: cb }) => {
+      stopProcess(false);
+      callbacks = cb;
+      const token = connectionToken;
+      const commandRaw = options.getCommand?.().trim() || "jsh";
+      const spec = parseCommand(commandRaw);
+      if (!spec.command) {
+        cb.onError?.("Missing command", [
+          "Provide a shell command for WebContainer (for example: jsh)"
+        ]);
+        cb.onDisconnect?.();
+        return;
+      }
+      try {
+        const webcontainer = await getSharedWebContainer();
+        if (connectionToken !== token)
+          return;
+        await ensureSeedScripts(webcontainer);
+        if (connectionToken !== token)
+          return;
+        const cwd = normalizeCwd(options.getCwd?.());
+        const env = {
+          TERM: "xterm-256color",
+          COLORTERM: "truecolor",
+          COLUMNS: String(cols),
+          LINES: String(rows),
+          ...options.getEnv?.()
+        };
+        const spawned = await webcontainer.spawn(spec.command, spec.args, {
+          terminal: { cols, rows },
+          cwd,
+          env
+        });
+        if (connectionToken !== token) {
+          try {
+            spawned.kill();
+          } catch {}
+          return;
+        }
+        proc = spawned;
+        activeCommand = spec.command;
+        inputWriter = spawned.input.getWriter();
+        outputReader = spawned.output.getReader();
+        connected = true;
+        cb.onConnect?.();
+        cb.onStatus?.(spec.label || spec.command);
+        log(`connected (${spec.label || spec.command})`);
+        if (spec.command === "jsh") {
+          cb.onData?.(WEB_CONTAINER_WELCOME);
+        }
+        startOutputPump(token, cb);
+        spawned.exit.then((code) => {
+          if (connectionToken !== token)
+            return;
+          connected = false;
+          proc = null;
+          resetStreams();
+          cb.onExit?.(code);
+          cb.onDisconnect?.();
+        }).catch((err) => {
+          if (connectionToken !== token)
+            return;
+          connected = false;
+          proc = null;
+          resetStreams();
+          const message = err instanceof Error ? err.message : String(err);
+          cb.onError?.("WebContainer process exited with error", [message]);
+          cb.onDisconnect?.();
+        });
+      } catch (err) {
+        handleConnectError(cb, err);
+      }
+    },
+    disconnect: () => {
+      if (!proc && !connected)
+        return;
+      stopProcess(true);
+      log("disconnected");
+    },
+    sendInput: (data) => {
+      if (!connected || !inputWriter)
+        return false;
+      const payload = mapInputForCommand(data);
+      inputWriter.write(payload).catch(() => {});
+      return true;
+    },
+    resize: (cols, rows) => {
+      if (!connected || !proc)
+        return false;
+      try {
+        proc.resize({ cols, rows });
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    isConnected: () => connected,
+    destroy: () => {
+      stopProcess(false);
+    }
+  };
+}
+
 // playground/app.ts
 var paneRoot = document.getElementById("paneRoot");
 if (!paneRoot) {
@@ -56202,7 +57682,11 @@ var btnClear = document.getElementById("btnClear");
 var rendererSelect = document.getElementById("rendererSelect");
 var demoSelect = document.getElementById("demoSelect");
 var btnRunDemo = document.getElementById("btnRunDemo");
+var connectionBackendEl = document.getElementById("connectionBackend");
 var ptyUrlInput = document.getElementById("ptyUrl");
+var wcCommandInput = document.getElementById("wcCommand");
+var wcCwdInput = document.getElementById("wcCwd");
+var connectionHintEl = document.getElementById("connectionHint");
 var ptyBtn = document.getElementById("btnPty");
 var themeSelect = document.getElementById("themeSelect");
 var themeFileInput = document.getElementById("themeFile");
@@ -56218,9 +57702,8 @@ var settingsClose = document.getElementById("settingsClose");
 var DEFAULT_THEME_NAME = "Aizen Dark";
 var DEFAULT_FONT_FAMILY = "jetbrains";
 var FONT_FAMILY_LOCAL_PREFIX = "local:";
-var FONT_URL_JETBRAINS_MONO = "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Regular/JetBrainsMonoNLNerdFontMono-Regular.ttf";
+var FONT_URL_JETBRAINS_MONO = "https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono@v2.304/fonts/ttf/JetBrainsMono-Regular.ttf";
 var FONT_URL_NERD_SYMBOLS = "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf";
-var FONT_URL_SYMBOLA = "https://cdn.jsdelivr.net/gh/ChiefMikeK/ttf-symbola@master/Symbola.ttf";
 var FONT_URL_NOTO_SYMBOLS = "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf";
 var FONT_URL_NOTO_COLOR_EMOJI = "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@main/fonts/NotoColorEmoji.ttf";
 var FONT_URL_OPENMOJI = "https://cdn.jsdelivr.net/gh/hfg-gmuend/openmoji@master/font/OpenMoji-black-glyf/OpenMoji-black-glyf.ttf";
@@ -56281,11 +57764,6 @@ function buildFontSourcesForSelection(value, localMatcher) {
     type: "url",
     label: "Noto Sans Symbols 2",
     url: FONT_URL_NOTO_SYMBOLS
-  });
-  sources.push({
-    type: "url",
-    label: "Symbola",
-    url: FONT_URL_SYMBOLA
   });
   sources.push({
     type: "url",
@@ -56358,8 +57836,7 @@ async function detectLocalFonts() {
         }
       }
     }
-    const localFontWindow = window;
-    const fonts = await localFontWindow.queryLocalFonts();
+    const fonts = await window.queryLocalFonts();
     const seen = new Set;
     let added = 0;
     for (let i3 = 0;i3 < fonts.length; i3 += 1) {
@@ -56381,8 +57858,67 @@ async function detectLocalFonts() {
     setFontFamilyHint("Local font access denied or unavailable.");
   }
 }
+function getConnectionBackend() {
+  const value = connectionBackendEl?.value;
+  return value === "webcontainer" ? "webcontainer" : "ws";
+}
 function getConnectUrl() {
+  if (getConnectionBackend() === "webcontainer")
+    return "";
   return ptyUrlInput?.value?.trim() ?? "";
+}
+function syncConnectionUi() {
+  const backend = getConnectionBackend();
+  const webcontainerMode = backend === "webcontainer";
+  if (ptyUrlInput)
+    ptyUrlInput.disabled = webcontainerMode;
+  if (wcCommandInput)
+    wcCommandInput.disabled = !webcontainerMode;
+  if (wcCwdInput)
+    wcCwdInput.disabled = !webcontainerMode;
+  if (connectionHintEl) {
+    connectionHintEl.textContent = webcontainerMode ? "Using in-browser WebContainer process" : "Using WebSocket PTY URL";
+  }
+}
+function createAdaptivePtyTransport() {
+  const wsTransport = createWebSocketPtyTransport();
+  const webContainerTransport = createWebContainerPtyTransport({
+    getCommand: () => wcCommandInput?.value?.trim() || "jsh",
+    getCwd: () => wcCwdInput?.value?.trim() || "/"
+  });
+  let activeTransport = null;
+  const pickTransport = () => getConnectionBackend() === "webcontainer" ? webContainerTransport : wsTransport;
+  return {
+    connect: (options) => {
+      const nextTransport = pickTransport();
+      if (activeTransport && activeTransport !== nextTransport) {
+        activeTransport.disconnect();
+      }
+      activeTransport = nextTransport;
+      return nextTransport.connect(options);
+    },
+    disconnect: () => {
+      activeTransport?.disconnect();
+      wsTransport.disconnect();
+      webContainerTransport.disconnect();
+      activeTransport = null;
+    },
+    sendInput: (data) => {
+      return activeTransport?.sendInput(data) ?? false;
+    },
+    resize: (cols, rows) => {
+      return activeTransport?.resize(cols, rows) ?? false;
+    },
+    isConnected: () => {
+      return activeTransport?.isConnected() ?? false;
+    },
+    destroy: () => {
+      activeTransport?.disconnect();
+      wsTransport.destroy?.();
+      webContainerTransport.destroy?.();
+      activeTransport = null;
+    }
+  };
 }
 function isSettingsDialogOpen() {
   return Boolean(settingsDialog?.open);
@@ -56461,7 +57997,7 @@ function syncPtyButton(pane, state) {
     ptyBtn.textContent = "Disconnect";
     return;
   }
-  ptyBtn.textContent = "Connect PTY";
+  ptyBtn.textContent = getConnectionBackend() === "webcontainer" ? "Start WebContainer" : "Connect PTY";
   setText(ptyStatusEl, state.ui.ptyStatus);
 }
 function renderActivePaneStatus(pane, state) {
@@ -56509,6 +58045,13 @@ function setPanePaused(id, value) {
   if (id === activePaneId) {
     syncPauseButton(state);
   }
+}
+function connectPaneIfNeeded(pane) {
+  if (getConnectionBackend() !== "webcontainer")
+    return;
+  if (pane.app.isPtyConnected())
+    return;
+  pane.app.connectPty(getConnectUrl());
 }
 function applyThemeToPane(pane, state, theme, sourceLabel, selectValue = "") {
   try {
@@ -56588,6 +58131,7 @@ restty = new Restty({
       renderer: paneState.renderer,
       fontSize: paneState.fontSize,
       fontSources: getCurrentFontSources(),
+      ptyTransport: createAdaptivePtyTransport(),
       callbacks: {
         onBackend: (backend) => {
           updatePaneUi(id, (state) => {
@@ -56627,7 +58171,9 @@ restty = new Restty({
     } else if (state.theme.theme) {
       applyThemeToPane(pane, state, state.theme.theme, state.theme.sourceLabel || "pane theme", state.theme.selectValue);
     }
-    pane.app.init();
+    pane.app.init().then(() => {
+      connectPaneIfNeeded(pane);
+    });
   },
   onPaneClosed: (pane) => {
     const state = paneStates.get(pane.id);
@@ -56680,6 +58226,24 @@ window.addEventListener("keydown", (event) => {
 window.addEventListener("resize", () => {
   queueResizeAllPanes();
 });
+connectionBackendEl?.addEventListener("change", () => {
+  syncConnectionUi();
+  for (const pane of restty.getPanes()) {
+    if (pane.app.isPtyConnected()) {
+      pane.app.disconnectPty();
+    }
+  }
+  if (getConnectionBackend() === "webcontainer") {
+    for (const pane of restty.getPanes()) {
+      connectPaneIfNeeded(pane);
+    }
+  }
+  const activePane = getActivePane();
+  const activeState = getActivePaneState();
+  if (activePane && activeState) {
+    syncPtyButton(activePane, activeState);
+  }
+});
 btnInit?.addEventListener("click", () => {
   const pane = getActivePane();
   if (!pane)
@@ -56689,7 +58253,9 @@ btnInit?.addEventListener("click", () => {
     return;
   setPanePaused(pane.id, false);
   state.demos?.stop();
-  pane.app.init();
+  pane.app.init().then(() => {
+    connectPaneIfNeeded(pane);
+  });
 });
 btnPause?.addEventListener("click", () => {
   const pane = getActivePane();
@@ -56826,6 +58392,7 @@ if (btnLoadLocalFonts) {
     detectLocalFonts();
   });
 }
+syncConnectionUi();
 syncFontFamilyControls();
 if (supportsLocalFontPicker()) {
   setFontFamilyHint("Select a base font, then pick a local font from the local picker.");
@@ -56841,5 +58408,5 @@ if (firstState) {
 }
 queueResizeAllPanes();
 
-//# debugId=FDE63C96D28C5A8364756E2164756E21
+//# debugId=09F2AF7178A8501F64756E2164756E21
 //# sourceMappingURL=app.js.map

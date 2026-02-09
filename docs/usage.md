@@ -174,15 +174,12 @@ Call `destroy()` when removing the terminal from the page to release GPU/WASM/PT
 
 Use these only if `Restty` is not enough:
 
-- `restty/wasm`: direct WASM API (`loadResttyWasm`, `ResttyWasm`)
-- `restty/pty`: PTY transport helpers
-- `restty/input`: input handler utilities
-- `restty/internal`: full internal barrel (unstable)
+- `restty/internal`: full internal barrel (unstable; includes low-level WASM/PTY/input APIs)
 
 Low-level example:
 
 ```ts
-import { loadResttyWasm } from "restty/wasm";
+import { loadResttyWasm } from "restty/internal";
 
 const wasm = await loadResttyWasm();
 const handle = wasm.create(80, 24, 2000);
@@ -204,9 +201,9 @@ wasm.destroy(handle);
 git submodule update --init --recursive
 bun install
 bun run build:themes
-bun run build:assets
-bun run pty
 bun run playground
 ```
 
 Open `http://localhost:5173`, then connect to `ws://localhost:8787/pty` from the UI.
+
+`bun run playground` starts both the PTY websocket server and playground dev server.

@@ -170,10 +170,7 @@ Active-pane convenience:
 
 Use these only when you need lower-level control:
 
-- `restty/wasm`: low-level WASM ABI wrapper (`loadResttyWasm`, `ResttyWasm`)
-- `restty/input`: key/mouse/input encoding utilities
-- `restty/pty`: PTY transport helpers
-- `restty/internal`: full internal barrel (unstable)
+- `restty/internal`: full internal barrel (unstable; includes low-level modules like WASM/input/pty helpers)
 
 ## Local Development
 
@@ -183,8 +180,6 @@ cd restty
 git submodule update --init --recursive
 bun install
 bun run build:themes
-bun run build:assets
-bun run pty
 bun run playground
 ```
 
@@ -198,9 +193,9 @@ bun run test          # full tests
 bun run test:ci       # CI-safe test target
 bun run lint          # lint
 bun run format:check  # formatting check
-bun run build:assets  # playground bundles
-bun run pty           # local PTY websocket server
-bun run playground    # playground dev server
+bun run build:assets  # static playground bundle (playground/public/playground.js)
+bun run playground    # one-command local dev (PTY + playground dev server)
+bun run pty           # PTY websocket server only
 ```
 
 ## Documentation

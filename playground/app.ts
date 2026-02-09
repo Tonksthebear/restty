@@ -1,12 +1,16 @@
 import {
   Restty,
+  createWebSocketPtyTransport,
   listBuiltinThemeNames,
   getBuiltinTheme,
   parseGhosttyTheme,
   type GhosttyTheme,
+  type PtyTransport,
   type ResttyFontSource,
-} from "../src/index.ts";
+  type ResttyManagedAppPane,
+} from "../src/internal.ts";
 import { createDemoController, type PlaygroundDemoKind } from "./lib/demos.ts";
+import { createWebContainerPtyTransport } from "./lib/webcontainer-pty.ts";
 
 const paneRoot = document.getElementById("paneRoot") as HTMLElement | null;
 if (!paneRoot) {
@@ -24,7 +28,13 @@ const btnClear = document.getElementById("btnClear");
 const rendererSelect = document.getElementById("rendererSelect") as HTMLSelectElement | null;
 const demoSelect = document.getElementById("demoSelect") as HTMLSelectElement | null;
 const btnRunDemo = document.getElementById("btnRunDemo");
+const connectionBackendEl = document.getElementById(
+  "connectionBackend",
+) as HTMLSelectElement | null;
 const ptyUrlInput = document.getElementById("ptyUrl") as HTMLInputElement | null;
+const wcCommandInput = document.getElementById("wcCommand") as HTMLInputElement | null;
+const wcCwdInput = document.getElementById("wcCwd") as HTMLInputElement | null;
+const connectionHintEl = document.getElementById("connectionHint") as HTMLElement | null;
 const ptyBtn = document.getElementById("btnPty");
 const themeSelect = document.getElementById("themeSelect") as HTMLSelectElement | null;
 const themeFileInput = document.getElementById("themeFile") as HTMLInputElement | null;
@@ -44,10 +54,9 @@ const DEFAULT_THEME_NAME = "Aizen Dark";
 const DEFAULT_FONT_FAMILY = "jetbrains";
 const FONT_FAMILY_LOCAL_PREFIX = "local:";
 const FONT_URL_JETBRAINS_MONO =
-  "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Regular/JetBrainsMonoNLNerdFontMono-Regular.ttf";
+  "https://cdn.jsdelivr.net/gh/JetBrains/JetBrainsMono@v2.304/fonts/ttf/JetBrainsMono-Regular.ttf";
 const FONT_URL_NERD_SYMBOLS =
   "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/NerdFontsSymbolsOnly/SymbolsNerdFontMono-Regular.ttf";
-const FONT_URL_SYMBOLA = "https://cdn.jsdelivr.net/gh/ChiefMikeK/ttf-symbola@master/Symbola.ttf";
 const FONT_URL_NOTO_SYMBOLS =
   "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf";
 const FONT_URL_NOTO_COLOR_EMOJI =
@@ -58,6 +67,7 @@ const FONT_URL_NOTO_CJK_SC =
   "https://cdn.jsdelivr.net/gh/notofonts/noto-cjk@main/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf";
 
 type RendererChoice = "auto" | "webgpu" | "webgl2";
+type ConnectionBackend = "ws" | "webcontainer";
 
 type PaneUiState = {
   backend: string;
@@ -83,11 +93,6 @@ type PaneState = {
   ui: PaneUiState;
 };
 
-type WindowWithLocalFontAccess = Window &
-  typeof globalThis & {
-    queryLocalFonts: () => Promise<Array<{ family?: string }>>;
-  };
-
 const paneStates = new Map<number, PaneState>();
 let activePaneId: number | null = null;
 let resizeRaf = 0;
@@ -96,7 +101,6 @@ let restty: Restty;
 const initialFontSize = fontSizeInput?.value ? Number(fontSizeInput.value) : 18;
 let selectedFontFamily = fontFamilySelect?.value ?? DEFAULT_FONT_FAMILY;
 let selectedLocalFontMatcher = "";
-type ManagedPane = NonNullable<ReturnType<Restty["getActivePane"]>>;
 
 function setText(el: HTMLElement | null, value: string) {
   if (el) el.textContent = value;
@@ -153,11 +157,6 @@ function buildFontSourcesForSelection(value: string, localMatcher: string): Rest
     type: "url",
     label: "Noto Sans Symbols 2",
     url: FONT_URL_NOTO_SYMBOLS,
-  });
-  sources.push({
-    type: "url",
-    label: "Symbola",
-    url: FONT_URL_SYMBOLA,
   });
   sources.push({
     type: "url",
@@ -235,8 +234,7 @@ async function detectLocalFonts() {
         }
       }
     }
-    const localFontWindow = window as WindowWithLocalFontAccess;
-    const fonts = await localFontWindow.queryLocalFonts();
+    const fonts = await (window as any).queryLocalFonts();
     const seen = new Set<string>();
     let added = 0;
     for (let i = 0; i < fonts.length; i += 1) {
@@ -257,8 +255,71 @@ async function detectLocalFonts() {
   }
 }
 
+function getConnectionBackend(): ConnectionBackend {
+  const value = connectionBackendEl?.value;
+  return value === "webcontainer" ? "webcontainer" : "ws";
+}
+
 function getConnectUrl(): string {
+  if (getConnectionBackend() === "webcontainer") return "";
   return ptyUrlInput?.value?.trim() ?? "";
+}
+
+function syncConnectionUi() {
+  const backend = getConnectionBackend();
+  const webcontainerMode = backend === "webcontainer";
+  if (ptyUrlInput) ptyUrlInput.disabled = webcontainerMode;
+  if (wcCommandInput) wcCommandInput.disabled = !webcontainerMode;
+  if (wcCwdInput) wcCwdInput.disabled = !webcontainerMode;
+  if (connectionHintEl) {
+    connectionHintEl.textContent = webcontainerMode
+      ? "Using in-browser WebContainer process"
+      : "Using WebSocket PTY URL";
+  }
+}
+
+function createAdaptivePtyTransport(): PtyTransport {
+  const wsTransport = createWebSocketPtyTransport();
+  const webContainerTransport = createWebContainerPtyTransport({
+    getCommand: () => wcCommandInput?.value?.trim() || "jsh",
+    getCwd: () => wcCwdInput?.value?.trim() || "/",
+  });
+
+  let activeTransport: PtyTransport | null = null;
+  const pickTransport = () =>
+    getConnectionBackend() === "webcontainer" ? webContainerTransport : wsTransport;
+
+  return {
+    connect: (options) => {
+      const nextTransport = pickTransport();
+      if (activeTransport && activeTransport !== nextTransport) {
+        activeTransport.disconnect();
+      }
+      activeTransport = nextTransport;
+      return nextTransport.connect(options);
+    },
+    disconnect: () => {
+      activeTransport?.disconnect();
+      wsTransport.disconnect();
+      webContainerTransport.disconnect();
+      activeTransport = null;
+    },
+    sendInput: (data: string) => {
+      return activeTransport?.sendInput(data) ?? false;
+    },
+    resize: (cols: number, rows: number) => {
+      return activeTransport?.resize(cols, rows) ?? false;
+    },
+    isConnected: () => {
+      return activeTransport?.isConnected() ?? false;
+    },
+    destroy: () => {
+      activeTransport?.disconnect();
+      wsTransport.destroy?.();
+      webContainerTransport.destroy?.();
+      activeTransport = null;
+    },
+  };
 }
 
 function isSettingsDialogOpen() {
@@ -300,7 +361,7 @@ function createDefaultPaneUi(): PaneUiState {
   };
 }
 
-function createPaneState(id: number, sourcePane: ManagedPane | null): PaneState {
+function createPaneState(id: number, sourcePane: ResttyManagedAppPane | null): PaneState {
   const sourceState = sourcePane ? paneStates.get(sourcePane.id) : null;
   return {
     id,
@@ -328,7 +389,7 @@ function createPaneState(id: number, sourcePane: ManagedPane | null): PaneState 
   };
 }
 
-function getActivePane(): ManagedPane | null {
+function getActivePane(): ResttyManagedAppPane | null {
   return restty.getActivePane();
 }
 
@@ -341,17 +402,18 @@ function syncPauseButton(state: PaneState) {
   if (btnPause) btnPause.textContent = state.paused ? "Resume" : "Pause";
 }
 
-function syncPtyButton(pane: ManagedPane, state: PaneState) {
+function syncPtyButton(pane: ResttyManagedAppPane, state: PaneState) {
   if (!ptyBtn) return;
   if (pane.app.isPtyConnected()) {
     ptyBtn.textContent = "Disconnect";
     return;
   }
-  ptyBtn.textContent = "Connect PTY";
+  ptyBtn.textContent =
+    getConnectionBackend() === "webcontainer" ? "Start WebContainer" : "Connect PTY";
   setText(ptyStatusEl, state.ui.ptyStatus);
 }
 
-function renderActivePaneStatus(pane: ManagedPane, state: PaneState) {
+function renderActivePaneStatus(pane: ResttyManagedAppPane, state: PaneState) {
   setText(backendEl, state.ui.backend);
   setText(fpsEl, state.ui.fps);
   setText(termSizeEl, state.ui.termSize);
@@ -359,7 +421,7 @@ function renderActivePaneStatus(pane: ManagedPane, state: PaneState) {
   syncPtyButton(pane, state);
 }
 
-function renderActivePaneControls(pane: ManagedPane, state: PaneState) {
+function renderActivePaneControls(pane: ResttyManagedAppPane, state: PaneState) {
   syncPauseButton(state);
   if (rendererSelect) rendererSelect.value = state.renderer;
   if (fontSizeInput) fontSizeInput.value = `${state.fontSize}`;
@@ -394,8 +456,14 @@ function setPanePaused(id: number, value: boolean) {
   }
 }
 
+function connectPaneIfNeeded(pane: ResttyManagedAppPane) {
+  if (getConnectionBackend() !== "webcontainer") return;
+  if (pane.app.isPtyConnected()) return;
+  pane.app.connectPty(getConnectUrl());
+}
+
 function applyThemeToPane(
-  pane: ManagedPane,
+  pane: ResttyManagedAppPane,
   state: PaneState,
   theme: GhosttyTheme,
   sourceLabel: string,
@@ -419,7 +487,7 @@ function applyThemeToPane(
 }
 
 function applyBuiltinThemeToPane(
-  pane: ManagedPane,
+  pane: ResttyManagedAppPane,
   state: PaneState,
   name: string,
   sourceLabel = name,
@@ -429,7 +497,7 @@ function applyBuiltinThemeToPane(
   return applyThemeToPane(pane, state, theme, sourceLabel, name);
 }
 
-function resetThemeForPane(pane: ManagedPane, state: PaneState) {
+function resetThemeForPane(pane: ResttyManagedAppPane, state: PaneState) {
   pane.app.resetTheme();
   state.theme = {
     selectValue: "",
@@ -484,6 +552,7 @@ restty = new Restty({
       renderer: paneState.renderer,
       fontSize: paneState.fontSize,
       fontSources: getCurrentFontSources(),
+      ptyTransport: createAdaptivePtyTransport(),
       callbacks: {
         onBackend: (backend) => {
           updatePaneUi(id, (state) => {
@@ -532,7 +601,9 @@ restty = new Restty({
       );
     }
 
-    void pane.app.init();
+    void pane.app.init().then(() => {
+      connectPaneIfNeeded(pane);
+    });
   },
   onPaneClosed: (pane) => {
     const state = paneStates.get(pane.id);
@@ -593,6 +664,26 @@ window.addEventListener("resize", () => {
   queueResizeAllPanes();
 });
 
+connectionBackendEl?.addEventListener("change", () => {
+  syncConnectionUi();
+  for (const pane of restty.getPanes()) {
+    if (pane.app.isPtyConnected()) {
+      pane.app.disconnectPty();
+    }
+  }
+  if (getConnectionBackend() === "webcontainer") {
+    for (const pane of restty.getPanes()) {
+      connectPaneIfNeeded(pane);
+    }
+  }
+
+  const activePane = getActivePane();
+  const activeState = getActivePaneState();
+  if (activePane && activeState) {
+    syncPtyButton(activePane, activeState);
+  }
+});
+
 btnInit?.addEventListener("click", () => {
   const pane = getActivePane();
   if (!pane) return;
@@ -600,7 +691,9 @@ btnInit?.addEventListener("click", () => {
   if (!state) return;
   setPanePaused(pane.id, false);
   state.demos?.stop();
-  void pane.app.init();
+  void pane.app.init().then(() => {
+    connectPaneIfNeeded(pane);
+  });
 });
 
 btnPause?.addEventListener("click", () => {
@@ -742,6 +835,7 @@ if (btnLoadLocalFonts) {
   });
 }
 
+syncConnectionUi();
 syncFontFamilyControls();
 if (supportsLocalFontPicker()) {
   setFontFamilyHint("Select a base font, then pick a local font from the local picker.");
