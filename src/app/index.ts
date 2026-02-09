@@ -1530,6 +1530,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     onWindowOp: (op) => {
       appendLog(`[term] window op ${op.type} ${op.params.join(";")}`);
     },
+    onDesktopNotification: callbacks?.onDesktopNotification,
   });
   inputHandler!.setMouseMode("auto");
 

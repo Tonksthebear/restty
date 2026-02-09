@@ -69,6 +69,16 @@ export type WindowOp =
     };
 
 /**
+ * Desktop notification payload parsed from terminal OSC sequences.
+ */
+export type DesktopNotification = {
+  title: string;
+  body: string;
+  source: "osc9" | "osc777";
+  raw: string;
+};
+
+/**
  * Input handler construction options.
  */
 export type InputHandlerOptions = {
@@ -109,6 +119,10 @@ export type InputHandlerOptions = {
    */
   onClipboardWrite?: (text: string) => void | Promise<void>;
   onClipboardRead?: () => string | null | Promise<string | null>;
+  /**
+   * Optional handler for desktop notifications (OSC 9 / OSC 777).
+   */
+  onDesktopNotification?: (notification: DesktopNotification) => void;
   /**
    * Return active Kitty keyboard protocol flags (CSI ? u query result).
    */

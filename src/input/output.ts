@@ -1,4 +1,9 @@
-import type { CellPosition, CursorPosition, WindowOp } from "./types";
+import type {
+  CellPosition,
+  CursorPosition,
+  DesktopNotification,
+  WindowOp,
+} from "./types";
 import type { MouseController } from "./mouse";
 import { isDeviceAttributesQuery, parsePrivateModeSeq, parseWindowOpSeq } from "./ansi";
 
@@ -33,6 +38,8 @@ export type OutputFilterOptions = {
     cellWidthPx: number;
     cellHeightPx: number;
   };
+  /** Handler for desktop notifications (OSC 9 / OSC 777). */
+  onDesktopNotification?: (notification: DesktopNotification) => void;
 };
 
 const textDecoder = new TextDecoder();
@@ -99,6 +106,7 @@ export class OutputFilter {
     bg?: [number, number, number];
     cursor?: [number, number, number];
   };
+  private desktopNotificationHandler?: (notification: DesktopNotification) => void;
   private semanticPromptSeen = false;
   private promptClickEvents = false;
   private promptInputActive = false;
@@ -113,6 +121,7 @@ export class OutputFilter {
     this.clipboardRead = options.onClipboardRead;
     this.windowOpHandler = options.onWindowOp;
     this.getWindowMetrics = options.getWindowMetrics;
+    this.desktopNotificationHandler = options.onDesktopNotification;
   }
 
   setCursorProvider(fn: () => CursorPosition) {
@@ -234,6 +243,41 @@ export class OutputFilter {
     const content = seq.slice(2);
     const parts = content.split(";");
     const code = parts[0] ?? "";
+    if (code === "9") {
+      const firstSep = content.indexOf(";");
+      const body = firstSep >= 0 ? content.slice(firstSep + 1) : "";
+      if (/^(?:[2-9]|1[0-2]?)(?:;|$)/.test(body)) {
+        // ConEmu extension space uses OSC 9;N... and is not a desktop
+        // notification payload.
+        return true;
+      }
+      this.desktopNotificationHandler?.({
+        title: "",
+        body,
+        source: "osc9",
+        raw: seq,
+      });
+      return true;
+    }
+    if (code === "777") {
+      const firstSep = content.indexOf(";");
+      const rest = firstSep >= 0 ? content.slice(firstSep + 1) : "";
+      if (!rest.startsWith("notify;")) {
+        return true;
+      }
+      const payload = rest.slice("notify;".length);
+      const titleSep = payload.indexOf(";");
+      if (titleSep < 0) {
+        return true;
+      }
+      this.desktopNotificationHandler?.({
+        title: payload.slice(0, titleSep),
+        body: payload.slice(titleSep + 1),
+        source: "osc777",
+        raw: seq,
+      });
+      return true;
+    }
     if (code === "52") {
       const target = parts[1] ?? "c";
       const payload = parts.slice(2).join(";");

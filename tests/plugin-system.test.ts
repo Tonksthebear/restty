@@ -32,6 +32,14 @@ type FakePane = {
     getBackend: () => string;
   };
   __writes: Array<{ kind: "input" | "key"; text: string; source: string }>;
+  __callbacks: {
+    onDesktopNotification?: (notification: {
+      title: string;
+      body: string;
+      source: "osc9" | "osc777";
+      raw: string;
+    }) => void;
+  };
 };
 
 type FakeManager = {
@@ -150,6 +158,9 @@ function createFakeManager(options: any): FakeManager {
       },
       app,
       __writes: writes,
+      __callbacks: {
+        onDesktopNotification: appOptions.callbacks?.onDesktopNotification,
+      },
     };
     panes.set(id, pane);
     options.onPaneCreated?.(pane);
@@ -262,6 +273,56 @@ test("plugin lifecycle: use/unuse/plugins and cleanup", async () => {
   expect(cleaned).toBe(1);
   expect(restty.plugins()).toEqual([]);
   expect(restty.unuse("plugin/lifecycle")).toBe(false);
+});
+
+test("restty onDesktopNotification callback receives paneId and preserves pane callback", () => {
+  const paneNotifications: Array<{ paneId: number; title: string; source: string }> = [];
+  const resttyNotifications: Array<{ paneId: number; title: string; source: string }> = [];
+  const restty = new Restty({
+    root: {} as any,
+    createInitialPane: false,
+    onDesktopNotification: (notification) => {
+      resttyNotifications.push({
+        paneId: notification.paneId,
+        title: notification.title,
+        source: notification.source,
+      });
+    },
+    appOptions: ({ id }) => ({
+      callbacks: {
+        onDesktopNotification: (notification) => {
+          paneNotifications.push({
+            paneId: id,
+            title: notification.title,
+            source: notification.source,
+          });
+        },
+      },
+    }),
+  });
+
+  const pane = restty.createInitialPane() as FakePane;
+  pane.__callbacks.onDesktopNotification?.({
+    title: "build complete",
+    body: "done",
+    source: "osc777",
+    raw: "notify;build complete;done",
+  });
+
+  expect(paneNotifications).toEqual([
+    {
+      paneId: pane.id,
+      title: "build complete",
+      source: "osc777",
+    },
+  ]);
+  expect(resttyNotifications).toEqual([
+    {
+      paneId: pane.id,
+      title: "build complete",
+      source: "osc777",
+    },
+  ]);
 });
 
 test("pluginInfo reports metadata, status, and active disposer counts", async () => {

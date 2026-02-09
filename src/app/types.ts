@@ -1,4 +1,4 @@
-import type { InputHandler, MouseMode } from "../input";
+import type { DesktopNotification, InputHandler, MouseMode } from "../input";
 import type { PtyTransport } from "../pty";
 import type { WebGPUCoreState } from "../renderer";
 import type { GhosttyTheme } from "../theme";
@@ -89,6 +89,8 @@ export type ResttyAppCallbacks = {
   onPtyStatus?: (status: string) => void;
   /** Mouse mode/status changed. */
   onMouseStatus?: (status: string) => void;
+  /** Terminal requested a desktop notification via OSC 9 / OSC 777. */
+  onDesktopNotification?: (notification: DesktopNotification) => void;
 };
 
 /** Raw font data as an ArrayBuffer or typed-array view. */

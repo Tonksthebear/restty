@@ -28,6 +28,7 @@ export function createInputHandler(options: InputHandlerOptions = {}): InputHand
     onClipboardWrite: options.onClipboardWrite,
     onWindowOp: options.onWindowOp,
     getWindowMetrics: options.getWindowMetrics,
+    onDesktopNotification: options.onDesktopNotification,
   });
 
   return {
@@ -76,4 +77,5 @@ export type {
   InputHandlerOptions,
   MouseMode,
   MouseStatus,
+  DesktopNotification,
 } from "./types";

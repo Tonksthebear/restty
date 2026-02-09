@@ -104,6 +104,7 @@ const paneStates = new Map<number, PaneState>();
 let activePaneId: number | null = null;
 let resizeRaf = 0;
 let restty: Restty;
+let notificationPermissionRequest: Promise<NotificationPermission> | null = null;
 
 const initialFontSize = fontSizeInput?.value ? Number(fontSizeInput.value) : 18;
 let selectedFontFamily = fontFamilySelect?.value ?? DEFAULT_FONT_FAMILY;
@@ -398,6 +399,48 @@ function createAdaptivePtyTransport(): PtyTransport {
   };
 }
 
+function handleDesktopNotification(notification: {
+  title: string;
+  body: string;
+  source: "osc9" | "osc777";
+  raw: string;
+  paneId: number;
+}) {
+  const title = notification.title.trim() || "Terminal notification";
+  const body = notification.body.trim();
+  const prefix = `[notify][pane ${notification.paneId}][${notification.source}]`;
+  if (body) {
+    console.info(`${prefix} ${title}: ${body}`);
+  } else {
+    console.info(`${prefix} ${title}`);
+  }
+
+  if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+    try {
+      const browserNotification = new Notification(title, body ? { body } : undefined);
+      void browserNotification;
+    } catch {
+      // Ignore browser notification failures in playground mode.
+    }
+    return;
+  }
+
+  if (typeof Notification !== "undefined" && Notification.permission === "default") {
+    if (!notificationPermissionRequest) {
+      notificationPermissionRequest = Notification.requestPermission().catch(() => "denied");
+    }
+    void notificationPermissionRequest.then((permission) => {
+      if (permission !== "granted") return;
+      try {
+        const browserNotification = new Notification(title, body ? { body } : undefined);
+        void browserNotification;
+      } catch {
+        // Ignore browser notification failures in playground mode.
+      }
+    });
+  }
+}
+
 function isSettingsDialogOpen() {
   return Boolean(settingsDialog?.open);
 }
@@ -618,6 +661,7 @@ restty = new Restty({
   root: paneRoot,
   createInitialPane: false,
   autoInit: false,
+  onDesktopNotification: handleDesktopNotification,
   paneStyles: {
     inactivePaneOpacity: 0.9,
   },

@@ -168,3 +168,63 @@ test("output filter disables prompt click events in alt-screen", () => {
   expect(filter.filter("\x1b[?1049l")).toBe("\x1b[?1049l");
   expect(filter.isPromptClickEventsEnabled()).toBe(true);
 });
+
+test("output filter emits desktop notification callback for OSC 9", () => {
+  const notifications: Array<{ title: string; body: string; source: string; raw: string }> = [];
+  const filter = new OutputFilter({
+    getCursorPosition: () => ({ row: 1, col: 1 }),
+    sendReply: () => {},
+    mouse: {
+      handleModeSeq: () => false,
+    } as any,
+    onDesktopNotification: (notification) => notifications.push(notification),
+  });
+
+  expect(filter.filter("\x1b]9;Build finished\x07")).toBe("");
+  expect(notifications).toEqual([
+    {
+      title: "",
+      body: "Build finished",
+      source: "osc9",
+      raw: "\x1b]9;Build finished",
+    },
+  ]);
+});
+
+test("output filter emits desktop notification callback for OSC 777 notify", () => {
+  const notifications: Array<{ title: string; body: string; source: string; raw: string }> = [];
+  const filter = new OutputFilter({
+    getCursorPosition: () => ({ row: 1, col: 1 }),
+    sendReply: () => {},
+    mouse: {
+      handleModeSeq: () => false,
+    } as any,
+    onDesktopNotification: (notification) => notifications.push(notification),
+  });
+
+  expect(filter.filter("\x1b]777;notify;Task;Done\x07")).toBe("");
+  expect(notifications).toEqual([
+    {
+      title: "Task",
+      body: "Done",
+      source: "osc777",
+      raw: "\x1b]777;notify;Task;Done",
+    },
+  ]);
+});
+
+test("output filter ignores ConEmu OSC 9 extensions for desktop notifications", () => {
+  const notifications: Array<{ title: string; body: string; source: string; raw: string }> = [];
+  const filter = new OutputFilter({
+    getCursorPosition: () => ({ row: 1, col: 1 }),
+    sendReply: () => {},
+    mouse: {
+      handleModeSeq: () => false,
+    } as any,
+    onDesktopNotification: (notification) => notifications.push(notification),
+  });
+
+  expect(filter.filter("\x1b]9;1;100\x07")).toBe("");
+  expect(filter.filter("\x1b]9;10;1\x07")).toBe("");
+  expect(notifications).toHaveLength(0);
+});

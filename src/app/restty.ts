@@ -1,4 +1,4 @@
-import type { InputHandler, MouseMode } from "../input";
+import type { DesktopNotification, InputHandler, MouseMode } from "../input";
 import type { GhosttyTheme } from "../theme";
 import {
   createResttyAppPaneManager,
@@ -18,6 +18,8 @@ export type ResttyOptions = Omit<CreateResttyAppPaneManagerOptions, "appOptions"
   appOptions?: CreateResttyAppPaneManagerOptions["appOptions"];
   /** Font sources applied to every pane. */
   fontSources?: ResttyPaneAppOptionsInput["fontSources"];
+  /** Global handler for desktop notifications emitted by any pane. */
+  onDesktopNotification?: (notification: DesktopNotification & { paneId: number }) => void;
   /** Whether to create the first pane automatically (default true). */
   createInitialPane?: boolean | { focus?: boolean };
 };
@@ -419,6 +421,7 @@ export class Restty {
       createInitialPane = true,
       appOptions,
       fontSources,
+      onDesktopNotification,
       onPaneCreated,
       onPaneClosed,
       onPaneSplit,
@@ -431,10 +434,21 @@ export class Restty {
       const resolved = typeof appOptions === "function" ? appOptions(context) : (appOptions ?? {});
       const resolvedBeforeInput = resolved.beforeInput;
       const resolvedBeforeRenderOutput = resolved.beforeRenderOutput;
+      const resolvedCallbacks = resolved.callbacks;
 
       return {
         ...resolved,
         ...(this.fontSources ? { fontSources: this.fontSources } : {}),
+        callbacks:
+          onDesktopNotification || resolvedCallbacks?.onDesktopNotification
+            ? {
+                ...resolvedCallbacks,
+                onDesktopNotification: (notification) => {
+                  resolvedCallbacks?.onDesktopNotification?.(notification);
+                  onDesktopNotification?.({ ...notification, paneId: context.id });
+                },
+              }
+            : resolvedCallbacks,
         beforeInput: ({ text, source }) => {
           const maybeUserText = resolvedBeforeInput?.({ text, source });
           if (maybeUserText === null) return null;
