@@ -152,6 +152,15 @@ const DEFAULT_SYMBOL_CONSTRAINT: NerdConstraint = {
   max_constraint_width: 1,
 };
 
+const DEFAULT_APPLE_SYMBOLS_CONSTRAINT: NerdConstraint = {
+  // Apple Symbols tends to render UI arrows/icons smaller than terminal-native
+  // output. Use cover for closer parity.
+  size: "cover",
+  align_horizontal: "center",
+  align_vertical: "center",
+  max_constraint_width: 1,
+};
+
 const DEFAULT_EMOJI_CONSTRAINT: NerdConstraint = {
   // Match Ghostty's emoji treatment: maximize size, preserve aspect, center.
   size: "cover",
@@ -318,6 +327,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   const OVERLAY_SCROLLBAR_MARGIN_CSS_PX = 4;
   const OVERLAY_SCROLLBAR_INSET_Y_CSS_PX = 2;
   const OVERLAY_SCROLLBAR_MIN_THUMB_CSS_PX = 28;
+  const OVERLAY_SCROLLBAR_CAP_SUPERSAMPLE = 8;
 
   let paused = false;
   let backend = "none";
@@ -717,27 +727,66 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     const y0 = Math.round(y);
     const width = Math.max(1, Math.round(w));
     const height = Math.max(1, Math.round(h));
-    const radius = Math.min(Math.floor(width * 0.5), Math.floor(height * 0.5));
+    const radius = Math.min(width * 0.5, height * 0.5);
     if (radius <= 0) {
       pushRectBox(out, x0, y0, width, height, color);
       return;
     }
-    const middleH = height - radius * 2;
+
+    const capRows = Math.min(height, Math.max(1, Math.ceil(radius)));
+    const middleStart = capRows;
+    const middleEnd = Math.max(middleStart, height - capRows);
+    const middleH = middleEnd - middleStart;
     if (middleH > 0) {
-      pushRectBox(out, x0, y0 + radius, width, middleH, color);
+      pushRectBox(out, x0, y0 + middleStart, width, middleH, color);
     }
+
     const radiusSq = radius * radius;
-    const maxInset = Math.floor((width - 1) * 0.5);
-    for (let row = 0; row < radius; row += 1) {
-      const dy = radius - row - 0.5;
-      const inset = Math.min(
-        maxInset,
-        Math.max(0, Math.ceil(radius - Math.sqrt(Math.max(0, radiusSq - dy * dy)))),
-      );
-      const rowW = width - inset * 2;
-      if (rowW <= 0) continue;
-      pushRectBox(out, x0 + inset, y0 + row, rowW, 1, color);
-      pushRectBox(out, x0 + inset, y0 + height - 1 - row, rowW, 1, color);
+    const centerX = width * 0.5;
+    const topCenterY = radius;
+    const bottomCenterY = height - radius;
+    const samplesPerAxis = Math.max(1, OVERLAY_SCROLLBAR_CAP_SUPERSAMPLE | 0);
+    const totalSamples = samplesPerAxis * samplesPerAxis;
+    const invSamples = 1 / totalSamples;
+    const alphaBase = color[3];
+    const alphaEpsilon = 1 / 255;
+
+    const sampleCapPixelCoverage = (localX: number, localY: number, centerY: number) => {
+      let hits = 0;
+      for (let sy = 0; sy < samplesPerAxis; sy += 1) {
+        const sampleY = localY + (sy + 0.5) / samplesPerAxis;
+        for (let sx = 0; sx < samplesPerAxis; sx += 1) {
+          const sampleX = localX + (sx + 0.5) / samplesPerAxis;
+          const dx = sampleX - centerX;
+          const dy = sampleY - centerY;
+          if (dx * dx + dy * dy <= radiusSq) hits += 1;
+        }
+      }
+      return hits * invSamples;
+    };
+
+    for (let row = 0; row < capRows; row += 1) {
+      const topY = y0 + row;
+      const bottomY = y0 + height - 1 - row;
+      for (let col = 0; col < width; col += 1) {
+        const coverageTop = sampleCapPixelCoverage(col, row, topCenterY);
+        if (coverageTop > 0) {
+          const alpha = alphaBase * coverageTop;
+          if (alpha > alphaEpsilon) {
+            out.push(x0 + col, topY, 1, 1, color[0], color[1], color[2], alpha);
+          }
+        }
+        if (bottomY !== topY) {
+          const localBottomY = height - 1 - row;
+          const coverageBottom = sampleCapPixelCoverage(col, localBottomY, bottomCenterY);
+          if (coverageBottom > 0) {
+            const alpha = alphaBase * coverageBottom;
+            if (alpha > alphaEpsilon) {
+              out.push(x0 + col, bottomY, 1, 1, color[0], color[1], color[2], alpha);
+            }
+          }
+        }
+      }
     }
   }
 
@@ -4274,16 +4323,20 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     return 0;
   }
 
-  function stylePreferenceFromFlags(bold: boolean, italic: boolean) {
+function stylePreferenceFromFlags(bold: boolean, italic: boolean) {
     if (bold && italic) return "bold_italic";
     if (bold) return "bold";
     if (italic) return "italic";
-    return "regular";
-  }
+  return "regular";
+}
 
-  function fontEntryHasBoldStyle(entry: FontEntry | undefined | null) {
-    return !!entry && /\bbold\b/i.test(entry.label ?? "");
-  }
+function isAppleSymbolsFont(entry: FontEntry | undefined | null) {
+  return !!entry && /\bapple symbols\b/i.test(entry.label ?? "");
+}
+
+function fontEntryHasBoldStyle(entry: FontEntry | undefined | null) {
+  return !!entry && /\bbold\b/i.test(entry.label ?? "");
+}
 
   function fontEntryHasItalicStyle(entry: FontEntry | undefined | null) {
     return !!entry && /\b(italic|oblique)\b/i.test(entry.label ?? "");
@@ -5420,9 +5473,11 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
               glyph.yOffset * itemScale;
             if (!glyphConstrained && symbolLike && item.cp) {
               const nerdConstraint = resolveSymbolConstraint(item.cp);
+              const defaultConstraint = isAppleSymbolsFont(entry)
+                ? DEFAULT_APPLE_SYMBOLS_CONSTRAINT
+                : DEFAULT_SYMBOL_CONSTRAINT;
               const constraint =
-                nerdConstraint ??
-                (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT);
+                nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : defaultConstraint);
               const rowY = item.baseY - yPad - baselineOffset;
               const constraintWidth = Math.max(
                 1,
@@ -6634,9 +6689,11 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
               glyph.yOffset * itemScale;
             if (!glyphConstrained && symbolLike && item.cp) {
               const nerdConstraint = resolveSymbolConstraint(item.cp);
+              const defaultConstraint = isAppleSymbolsFont(entry)
+                ? DEFAULT_APPLE_SYMBOLS_CONSTRAINT
+                : DEFAULT_SYMBOL_CONSTRAINT;
               const constraint =
-                nerdConstraint ??
-                (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT);
+                nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : defaultConstraint);
               const rowY = item.baseY - yPad - baselineOffset;
               const constraintWidth = Math.max(
                 1,

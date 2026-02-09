@@ -49965,6 +49965,12 @@ var DEFAULT_SYMBOL_CONSTRAINT = {
   align_vertical: "center",
   max_constraint_width: 1
 };
+var DEFAULT_APPLE_SYMBOLS_CONSTRAINT = {
+  size: "cover",
+  align_horizontal: "center",
+  align_vertical: "center",
+  max_constraint_width: 1
+};
 var DEFAULT_EMOJI_CONSTRAINT = {
   size: "cover",
   align_horizontal: "center",
@@ -50075,6 +50081,7 @@ function createResttyApp(options) {
   const OVERLAY_SCROLLBAR_MARGIN_CSS_PX = 4;
   const OVERLAY_SCROLLBAR_INSET_Y_CSS_PX = 2;
   const OVERLAY_SCROLLBAR_MIN_THUMB_CSS_PX = 28;
+  const OVERLAY_SCROLLBAR_CAP_SUPERSAMPLE = 8;
   let paused = false;
   let backend = "none";
   let preferredRenderer = options.renderer ?? "auto";
@@ -50397,25 +50404,63 @@ function createResttyApp(options) {
     const y02 = Math.round(y);
     const width = Math.max(1, Math.round(w));
     const height = Math.max(1, Math.round(h));
-    const radius = Math.min(Math.floor(width * 0.5), Math.floor(height * 0.5));
+    const radius = Math.min(width * 0.5, height * 0.5);
     if (radius <= 0) {
       pushRectBox(out, x02, y02, width, height, color);
       return;
     }
-    const middleH = height - radius * 2;
+    const capRows = Math.min(height, Math.max(1, Math.ceil(radius)));
+    const middleStart = capRows;
+    const middleEnd = Math.max(middleStart, height - capRows);
+    const middleH = middleEnd - middleStart;
     if (middleH > 0) {
-      pushRectBox(out, x02, y02 + radius, width, middleH, color);
+      pushRectBox(out, x02, y02 + middleStart, width, middleH, color);
     }
     const radiusSq = radius * radius;
-    const maxInset = Math.floor((width - 1) * 0.5);
-    for (let row = 0;row < radius; row += 1) {
-      const dy = radius - row - 0.5;
-      const inset = Math.min(maxInset, Math.max(0, Math.ceil(radius - Math.sqrt(Math.max(0, radiusSq - dy * dy)))));
-      const rowW = width - inset * 2;
-      if (rowW <= 0)
-        continue;
-      pushRectBox(out, x02 + inset, y02 + row, rowW, 1, color);
-      pushRectBox(out, x02 + inset, y02 + height - 1 - row, rowW, 1, color);
+    const centerX = width * 0.5;
+    const topCenterY = radius;
+    const bottomCenterY = height - radius;
+    const samplesPerAxis = Math.max(1, OVERLAY_SCROLLBAR_CAP_SUPERSAMPLE | 0);
+    const totalSamples = samplesPerAxis * samplesPerAxis;
+    const invSamples = 1 / totalSamples;
+    const alphaBase = color[3];
+    const alphaEpsilon = 1 / 255;
+    const sampleCapPixelCoverage = (localX, localY, centerY) => {
+      let hits = 0;
+      for (let sy = 0;sy < samplesPerAxis; sy += 1) {
+        const sampleY = localY + (sy + 0.5) / samplesPerAxis;
+        for (let sx = 0;sx < samplesPerAxis; sx += 1) {
+          const sampleX = localX + (sx + 0.5) / samplesPerAxis;
+          const dx = sampleX - centerX;
+          const dy = sampleY - centerY;
+          if (dx * dx + dy * dy <= radiusSq)
+            hits += 1;
+        }
+      }
+      return hits * invSamples;
+    };
+    for (let row = 0;row < capRows; row += 1) {
+      const topY = y02 + row;
+      const bottomY = y02 + height - 1 - row;
+      for (let col = 0;col < width; col += 1) {
+        const coverageTop = sampleCapPixelCoverage(col, row, topCenterY);
+        if (coverageTop > 0) {
+          const alpha = alphaBase * coverageTop;
+          if (alpha > alphaEpsilon) {
+            out.push(x02 + col, topY, 1, 1, color[0], color[1], color[2], alpha);
+          }
+        }
+        if (bottomY !== topY) {
+          const localBottomY = height - 1 - row;
+          const coverageBottom = sampleCapPixelCoverage(col, localBottomY, bottomCenterY);
+          if (coverageBottom > 0) {
+            const alpha = alphaBase * coverageBottom;
+            if (alpha > alphaEpsilon) {
+              out.push(x02 + col, bottomY, 1, 1, color[0], color[1], color[2], alpha);
+            }
+          }
+        }
+      }
     }
   }
   function appendOverlayScrollbar(overlayData, total, offset, len) {
@@ -53480,6 +53525,9 @@ function createResttyApp(options) {
       return "italic";
     return "regular";
   }
+  function isAppleSymbolsFont(entry) {
+    return !!entry && /\bapple symbols\b/i.test(entry.label ?? "");
+  }
   function fontEntryHasBoldStyle(entry) {
     return !!entry && /\bbold\b/i.test(entry.label ?? "");
   }
@@ -54463,7 +54511,8 @@ function createResttyApp(options) {
             let y = item.baseY + baselineAdjust - metrics.bearingY * bitmapScale - glyph.yOffset * itemScale;
             if (!glyphConstrained && symbolLike && item.cp) {
               const nerdConstraint = resolveSymbolConstraint(item.cp);
-              const constraint = nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT);
+              const defaultConstraint = isAppleSymbolsFont(entry) ? DEFAULT_APPLE_SYMBOLS_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT;
+              const constraint = nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : defaultConstraint);
               const rowY = item.baseY - yPad - baselineOffset;
               const constraintWidth = Math.max(1, item.constraintWidth ?? Math.round(maxWidth / cellW));
               const adjusted = constrainGlyphBox({
@@ -55429,7 +55478,8 @@ function createResttyApp(options) {
             let y = item.baseY + baselineAdjust - metrics.bearingY * bitmapScale - glyph.yOffset * itemScale;
             if (!glyphConstrained && symbolLike && item.cp) {
               const nerdConstraint = resolveSymbolConstraint(item.cp);
-              const constraint = nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT);
+              const defaultConstraint = isAppleSymbolsFont(entry) ? DEFAULT_APPLE_SYMBOLS_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT;
+              const constraint = nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : defaultConstraint);
               const rowY = item.baseY - yPad - baselineOffset;
               const constraintWidth = Math.max(1, item.constraintWidth ?? Math.round(maxWidth / cellW));
               const adjusted = constrainGlyphBox({
@@ -58733,5 +58783,5 @@ if (firstState) {
 }
 queueResizeAllPanes();
 
-//# debugId=53CE2A9E2B50510264756E2164756E21
+//# debugId=AC2AE0613D7D28EE64756E2164756E21
 //# sourceMappingURL=app.js.map
