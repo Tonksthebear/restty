@@ -90,6 +90,30 @@ export function updateImePosition(
   imeInput.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
 }
 
+/** Resolve a visible IME anchor from cursor coordinates, clamped to current viewport bounds. */
+export function resolveImeAnchor(
+  cursor: {
+    row: number;
+    col: number;
+    wideTail?: boolean;
+  } | null,
+  cols: number,
+  rows: number,
+): CursorPosition | null {
+  if (!cursor) return null;
+  const maxCol = Math.max(0, Math.floor(cols) - 1);
+  const maxRow = Math.max(0, Math.floor(rows) - 1);
+  let col = Number.isFinite(cursor.col) ? Math.floor(cursor.col) : 0;
+  if (cursor.wideTail && col > 0) {
+    col -= 1;
+  }
+  const row = Number.isFinite(cursor.row) ? Math.floor(cursor.row) : 0;
+  return {
+    col: Math.max(0, Math.min(maxCol, col)),
+    row: Math.max(0, Math.min(maxRow, row)),
+  };
+}
+
 /**
  * Sync hidden IME input typography with terminal sizing so OS preedit/candidate UI
  * uses the same visual scale as the terminal text.

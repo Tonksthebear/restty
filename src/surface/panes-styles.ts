@@ -103,8 +103,17 @@ body.is-resizing-split {
   position: fixed;
   left: 0;
   top: 0;
-  width: 1px;
-  height: 1px;
+  width: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  overflow: hidden;
+  resize: none;
   opacity: 0;
   pointer-events: none;
 }

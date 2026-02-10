@@ -1,5 +1,5 @@
 import { expect, mock, test } from "bun:test";
-import type { ResttyPlugin } from "../src/app/restty";
+import type { ResttyPlugin } from "../src/surface/restty";
 
 type FakePane = {
   id: number;
@@ -244,7 +244,7 @@ mock.module("../src/surface/pane-app-manager", () => ({
   createResttyAppPaneManager: (options: any) => createFakeManager(options),
 }));
 
-const { RESTTY_PLUGIN_API_VERSION, Restty } = await import("../src/app/restty");
+const { RESTTY_PLUGIN_API_VERSION, Restty } = await import("../src/surface/restty");
 
 function createRestty(): InstanceType<typeof Restty> {
   return new Restty({

@@ -5,7 +5,7 @@ import {
   isSymbolFont,
   pickFontIndexForText,
 } from "../src/fonts";
-import { DEFAULT_FONT_SOURCES } from "../src/app/font-sources";
+import { DEFAULT_FONT_SOURCES } from "../src/runtime/font-sources";
 
 function makeFont(codepoints: number[]) {
   const glyphSet = new Set(codepoints);

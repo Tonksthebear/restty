@@ -9,7 +9,7 @@ restty has three main layers:
 - Terminal core (`src/wasm/`): WASM wrapper around `libghostty-vt`.
 - Renderer (`src/renderer/`): WebGPU first, WebGL2 fallback.
 
-`src/app/` coordinates those layers and exposes the ergonomic `Restty` API.
+`src/surface/` coordinates those layers and exposes the ergonomic `Restty` API.
 
 ## Startup flow
 
@@ -32,7 +32,7 @@ restty has three main layers:
 
 ## Input flow (browser -> terminal/PTY)
 
-1. Keyboard, mouse, IME, and clipboard events are captured in `src/app/index.ts`.
+1. Keyboard, mouse, IME, and clipboard events are captured in `src/runtime/create-runtime.ts`.
 2. `src/input/` encodes key/mouse protocol sequences.
 3. Encoded bytes are sent to PTY when connected.
 4. If no PTY is connected, text can still be written to WASM for local/demo usage.

@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { readPastePayloadFromDataTransfer } from "../src/app/clipboard-paste";
+import { readPastePayloadFromDataTransfer } from "../src/runtime/clipboard-paste";
 
 type MockDataTransfer = {
   getData: (type: string) => string;

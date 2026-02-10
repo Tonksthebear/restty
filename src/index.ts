@@ -1,6 +1,11 @@
 // restty public API - high-level integration first.
 
-export { RESTTY_PLUGIN_API_VERSION, Restty, ResttyPaneHandle, createRestty } from "./surface/restty";
+export {
+  RESTTY_PLUGIN_API_VERSION,
+  Restty,
+  ResttyPaneHandle,
+  createRestty,
+} from "./surface/restty";
 export type {
   ResttyOptions,
   ResttyPaneApi,

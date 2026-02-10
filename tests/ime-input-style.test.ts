@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { DEFAULT_IME_FONT_FAMILY, syncImeInputTypography } from "../src/ime";
+import { DEFAULT_IME_FONT_FAMILY, resolveImeAnchor, syncImeInputTypography } from "../src/ime";
 
 function createFakeImeInput(): HTMLInputElement {
   return {
@@ -31,4 +31,17 @@ test("syncImeInputTypography clamps font size to supported range", () => {
 
 test("syncImeInputTypography safely ignores null input", () => {
   expect(() => syncImeInputTypography(null, 18)).not.toThrow();
+});
+
+test("resolveImeAnchor clamps row/col into viewport bounds", () => {
+  expect(resolveImeAnchor({ row: 300, col: -6 }, 80, 24)).toEqual({ row: 23, col: 0 });
+  expect(resolveImeAnchor({ row: 7, col: 9 }, 80, 24)).toEqual({ row: 7, col: 9 });
+});
+
+test("resolveImeAnchor backs up wide-tail cursor and clamps", () => {
+  expect(resolveImeAnchor({ row: 5, col: 0, wideTail: true }, 80, 24)).toEqual({ row: 5, col: 0 });
+  expect(resolveImeAnchor({ row: 5, col: 12, wideTail: true }, 80, 24)).toEqual({
+    row: 5,
+    col: 11,
+  });
 });

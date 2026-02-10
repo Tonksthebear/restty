@@ -53,6 +53,7 @@ import {
   PREEDIT_FG,
   PREEDIT_UL,
   PREEDIT_CARET,
+  resolveImeAnchor,
   syncImeInputTypography,
 } from "../ime";
 import {
@@ -447,8 +448,17 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     style.position = "fixed";
     style.left = "0";
     style.top = "0";
-    style.width = "1px";
-    style.height = "1px";
+    style.width = "0";
+    style.height = "0";
+    style.padding = "0";
+    style.margin = "0";
+    style.border = "0";
+    style.outline = "none";
+    style.background = "transparent";
+    style.color = "transparent";
+    style.caretColor = "transparent";
+    style.overflow = "hidden";
+    style.resize = "none";
     style.opacity = "0";
     style.pointerEvents = "none";
     syncImeInputTypography(imeInput, fontConfig.sizePx);
@@ -4219,6 +4229,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       }
       cursorCell = { row, col, wide };
     }
+    const cursorImeAnchor = resolveImeAnchor(cursorPos, cols, rows);
     if (dbgEl && wasmExports && wasmHandle) {
       const cx = wasmExports.restty_debug_cursor_x
         ? wasmExports.restty_debug_cursor_x(wasmHandle)
@@ -4265,8 +4276,8 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     const underlineOffsetPx = -underlinePosition * primaryScale;
     const underlineThicknessPx = Math.max(1, Math.ceil(underlineThickness * primaryScale));
 
-    if (cursorPos && cursorStyle === null) {
-      updateImePosition({ row: cursorPos.row, col: cursorPos.col }, cellW, cellH);
+    if (cursorImeAnchor) {
+      updateImePosition(cursorImeAnchor, cellW, cellH);
     }
 
     const bgData = [];
@@ -4648,8 +4659,8 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       noteColorGlyphText(preeditEntry, preeditText, shaped);
       const glyphSet = getGlyphSet(preeditFontIndex);
       for (const glyph of shaped.glyphs) glyphSet.add(glyph.glyphId);
-      const preeditRow = cursorCell?.row ?? cursorPos?.row ?? cursor.row;
-      const preeditCol = cursorCell?.col ?? cursorPos?.col ?? cursor.col;
+      const preeditRow = cursorCell?.row ?? cursorImeAnchor?.row ?? cursor.row;
+      const preeditCol = cursorCell?.col ?? cursorImeAnchor?.col ?? cursor.col;
       const baseY = preeditRow * cellH + yPad + baselineOffset;
       const x = preeditCol * cellW;
       const preeditScale = scaleByFont[preeditFontIndex] ?? primaryScale;
@@ -4984,7 +4995,6 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
         const y = cursorRow * cellH;
         const cursorColor = cursor?.color ? decodePackedRGBA(cursor.color) : cursorFallback;
         const cursorThicknessPx = underlineThicknessPx;
-        updateImePosition({ row: cursorRow, col: cursorCol }, cellW, cellH);
         if (cursorStyle === 0) {
           pushRect(fgRectData, x, y, cursorWidth, cellH, cursorColor);
         } else if (cursorStyle === 1) {
@@ -5391,6 +5401,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       }
       cursorCell = { row, col, wide };
     }
+    const cursorImeAnchor = resolveImeAnchor(cursorPos, cols, rows);
 
     const cellW = gridState.cellW || canvas.width / cols;
     const cellH = gridState.cellH || canvas.height / rows;
@@ -5409,8 +5420,8 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     const underlineOffsetPx = -underlinePosition * primaryScale;
     const underlineThicknessPx = Math.max(1, Math.ceil(underlineThickness * primaryScale));
 
-    if (cursorPos && cursorStyle === null) {
-      updateImePosition({ row: cursorPos.row, col: cursorPos.col }, cellW, cellH);
+    if (cursorImeAnchor) {
+      updateImePosition(cursorImeAnchor, cellW, cellH);
     }
 
     const bgData: number[] = [];
@@ -5793,8 +5804,8 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       noteColorGlyphText(preeditEntry, preeditText, shaped);
       const glyphSet = getGlyphSet(preeditFontIndex);
       for (const glyph of shaped.glyphs) glyphSet.add(glyph.glyphId);
-      const preeditRow = cursorCell?.row ?? cursorPos?.row ?? cursor.row;
-      const preeditCol = cursorCell?.col ?? cursorPos?.col ?? cursor.col;
+      const preeditRow = cursorCell?.row ?? cursorImeAnchor?.row ?? cursor.row;
+      const preeditCol = cursorCell?.col ?? cursorImeAnchor?.col ?? cursor.col;
       const baseY = preeditRow * cellH + yPad + baselineOffset;
       const x = preeditCol * cellW;
       const preeditScale = scaleByFont[preeditFontIndex] ?? primaryScale;
@@ -5901,7 +5912,6 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
         const y = cursorRow * cellH;
         const cursorColor = cursor?.color ? decodePackedRGBA(cursor.color) : cursorFallback;
         const cursorThicknessPx = underlineThicknessPx;
-        updateImePosition({ row: cursorRow, col: cursorCol }, cellW, cellH);
         if (cursorStyle === 0) {
           pushRect(fgRectData, x, y, cursorWidth, cellH, cursorColor);
         } else if (cursorStyle === 1) {

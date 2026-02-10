@@ -35,7 +35,8 @@
 - `src/fonts/` font loading and fallback/font-metadata helpers.
 - `src/input/` key/mouse encoding and output filtering.
 - `src/pty/` websocket PTY connection helpers.
-- `src/app/` high-level app integration (`createResttyApp`).
+- `src/surface/` high-level orchestration and `Restty` API.
+- `src/runtime/` terminal runtime implementation (`createResttyApp`).
 - `docs/internals/` internal architecture docs.
 
 ## Assumptions
