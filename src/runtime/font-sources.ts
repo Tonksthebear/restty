@@ -96,6 +96,21 @@ export const DEFAULT_FONT_SOURCES: ResttyFontSource[] = [
   },
   {
     type: "local",
+    matchers: [
+      "noto sans canadian aboriginal",
+      "notosanscanadianaboriginal",
+      "euphemia ucas",
+      "euphemiaucas",
+    ],
+    label: "Noto Sans Canadian Aboriginal / Euphemia UCAS",
+  },
+  {
+    type: "url",
+    url: "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansCanadianAboriginal/NotoSansCanadianAboriginal-Regular.ttf",
+    label: "Noto Sans Canadian Aboriginal",
+  },
+  {
+    type: "local",
     matchers: ["apple color emoji", "applecoloremoji"],
     label: "Apple Color Emoji",
   },

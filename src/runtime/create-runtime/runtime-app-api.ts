@@ -366,6 +366,11 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
       const canvas = getCanvas();
       return active === canvas || (imeInput ? active === imeInput : false);
     };
+    const ensureImeInputFocus = () => {
+      if (!imeInput || typeof document === "undefined") return;
+      if (document.activeElement === imeInput) return;
+      imeInput.focus({ preventScroll: true });
+    };
 
     const isMacInputSourceShortcut = (event: KeyboardEvent) =>
       isMacPlatform &&
@@ -406,9 +411,13 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (isMacInputSourceShortcut(event)) return;
+      if (isMacInputSourceShortcut(event)) {
+        if (hasInputFocus()) ensureImeInputFocus();
+        return;
+      }
       if (shouldSkipKeyEvent(event)) return;
       if (!hasInputFocus()) return;
+      ensureImeInputFocus();
       writeState({ isFocused: true });
       const shared = readState();
       if (!shared.wasmReady || !shared.wasmHandle) return;

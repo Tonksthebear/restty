@@ -89,12 +89,8 @@ export function bindPointerEvents(options: BindPointerEventsOptions) {
 
   const shouldRoutePointerToAppMouse = (shiftKey: boolean) => {
     if (shiftKey) return false;
-    if (!inputHandler.isMouseActive()) return false;
-    return inputHandler.isAltScreen ? inputHandler.isAltScreen() : false;
+    return inputHandler.isMouseActive();
   };
-
-  const shouldPreferLocalPrimarySelection = (event: PointerEvent) =>
-    !isTouchPointer(event) && event.button === 0 && !event.altKey;
 
   canvas.style.touchAction =
     touchSelectionMode === "long-press" || touchSelectionMode === "drag"
@@ -128,7 +124,6 @@ export function bindPointerEvents(options: BindPointerEventsOptions) {
 
     if (
       shouldRoutePointerToAppMouse(event.shiftKey) &&
-      !shouldPreferLocalPrimarySelection(event) &&
       inputHandler.sendMouseEvent("down", event)
     ) {
       clearPendingDesktopSelection();
@@ -289,7 +284,6 @@ export function bindPointerEvents(options: BindPointerEventsOptions) {
     updateCanvasCursor,
     markNeedsRender,
     shouldRoutePointerToAppMouse,
-    shouldPreferLocalPrimarySelection,
     linkState,
     updateLinkHover,
   });

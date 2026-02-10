@@ -161,10 +161,16 @@ export function createLifecycleCanvasHandlers(deps: LifecycleThemeSizeDeps) {
     const canvas = deps.getCanvas();
     canvas.focus({ preventScroll: true });
     if (!deps.imeInput) return;
-    deps.imeInput.focus({ preventScroll: true });
+    const focusImeInput = () => {
+      deps.imeInput?.focus({ preventScroll: true });
+    };
+    focusImeInput();
     if (typeof document !== "undefined" && document.activeElement !== deps.imeInput) {
       requestAnimationFrame(() => {
-        if (document.activeElement === canvas) deps.imeInput?.focus({ preventScroll: true });
+        focusImeInput();
+        if (document.activeElement !== deps.imeInput) {
+          setTimeout(focusImeInput, 0);
+        }
       });
     }
   }

@@ -239,11 +239,19 @@ export function createRuntimeInteraction(
     cellH: number,
   ) => {
     if (!imeInput || !cursor) return;
-    const rect = getCanvas().getBoundingClientRect();
-    const scale = getCurrentDpr() || 1;
-    const x = rect.left + cursor.col * (cellW / scale);
-    const y = rect.top + cursor.row * (cellH / scale);
-    imeInput.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+    const canvas = getCanvas();
+    const rect = canvas.getBoundingClientRect();
+    const { cols, rows } = getGridState();
+    const fallbackScale = getCurrentDpr() || 1;
+    const scaleX = rect.width > 0 ? canvas.width / rect.width : fallbackScale;
+    const scaleY = rect.height > 0 ? canvas.height / rect.height : fallbackScale;
+    const cssCellW = cellW > 0 ? cellW / Math.max(1e-6, scaleX) : cols > 0 ? rect.width / cols : 1;
+    const cssCellH = cellH > 0 ? cellH / Math.max(1e-6, scaleY) : rows > 0 ? rect.height / rows : 1;
+    const x = rect.left + cursor.col * cssCellW;
+    const y = rect.top + cursor.row * cssCellH;
+    imeInput.style.transform = "none";
+    imeInput.style.left = `${x}px`;
+    imeInput.style.top = `${y}px`;
   };
 
   const syncImeSelection = () => {

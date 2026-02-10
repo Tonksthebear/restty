@@ -2,6 +2,10 @@ import { expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { isSymbolCp } from "../src/renderer/shapes";
+import {
+  isRenderSymbolLike,
+  resolveSymbolConstraint,
+} from "../src/runtime/create-app-symbols";
 
 test("symbol-like classification follows Ghostty's precomputed table", () => {
   expect(isSymbolCp(0x2192)).toBe(true); // →
@@ -55,4 +59,15 @@ test("render path uses generic symbol handling without per-codepoint override ta
   expect(symbolSource.includes('size: "cover"')).toBe(true);
   const renderSymbolChecks = appSource.match(/const symbolLike = isRenderSymbolLike\(cp\);/g) ?? [];
   expect(renderSymbolChecks.length).toBe(2);
+});
+
+test("symbol constraints remain table-driven without per-codepoint overrides", () => {
+  const symbolSource = readFileSync(
+    join(process.cwd(), "src/runtime/create-app-symbols.ts"),
+    "utf8",
+  );
+  expect(symbolSource.includes("cp === 0x15e3")).toBe(false);
+  expect(symbolSource.includes("RENDERER_SYMBOL_FALLBACK_CODEPOINTS")).toBe(false);
+  expect(isRenderSymbolLike(0x15e3)).toBe(false);
+  expect(resolveSymbolConstraint(0x15e3)).toBeNull();
 });

@@ -71,6 +71,8 @@ export function createRuntimeReporting(options: CreateRuntimeReportingOptions) {
     if (!cursor) return null;
     let col = Number(cursor.col);
     let row = Number(cursor.row);
+    if (!Number.isFinite(col)) col = 0;
+    if (!Number.isFinite(row)) row = 0;
     const render = options.getLastRenderState();
     const cols = render?.cols ?? 0;
     const rows = render?.rows ?? 0;
@@ -97,6 +99,9 @@ export function createRuntimeReporting(options: CreateRuntimeReportingOptions) {
     if (cols > 0 && rows > 0) {
       col = Math.max(0, Math.min(cols - 1, Math.floor(col)));
       row = Math.max(0, Math.min(rows - 1, Math.floor(row)));
+    } else {
+      col = Math.max(0, Math.floor(col));
+      row = Math.max(0, Math.floor(row));
     }
     return { col, row, wideTail: cursor.wideTail === 1 };
   }

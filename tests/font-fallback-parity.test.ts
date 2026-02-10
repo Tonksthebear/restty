@@ -156,3 +156,20 @@ test("default local fallback includes robust Apple matcher aliases", () => {
   expect(appleEmoji?.matchers.includes("apple color emoji")).toBe(true);
   expect(appleEmoji?.matchers.includes("applecoloremoji")).toBe(true);
 });
+
+test("default font sources include canadian aboriginal fallback for syllabics", () => {
+  const canadianUrlIndex = DEFAULT_FONT_SOURCES.findIndex(
+    (source) =>
+      source.type === "url" && source.url.includes("NotoSansCanadianAboriginal-Regular.ttf"),
+  );
+  const canadianLocalSource = DEFAULT_FONT_SOURCES.find(
+    (source) =>
+      source.type === "local" &&
+      source.matchers.some((matcher) => matcher.includes("canadian aboriginal")),
+  );
+  expect(canadianUrlIndex).toBeGreaterThanOrEqual(0);
+  expect(canadianLocalSource).toBeTruthy();
+  if (canadianLocalSource?.type === "local") {
+    expect(canadianLocalSource.matchers.includes("euphemia ucas")).toBe(true);
+  }
+});

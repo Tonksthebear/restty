@@ -68,6 +68,8 @@ const FONT_URL_NERD_SYMBOLS =
 const FONT_URL_NOTO_SYMBOLS =
   "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansSymbols2/NotoSansSymbols2-Regular.ttf";
 const FONT_URL_SYMBOLA = "https://cdn.jsdelivr.net/gh/ChiefMikeK/ttf-symbola@master/Symbola.ttf";
+const FONT_URL_NOTO_CANADIAN_ABORIGINAL =
+  "https://cdn.jsdelivr.net/gh/notofonts/noto-fonts@main/unhinted/ttf/NotoSansCanadianAboriginal/NotoSansCanadianAboriginal-Regular.ttf";
 const FONT_URL_NOTO_COLOR_EMOJI =
   "https://cdn.jsdelivr.net/gh/googlefonts/noto-emoji@main/fonts/NotoColorEmoji.ttf";
 const FONT_URL_OPENMOJI =
@@ -233,6 +235,21 @@ function buildFontSourcesForSelection(value: string, localMatcher: string): Rest
     type: "url",
     label: "Symbola",
     url: FONT_URL_SYMBOLA,
+  });
+  sources.push({
+    type: "local",
+    label: "Noto Sans Canadian Aboriginal / Euphemia UCAS",
+    matchers: [
+      "noto sans canadian aboriginal",
+      "notosanscanadianaboriginal",
+      "euphemia ucas",
+      "euphemiaucas",
+    ],
+  });
+  sources.push({
+    type: "url",
+    label: "Noto Sans Canadian Aboriginal",
+    url: FONT_URL_NOTO_CANADIAN_ABORIGINAL,
   });
   sources.push({
     type: "local",

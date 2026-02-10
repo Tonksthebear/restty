@@ -25,7 +25,6 @@ type CreatePointerUpHandlerOptions = {
   updateCanvasCursor: () => void;
   markNeedsRender: () => void;
   shouldRoutePointerToAppMouse: (shiftKey: boolean) => boolean;
-  shouldPreferLocalPrimarySelection: (event: PointerEvent) => boolean;
   linkState: RuntimeLinkState;
   updateLinkHover: (cell: RuntimeCell | null) => void;
 };
@@ -48,7 +47,6 @@ export function createPointerUpHandler(options: CreatePointerUpHandlerOptions) {
     updateCanvasCursor,
     markNeedsRender,
     shouldRoutePointerToAppMouse,
-    shouldPreferLocalPrimarySelection,
     linkState,
     updateLinkHover,
   } = options;
@@ -118,7 +116,6 @@ export function createPointerUpHandler(options: CreatePointerUpHandlerOptions) {
     } else {
       if (
         shouldRoutePointerToAppMouse(event.shiftKey) &&
-        !shouldPreferLocalPrimarySelection(event) &&
         inputHandler.sendMouseEvent("up", event)
       ) {
         event.preventDefault();
