@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { loadResttyWasm } from "../src/wasm/runtime";
+import { loadResttyWasm } from "../src/wasm/runtime/restty-wasm";
 
 test("kitty graphics query returns OK", async () => {
   const wasm = await loadResttyWasm();

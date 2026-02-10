@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { OutputFilter } from "../src/input/output";
+import { OutputFilter } from "../src/input/output/index";
 
 test("output filter replies to XTVERSION query (CSI > q)", () => {
   const replies: string[] = [];

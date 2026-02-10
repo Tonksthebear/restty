@@ -1,0 +1,323 @@
+import type { ResttyManagedAppPane, ResttyManagedPaneStyleOptions } from "../pane-app-manager";
+import type { ResttyPaneManager, ResttyPaneSplitDirection } from "../panes-types";
+import { ResttyPaneHandle } from "../restty-pane-handle";
+import type { ResttyLifecycleHookPayload, ResttyPluginEvents } from "../restty-plugin-types";
+
+type ResttyPaneLookup = {
+  getPanes: () => ResttyManagedAppPane[];
+  getPaneById: (id: number) => ResttyManagedAppPane | null;
+  getActivePane: () => ResttyManagedAppPane | null;
+  getFocusedPane: () => ResttyManagedAppPane | null;
+};
+
+type ResttyLifecycleEmitter = {
+  runLifecycleHooks: (payload: ResttyLifecycleHookPayload) => void;
+  emitPluginEvent: <E extends keyof ResttyPluginEvents>(
+    event: E,
+    payload: ResttyPluginEvents[E],
+  ) => void;
+};
+
+export function requirePaneById(getPaneById: (id: number) => ResttyManagedAppPane | null, id: number): ResttyManagedAppPane {
+  const pane = getPaneById(id);
+  if (!pane) throw new Error(`Restty pane ${id} does not exist`);
+  return pane;
+}
+
+export function makePaneHandle(
+  getPaneById: (id: number) => ResttyManagedAppPane | null,
+  id: number,
+): ResttyPaneHandle {
+  return new ResttyPaneHandle(() => requirePaneById(getPaneById, id));
+}
+
+export function requireActivePaneHandle(
+  lookup: Pick<ResttyPaneLookup, "getActivePane" | "getPaneById">,
+): ResttyPaneHandle {
+  const pane = lookup.getActivePane();
+  if (!pane) {
+    throw new Error("Restty has no active pane. Create or focus a pane first.");
+  }
+  return makePaneHandle(lookup.getPaneById, pane.id);
+}
+
+export function panes(lookup: Pick<ResttyPaneLookup, "getPanes" | "getPaneById">): ResttyPaneHandle[] {
+  return lookup.getPanes().map((pane) => makePaneHandle(lookup.getPaneById, pane.id));
+}
+
+export function pane(
+  lookup: Pick<ResttyPaneLookup, "getPaneById">,
+  id: number,
+): ResttyPaneHandle | null {
+  if (!lookup.getPaneById(id)) return null;
+  return makePaneHandle(lookup.getPaneById, id);
+}
+
+export function activePane(
+  lookup: Pick<ResttyPaneLookup, "getActivePane" | "getPaneById">,
+): ResttyPaneHandle | null {
+  const active = lookup.getActivePane();
+  if (!active) return null;
+  return makePaneHandle(lookup.getPaneById, active.id);
+}
+
+export function focusedPane(
+  lookup: Pick<ResttyPaneLookup, "getFocusedPane" | "getPaneById">,
+): ResttyPaneHandle | null {
+  const focused = lookup.getFocusedPane();
+  if (!focused) return null;
+  return makePaneHandle(lookup.getPaneById, focused.id);
+}
+
+export function forEachPane(
+  lookup: Pick<ResttyPaneLookup, "getPanes" | "getPaneById">,
+  visitor: (pane: ResttyPaneHandle) => void,
+): void {
+  const all = lookup.getPanes();
+  for (let i = 0; i < all.length; i += 1) {
+    visitor(makePaneHandle(lookup.getPaneById, all[i].id));
+  }
+}
+
+export function createInitialPane(
+  paneManager: ResttyPaneManager<ResttyManagedAppPane>,
+  hooks: Pick<ResttyLifecycleEmitter, "runLifecycleHooks">,
+  options?: { focus?: boolean },
+): ResttyManagedAppPane {
+  hooks.runLifecycleHooks({ phase: "before", action: "create-initial-pane" });
+  const pane = paneManager.createInitialPane(options);
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "create-initial-pane",
+    paneId: pane.id,
+    ok: true,
+  });
+  return pane;
+}
+
+export function splitActivePane(
+  paneManager: ResttyPaneManager<ResttyManagedAppPane>,
+  lookup: Pick<ResttyPaneLookup, "getActivePane">,
+  hooks: Pick<ResttyLifecycleEmitter, "runLifecycleHooks">,
+  direction: ResttyPaneSplitDirection,
+): ResttyManagedAppPane | null {
+  const sourcePaneId = lookup.getActivePane()?.id ?? null;
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "split-active-pane",
+    paneId: sourcePaneId,
+    direction,
+  });
+  const pane = paneManager.splitActivePane(direction);
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "split-active-pane",
+    sourcePaneId: sourcePaneId ?? undefined,
+    createdPaneId: pane?.id ?? null,
+    direction,
+    ok: !!pane,
+  });
+  return pane;
+}
+
+export function splitPane(
+  paneManager: ResttyPaneManager<ResttyManagedAppPane>,
+  hooks: Pick<ResttyLifecycleEmitter, "runLifecycleHooks">,
+  id: number,
+  direction: ResttyPaneSplitDirection,
+): ResttyManagedAppPane | null {
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "split-pane",
+    paneId: id,
+    direction,
+  });
+  const pane = paneManager.splitPane(id, direction);
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "split-pane",
+    sourcePaneId: id,
+    createdPaneId: pane?.id ?? null,
+    direction,
+    ok: !!pane,
+  });
+  return pane;
+}
+
+export function closePane(
+  paneManager: ResttyPaneManager<ResttyManagedAppPane>,
+  hooks: Pick<ResttyLifecycleEmitter, "runLifecycleHooks">,
+  id: number,
+): boolean {
+  hooks.runLifecycleHooks({ phase: "before", action: "close-pane", paneId: id });
+  const ok = paneManager.closePane(id);
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "close-pane",
+    paneId: id,
+    ok,
+  });
+  return ok;
+}
+
+export function setActivePane(
+  paneManager: ResttyPaneManager<ResttyManagedAppPane>,
+  lookup: Pick<ResttyPaneLookup, "getActivePane">,
+  hooks: Pick<ResttyLifecycleEmitter, "runLifecycleHooks">,
+  id: number,
+  options?: { focus?: boolean },
+): void {
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "set-active-pane",
+    paneId: id,
+  });
+  paneManager.setActivePane(id, options);
+  const activePaneId = lookup.getActivePane()?.id ?? null;
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "set-active-pane",
+    paneId: activePaneId,
+    ok: activePaneId === id,
+  });
+}
+
+export function markPaneFocused(
+  paneManager: ResttyPaneManager<ResttyManagedAppPane>,
+  lookup: Pick<ResttyPaneLookup, "getFocusedPane">,
+  hooks: Pick<ResttyLifecycleEmitter, "runLifecycleHooks">,
+  id: number,
+  options?: { focus?: boolean },
+): void {
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "mark-pane-focused",
+    paneId: id,
+  });
+  paneManager.markPaneFocused(id, options);
+  const focusedPaneId = lookup.getFocusedPane()?.id ?? null;
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "mark-pane-focused",
+    paneId: focusedPaneId,
+    ok: focusedPaneId === id,
+  });
+}
+
+export function connectPty(
+  lookup: Pick<ResttyPaneLookup, "getActivePane" | "getPaneById">,
+  hooks: Pick<ResttyLifecycleEmitter, "runLifecycleHooks">,
+  url = "",
+): void {
+  const pane = requireActivePaneHandle(lookup);
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "connect-pty",
+    paneId: pane.id,
+  });
+  pane.connectPty(url);
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "connect-pty",
+    paneId: pane.id,
+    ok: true,
+  });
+}
+
+export function disconnectPty(
+  lookup: Pick<ResttyPaneLookup, "getActivePane" | "getPaneById">,
+  hooks: Pick<ResttyLifecycleEmitter, "runLifecycleHooks">,
+): void {
+  const pane = requireActivePaneHandle(lookup);
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "disconnect-pty",
+    paneId: pane.id,
+  });
+  pane.disconnectPty();
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "disconnect-pty",
+    paneId: pane.id,
+    ok: true,
+  });
+}
+
+export function resize(
+  lookup: Pick<ResttyPaneLookup, "getActivePane" | "getPaneById">,
+  hooks: ResttyLifecycleEmitter,
+  cols: number,
+  rows: number,
+): void {
+  const pane = requireActivePaneHandle(lookup);
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "resize",
+    paneId: pane.id,
+    cols,
+    rows,
+  });
+  pane.resize(cols, rows);
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "resize",
+    paneId: pane.id,
+    cols,
+    rows,
+    ok: true,
+  });
+  hooks.emitPluginEvent("pane:resized", { paneId: pane.id, cols, rows });
+}
+
+export function focus(
+  lookup: Pick<ResttyPaneLookup, "getActivePane" | "getPaneById">,
+  hooks: ResttyLifecycleEmitter,
+): void {
+  const pane = requireActivePaneHandle(lookup);
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "focus",
+    paneId: pane.id,
+  });
+  pane.focus();
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "focus",
+    paneId: pane.id,
+    ok: true,
+  });
+  hooks.emitPluginEvent("pane:focused", { paneId: pane.id });
+}
+
+export function blur(
+  lookup: Pick<ResttyPaneLookup, "getActivePane" | "getPaneById">,
+  hooks: ResttyLifecycleEmitter,
+): void {
+  const pane = requireActivePaneHandle(lookup);
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "blur",
+    paneId: pane.id,
+  });
+  pane.blur();
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "blur",
+    paneId: pane.id,
+    ok: true,
+  });
+  hooks.emitPluginEvent("pane:blurred", { paneId: pane.id });
+}
+
+export function getPaneStyleOptions(
+  paneManager: ResttyPaneManager<ResttyManagedAppPane>,
+): Readonly<Required<ResttyManagedPaneStyleOptions>> {
+  return paneManager.getStyleOptions();
+}
+
+export function setPaneStyleOptions(
+  paneManager: ResttyPaneManager<ResttyManagedAppPane>,
+  options: ResttyManagedPaneStyleOptions,
+): void {
+  paneManager.setStyleOptions(options);
+}

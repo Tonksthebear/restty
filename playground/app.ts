@@ -753,6 +753,28 @@ function connectPaneIfNeeded(pane: ResttyManagedAppPane) {
   pane.app.connectPty(getConnectUrl());
 }
 
+function applySavedThemeForPane(pane: ResttyManagedAppPane, state: PaneState) {
+  if (state.theme.selectValue) {
+    applyBuiltinThemeToPane(pane, state, state.theme.selectValue, state.theme.sourceLabel);
+    return;
+  }
+  if (!state.theme.theme) return;
+  applyThemeToPane(
+    pane,
+    state,
+    state.theme.theme,
+    state.theme.sourceLabel || "pane theme",
+    state.theme.selectValue,
+  );
+}
+
+async function initPaneApp(pane: ResttyManagedAppPane, state: PaneState) {
+  await pane.app.init();
+  applySavedThemeForPane(pane, state);
+  connectPaneIfNeeded(pane);
+  pane.canvas.focus({ preventScroll: true });
+}
+
 function applyThemeToPane(
   pane: ResttyManagedAppPane,
   state: PaneState,
@@ -883,22 +905,7 @@ restty = new Restty({
 
     state.demos = createDemoController(pane.app);
     pane.app.setMouseMode(state.mouseMode);
-
-    if (state.theme.selectValue) {
-      applyBuiltinThemeToPane(pane, state, state.theme.selectValue, state.theme.sourceLabel);
-    } else if (state.theme.theme) {
-      applyThemeToPane(
-        pane,
-        state,
-        state.theme.theme,
-        state.theme.sourceLabel || "pane theme",
-        state.theme.selectValue,
-      );
-    }
-
-    void pane.app.init().then(() => {
-      connectPaneIfNeeded(pane);
-    });
+    void initPaneApp(pane, state);
   },
   onPaneClosed: (pane) => {
     const state = paneStates.get(pane.id);
@@ -987,9 +994,7 @@ btnInit?.addEventListener("click", () => {
   if (!state) return;
   setPanePaused(pane.id, false);
   state.demos?.stop();
-  void pane.app.init().then(() => {
-    connectPaneIfNeeded(pane);
-  });
+  void initPaneApp(pane, state);
 });
 
 btnPause?.addEventListener("click", () => {

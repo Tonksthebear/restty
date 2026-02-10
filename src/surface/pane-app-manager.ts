@@ -1,16 +1,18 @@
 import {
-  createDefaultResttyPaneContextMenuItems,
-  createResttyPaneManager,
   type ResttyPaneStyleOptions,
   type ResttyPaneStylesOptions,
   type ResttyPaneContextMenuOptions,
   type ResttyPaneManager,
   type ResttyPaneShortcutsOptions,
   type ResttyPaneWithApp,
-} from "./panes";
-import { getDefaultResttyAppSession } from "./session";
+} from "./panes-types";
+import {
+  createDefaultResttyPaneContextMenuItems,
+} from "./panes/default-context-menu-items";
+import { createResttyPaneManager } from "./panes/manager";
+import { getDefaultResttyAppSession } from "../runtime/session";
 import { createResttyApp } from "./app-factory";
-import type { ResttyAppOptions, ResttyAppSession } from "./types";
+import type { ResttyAppOptions, ResttyAppSession } from "../runtime/types";
 
 /**
  * A pane created by the app pane manager, extending the base pane

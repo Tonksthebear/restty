@@ -9,119 +9,11 @@ var __export = (target, all) => {
     });
 };
 
-// src/renderer/box-drawing-map.ts
-var BOX_LINE_MAP = new Map([
-  [9472, [0, 1, 0, 1]],
-  [9473, [0, 2, 0, 2]],
-  [9474, [1, 0, 1, 0]],
-  [9475, [2, 0, 2, 0]],
-  [9484, [0, 1, 1, 0]],
-  [9485, [0, 2, 1, 0]],
-  [9486, [0, 1, 2, 0]],
-  [9487, [0, 2, 2, 0]],
-  [9488, [0, 0, 1, 1]],
-  [9489, [0, 0, 1, 2]],
-  [9490, [0, 0, 2, 1]],
-  [9491, [0, 0, 2, 2]],
-  [9492, [1, 1, 0, 0]],
-  [9493, [1, 2, 0, 0]],
-  [9494, [2, 1, 0, 0]],
-  [9495, [2, 2, 0, 0]],
-  [9496, [1, 0, 0, 1]],
-  [9497, [1, 0, 0, 2]],
-  [9498, [2, 0, 0, 1]],
-  [9499, [2, 0, 0, 2]],
-  [9500, [1, 1, 1, 0]],
-  [9501, [1, 2, 1, 0]],
-  [9502, [2, 1, 1, 0]],
-  [9503, [1, 1, 2, 0]],
-  [9504, [2, 1, 2, 0]],
-  [9505, [2, 2, 1, 0]],
-  [9506, [1, 2, 2, 0]],
-  [9507, [2, 2, 2, 0]],
-  [9508, [1, 0, 1, 1]],
-  [9509, [1, 0, 1, 2]],
-  [9510, [2, 0, 1, 1]],
-  [9511, [1, 0, 2, 1]],
-  [9512, [2, 0, 2, 1]],
-  [9513, [2, 0, 1, 2]],
-  [9514, [1, 0, 2, 2]],
-  [9515, [2, 0, 2, 2]],
-  [9516, [0, 1, 1, 1]],
-  [9517, [0, 1, 1, 2]],
-  [9518, [0, 2, 1, 1]],
-  [9519, [0, 2, 1, 2]],
-  [9520, [0, 1, 2, 1]],
-  [9521, [0, 1, 2, 2]],
-  [9522, [0, 2, 2, 1]],
-  [9523, [0, 2, 2, 2]],
-  [9524, [1, 1, 0, 1]],
-  [9525, [1, 1, 0, 2]],
-  [9526, [1, 2, 0, 1]],
-  [9527, [1, 2, 0, 2]],
-  [9528, [2, 1, 0, 1]],
-  [9529, [2, 1, 0, 2]],
-  [9530, [2, 2, 0, 1]],
-  [9531, [2, 2, 0, 2]],
-  [9532, [1, 1, 1, 1]],
-  [9533, [1, 1, 1, 2]],
-  [9534, [1, 2, 1, 1]],
-  [9535, [1, 2, 1, 2]],
-  [9536, [2, 1, 1, 1]],
-  [9537, [1, 1, 2, 1]],
-  [9538, [2, 1, 2, 1]],
-  [9539, [2, 1, 1, 2]],
-  [9540, [2, 2, 1, 1]],
-  [9541, [1, 1, 2, 2]],
-  [9542, [1, 2, 2, 1]],
-  [9543, [2, 2, 1, 2]],
-  [9544, [1, 2, 2, 2]],
-  [9545, [2, 1, 2, 2]],
-  [9546, [2, 2, 2, 1]],
-  [9547, [2, 2, 2, 2]],
-  [9552, [0, 3, 0, 3]],
-  [9553, [3, 0, 3, 0]],
-  [9554, [0, 3, 1, 0]],
-  [9555, [0, 1, 3, 0]],
-  [9556, [0, 3, 3, 0]],
-  [9557, [0, 0, 1, 3]],
-  [9558, [0, 0, 3, 1]],
-  [9559, [0, 0, 3, 3]],
-  [9560, [1, 3, 0, 0]],
-  [9561, [3, 1, 0, 0]],
-  [9562, [3, 3, 0, 0]],
-  [9563, [1, 0, 0, 3]],
-  [9564, [3, 0, 0, 1]],
-  [9565, [3, 0, 0, 3]],
-  [9566, [1, 3, 1, 0]],
-  [9567, [3, 1, 3, 0]],
-  [9568, [3, 3, 3, 0]],
-  [9569, [1, 0, 1, 3]],
-  [9570, [3, 0, 3, 1]],
-  [9571, [3, 0, 3, 3]],
-  [9572, [0, 3, 1, 3]],
-  [9573, [0, 1, 3, 1]],
-  [9574, [0, 3, 3, 3]],
-  [9575, [1, 3, 0, 3]],
-  [9576, [3, 1, 0, 1]],
-  [9577, [3, 3, 0, 3]],
-  [9578, [1, 3, 1, 3]],
-  [9579, [3, 1, 3, 1]],
-  [9580, [3, 3, 3, 3]],
-  [9588, [0, 0, 0, 1]],
-  [9589, [1, 0, 0, 0]],
-  [9590, [0, 1, 0, 0]],
-  [9591, [0, 0, 1, 0]],
-  [9592, [0, 0, 0, 2]],
-  [9593, [2, 0, 0, 0]],
-  [9594, [0, 2, 0, 0]],
-  [9595, [0, 0, 2, 0]],
-  [9596, [0, 2, 0, 1]],
-  [9597, [1, 0, 2, 0]],
-  [9598, [0, 1, 0, 2]],
-  [9599, [2, 0, 1, 0]]
-]);
-
+// src/renderer/shapes/types.ts
+var BOX_STYLE_NONE = 0;
+var BOX_STYLE_LIGHT = 1;
+var BOX_STYLE_HEAVY = 2;
+var BOX_STYLE_DOUBLE = 3;
 // src/unicode/ghostty-symbol-ranges.ts
 var GHOSTTY_SYMBOL_RANGES = [
   [8592, 8703],
@@ -175,11 +67,7 @@ function isCodepointInRanges(cp, ranges) {
   return false;
 }
 
-// src/renderer/shapes.ts
-var BOX_STYLE_NONE = 0;
-var BOX_STYLE_LIGHT = 1;
-var BOX_STYLE_HEAVY = 2;
-var BOX_STYLE_DOUBLE = 3;
+// src/renderer/shapes/classify.ts
 function isSpaceCp(cp) {
   return cp === 0 || cp === 32 || cp === 8194;
 }
@@ -201,6 +89,7 @@ function isGraphicsElement(cp) {
 function isSymbolCp(cp) {
   return isSymbolLikeCodepoint(cp);
 }
+// src/renderer/shapes/geometry.ts
 function applyAlpha(color, alpha) {
   return [color[0], color[1], color[2], color[3] * alpha];
 }
@@ -227,6 +116,7 @@ function pushRectBox(out, x, y, w, h, color) {
     return;
   out.push(x0, y0, width, height, color[0], color[1], color[2], color[3]);
 }
+// src/renderer/shapes/block-elements.ts
 function fillFrac(out, x, y, cellW, cellH, fx0, fx1, fy0, fy1, color) {
   const px0 = x + cellW * fx0;
   const px1 = x + cellW * fx1;
@@ -347,294 +237,410 @@ function drawBlockElement(cp, x, y, cellW, cellH, color, out) {
       return false;
   }
 }
-function drawBoxDrawing(cp, x, y, cellW, cellH, color, out, boxThicknessPx) {
-  const hasBoxThickness = Number.isFinite(boxThicknessPx) && typeof boxThicknessPx === "number" && boxThicknessPx > 0;
-  const lightStroke = hasBoxThickness ? Math.max(1, Math.round(boxThicknessPx)) : Math.max(1, Math.floor(cellH / 16));
-  const heavyStroke = lightStroke * 2;
-  const spec = BOX_LINE_MAP.get(cp);
-  if (!spec) {
-    const light2 = lightStroke;
-    const heavy2 = heavyStroke;
-    const cellWInt2 = Math.max(1, Math.round(cellW));
-    const cellHInt2 = Math.max(1, Math.round(cellH));
-    const satSub2 = (a, b) => a > b ? a - b : 0;
-    const dashedH = (count, thickness, desiredGap) => {
-      const thickPx = Math.max(1, Math.round(thickness));
-      const gapCount = count;
-      if (cellWInt2 < count + gapCount) {
-        const y02 = y + Math.floor(satSub2(cellHInt2, thickPx) / 2);
-        pushRectBox(out, x, y02, cellWInt2, thickPx, color);
-        return;
+// src/renderer/box-drawing-map.ts
+var BOX_LINE_MAP = new Map([
+  [9472, [0, 1, 0, 1]],
+  [9473, [0, 2, 0, 2]],
+  [9474, [1, 0, 1, 0]],
+  [9475, [2, 0, 2, 0]],
+  [9484, [0, 1, 1, 0]],
+  [9485, [0, 2, 1, 0]],
+  [9486, [0, 1, 2, 0]],
+  [9487, [0, 2, 2, 0]],
+  [9488, [0, 0, 1, 1]],
+  [9489, [0, 0, 1, 2]],
+  [9490, [0, 0, 2, 1]],
+  [9491, [0, 0, 2, 2]],
+  [9492, [1, 1, 0, 0]],
+  [9493, [1, 2, 0, 0]],
+  [9494, [2, 1, 0, 0]],
+  [9495, [2, 2, 0, 0]],
+  [9496, [1, 0, 0, 1]],
+  [9497, [1, 0, 0, 2]],
+  [9498, [2, 0, 0, 1]],
+  [9499, [2, 0, 0, 2]],
+  [9500, [1, 1, 1, 0]],
+  [9501, [1, 2, 1, 0]],
+  [9502, [2, 1, 1, 0]],
+  [9503, [1, 1, 2, 0]],
+  [9504, [2, 1, 2, 0]],
+  [9505, [2, 2, 1, 0]],
+  [9506, [1, 2, 2, 0]],
+  [9507, [2, 2, 2, 0]],
+  [9508, [1, 0, 1, 1]],
+  [9509, [1, 0, 1, 2]],
+  [9510, [2, 0, 1, 1]],
+  [9511, [1, 0, 2, 1]],
+  [9512, [2, 0, 2, 1]],
+  [9513, [2, 0, 1, 2]],
+  [9514, [1, 0, 2, 2]],
+  [9515, [2, 0, 2, 2]],
+  [9516, [0, 1, 1, 1]],
+  [9517, [0, 1, 1, 2]],
+  [9518, [0, 2, 1, 1]],
+  [9519, [0, 2, 1, 2]],
+  [9520, [0, 1, 2, 1]],
+  [9521, [0, 1, 2, 2]],
+  [9522, [0, 2, 2, 1]],
+  [9523, [0, 2, 2, 2]],
+  [9524, [1, 1, 0, 1]],
+  [9525, [1, 1, 0, 2]],
+  [9526, [1, 2, 0, 1]],
+  [9527, [1, 2, 0, 2]],
+  [9528, [2, 1, 0, 1]],
+  [9529, [2, 1, 0, 2]],
+  [9530, [2, 2, 0, 1]],
+  [9531, [2, 2, 0, 2]],
+  [9532, [1, 1, 1, 1]],
+  [9533, [1, 1, 1, 2]],
+  [9534, [1, 2, 1, 1]],
+  [9535, [1, 2, 1, 2]],
+  [9536, [2, 1, 1, 1]],
+  [9537, [1, 1, 2, 1]],
+  [9538, [2, 1, 2, 1]],
+  [9539, [2, 1, 1, 2]],
+  [9540, [2, 2, 1, 1]],
+  [9541, [1, 1, 2, 2]],
+  [9542, [1, 2, 2, 1]],
+  [9543, [2, 2, 1, 2]],
+  [9544, [1, 2, 2, 2]],
+  [9545, [2, 1, 2, 2]],
+  [9546, [2, 2, 2, 1]],
+  [9547, [2, 2, 2, 2]],
+  [9552, [0, 3, 0, 3]],
+  [9553, [3, 0, 3, 0]],
+  [9554, [0, 3, 1, 0]],
+  [9555, [0, 1, 3, 0]],
+  [9556, [0, 3, 3, 0]],
+  [9557, [0, 0, 1, 3]],
+  [9558, [0, 0, 3, 1]],
+  [9559, [0, 0, 3, 3]],
+  [9560, [1, 3, 0, 0]],
+  [9561, [3, 1, 0, 0]],
+  [9562, [3, 3, 0, 0]],
+  [9563, [1, 0, 0, 3]],
+  [9564, [3, 0, 0, 1]],
+  [9565, [3, 0, 0, 3]],
+  [9566, [1, 3, 1, 0]],
+  [9567, [3, 1, 3, 0]],
+  [9568, [3, 3, 3, 0]],
+  [9569, [1, 0, 1, 3]],
+  [9570, [3, 0, 3, 1]],
+  [9571, [3, 0, 3, 3]],
+  [9572, [0, 3, 1, 3]],
+  [9573, [0, 1, 3, 1]],
+  [9574, [0, 3, 3, 3]],
+  [9575, [1, 3, 0, 3]],
+  [9576, [3, 1, 0, 1]],
+  [9577, [3, 3, 0, 3]],
+  [9578, [1, 3, 1, 3]],
+  [9579, [3, 1, 3, 1]],
+  [9580, [3, 3, 3, 3]],
+  [9588, [0, 0, 0, 1]],
+  [9589, [1, 0, 0, 0]],
+  [9590, [0, 1, 0, 0]],
+  [9591, [0, 0, 1, 0]],
+  [9592, [0, 0, 0, 2]],
+  [9593, [2, 0, 0, 0]],
+  [9594, [0, 2, 0, 0]],
+  [9595, [0, 0, 2, 0]],
+  [9596, [0, 2, 0, 1]],
+  [9597, [1, 0, 2, 0]],
+  [9598, [0, 1, 0, 2]],
+  [9599, [2, 0, 1, 0]]
+]);
+
+// src/renderer/shapes/box-drawing/dashed-lines.ts
+var satSub = (a, b) => a > b ? a - b : 0;
+function drawDashedHorizontal(count, thickness, desiredGap, x, y, cellWInt, cellHInt, color, out) {
+  const thickPx = Math.max(1, Math.round(thickness));
+  const gapCount = count;
+  if (cellWInt < count + gapCount) {
+    const y02 = y + Math.floor(satSub(cellHInt, thickPx) / 2);
+    pushRectBox(out, x, y02, cellWInt, thickPx, color);
+    return;
+  }
+  const maxGap = Math.floor(cellWInt / (2 * count));
+  const gapWidth = Math.min(Math.max(1, Math.round(desiredGap)), maxGap);
+  const totalGapWidth = gapCount * gapWidth;
+  const totalDashWidth = cellWInt - totalGapWidth;
+  const dashWidth = Math.floor(totalDashWidth / count);
+  let extra = totalDashWidth % count;
+  const y0 = y + Math.floor(satSub(cellHInt, thickPx) / 2);
+  let px = x + Math.floor(gapWidth / 2);
+  for (let i = 0;i < count; i += 1) {
+    let seg = dashWidth;
+    if (extra > 0) {
+      seg += 1;
+      extra -= 1;
+    }
+    pushRectBox(out, px, y0, seg, thickPx, color);
+    px += seg + gapWidth;
+  }
+}
+function drawDashedVertical(count, thickness, desiredGap, x, y, cellWInt, cellHInt, color, out) {
+  const thickPx = Math.max(1, Math.round(thickness));
+  const gapCount = count;
+  if (cellHInt < count + gapCount) {
+    const x02 = x + Math.floor(satSub(cellWInt, thickPx) / 2);
+    pushRectBox(out, x02, y, thickPx, cellHInt, color);
+    return;
+  }
+  const maxGap = Math.floor(cellHInt / (2 * count));
+  const gapHeight = Math.min(Math.max(1, Math.round(desiredGap)), maxGap);
+  const totalGapHeight = gapCount * gapHeight;
+  const totalDashHeight = cellHInt - totalGapHeight;
+  const dashHeight = Math.floor(totalDashHeight / count);
+  let extra = totalDashHeight % count;
+  const x0 = x + Math.floor(satSub(cellWInt, thickPx) / 2);
+  let py = y;
+  for (let i = 0;i < count; i += 1) {
+    let seg = dashHeight;
+    if (extra > 0) {
+      seg += 1;
+      extra -= 1;
+    }
+    pushRectBox(out, x0, py, thickPx, seg, color);
+    py += seg + gapHeight;
+  }
+}
+
+// src/renderer/shapes/box-drawing/diagonal.ts
+function drawDiagonal(dir, x, y, cellW, cellH, light, color, out) {
+  const thickness = light;
+  const steps = Math.max(2, Math.round(Math.max(cellW, cellH)));
+  for (let i = 0;i < steps; i += 1) {
+    const t = steps === 1 ? 0 : i / (steps - 1);
+    const px = dir === "ul_lr" ? x + t * cellW : x + (1 - t) * cellW;
+    const py = y + t * cellH;
+    pushRectBox(out, px - thickness * 0.5, py - thickness * 0.5, thickness, thickness, color);
+  }
+}
+
+// src/renderer/shapes/box-drawing/rounded-corner.ts
+var sampleOffsets = [
+  [0.25, 0.25],
+  [0.75, 0.25],
+  [0.25, 0.75],
+  [0.75, 0.75]
+];
+var cubicPoint = (a, b, c, d, t) => {
+  const mt = 1 - t;
+  const mt2 = mt * mt;
+  const t2 = t * t;
+  return {
+    x: mt2 * mt * a.x + 3 * mt2 * t * b.x + 3 * mt * t2 * c.x + t2 * t * d.x,
+    y: mt2 * mt * a.y + 3 * mt2 * t * b.y + 3 * mt * t2 * c.y + t2 * t * d.y
+  };
+};
+var addSegment = (segments, a, b) => {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const len = Math.hypot(dx, dy);
+  if (len <= 0.000001)
+    return;
+  const ux = dx / len;
+  const uy = dy / len;
+  segments.push({ ax: a.x, ay: a.y, ux, uy, nx: -uy, ny: ux, len });
+};
+var sampleInsideStroke = (sx, sy, segments, half) => {
+  for (const seg of segments) {
+    const rx = sx - seg.ax;
+    const ry = sy - seg.ay;
+    const along = rx * seg.ux + ry * seg.uy;
+    if (along < 0 || along > seg.len)
+      continue;
+    const perp = Math.abs(rx * seg.nx + ry * seg.ny);
+    if (perp <= half + 0.000001)
+      return true;
+  }
+  return false;
+};
+function drawRoundedCorner(cornerCp, x, y, cellW, cellH, light, color, out) {
+  const thickness = Math.max(1, Math.round(light));
+  const half = thickness * 0.5;
+  const s = 0.25;
+  const cx = x + Math.floor((cellW - thickness) * 0.5) + half;
+  const cy = y + Math.floor((cellH - thickness) * 0.5) + half;
+  const r = Math.min(cellW, cellH) * 0.5;
+  const p0 = { x: cx, y };
+  const p1 = { x: cx, y: cy - r };
+  const c1 = { x: cx, y: cy - s * r };
+  const c2 = { x: cx, y: cy };
+  const p2 = { x: cx, y: cy };
+  const p3 = { x: cx, y: cy };
+  let p4 = { x: x + cellW, y: cy };
+  switch (cornerCp) {
+    case 9581:
+      p0.y = y + cellH;
+      p1.y = cy + r;
+      c1.y = cy + s * r;
+      c2.x = cx + s * r;
+      p2.x = cx + r;
+      p3.x = cx + r;
+      p4 = { x: x + cellW, y: cy };
+      break;
+    case 9582:
+      p0.y = y + cellH;
+      p1.y = cy + r;
+      c1.y = cy + s * r;
+      c2.x = cx - s * r;
+      p2.x = cx - r;
+      p3.x = cx - r;
+      p4 = { x, y: cy };
+      break;
+    case 9583:
+      c2.x = cx - s * r;
+      p2.x = cx - r;
+      p3.x = cx - r;
+      p4 = { x, y: cy };
+      break;
+    case 9584:
+      c2.x = cx + s * r;
+      p2.x = cx + r;
+      p3.x = cx + r;
+      p4 = { x: x + cellW, y: cy };
+      break;
+  }
+  const steps = Math.max(10, Math.round(Math.max(cellW, cellH) * 1.5));
+  const curvePoints = [];
+  for (let i = 0;i <= steps; i += 1) {
+    const t = i / steps;
+    curvePoints.push(cubicPoint(p1, c1, c2, p2, t));
+  }
+  const segments = [];
+  addSegment(segments, p0, p1);
+  for (let i = 1;i < curvePoints.length; i += 1) {
+    addSegment(segments, curvePoints[i - 1], curvePoints[i]);
+  }
+  addSegment(segments, p3, p4);
+  const minX = Math.max(Math.floor(x), Math.floor(Math.min(p0.x, p4.x, cx - r) - half - 1));
+  const maxX = Math.min(Math.ceil(x + cellW) - 1, Math.ceil(Math.max(p0.x, p4.x, cx + r) + half + 1));
+  const minY = Math.max(Math.floor(y), Math.floor(Math.min(p0.y, p4.y, cy - r) - half - 1));
+  const maxY = Math.min(Math.ceil(y + cellH) - 1, Math.ceil(Math.max(p0.y, p4.y, cy + r) + half + 1));
+  if (maxX < minX || maxY < minY)
+    return;
+  for (let py = minY;py <= maxY; py += 1) {
+    let runX = -1;
+    let runCoverage = 0;
+    for (let px = minX;px <= maxX; px += 1) {
+      let coverage = 0;
+      for (const [ox, oy] of sampleOffsets) {
+        if (sampleInsideStroke(px + ox, py + oy, segments, half))
+          coverage += 1;
       }
-      const maxGap = Math.floor(cellWInt2 / (2 * count));
-      const gapWidth = Math.min(Math.max(1, Math.round(desiredGap)), maxGap);
-      const totalGapWidth = gapCount * gapWidth;
-      const totalDashWidth = cellWInt2 - totalGapWidth;
-      const dashWidth = Math.floor(totalDashWidth / count);
-      let extra = totalDashWidth % count;
-      const y0 = y + Math.floor(satSub2(cellHInt2, thickPx) / 2);
-      let px = x + Math.floor(gapWidth / 2);
-      for (let i = 0;i < count; i += 1) {
-        let seg = dashWidth;
-        if (extra > 0) {
-          seg += 1;
-          extra -= 1;
-        }
-        pushRectBox(out, px, y0, seg, thickPx, color);
-        px += seg + gapWidth;
+      if (coverage > 0 && runX < 0) {
+        runX = px;
+        runCoverage = coverage;
+        continue;
       }
-    };
-    const dashedV = (count, thickness, desiredGap) => {
-      const thickPx = Math.max(1, Math.round(thickness));
-      const gapCount = count;
-      if (cellHInt2 < count + gapCount) {
-        const x02 = x + Math.floor(satSub2(cellWInt2, thickPx) / 2);
-        pushRectBox(out, x02, y, thickPx, cellHInt2, color);
-        return;
+      if (coverage > 0 && coverage === runCoverage)
+        continue;
+      if (runX >= 0) {
+        const alphaColor = [
+          color[0],
+          color[1],
+          color[2],
+          color[3] * (runCoverage / sampleOffsets.length)
+        ];
+        pushRectBox(out, runX, py, px - runX, 1, alphaColor);
+        runX = coverage > 0 ? px : -1;
+        runCoverage = coverage;
       }
-      const maxGap = Math.floor(cellHInt2 / (2 * count));
-      const gapHeight = Math.min(Math.max(1, Math.round(desiredGap)), maxGap);
-      const totalGapHeight = gapCount * gapHeight;
-      const totalDashHeight = cellHInt2 - totalGapHeight;
-      const dashHeight = Math.floor(totalDashHeight / count);
-      let extra = totalDashHeight % count;
-      const x0 = x + Math.floor(satSub2(cellWInt2, thickPx) / 2);
-      let py = y;
-      for (let i = 0;i < count; i += 1) {
-        let seg = dashHeight;
-        if (extra > 0) {
-          seg += 1;
-          extra -= 1;
-        }
-        pushRectBox(out, x0, py, thickPx, seg, color);
-        py += seg + gapHeight;
-      }
-    };
-    const drawDiagonal = (dir) => {
-      const thickness = light2;
-      const steps = Math.max(2, Math.round(Math.max(cellW, cellH)));
-      for (let i = 0;i < steps; i += 1) {
-        const t = steps === 1 ? 0 : i / (steps - 1);
-        const px = dir === "ul_lr" ? x + t * cellW : x + (1 - t) * cellW;
-        const py = y + t * cellH;
-        pushRectBox(out, px - thickness * 0.5, py - thickness * 0.5, thickness, thickness, color);
-      }
-    };
-    const drawRoundedCorner = (cornerCp) => {
-      const thickness = Math.max(1, Math.round(light2));
-      const half = thickness * 0.5;
-      const s = 0.25;
-      const cx = x + Math.floor((cellW - thickness) * 0.5) + half;
-      const cy = y + Math.floor((cellH - thickness) * 0.5) + half;
-      const r = Math.min(cellW, cellH) * 0.5;
-      const p0 = { x: cx, y };
-      const p1 = { x: cx, y: cy - r };
-      const c1 = { x: cx, y: cy - s * r };
-      const c2 = { x: cx, y: cy };
-      const p2 = { x: cx, y: cy };
-      const p3 = { x: cx, y: cy };
-      let p4 = { x: x + cellW, y: cy };
-      switch (cornerCp) {
-        case 9581:
-          p0.y = y + cellH;
-          p1.y = cy + r;
-          c1.y = cy + s * r;
-          c2.x = cx + s * r;
-          p2.x = cx + r;
-          p3.x = cx + r;
-          p4 = { x: x + cellW, y: cy };
-          break;
-        case 9582:
-          p0.y = y + cellH;
-          p1.y = cy + r;
-          c1.y = cy + s * r;
-          c2.x = cx - s * r;
-          p2.x = cx - r;
-          p3.x = cx - r;
-          p4 = { x, y: cy };
-          break;
-        case 9583:
-          c2.x = cx - s * r;
-          p2.x = cx - r;
-          p3.x = cx - r;
-          p4 = { x, y: cy };
-          break;
-        case 9584:
-          c2.x = cx + s * r;
-          p2.x = cx + r;
-          p3.x = cx + r;
-          p4 = { x: x + cellW, y: cy };
-          break;
-      }
-      const segments = [];
-      const addSegment = (a, b) => {
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        const len = Math.hypot(dx, dy);
-        if (len <= 0.000001)
-          return;
-        const ux = dx / len;
-        const uy = dy / len;
-        segments.push({ ax: a.x, ay: a.y, ux, uy, nx: -uy, ny: ux, len });
-      };
-      const cubicPoint = (a, b, c, d, t) => {
-        const mt = 1 - t;
-        const mt2 = mt * mt;
-        const t2 = t * t;
-        return {
-          x: mt2 * mt * a.x + 3 * mt2 * t * b.x + 3 * mt * t2 * c.x + t2 * t * d.x,
-          y: mt2 * mt * a.y + 3 * mt2 * t * b.y + 3 * mt * t2 * c.y + t2 * t * d.y
-        };
-      };
-      const steps = Math.max(10, Math.round(Math.max(cellW, cellH) * 1.5));
-      const curvePoints = [];
-      for (let i = 0;i <= steps; i += 1) {
-        const t = i / steps;
-        curvePoints.push(cubicPoint(p1, c1, c2, p2, t));
-      }
-      addSegment(p0, p1);
-      for (let i = 1;i < curvePoints.length; i += 1) {
-        addSegment(curvePoints[i - 1], curvePoints[i]);
-      }
-      addSegment(p3, p4);
-      const minX = Math.max(Math.floor(x), Math.floor(Math.min(p0.x, p4.x, cx - r) - half - 1));
-      const maxX = Math.min(Math.ceil(x + cellW) - 1, Math.ceil(Math.max(p0.x, p4.x, cx + r) + half + 1));
-      const minY = Math.max(Math.floor(y), Math.floor(Math.min(p0.y, p4.y, cy - r) - half - 1));
-      const maxY = Math.min(Math.ceil(y + cellH) - 1, Math.ceil(Math.max(p0.y, p4.y, cy + r) + half + 1));
-      if (maxX < minX || maxY < minY)
-        return;
-      const sampleOffsets = [
-        [0.25, 0.25],
-        [0.75, 0.25],
-        [0.25, 0.75],
-        [0.75, 0.75]
+    }
+    if (runX >= 0) {
+      const alphaColor = [
+        color[0],
+        color[1],
+        color[2],
+        color[3] * (runCoverage / sampleOffsets.length)
       ];
-      const sampleInsideStroke = (sx, sy) => {
-        for (const seg of segments) {
-          const rx = sx - seg.ax;
-          const ry = sy - seg.ay;
-          const along = rx * seg.ux + ry * seg.uy;
-          if (along < 0 || along > seg.len)
-            continue;
-          const perp = Math.abs(rx * seg.nx + ry * seg.ny);
-          if (perp <= half + 0.000001)
-            return true;
-        }
-        return false;
-      };
-      for (let py = minY;py <= maxY; py += 1) {
-        let runX = -1;
-        let runCoverage = 0;
-        for (let px = minX;px <= maxX; px += 1) {
-          let coverage = 0;
-          for (const [ox, oy] of sampleOffsets) {
-            if (sampleInsideStroke(px + ox, py + oy))
-              coverage += 1;
-          }
-          if (coverage > 0 && runX < 0) {
-            runX = px;
-            runCoverage = coverage;
-            continue;
-          }
-          if (coverage > 0 && coverage === runCoverage)
-            continue;
-          if (runX >= 0) {
-            const alphaColor = [
-              color[0],
-              color[1],
-              color[2],
-              color[3] * (runCoverage / sampleOffsets.length)
-            ];
-            pushRectBox(out, runX, py, px - runX, 1, alphaColor);
-            runX = coverage > 0 ? px : -1;
-            runCoverage = coverage;
-          }
-        }
-        if (runX >= 0) {
-          const alphaColor = [
-            color[0],
-            color[1],
-            color[2],
-            color[3] * (runCoverage / sampleOffsets.length)
-          ];
-          pushRectBox(out, runX, py, maxX - runX + 1, 1, alphaColor);
-        }
-      }
-    };
-    switch (cp) {
-      case 9476:
-        dashedH(3, light2, Math.max(4, light2));
-        return true;
-      case 9477:
-        dashedH(3, heavy2, Math.max(4, light2));
-        return true;
-      case 9480:
-        dashedH(4, light2, Math.max(4, light2));
-        return true;
-      case 9481:
-        dashedH(4, heavy2, Math.max(4, light2));
-        return true;
-      case 9478:
-        dashedV(3, light2, Math.max(4, light2));
-        return true;
-      case 9479:
-        dashedV(3, heavy2, Math.max(4, light2));
-        return true;
-      case 9482:
-        dashedV(4, light2, Math.max(4, light2));
-        return true;
-      case 9483:
-        dashedV(4, heavy2, Math.max(4, light2));
-        return true;
-      case 9548:
-        dashedH(2, light2, light2);
-        return true;
-      case 9549:
-        dashedH(2, heavy2, heavy2);
-        return true;
-      case 9550:
-        dashedV(2, light2, heavy2);
-        return true;
-      case 9551:
-        dashedV(2, heavy2, heavy2);
-        return true;
-      case 9581:
-      case 9582:
-      case 9583:
-      case 9584:
-        drawRoundedCorner(cp);
-        return true;
-      case 9585:
-        drawDiagonal("ur_ll");
-        return true;
-      case 9586:
-        drawDiagonal("ul_lr");
-        return true;
-      case 9587:
-        drawDiagonal("ul_lr");
-        drawDiagonal("ur_ll");
-        return true;
-      default:
-        return false;
+      pushRectBox(out, runX, py, maxX - runX + 1, 1, alphaColor);
     }
   }
+}
+
+// src/renderer/shapes/box-drawing/fallback.ts
+function drawFallbackBoxDrawing(cp, x, y, cellW, cellH, color, out, light, heavy) {
+  const cellWInt = Math.max(1, Math.round(cellW));
+  const cellHInt = Math.max(1, Math.round(cellH));
+  switch (cp) {
+    case 9476:
+      drawDashedHorizontal(3, light, Math.max(4, light), x, y, cellWInt, cellHInt, color, out);
+      return true;
+    case 9477:
+      drawDashedHorizontal(3, heavy, Math.max(4, light), x, y, cellWInt, cellHInt, color, out);
+      return true;
+    case 9480:
+      drawDashedHorizontal(4, light, Math.max(4, light), x, y, cellWInt, cellHInt, color, out);
+      return true;
+    case 9481:
+      drawDashedHorizontal(4, heavy, Math.max(4, light), x, y, cellWInt, cellHInt, color, out);
+      return true;
+    case 9478:
+      drawDashedVertical(3, light, Math.max(4, light), x, y, cellWInt, cellHInt, color, out);
+      return true;
+    case 9479:
+      drawDashedVertical(3, heavy, Math.max(4, light), x, y, cellWInt, cellHInt, color, out);
+      return true;
+    case 9482:
+      drawDashedVertical(4, light, Math.max(4, light), x, y, cellWInt, cellHInt, color, out);
+      return true;
+    case 9483:
+      drawDashedVertical(4, heavy, Math.max(4, light), x, y, cellWInt, cellHInt, color, out);
+      return true;
+    case 9548:
+      drawDashedHorizontal(2, light, light, x, y, cellWInt, cellHInt, color, out);
+      return true;
+    case 9549:
+      drawDashedHorizontal(2, heavy, heavy, x, y, cellWInt, cellHInt, color, out);
+      return true;
+    case 9550:
+      drawDashedVertical(2, light, heavy, x, y, cellWInt, cellHInt, color, out);
+      return true;
+    case 9551:
+      drawDashedVertical(2, heavy, heavy, x, y, cellWInt, cellHInt, color, out);
+      return true;
+    case 9581:
+    case 9582:
+    case 9583:
+    case 9584:
+      drawRoundedCorner(cp, x, y, cellW, cellH, light, color, out);
+      return true;
+    case 9585:
+      drawDiagonal("ur_ll", x, y, cellW, cellH, light, color, out);
+      return true;
+    case 9586:
+      drawDiagonal("ul_lr", x, y, cellW, cellH, light, color, out);
+      return true;
+    case 9587:
+      drawDiagonal("ul_lr", x, y, cellW, cellH, light, color, out);
+      drawDiagonal("ur_ll", x, y, cellW, cellH, light, color, out);
+      return true;
+    default:
+      return false;
+  }
+}
+
+// src/renderer/shapes/box-drawing/mapped.ts
+var satSub2 = (a, b) => a > b ? a - b : 0;
+function drawMappedBoxDrawing(spec, x, y, cellW, cellH, color, out, lightStroke, heavyStroke) {
   const [up, right, down, left] = spec;
   const light = lightStroke;
   const heavy = heavyStroke;
   const cellWInt = Math.max(1, Math.round(cellW));
   const cellHInt = Math.max(1, Math.round(cellH));
-  const satSub = (a, b) => a > b ? a - b : 0;
-  const hLightTop = Math.floor(satSub(cellHInt, light) / 2);
+  const hLightTop = Math.floor(satSub2(cellHInt, light) / 2);
   const hLightBottom = hLightTop + light;
-  const hHeavyTop = Math.floor(satSub(cellHInt, heavy) / 2);
+  const hHeavyTop = Math.floor(satSub2(cellHInt, heavy) / 2);
   const hHeavyBottom = hHeavyTop + heavy;
-  const hDoubleTop = satSub(hLightTop, light);
+  const hDoubleTop = satSub2(hLightTop, light);
   const hDoubleBottom = hLightBottom + light;
-  const vLightLeft = Math.floor(satSub(cellWInt, light) / 2);
+  const vLightLeft = Math.floor(satSub2(cellWInt, light) / 2);
   const vLightRight = vLightLeft + light;
-  const vHeavyLeft = Math.floor(satSub(cellWInt, heavy) / 2);
+  const vHeavyLeft = Math.floor(satSub2(cellWInt, heavy) / 2);
   const vHeavyRight = vHeavyLeft + heavy;
-  const vDoubleLeft = satSub(vLightLeft, light);
+  const vDoubleLeft = satSub2(vLightLeft, light);
   const vDoubleRight = vLightRight + light;
   const upBottom = left === BOX_STYLE_HEAVY || right === BOX_STYLE_HEAVY ? hHeavyBottom : left !== right || down === up ? left === BOX_STYLE_DOUBLE || right === BOX_STYLE_DOUBLE ? hDoubleBottom : hLightBottom : left === BOX_STYLE_NONE && right === BOX_STYLE_NONE ? hLightBottom : hLightTop;
   const downTop = left === BOX_STYLE_HEAVY || right === BOX_STYLE_HEAVY ? hHeavyTop : left !== right || up === down ? left === BOX_STYLE_DOUBLE || right === BOX_STYLE_DOUBLE ? hDoubleTop : hLightTop : left === BOX_STYLE_NONE && right === BOX_STYLE_NONE ? hLightTop : hLightBottom;
@@ -751,6 +757,19 @@ function drawBoxDrawing(cp, x, y, cellW, cellH, color, out, boxThicknessPx) {
   }
   return true;
 }
+
+// src/renderer/shapes/box-drawing/draw-box-drawing.ts
+function drawBoxDrawing(cp, x, y, cellW, cellH, color, out, boxThicknessPx) {
+  const hasBoxThickness = Number.isFinite(boxThicknessPx) && typeof boxThicknessPx === "number" && boxThicknessPx > 0;
+  const lightStroke = hasBoxThickness ? Math.max(1, Math.round(boxThicknessPx)) : Math.max(1, Math.floor(cellH / 16));
+  const heavyStroke = lightStroke * 2;
+  const spec = BOX_LINE_MAP.get(cp);
+  if (!spec) {
+    return drawFallbackBoxDrawing(cp, x, y, cellW, cellH, color, out, lightStroke, heavyStroke);
+  }
+  return drawMappedBoxDrawing(spec, x, y, cellW, cellH, color, out, lightStroke, heavyStroke);
+}
+// src/renderer/shapes/braille.ts
 function drawBraille(cp, x, y, cellW, cellH, color, out) {
   if (!isBraille(cp))
     return false;
@@ -783,6 +802,7 @@ function drawBraille(cp, x, y, cellW, cellH, color, out) {
   }
   return true;
 }
+// src/renderer/shapes/powerline.ts
 function drawPowerline(cp, x, y, cellW, cellH, color, out) {
   if (!isPowerline(cp))
     return false;
@@ -844,6 +864,7 @@ function drawPowerline(cp, x, y, cellW, cellH, color, out) {
       return false;
   }
 }
+// src/renderer/shapes/glyph-box.ts
 function constrainGlyphBox(glyph, constraint, metrics, constraintWidth) {
   if (!constraint)
     return glyph;
@@ -947,7 +968,7 @@ function constrainGlyphBox(glyph, constraint, metrics, constraintWidth) {
     y: groupY + scaledGroupHeight * relY
   };
 }
-// src/renderer/shaders.ts
+// src/renderer/shaders/rect.ts
 var RECT_SHADER = `
 struct Uniforms {
   res: vec2f,
@@ -1059,6 +1080,7 @@ void main() {
   fragColor = color;
 }
 `;
+// src/renderer/shaders/glyph-gl.ts
 var GLYPH_SHADER_GL_VERT = `#version 300 es
 precision highp float;
 
@@ -1170,6 +1192,7 @@ void main() {
   fragColor = color;
 }
 `;
+// src/renderer/shaders/glyph-wgsl.ts
 var GLYPH_SHADER = `
 struct Uniforms {
   res: vec2f,
@@ -1404,7 +1427,7 @@ fn fsMain(input: VSOut) -> @location(0) vec4f {
   return color;
 }
 `;
-// src/renderer/webgpu.ts
+// src/renderer/webgpu/setup.ts
 function getPreferredAndSrgbFormats() {
   const preferredFormat = navigator.gpu.getPreferredCanvasFormat();
   const srgbFormat = preferredFormat === "bgra8unorm" ? "bgra8unorm-srgb" : preferredFormat === "rgba8unorm" ? "rgba8unorm-srgb" : preferredFormat;
@@ -1643,6 +1666,7 @@ async function initWebGPU(canvas, options = {}) {
     glyphAtlases: new Map
   };
 }
+// src/renderer/webgpu/webgl.ts
 function compileShader(gl, type, source) {
   const shader = gl.createShader(type);
   if (!shader)
@@ -1778,6 +1802,7 @@ function initWebGL(canvas) {
     glyphAtlases: new Map
   };
 }
+// src/renderer/webgpu/buffers.ts
 function ensureInstanceBuffer(state, kind, byteLength) {
   const bufferKey = kind === "rect" ? "rectInstanceBuffer" : "glyphInstanceBuffer";
   const capKey = kind === "rect" ? "rectCapacity" : "glyphCapacity";
@@ -1821,33 +1846,7 @@ function fontHeightUnits(font) {
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
-// src/fonts/nerd-ranges.ts
-var NERD_SYMBOL_RANGES = [
-  [57344, 57354],
-  [57504, 57507],
-  [57520, 57544],
-  [57546, 57546],
-  [57548, 57559],
-  [57856, 58025],
-  [58112, 58339],
-  [58874, 59063],
-  [59136, 59631],
-  [60000, 60446],
-  [60672, 62207],
-  [60928, 60939],
-  [62208, 62337],
-  [62464, 62771],
-  [983041, 989936]
-];
-function isNerdSymbolCodepoint(cp) {
-  for (const [start, end] of NERD_SYMBOL_RANGES) {
-    if (cp >= start && cp <= end)
-      return true;
-  }
-  return false;
-}
-
-// src/fonts/manager.ts
+// src/fonts/manager/classification.ts
 var SYMBOL_FONT_HINTS = [/symbols nerd font/i, /noto sans symbols/i, /apple symbols/i, /symbola/i];
 var NERD_SYMBOL_FONT_HINTS = [/symbols nerd font/i, /nerd fonts symbols/i];
 var COLOR_EMOJI_FONT_HINTS = [
@@ -1910,6 +1909,7 @@ function fontScaleOverride(entry, overrides = []) {
   }
   return 1;
 }
+// src/fonts/manager/entries.ts
 function createFontEntry(font, label) {
   return {
     font,
@@ -1972,6 +1972,31 @@ function glyphWidthUnits(entry, glyphId) {
   }
   entry.boundsCache.set(glyphId, width);
   return width;
+}
+// src/fonts/nerd-ranges.ts
+var NERD_SYMBOL_RANGES = [
+  [57344, 57354],
+  [57504, 57507],
+  [57520, 57544],
+  [57546, 57546],
+  [57548, 57559],
+  [57856, 58025],
+  [58112, 58339],
+  [58874, 59063],
+  [59136, 59631],
+  [60000, 60446],
+  [60672, 62207],
+  [60928, 60939],
+  [62208, 62337],
+  [62464, 62771],
+  [983041, 989936]
+];
+function isNerdSymbolCodepoint(cp) {
+  for (const [start, end] of NERD_SYMBOL_RANGES) {
+    if (cp >= start && cp <= end)
+      return true;
+  }
+  return false;
 }
 // src/fonts/nerd-constraints.ts
 var NERD_CONSTRAINTS = [
@@ -6915,7 +6940,155 @@ function getNerdConstraint(cp) {
   }
   return null;
 }
+// src/selection/core.ts
+function createSelectionState() {
+  return {
+    active: false,
+    dragging: false,
+    anchor: null,
+    focus: null
+  };
+}
+function selectionForRow(state2, row, cols) {
+  if (!state2.active || !state2.anchor || !state2.focus)
+    return null;
+  const a = state2.anchor;
+  const f = state2.focus;
+  const forward = f.row > a.row || f.row === a.row && f.col >= a.col;
+  const start = forward ? a : f;
+  const end = forward ? f : a;
+  if (start.row === end.row && row === start.row) {
+    const left = Math.min(start.col, end.col);
+    const right = Math.max(start.col, end.col) + 1;
+    return { start: clamp(left, 0, cols), end: clamp(right, 0, cols) };
+  }
+  if (row < start.row || row > end.row)
+    return null;
+  if (row === start.row) {
+    return { start: clamp(start.col, 0, cols), end: cols };
+  }
+  if (row === end.row) {
+    return { start: 0, end: clamp(end.col + 1, 0, cols) };
+  }
+  return { start: 0, end: cols };
+}
+function normalizeSelectionCell(cell, rows, cols, wideFlags) {
+  if (!cell)
+    return cell;
+  if (!rows || !cols)
+    return cell;
+  const row = clamp(cell.row, 0, rows - 1);
+  const col = clamp(cell.col, 0, cols - 1);
+  if (!wideFlags)
+    return { row, col };
+  const idx = row * cols + col;
+  const flag = wideFlags[idx] ?? 0;
+  if (flag === 2) {
+    const left = col > 0 ? col - 1 : col;
+    return { row, col: left };
+  }
+  if (flag === 3 && row > 0) {
+    const prevRow = row - 1;
+    for (let c = cols - 1;c >= 0; c -= 1) {
+      const f = wideFlags[prevRow * cols + c] ?? 0;
+      if (f !== 2 && f !== 3)
+        return { row: prevRow, col: c };
+    }
+  }
+  return { row, col };
+}
+function positionToCell(clientX, clientY, canvasRect, dpr, cellW, cellH, cols, rows) {
+  const x = (clientX - canvasRect.left) * dpr;
+  const y = (clientY - canvasRect.top) * dpr;
+  const col = clamp(Math.floor(x / (cellW || 1)), 0, (cols || 1) - 1);
+  const row = clamp(Math.floor(y / (cellH || 1)), 0, (rows || 1) - 1);
+  return { row, col };
+}
+// src/selection/text.ts
+function getSelectionText(state2, rows, cols, getCellText) {
+  if (!state2.active || !state2.anchor || !state2.focus)
+    return "";
+  if (!rows || !cols)
+    return "";
+  const a = state2.anchor;
+  const f = state2.focus;
+  const forward = f.row > a.row || f.row === a.row && f.col >= a.col;
+  const startRow = forward ? a.row : f.row;
+  const endRow = forward ? f.row : a.row;
+  const lines = [];
+  for (let row = startRow;row <= endRow; row += 1) {
+    const range = selectionForRow(state2, row, cols);
+    if (!range)
+      continue;
+    let line = "";
+    for (let col = range.start;col < range.end; col += 1) {
+      const idx = row * cols + col;
+      line += getCellText(idx);
+    }
+    line = line.replace(/[ \t]+$/g, "");
+    lines.push(line);
+  }
+  return lines.join(`
+`);
+}
+// src/selection/clipboard.ts
+async function copyToClipboard(text) {
+  if (!text)
+    return false;
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const temp = document.createElement("textarea");
+    temp.value = text;
+    temp.style.position = "fixed";
+    temp.style.opacity = "0";
+    document.body.appendChild(temp);
+    temp.select();
+    try {
+      document.execCommand("copy");
+      return true;
+    } catch {
+      return false;
+    } finally {
+      document.body.removeChild(temp);
+    }
+  }
+}
+async function pasteFromClipboard() {
+  try {
+    return await navigator.clipboard.readText();
+  } catch {
+    return null;
+  }
+}
 // src/ime/ime.ts
+var DEFAULT_IME_FONT_FAMILY = '"JetBrains Mono","Fira Code","SFMono-Regular","Menlo","Consolas","Liberation Mono",monospace';
+function resolveImeAnchor(cursor, cols, rows) {
+  if (!cursor)
+    return null;
+  const maxCol = Math.max(0, Math.floor(cols) - 1);
+  const maxRow = Math.max(0, Math.floor(rows) - 1);
+  let col = Number.isFinite(cursor.col) ? Math.floor(cursor.col) : 0;
+  if (cursor.wideTail && col > 0) {
+    col -= 1;
+  }
+  const row = Number.isFinite(cursor.row) ? Math.floor(cursor.row) : 0;
+  return {
+    col: Math.max(0, Math.min(maxCol, col)),
+    row: Math.max(0, Math.min(maxRow, row))
+  };
+}
+function syncImeInputTypography(imeInput, fontSizePt, fontFamily = DEFAULT_IME_FONT_FAMILY) {
+  if (!imeInput)
+    return;
+  const size = Number.isFinite(fontSizePt) ? Math.max(10, Math.min(64, Math.round(fontSizePt))) : 18;
+  imeInput.style.fontSize = `${size}pt`;
+  imeInput.style.lineHeight = `${size}pt`;
+  imeInput.style.fontFamily = fontFamily;
+  imeInput.style.fontWeight = "400";
+  imeInput.style.letterSpacing = "0";
+}
 var PREEDIT_BG = [0.16, 0.16, 0.2, 0.9];
 var PREEDIT_ACTIVE_BG = [0.3, 0.32, 0.42, 0.95];
 var PREEDIT_FG = [0.95, 0.95, 0.98, 1];
@@ -6935,11 +7108,11 @@ function createPtyConnection() {
     connectId: 0
   };
 }
-function setConnectionStatus(state, status) {
-  state.status = status;
+function setConnectionStatus(state2, status) {
+  state2.status = status;
 }
-function connectPty(state, options, callbacks) {
-  if (state.status === "connecting" || state.status === "connected" || state.status === "closing") {
+function connectPty(state2, options, callbacks) {
+  if (state2.status === "connecting" || state2.status === "connected" || state2.status === "closing") {
     return false;
   }
   const url = options.url?.trim?.() ?? "";
@@ -6947,21 +7120,21 @@ function connectPty(state, options, callbacks) {
     return false;
   const ws = new WebSocket(url);
   const decoder = new TextDecoder;
-  const connectId = state.connectId + 1;
-  state.connectId = connectId;
-  state.url = url;
-  state.socket = ws;
-  state.decoder = decoder;
-  setConnectionStatus(state, "connecting");
+  const connectId = state2.connectId + 1;
+  state2.connectId = connectId;
+  state2.url = url;
+  state2.socket = ws;
+  state2.decoder = decoder;
+  setConnectionStatus(state2, "connecting");
   ws.binaryType = "arraybuffer";
   const flushDecoder = () => {
-    if (state.connectId !== connectId)
+    if (state2.connectId !== connectId)
       return;
     if (!decoder)
       return;
     const tail = decoder.decode();
-    if (state.decoder === decoder) {
-      state.decoder = null;
+    if (state2.decoder === decoder) {
+      state2.decoder = null;
     }
     if (tail)
       callbacks.onData?.(tail);
@@ -6974,31 +7147,31 @@ function connectPty(state, options, callbacks) {
     callbacks.onDisconnect?.();
   };
   const clearCurrentSocket = () => {
-    if (state.connectId !== connectId)
+    if (state2.connectId !== connectId)
       return;
-    if (state.socket === ws) {
-      state.socket = null;
+    if (state2.socket === ws) {
+      state2.socket = null;
     }
-    setConnectionStatus(state, "idle");
-    if (state.decoder === decoder) {
-      state.decoder = null;
+    setConnectionStatus(state2, "idle");
+    if (state2.decoder === decoder) {
+      state2.decoder = null;
     }
   };
   ws.addEventListener("open", () => {
-    if (state.connectId !== connectId) {
+    if (state2.connectId !== connectId) {
       try {
         ws.close();
       } catch {}
       return;
     }
-    if (state.socket !== ws)
+    if (state2.socket !== ws)
       return;
-    setConnectionStatus(state, "connected");
+    setConnectionStatus(state2, "connected");
     callbacks.onConnect?.();
     if (Number.isFinite(options.cols) && Number.isFinite(options.rows)) {
       const cols = Math.max(0, Number(options.cols));
       const rows = Math.max(0, Number(options.rows));
-      sendPtyResize(state, cols, rows);
+      sendPtyResize(state2, cols, rows);
     }
   });
   ws.addEventListener("close", () => {
@@ -7012,22 +7185,22 @@ function connectPty(state, options, callbacks) {
     notifyDisconnected();
   });
   ws.addEventListener("message", (event) => {
-    if (state.connectId !== connectId || state.socket !== ws)
+    if (state2.connectId !== connectId || state2.socket !== ws)
       return;
     const payload = event.data;
     if (payload instanceof ArrayBuffer) {
-      const text = decodePtyBinary(decoder, payload, true);
-      if (text)
-        callbacks.onData?.(text);
+      const text2 = decodePtyBinary(decoder, payload, true);
+      if (text2)
+        callbacks.onData?.(text2);
       return;
     }
     if (payload instanceof Blob) {
       payload.arrayBuffer().then((buf) => {
-        if (state.connectId !== connectId || state.socket !== ws)
+        if (state2.connectId !== connectId || state2.socket !== ws)
           return;
-        const text = decodePtyBinary(decoder, buf, true);
-        if (text)
-          callbacks.onData?.(text);
+        const text2 = decodePtyBinary(decoder, buf, true);
+        if (text2)
+          callbacks.onData?.(text2);
       });
       return;
     }
@@ -7039,47 +7212,47 @@ function connectPty(state, options, callbacks) {
   });
   return true;
 }
-function disconnectPty(state) {
-  const socket = state.socket;
-  if (state.decoder && !socket) {
-    state.decoder.decode();
-    state.decoder = null;
+function disconnectPty(state2) {
+  const socket = state2.socket;
+  if (state2.decoder && !socket) {
+    state2.decoder.decode();
+    state2.decoder = null;
   }
   if (!socket) {
-    setConnectionStatus(state, "idle");
+    setConnectionStatus(state2, "idle");
     return;
   }
-  setConnectionStatus(state, "closing");
+  setConnectionStatus(state2, "closing");
   if (socket) {
     try {
       if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
         socket.close();
       } else {
-        if (state.socket === socket) {
-          state.socket = null;
+        if (state2.socket === socket) {
+          state2.socket = null;
         }
-        setConnectionStatus(state, "idle");
+        setConnectionStatus(state2, "idle");
       }
     } catch {
-      if (state.socket === socket) {
-        state.socket = null;
+      if (state2.socket === socket) {
+        state2.socket = null;
       }
-      setConnectionStatus(state, "idle");
+      setConnectionStatus(state2, "idle");
     }
   }
 }
-function sendPtyInput(state, data) {
-  if (!state.socket || state.socket.readyState !== WebSocket.OPEN)
+function sendPtyInput(state2, data) {
+  if (!state2.socket || state2.socket.readyState !== WebSocket.OPEN)
     return false;
   const message = { type: "input", data };
-  state.socket.send(JSON.stringify(message));
+  state2.socket.send(JSON.stringify(message));
   return true;
 }
-function sendPtyResize(state, cols, rows) {
-  if (!state.socket || state.socket.readyState !== WebSocket.OPEN)
+function sendPtyResize(state2, cols, rows) {
+  if (!state2.socket || state2.socket.readyState !== WebSocket.OPEN)
     return false;
   const message = { type: "resize", cols, rows };
-  state.socket.send(JSON.stringify(message));
+  state2.socket.send(JSON.stringify(message));
   return true;
 }
 function handleServerMessage(payload, callbacks) {
@@ -7100,39 +7273,72 @@ function handleServerMessage(payload, callbacks) {
   } catch {}
   return false;
 }
-function isPtyConnected(state) {
-  return state.status === "connected" && state.socket?.readyState === WebSocket.OPEN;
+function isPtyConnected(state2) {
+  return state2.status === "connected" && state2.socket?.readyState === WebSocket.OPEN;
 }
-function createWebSocketPtyTransport(state = createPtyConnection()) {
+function createWebSocketPtyTransport(state2 = createPtyConnection()) {
   return {
     connect: (options) => {
       const url = options.url?.trim?.() ?? "";
       if (!url) {
         throw new Error("PTY URL is required for WebSocket transport");
       }
-      const connected = connectPty(state, options, options.callbacks);
-      if (!connected && state.status !== "connected") {
-        throw new Error(`PTY connection is busy (${state.status})`);
+      const connected = connectPty(state2, options, options.callbacks);
+      if (!connected && state2.status !== "connected") {
+        throw new Error(`PTY connection is busy (${state2.status})`);
       }
     },
     disconnect: () => {
-      disconnectPty(state);
+      disconnectPty(state2);
     },
     sendInput: (data) => {
-      return sendPtyInput(state, data);
+      return sendPtyInput(state2, data);
     },
     resize: (cols, rows) => {
-      return sendPtyResize(state, cols, rows);
+      return sendPtyResize(state2, cols, rows);
     },
     isConnected: () => {
-      return isPtyConnected(state);
+      return isPtyConnected(state2);
     },
     destroy: () => {
-      disconnectPty(state);
+      disconnectPty(state2);
     }
   };
 }
-// src/input/keymap.ts
+// src/utils/base64.ts
+var textDecoder = new TextDecoder;
+function decodeBase64Bytes(text2) {
+  const cleaned = text2.replace(/\s+/g, "");
+  if (!cleaned)
+    return new Uint8Array(0);
+  if (typeof atob === "function") {
+    const binary = atob(cleaned);
+    const out = new Uint8Array(binary.length);
+    for (let i = 0;i < binary.length; i += 1) {
+      out[i] = binary.charCodeAt(i) & 255;
+    }
+    return out;
+  }
+  if (typeof Buffer !== "undefined") {
+    return new Uint8Array(Buffer.from(cleaned, "base64"));
+  }
+  throw new Error("No base64 decoder available in this environment.");
+}
+function encodeBase64Bytes(bytes) {
+  if (typeof btoa === "function") {
+    let binary = "";
+    const chunk = 32768;
+    for (let i = 0;i < bytes.length; i += chunk) {
+      binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+    }
+    return btoa(binary);
+  }
+  if (typeof Buffer !== "undefined") {
+    return Buffer.from(bytes).toString("base64");
+  }
+  throw new Error("No base64 encoder available in this environment.");
+}
+// src/input/keymap/constants.ts
 var sequences = {
   enter: "\r",
   backspace: "",
@@ -7144,6 +7350,206 @@ var sequences = {
 var DEFAULT_CONFIG = {
   enableCtrlCombos: true
 };
+
+// src/input/keymap/before-input.ts
+function encodeBeforeInputEvent(event) {
+  if (!event)
+    return "";
+  const type = event.inputType;
+  if (type === "insertText")
+    return event.data || "";
+  if (type === "insertLineBreak")
+    return sequences.enter;
+  if (type === "deleteContentBackward")
+    return sequences.backspace;
+  if (type === "deleteContentForward")
+    return sequences.delete;
+  if (type === "insertFromPaste") {
+    return event.dataTransfer?.getData("text/plain") || "";
+  }
+  return "";
+}
+
+// src/input/keymap/control.ts
+function ctrlCharForKey(key) {
+  if (key === " ")
+    return "\x00";
+  if (key === "@")
+    return "\x00";
+  if (key === "[")
+    return "\x1B";
+  if (key === "\\")
+    return "\x1C";
+  if (key === "]")
+    return "\x1D";
+  if (key === "^")
+    return "\x1E";
+  if (key === "_")
+    return "\x1F";
+  if (key === "?")
+    return "";
+  if (key.length === 1) {
+    const code = key.toUpperCase().charCodeAt(0);
+    if (code >= 64 && code <= 95) {
+      return String.fromCharCode(code & 31);
+    }
+  }
+  return "";
+}
+function modifierCode(event) {
+  let mod = 1;
+  if (event.shiftKey)
+    mod += 1;
+  if (event.altKey)
+    mod += 2;
+  if (event.ctrlKey)
+    mod += 4;
+  return mod;
+}
+
+// src/input/keymap/default-mapping.ts
+var FUNCTION_KEY_SEQUENCE_BY_NUMBER = {
+  1: "\x1BOP",
+  2: "\x1BOQ",
+  3: "\x1BOR",
+  4: "\x1BOS",
+  5: "\x1B[15~",
+  6: "\x1B[17~",
+  7: "\x1B[18~",
+  8: "\x1B[19~",
+  9: "\x1B[20~",
+  10: "\x1B[21~",
+  11: "\x1B[23~",
+  12: "\x1B[24~"
+};
+var MODIFIER_CAPABLE_CSI_FINAL_BY_KEY = {
+  ArrowUp: "A",
+  ArrowDown: "B",
+  ArrowRight: "C",
+  ArrowLeft: "D",
+  Home: "H",
+  End: "F"
+};
+var SIMPLE_KEY_SEQUENCES = {
+  Enter: sequences.enter,
+  Backspace: sequences.backspace,
+  Delete: sequences.delete,
+  Del: sequences.delete,
+  Escape: sequences.escape,
+  PageUp: "\x1B[5~",
+  PageDown: "\x1B[6~",
+  Insert: "\x1B[2~"
+};
+function encodeDefaultKeyEvent(event) {
+  const key = event.key ?? "";
+  if (key === "Tab") {
+    return event.shiftKey ? sequences.shiftTab : sequences.tab;
+  }
+  const modifierFinal = MODIFIER_CAPABLE_CSI_FINAL_BY_KEY[key];
+  if (modifierFinal) {
+    return event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}${modifierFinal}` : `\x1B[${modifierFinal}`;
+  }
+  const direct = SIMPLE_KEY_SEQUENCES[key];
+  if (direct)
+    return direct;
+  if (key.startsWith("F")) {
+    const fn = Number(key.slice(1));
+    return FUNCTION_KEY_SEQUENCE_BY_NUMBER[fn] ?? "";
+  }
+  if (key.length === 1) {
+    return event.altKey ? `\x1B${key}` : key;
+  }
+  return "";
+}
+
+// src/input/keymap/normalization.ts
+var UN_SHIFTED_CODE_BY_CODE = {
+  Backquote: "`",
+  Minus: "-",
+  Equal: "=",
+  BracketLeft: "[",
+  BracketRight: "]",
+  Backslash: "\\",
+  Semicolon: ";",
+  Quote: "'",
+  Comma: ",",
+  Period: ".",
+  Slash: "/"
+};
+var SHIFTED_CODE_BY_CODE = {
+  Backquote: "~",
+  Digit1: "!",
+  Digit2: "@",
+  Digit3: "#",
+  Digit4: "$",
+  Digit5: "%",
+  Digit6: "^",
+  Digit7: "&",
+  Digit8: "*",
+  Digit9: "(",
+  Digit0: ")",
+  Minus: "_",
+  Equal: "+",
+  BracketLeft: "{",
+  BracketRight: "}",
+  Backslash: "|",
+  Semicolon: ":",
+  Quote: '"',
+  Comma: "<",
+  Period: ">",
+  Slash: "?"
+};
+function deriveUnshiftedCodepoint(event) {
+  const code = event.code || "";
+  if (code.startsWith("Key") && code.length === 4) {
+    return code.slice(3).toLowerCase().codePointAt(0) ?? 0;
+  }
+  if (code.startsWith("Digit") && code.length === 6) {
+    return code.slice(5).codePointAt(0) ?? 0;
+  }
+  const punctuation = UN_SHIFTED_CODE_BY_CODE[code];
+  if (punctuation)
+    return punctuation.codePointAt(0) ?? 0;
+  if (event.key?.length === 1)
+    return event.key.codePointAt(0) ?? 0;
+  return 0;
+}
+function deriveShiftedCodepoint(event, unshiftedCodepoint) {
+  if (!event.shiftKey)
+    return 0;
+  if (event.key?.length === 1) {
+    const cp2 = event.key.codePointAt(0) ?? 0;
+    if (cp2 > 0 && cp2 !== unshiftedCodepoint)
+      return cp2;
+  }
+  const shifted = SHIFTED_CODE_BY_CODE[event.code || ""];
+  if (!shifted)
+    return 0;
+  const cp = shifted.codePointAt(0) ?? 0;
+  return cp !== unshiftedCodepoint ? cp : 0;
+}
+function deriveBaseLayoutCodepoint(event) {
+  const code = event.code || "";
+  if (code.startsWith("Key") && code.length === 4) {
+    return code.slice(3).toLowerCase().codePointAt(0) ?? 0;
+  }
+  if (code.startsWith("Digit") && code.length === 6) {
+    return code.slice(5).codePointAt(0) ?? 0;
+  }
+  const punctuation = UN_SHIFTED_CODE_BY_CODE[code];
+  if (punctuation)
+    return punctuation.codePointAt(0) ?? 0;
+  return 0;
+}
+function toCodepoints(text2) {
+  const points = [];
+  for (const ch of text2) {
+    points.push(ch.codePointAt(0) ?? 0);
+  }
+  return points.filter((cp) => cp > 0);
+}
+
+// src/input/keymap/kitty.ts
 var KITTY_FLAG_DISAMBIGUATE = 1 << 0;
 var KITTY_FLAG_REPORT_EVENTS = 1 << 1;
 var KITTY_FLAG_REPORT_ALTERNATE = 1 << 2;
@@ -7217,165 +7623,6 @@ var KITTY_KEYPAD_BY_CODE = {
   NumpadEqual: { code: 57415, final: "u" }
 };
 var KITTY_LOCK_KEYS = new Set(["CapsLock", "NumLock", "ScrollLock"]);
-var UN_SHIFTED_CODE_BY_CODE = {
-  Backquote: "`",
-  Minus: "-",
-  Equal: "=",
-  BracketLeft: "[",
-  BracketRight: "]",
-  Backslash: "\\",
-  Semicolon: ";",
-  Quote: "'",
-  Comma: ",",
-  Period: ".",
-  Slash: "/"
-};
-var SHIFTED_CODE_BY_CODE = {
-  Backquote: "~",
-  Digit1: "!",
-  Digit2: "@",
-  Digit3: "#",
-  Digit4: "$",
-  Digit5: "%",
-  Digit6: "^",
-  Digit7: "&",
-  Digit8: "*",
-  Digit9: "(",
-  Digit0: ")",
-  Minus: "_",
-  Equal: "+",
-  BracketLeft: "{",
-  BracketRight: "}",
-  Backslash: "|",
-  Semicolon: ":",
-  Quote: '"',
-  Comma: "<",
-  Period: ">",
-  Slash: "?"
-};
-function ctrlCharForKey(key) {
-  if (key === " ")
-    return "\x00";
-  if (key === "@")
-    return "\x00";
-  if (key === "[")
-    return "\x1B";
-  if (key === "\\")
-    return "\x1C";
-  if (key === "]")
-    return "\x1D";
-  if (key === "^")
-    return "\x1E";
-  if (key === "_")
-    return "\x1F";
-  if (key === "?")
-    return "";
-  if (key.length === 1) {
-    const code = key.toUpperCase().charCodeAt(0);
-    if (code >= 64 && code <= 95) {
-      return String.fromCharCode(code & 31);
-    }
-  }
-  return "";
-}
-function modifierCode(event) {
-  let mod = 1;
-  if (event.shiftKey)
-    mod += 1;
-  if (event.altKey)
-    mod += 2;
-  if (event.ctrlKey)
-    mod += 4;
-  return mod;
-}
-function encodeKeyEvent(event, config = DEFAULT_CONFIG, kittyFlags = 0) {
-  if (!event)
-    return "";
-  if (event.isComposing)
-    return "";
-  if (kittyFlags !== 0) {
-    return encodeKittyKeyEvent(event, kittyFlags);
-  }
-  if (event.metaKey)
-    return "";
-  const cfg = { ...DEFAULT_CONFIG, ...config };
-  let seq = "";
-  if (cfg.enableCtrlCombos && event.ctrlKey) {
-    seq = ctrlCharForKey(event.key);
-    if (event.altKey && seq)
-      seq = `\x1B${seq}`;
-  }
-  if (!seq) {
-    switch (event.key) {
-      case "Enter":
-        seq = sequences.enter;
-        break;
-      case "Backspace":
-        seq = sequences.backspace;
-        break;
-      case "Delete":
-      case "Del":
-        seq = sequences.delete;
-        break;
-      case "Tab":
-        seq = event.shiftKey ? sequences.shiftTab : sequences.tab;
-        break;
-      case "Escape":
-        seq = sequences.escape;
-        break;
-      case "ArrowUp":
-        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}A` : "\x1B[A";
-        break;
-      case "ArrowDown":
-        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}B` : "\x1B[B";
-        break;
-      case "ArrowRight":
-        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}C` : "\x1B[C";
-        break;
-      case "ArrowLeft":
-        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}D` : "\x1B[D";
-        break;
-      case "Home":
-        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}H` : "\x1B[H";
-        break;
-      case "End":
-        seq = event.shiftKey || event.altKey || event.ctrlKey ? `\x1B[1;${modifierCode(event)}F` : "\x1B[F";
-        break;
-      case "PageUp":
-        seq = "\x1B[5~";
-        break;
-      case "PageDown":
-        seq = "\x1B[6~";
-        break;
-      case "Insert":
-        seq = "\x1B[2~";
-        break;
-      default:
-        if (event.key?.startsWith("F")) {
-          const fn = Number(event.key.slice(1));
-          const map = {
-            1: "\x1BOP",
-            2: "\x1BOQ",
-            3: "\x1BOR",
-            4: "\x1BOS",
-            5: "\x1B[15~",
-            6: "\x1B[17~",
-            7: "\x1B[18~",
-            8: "\x1B[19~",
-            9: "\x1B[20~",
-            10: "\x1B[21~",
-            11: "\x1B[23~",
-            12: "\x1B[24~"
-          };
-          seq = map[fn] ?? "";
-        } else if (event.key?.length === 1) {
-          seq = event.altKey ? `\x1B${event.key}` : event.key;
-        }
-        break;
-    }
-  }
-  return seq;
-}
 function kittyModifierCode(event, includeLockModifiers) {
   let code = 1;
   if (event.shiftKey)
@@ -7393,55 +7640,6 @@ function kittyModifierCode(event, includeLockModifiers) {
       code += 128;
   }
   return code;
-}
-function deriveUnshiftedCodepoint(event) {
-  const code = event.code || "";
-  if (code.startsWith("Key") && code.length === 4) {
-    return code.slice(3).toLowerCase().codePointAt(0) ?? 0;
-  }
-  if (code.startsWith("Digit") && code.length === 6) {
-    return code.slice(5).codePointAt(0) ?? 0;
-  }
-  const punctuation = UN_SHIFTED_CODE_BY_CODE[code];
-  if (punctuation)
-    return punctuation.codePointAt(0) ?? 0;
-  if (event.key?.length === 1)
-    return event.key.codePointAt(0) ?? 0;
-  return 0;
-}
-function deriveShiftedCodepoint(event, unshiftedCodepoint) {
-  if (!event.shiftKey)
-    return 0;
-  if (event.key?.length === 1) {
-    const cp2 = event.key.codePointAt(0) ?? 0;
-    if (cp2 > 0 && cp2 !== unshiftedCodepoint)
-      return cp2;
-  }
-  const shifted = SHIFTED_CODE_BY_CODE[event.code || ""];
-  if (!shifted)
-    return 0;
-  const cp = shifted.codePointAt(0) ?? 0;
-  return cp !== unshiftedCodepoint ? cp : 0;
-}
-function deriveBaseLayoutCodepoint(event) {
-  const code = event.code || "";
-  if (code.startsWith("Key") && code.length === 4) {
-    return code.slice(3).toLowerCase().codePointAt(0) ?? 0;
-  }
-  if (code.startsWith("Digit") && code.length === 6) {
-    return code.slice(5).codePointAt(0) ?? 0;
-  }
-  const punctuation = UN_SHIFTED_CODE_BY_CODE[code];
-  if (punctuation)
-    return punctuation.codePointAt(0) ?? 0;
-  return 0;
-}
-function toCodepoints(text) {
-  const points = [];
-  for (const ch of text) {
-    points.push(ch.codePointAt(0) ?? 0);
-  }
-  return points.filter((cp) => cp > 0);
 }
 function kittyEventType(event, reportEvents) {
   if (!reportEvents)
@@ -7539,24 +7737,9 @@ function encodeKittyKeyEvent(event, kittyFlags) {
   }
   return "";
 }
-function encodeBeforeInput(event) {
-  if (!event)
-    return "";
-  const type = event.inputType;
-  if (type === "insertText")
-    return event.data || "";
-  if (type === "insertLineBreak")
-    return sequences.enter;
-  if (type === "deleteContentBackward")
-    return sequences.backspace;
-  if (type === "deleteContentForward")
-    return sequences.delete;
-  if (type === "insertFromPaste") {
-    return event.dataTransfer?.getData("text/plain") || "";
-  }
-  return "";
-}
-function mapKeyForPty(seq) {
+
+// src/input/keymap/pty-map.ts
+function mapKeySequenceForPty(seq) {
   const csi = "\x1B[";
   if (seq.startsWith(csi) && seq.endsWith("u")) {
     const body = seq.slice(csi.length, -1);
@@ -7584,6 +7767,36 @@ function mapKeyForPty(seq) {
 `)
     return "\r";
   return seq;
+}
+
+// src/input/keymap.ts
+function encodeKeyEvent(event, config = DEFAULT_CONFIG, kittyFlags = 0) {
+  if (!event)
+    return "";
+  if (event.isComposing)
+    return "";
+  if (kittyFlags !== 0) {
+    return encodeKittyKeyEvent(event, kittyFlags);
+  }
+  if (event.metaKey)
+    return "";
+  const cfg = { ...DEFAULT_CONFIG, ...config };
+  let seq = "";
+  if (cfg.enableCtrlCombos && event.ctrlKey) {
+    seq = ctrlCharForKey(event.key);
+    if (event.altKey && seq)
+      seq = `\x1B${seq}`;
+  }
+  if (!seq) {
+    seq = encodeDefaultKeyEvent(event);
+  }
+  return seq;
+}
+function encodeBeforeInput(event) {
+  return encodeBeforeInputEvent(event);
+}
+function mapKeyForPty(seq) {
+  return mapKeySequenceForPty(seq);
 }
 
 // src/input/ansi.ts
@@ -7835,41 +8048,258 @@ class MouseController {
   }
 }
 
-// src/input/output.ts
-var textDecoder = new TextDecoder;
-var textEncoder = new TextEncoder;
-function decodeBase64(data) {
-  if (!data)
-    return new Uint8Array;
-  const cleaned = data.replace(/\s+/g, "");
-  if (typeof atob === "function") {
-    const binary = atob(cleaned);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0;i < binary.length; i += 1) {
-      bytes[i] = binary.charCodeAt(i) & 255;
-    }
-    return bytes;
+// src/input/output/csi.ts
+function deriveAltScreen(seq, current) {
+  const altMode = parsePrivateModeSeq(seq);
+  if (!altMode)
+    return current;
+  const { enabled, codes } = altMode;
+  if (codes.some((code) => code === 47 || code === 1047 || code === 1049)) {
+    return enabled;
   }
-  if (typeof Buffer !== "undefined") {
-    return new Uint8Array(Buffer.from(cleaned, "base64"));
-  }
-  return new Uint8Array;
+  return current;
 }
-function encodeBase64(bytes) {
-  if (typeof btoa === "function") {
-    let binary = "";
-    const chunk = 32768;
-    for (let i = 0;i < bytes.length; i += chunk) {
-      binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+function applyTrackedPrivateModes(seq, state2) {
+  const mode = parsePrivateModeSeq(seq);
+  if (!mode)
+    return false;
+  const { enabled, codes } = mode;
+  let handled = false;
+  for (const code of codes) {
+    if (code === 2004) {
+      state2.bracketedPaste = enabled;
+      handled = true;
+    } else if (code === 1004) {
+      state2.focusReporting = enabled;
+      handled = true;
+    } else if (code === 2026) {
+      state2.synchronizedOutput = enabled;
     }
-    return btoa(binary);
   }
-  if (typeof Buffer !== "undefined") {
-    return Buffer.from(bytes).toString("base64");
+  return handled;
+}
+function handleWindowOpSequence(seq, handlers) {
+  const params = parseWindowOpSeq(seq);
+  if (!params)
+    return false;
+  const op = params[0] ?? 0;
+  const metrics = handlers.getWindowMetrics?.();
+  if (metrics && op === 14 && params.length === 1) {
+    handlers.sendReply(`\x1B[4;${metrics.heightPx};${metrics.widthPx}t`);
+    return true;
   }
-  return "";
+  if (metrics && op === 16 && params.length === 1) {
+    handlers.sendReply(`\x1B[6;${metrics.cellHeightPx};${metrics.cellWidthPx}t`);
+    return true;
+  }
+  if (metrics && op === 18 && params.length === 1) {
+    handlers.sendReply(`\x1B[8;${metrics.rows};${metrics.cols}t`);
+    return true;
+  }
+  if (!handlers.onWindowOp)
+    return false;
+  if (params[0] === 8 && params.length >= 3) {
+    handlers.onWindowOp({
+      type: "resize",
+      rows: params[1] ?? 0,
+      cols: params[2] ?? 0,
+      params,
+      raw: seq
+    });
+  } else {
+    handlers.onWindowOp({ type: "unknown", params, raw: seq });
+  }
+  return true;
+}
+function handleCoreCsiSequence(seq, handlers) {
+  if (seq === "\x1B[6n") {
+    const { row, col } = handlers.getCursorPosition();
+    handlers.sendReply(`\x1B[${row};${col}R`);
+    return true;
+  }
+  if (seq === "\x1B[>q") {
+    handlers.sendReply("\x1BP>|ghostty 1.0\x1B\\");
+    return true;
+  }
+  if (isDeviceAttributesQuery(seq)) {
+    handlers.sendReply("\x1B[?1;2c");
+    return true;
+  }
+  return false;
 }
 
+// src/input/output/osc.ts
+var textDecoder2 = new TextDecoder;
+var textEncoder = new TextEncoder;
+function replyOscColor(code, rgb, sendReply) {
+  const toHex4 = (value) => Math.round(Math.max(0, Math.min(255, value)) * 257).toString(16).padStart(4, "0");
+  const r = toHex4(rgb[0]);
+  const g = toHex4(rgb[1]);
+  const b = toHex4(rgb[2]);
+  sendReply(`\x1B]${code};rgb:${r}/${g}/${b}\x07`);
+}
+function handleOscSequence(seq, handlers) {
+  const content = seq.slice(2);
+  const parts = content.split(";");
+  const code = parts[0] ?? "";
+  if (code === "9") {
+    const firstSep = content.indexOf(";");
+    const body = firstSep >= 0 ? content.slice(firstSep + 1) : "";
+    if (/^(?:[2-9]|1[0-2]?)(?:;|$)/.test(body)) {
+      return true;
+    }
+    handlers.onDesktopNotification?.({
+      title: "",
+      body,
+      source: "osc9",
+      raw: seq
+    });
+    return true;
+  }
+  if (code === "777") {
+    const firstSep = content.indexOf(";");
+    const rest = firstSep >= 0 ? content.slice(firstSep + 1) : "";
+    if (!rest.startsWith("notify;")) {
+      return true;
+    }
+    const payload = rest.slice("notify;".length);
+    const titleSep = payload.indexOf(";");
+    if (titleSep < 0) {
+      return true;
+    }
+    handlers.onDesktopNotification?.({
+      title: payload.slice(0, titleSep),
+      body: payload.slice(titleSep + 1),
+      source: "osc777",
+      raw: seq
+    });
+    return true;
+  }
+  if (code === "52") {
+    const target = parts[1] ?? "c";
+    const payload = parts.slice(2).join(";");
+    if (payload === "?") {
+      if (!handlers.onClipboardRead)
+        return true;
+      Promise.resolve(handlers.onClipboardRead()).then((text3) => {
+        const safeText = text3 ?? "";
+        const bytes2 = textEncoder.encode(safeText);
+        try {
+          const encoded = encodeBase64Bytes(bytes2);
+          handlers.sendReply(`\x1B]52;${target};${encoded}\x07`);
+        } catch {}
+      }).catch(() => {});
+      return true;
+    }
+    if (!handlers.onClipboardWrite)
+      return true;
+    let bytes = new Uint8Array(0);
+    try {
+      bytes = decodeBase64Bytes(payload);
+    } catch {}
+    const text2 = textDecoder2.decode(bytes);
+    Promise.resolve(handlers.onClipboardWrite(text2)).catch(() => {});
+    return true;
+  }
+  const param = parts[1];
+  if (param !== "?")
+    return false;
+  const colors = handlers.getDefaultColors?.();
+  if (!colors)
+    return false;
+  if (code === "10" && colors.fg) {
+    replyOscColor(code, colors.fg, handlers.sendReply);
+    return true;
+  }
+  if (code === "11" && colors.bg) {
+    replyOscColor(code, colors.bg, handlers.sendReply);
+    return true;
+  }
+  if (code === "12" && colors.cursor) {
+    replyOscColor(code, colors.cursor, handlers.sendReply);
+    return true;
+  }
+  return false;
+}
+
+// src/input/output/prompt.ts
+function createPromptState() {
+  return {
+    semanticPromptSeen: false,
+    promptClickEvents: false,
+    promptInputActive: false,
+    commandRunning: false
+  };
+}
+function isPromptClickEventsEnabled(state2, altScreen) {
+  return state2.semanticPromptSeen && state2.promptClickEvents && state2.promptInputActive && !state2.commandRunning && !altScreen;
+}
+function readOsc133BoolOption(options, key) {
+  if (!options)
+    return null;
+  const prefix = `${key}=`;
+  const fields = options.split(";");
+  for (let i = 0;i < fields.length; i += 1) {
+    const field = fields[i];
+    if (!field.startsWith(prefix))
+      continue;
+    const value = field.slice(prefix.length);
+    if (value === "1")
+      return true;
+    if (value === "0")
+      return false;
+    return null;
+  }
+  return null;
+}
+function observeSemanticPromptOsc(state2, action, options) {
+  const clickEvents = readOsc133BoolOption(options, "click_events");
+  if (clickEvents !== null)
+    state2.promptClickEvents = clickEvents;
+  switch (action) {
+    case "A":
+    case "B":
+    case "I":
+      state2.semanticPromptSeen = true;
+      state2.promptInputActive = true;
+      state2.commandRunning = false;
+      break;
+    case "C":
+      state2.semanticPromptSeen = true;
+      state2.promptInputActive = false;
+      state2.commandRunning = true;
+      break;
+    case "D":
+      state2.semanticPromptSeen = true;
+      state2.promptInputActive = false;
+      state2.commandRunning = false;
+      break;
+    case "P":
+      state2.semanticPromptSeen = true;
+      break;
+    default:
+      break;
+  }
+}
+function observeOscPromptState(state2, seq) {
+  const content = seq.slice(2);
+  const sep = content.indexOf(";");
+  if (sep < 0)
+    return;
+  const code = content.slice(0, sep);
+  if (code !== "133")
+    return;
+  const rest = content.slice(sep + 1);
+  if (!rest)
+    return;
+  const action = rest[0] ?? "";
+  if (!action)
+    return;
+  const options = rest.length > 2 && rest[1] === ";" ? rest.slice(2) : "";
+  observeSemanticPromptOsc(state2, action, options);
+}
+
+// src/input/output/index.ts
 class OutputFilter {
   remainder = "";
   getCursorPosition;
@@ -7884,6 +8314,8 @@ class OutputFilter {
   clipboardWrite;
   clipboardRead;
   getDefaultColors;
+  desktopNotificationHandler;
+  promptState = createPromptState();
   constructor(options) {
     this.getCursorPosition = options.getCursorPosition;
     this.sendReply = options.sendReply;
@@ -7893,6 +8325,7 @@ class OutputFilter {
     this.clipboardRead = options.onClipboardRead;
     this.windowOpHandler = options.onWindowOp;
     this.getWindowMetrics = options.getWindowMetrics;
+    this.desktopNotificationHandler = options.onDesktopNotification;
   }
   setCursorProvider(fn) {
     this.getCursorPosition = fn;
@@ -7915,109 +8348,46 @@ class OutputFilter {
   isSynchronizedOutput() {
     return this.synchronizedOutput;
   }
-  replyOscColor(code, rgb) {
-    const toHex4 = (value) => Math.round(Math.max(0, Math.min(255, value)) * 257).toString(16).padStart(4, "0");
-    const r = toHex4(rgb[0]);
-    const g = toHex4(rgb[1]);
-    const b = toHex4(rgb[2]);
-    this.sendReply(`\x1B]${code};rgb:${r}/${g}/${b}\x07`);
+  isPromptClickEventsEnabled() {
+    return isPromptClickEventsEnabled(this.promptState, this.altScreen);
+  }
+  encodePromptClickEvent(cell) {
+    if (!this.isPromptClickEventsEnabled())
+      return "";
+    const row = Math.max(1, Math.floor(cell.row) + 1);
+    const col = Math.max(1, Math.floor(cell.col) + 1);
+    return `\x1B[<0;${col};${row}M`;
+  }
+  observeOsc(seq) {
+    observeOscPromptState(this.promptState, seq);
   }
   handleOsc(seq) {
-    const content = seq.slice(2);
-    const parts = content.split(";");
-    const code = parts[0] ?? "";
-    if (code === "52") {
-      const target = parts[1] ?? "c";
-      const payload = parts.slice(2).join(";");
-      if (payload === "?") {
-        if (!this.clipboardRead)
-          return true;
-        Promise.resolve(this.clipboardRead()).then((text2) => {
-          const safeText = text2 ?? "";
-          const bytes2 = textEncoder.encode(safeText);
-          const encoded = encodeBase64(bytes2);
-          this.sendReply(`\x1B]52;${target};${encoded}\x07`);
-        }).catch(() => {});
-        return true;
-      }
-      if (!this.clipboardWrite)
-        return true;
-      const bytes = decodeBase64(payload);
-      const text = textDecoder.decode(bytes);
-      Promise.resolve(this.clipboardWrite(text)).catch(() => {});
-      return true;
-    }
-    const param = parts[1];
-    if (param !== "?")
-      return false;
-    const colors = this.getDefaultColors?.();
-    if (!colors)
-      return false;
-    if (code === "10" && colors.fg) {
-      this.replyOscColor(code, colors.fg);
-      return true;
-    }
-    if (code === "11" && colors.bg) {
-      this.replyOscColor(code, colors.bg);
-      return true;
-    }
-    if (code === "12" && colors.cursor) {
-      this.replyOscColor(code, colors.cursor);
-      return true;
-    }
-    return false;
+    return handleOscSequence(seq, {
+      sendReply: this.sendReply,
+      getDefaultColors: this.getDefaultColors,
+      onClipboardWrite: this.clipboardWrite,
+      onClipboardRead: this.clipboardRead,
+      onDesktopNotification: this.desktopNotificationHandler
+    });
   }
   handleModeSeq(seq) {
-    const mode = parsePrivateModeSeq(seq);
-    if (!mode)
-      return false;
-    const { enabled, codes } = mode;
-    let handled = false;
-    for (const code of codes) {
-      if (code === 2004) {
-        this.bracketedPaste = enabled;
-        handled = true;
-      } else if (code === 1004) {
-        this.focusReporting = enabled;
-        handled = true;
-      } else if (code === 2026) {
-        this.synchronizedOutput = enabled;
-      }
-    }
+    const modeState = {
+      bracketedPaste: this.bracketedPaste,
+      focusReporting: this.focusReporting,
+      synchronizedOutput: this.synchronizedOutput
+    };
+    const handled = applyTrackedPrivateModes(seq, modeState);
+    this.bracketedPaste = modeState.bracketedPaste;
+    this.focusReporting = modeState.focusReporting;
+    this.synchronizedOutput = modeState.synchronizedOutput;
     return handled;
   }
   handleWindowOp(seq) {
-    const params = parseWindowOpSeq(seq);
-    if (!params)
-      return false;
-    const op = params[0] ?? 0;
-    const metrics = this.getWindowMetrics?.();
-    if (metrics && op === 14 && params.length === 1) {
-      this.sendReply(`\x1B[4;${metrics.heightPx};${metrics.widthPx}t`);
-      return true;
-    }
-    if (metrics && op === 16 && params.length === 1) {
-      this.sendReply(`\x1B[6;${metrics.cellHeightPx};${metrics.cellWidthPx}t`);
-      return true;
-    }
-    if (metrics && op === 18 && params.length === 1) {
-      this.sendReply(`\x1B[8;${metrics.rows};${metrics.cols}t`);
-      return true;
-    }
-    if (!this.windowOpHandler)
-      return false;
-    if (params[0] === 8 && params.length >= 3) {
-      this.windowOpHandler({
-        type: "resize",
-        rows: params[1] ?? 0,
-        cols: params[2] ?? 0,
-        params,
-        raw: seq
-      });
-    } else {
-      this.windowOpHandler({ type: "unknown", params, raw: seq });
-    }
-    return true;
+    return handleWindowOpSequence(seq, {
+      sendReply: this.sendReply,
+      getWindowMetrics: this.getWindowMetrics,
+      onWindowOp: this.windowOpHandler
+    });
   }
   filter(output) {
     if (!output)
@@ -8057,6 +8427,7 @@ class OutputFilter {
           break;
         }
         const seq2 = data.slice(i, j2);
+        this.observeOsc(seq2);
         if (!this.handleOsc(seq2)) {
           result += data.slice(i, j2 + terminatorLen);
         }
@@ -8080,13 +8451,7 @@ class OutputFilter {
         break;
       }
       const seq = data.slice(i, j + 1);
-      const altMode = parsePrivateModeSeq(seq);
-      if (altMode) {
-        const { enabled, codes } = altMode;
-        if (codes.some((code) => code === 47 || code === 1047 || code === 1049)) {
-          this.altScreen = enabled;
-        }
-      }
+      this.altScreen = deriveAltScreen(seq, this.altScreen);
       const mouseHandled = this.mouse.handleModeSeq(seq);
       const modeHandled = this.handleModeSeq(seq);
       if (mouseHandled || modeHandled) {
@@ -8097,14 +8462,10 @@ class OutputFilter {
         i = j + 1;
         continue;
       }
-      if (seq === "\x1B[6n") {
-        const { row, col } = this.getCursorPosition();
-        this.sendReply(`\x1B[${row};${col}R`);
-      } else if (seq === "\x1B[>q") {
-        this.sendReply("\x1BP>|ghostty 1.0\x1B\\");
-      } else if (isDeviceAttributesQuery(seq)) {
-        this.sendReply("\x1B[?1;2c");
-      } else {
+      if (!handleCoreCsiSequence(seq, {
+        sendReply: this.sendReply,
+        getCursorPosition: this.getCursorPosition
+      })) {
         result += seq;
       }
       i = j + 1;
@@ -8118,11 +8479,11 @@ function createInputHandler(options = {}) {
   const config = options.config || {};
   const cursorProvider = options.getCursorPosition || (() => ({ row: 1, col: 1 }));
   const replySink = options.sendReply || (() => {});
-  const positionToCell = options.positionToCell || (() => ({ row: 0, col: 0 }));
+  const positionToCell2 = options.positionToCell || (() => ({ row: 0, col: 0 }));
   const positionToPixel = options.positionToPixel || null;
   const mouse = new MouseController({
     sendReply: replySink,
-    positionToCell,
+    positionToCell: positionToCell2,
     positionToPixel: positionToPixel ?? undefined
   });
   const filter = new OutputFilter({
@@ -8133,7 +8494,8 @@ function createInputHandler(options = {}) {
     onClipboardRead: options.onClipboardRead,
     onClipboardWrite: options.onClipboardWrite,
     onWindowOp: options.onWindowOp,
-    getWindowMetrics: options.getWindowMetrics
+    getWindowMetrics: options.getWindowMetrics,
+    onDesktopNotification: options.onDesktopNotification
   });
   return {
     sequences,
@@ -8166,6 +8528,8 @@ function createInputHandler(options = {}) {
     isFocusReporting: () => filter.isFocusReporting(),
     isAltScreen: () => filter.isAltScreen(),
     isSynchronizedOutput: () => filter.isSynchronizedOutput(),
+    isPromptClickEventsEnabled: () => filter.isPromptClickEventsEnabled(),
+    encodePromptClickEvent: (cell) => filter.encodePromptClickEvent(cell),
     sendMouseEvent: (kind, event) => mouse.sendMouseEvent(kind, event)
   };
 }
@@ -13717,67 +14081,7 @@ AAAwEBAAGQAAAAgAAAAAAAAAAgAAAAQAAABbAQAAXAEAAFkBAABaAQAA5DQSAOw0EgDqNBIA6DQSAOw0
 /wAAAP8PAAD//wAAAEHgq8oACwgBAAAAAAAAAA==
 `;
 
-// src/wasm/runtime.ts
-var textDecoder2 = new TextDecoder;
-var textEncoder2 = new TextEncoder;
-function makeViewEntry() {
-  return { buffer: null, ptr: 0, len: 0, view: null };
-}
-function makeRenderViewCache() {
-  return {
-    codepoints: makeViewEntry(),
-    contentTags: makeViewEntry(),
-    wide: makeViewEntry(),
-    cellFlags: makeViewEntry(),
-    styleFlags: makeViewEntry(),
-    linkIds: makeViewEntry(),
-    fgBytes: makeViewEntry(),
-    bgBytes: makeViewEntry(),
-    ulBytes: makeViewEntry(),
-    ulStyle: makeViewEntry(),
-    linkOffsets: makeViewEntry(),
-    linkLengths: makeViewEntry(),
-    linkBuffer: makeViewEntry(),
-    graphemeOffset: makeViewEntry(),
-    graphemeLen: makeViewEntry(),
-    graphemeBuffer: makeViewEntry(),
-    selectionStart: makeViewEntry(),
-    selectionEnd: makeViewEntry()
-  };
-}
-function getCachedView(entry, buffer, ptr, len, Ctor) {
-  if (!ptr || len <= 0) {
-    entry.buffer = buffer;
-    entry.ptr = 0;
-    entry.len = 0;
-    entry.view = null;
-    return null;
-  }
-  if (entry.view && entry.buffer === buffer && entry.ptr === ptr && entry.len === len) {
-    return entry.view;
-  }
-  const view = new Ctor(buffer, ptr, len);
-  entry.buffer = buffer;
-  entry.ptr = ptr;
-  entry.len = len;
-  entry.view = view;
-  return view;
-}
-function decodeBase642(base64) {
-  const cleaned = base64.replace(/\s+/g, "");
-  if (typeof atob === "function") {
-    const binary = atob(cleaned);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0;i < binary.length; i += 1) {
-      bytes[i] = binary.charCodeAt(i) & 255;
-    }
-    return bytes;
-  }
-  if (typeof Buffer !== "undefined") {
-    return new Uint8Array(Buffer.from(cleaned, "base64"));
-  }
-  throw new Error("No base64 decoder available in this environment.");
-}
+// src/wasm/runtime/abi.ts
 function resolveWasmAbi(exports) {
   if (exports.restty_render_info) {
     return { kind: "info" };
@@ -13913,6 +14217,175 @@ function readCellPtrs(exports, handle) {
     cursorPtr: exports.restty_cursor_info_ptr(handle)
   };
 }
+function readRenderStatePtrs(abi, exports, handle) {
+  if (abi.kind === "info") {
+    return readRenderInfo(exports, handle);
+  }
+  if (abi.kind === "render") {
+    return readRenderPtrs(exports, handle);
+  }
+  return readCellPtrs(exports, handle);
+}
+
+// src/wasm/runtime/kitty.ts
+function readKittyPlacements(exports, memory, handle) {
+  if (!exports.restty_kitty_placement_count || !exports.restty_kitty_placements_ptr) {
+    return [];
+  }
+  const count = exports.restty_kitty_placement_count(handle) >>> 0;
+  if (!count)
+    return [];
+  const ptr = exports.restty_kitty_placements_ptr(handle) >>> 0;
+  if (!ptr)
+    return [];
+  const stride = exports.restty_kitty_placement_stride ? exports.restty_kitty_placement_stride() >>> 0 : 68;
+  if (!stride)
+    return [];
+  const view = new DataView(memory.buffer, ptr, count * stride);
+  const placements = new Array(count);
+  for (let i = 0;i < count; i += 1) {
+    const base = i * stride;
+    placements[i] = {
+      imageId: view.getUint32(base + 0, true),
+      imageFormat: view.getUint8(base + 4),
+      imageWidth: view.getUint32(base + 8, true),
+      imageHeight: view.getUint32(base + 12, true),
+      imageDataPtr: view.getUint32(base + 16, true),
+      imageDataLen: view.getUint32(base + 20, true),
+      x: view.getInt32(base + 24, true),
+      y: view.getInt32(base + 28, true),
+      z: view.getInt32(base + 32, true),
+      width: view.getUint32(base + 36, true),
+      height: view.getUint32(base + 40, true),
+      cellOffsetX: view.getUint32(base + 44, true),
+      cellOffsetY: view.getUint32(base + 48, true),
+      sourceX: view.getUint32(base + 52, true),
+      sourceY: view.getUint32(base + 56, true),
+      sourceWidth: view.getUint32(base + 60, true),
+      sourceHeight: view.getUint32(base + 64, true)
+    };
+  }
+  return placements;
+}
+
+// src/wasm/runtime/view-cache.ts
+function makeViewEntry() {
+  return { buffer: null, ptr: 0, len: 0, view: null };
+}
+function makeRenderViewCache() {
+  return {
+    codepoints: makeViewEntry(),
+    contentTags: makeViewEntry(),
+    wide: makeViewEntry(),
+    cellFlags: makeViewEntry(),
+    styleFlags: makeViewEntry(),
+    linkIds: makeViewEntry(),
+    fgBytes: makeViewEntry(),
+    bgBytes: makeViewEntry(),
+    ulBytes: makeViewEntry(),
+    ulStyle: makeViewEntry(),
+    linkOffsets: makeViewEntry(),
+    linkLengths: makeViewEntry(),
+    linkBuffer: makeViewEntry(),
+    graphemeOffset: makeViewEntry(),
+    graphemeLen: makeViewEntry(),
+    graphemeBuffer: makeViewEntry(),
+    selectionStart: makeViewEntry(),
+    selectionEnd: makeViewEntry()
+  };
+}
+function getCachedView(entry, buffer, ptr, len, Ctor) {
+  if (!ptr || len <= 0) {
+    entry.buffer = buffer;
+    entry.ptr = 0;
+    entry.len = 0;
+    entry.view = null;
+    return null;
+  }
+  if (entry.view && entry.buffer === buffer && entry.ptr === ptr && entry.len === len) {
+    return entry.view;
+  }
+  const view = new Ctor(buffer, ptr, len);
+  entry.buffer = buffer;
+  entry.ptr = ptr;
+  entry.len = len;
+  entry.view = view;
+  return view;
+}
+
+// src/wasm/runtime/render-state.ts
+function readRenderState(abi, exports, memory, handle, cache) {
+  const info = readRenderStatePtrs(abi, exports, handle);
+  if (!info)
+    return null;
+  const { rows, cols } = info;
+  if (!rows || !cols)
+    return null;
+  const cellCount = rows * cols;
+  const buffer = memory.buffer;
+  const codepoints = getCachedView(cache.codepoints, buffer, info.codepointsPtr, cellCount, Uint32Array);
+  const contentTags = getCachedView(cache.contentTags, buffer, info.contentTagsPtr, cellCount, Uint8Array);
+  const wide = getCachedView(cache.wide, buffer, info.widePtr, cellCount, Uint8Array);
+  const cellFlags = getCachedView(cache.cellFlags, buffer, info.flagsPtr, cellCount, Uint16Array);
+  const styleFlags = getCachedView(cache.styleFlags, buffer, info.styleFlagsPtr, cellCount, Uint16Array);
+  const linkIds = getCachedView(cache.linkIds, buffer, info.linkIdsPtr, cellCount, Uint32Array);
+  const fgBytes = getCachedView(cache.fgBytes, buffer, info.fgPtr, cellCount * 4, Uint8Array);
+  const bgBytes = getCachedView(cache.bgBytes, buffer, info.bgPtr, cellCount * 4, Uint8Array);
+  const ulBytes = getCachedView(cache.ulBytes, buffer, info.ulPtr, cellCount * 4, Uint8Array);
+  const ulStyle = getCachedView(cache.ulStyle, buffer, info.ulStylePtr, cellCount, Uint8Array);
+  const linkCount = exports.restty_link_count ? exports.restty_link_count(handle) : 0;
+  const linkOffsetsPtr = linkCount && exports.restty_link_offsets_ptr ? exports.restty_link_offsets_ptr(handle) : 0;
+  const linkLengthsPtr = linkCount && exports.restty_link_lengths_ptr ? exports.restty_link_lengths_ptr(handle) : 0;
+  const linkOffsets = getCachedView(cache.linkOffsets, buffer, linkOffsetsPtr, linkCount, Uint32Array);
+  const linkLengths = getCachedView(cache.linkLengths, buffer, linkLengthsPtr, linkCount, Uint32Array);
+  const linkBufferLen = exports.restty_link_buffer_len ? exports.restty_link_buffer_len(handle) : 0;
+  const linkBufferPtr = linkBufferLen && exports.restty_link_buffer_ptr ? exports.restty_link_buffer_ptr(handle) : 0;
+  const linkBuffer = getCachedView(cache.linkBuffer, buffer, linkBufferPtr, linkBufferLen, Uint8Array);
+  const graphemeOffset = getCachedView(cache.graphemeOffset, buffer, info.graphemeOffsetPtr, cellCount, Uint32Array);
+  const graphemeLen = getCachedView(cache.graphemeLen, buffer, info.graphemeLenPtr, cellCount, Uint32Array);
+  const graphemeBuffer = getCachedView(cache.graphemeBuffer, buffer, info.graphemeBufferPtr, info.graphemeBufferLen, Uint32Array);
+  const selectionStart = getCachedView(cache.selectionStart, buffer, info.selectionStartPtr, rows, Int16Array);
+  const selectionEnd = getCachedView(cache.selectionEnd, buffer, info.selectionEndPtr, rows, Int16Array);
+  const cursor = info.cursorPtr ? unpackCursor(buffer, info.cursorPtr) : null;
+  return {
+    rows,
+    cols,
+    cellCount,
+    codepoints,
+    contentTags,
+    wide,
+    cellFlags,
+    styleFlags,
+    linkIds,
+    fgBytes,
+    bgBytes,
+    ulBytes,
+    ulStyle,
+    linkOffsets,
+    linkLengths,
+    linkBuffer,
+    graphemeOffset,
+    graphemeLen,
+    graphemeBuffer,
+    selectionStart,
+    selectionEnd,
+    cursor
+  };
+}
+
+// src/wasm/runtime/restty-wasm.ts
+var textDecoder3 = new TextDecoder;
+var textEncoder2 = new TextEncoder;
+var requiredWasmExports = [
+  "memory",
+  "restty_create",
+  "restty_destroy",
+  "restty_write",
+  "restty_resize",
+  "restty_render_update",
+  "restty_alloc",
+  "restty_free"
+];
 
 class ResttyWasm {
   exports;
@@ -13926,7 +14399,7 @@ class ResttyWasm {
     this.renderViewCaches = new Map;
   }
   static async load(options = {}) {
-    const bytes = decodeBase642(WASM_BASE64);
+    const bytes = decodeBase64Bytes(WASM_BASE64);
     let memory = null;
     const log = options.log;
     const imports = {
@@ -13935,26 +14408,16 @@ class ResttyWasm {
           if (!memory || !ptr || !len)
             return;
           const view = new Uint8Array(memory.buffer, ptr, len);
-          const text = textDecoder2.decode(view);
+          const text2 = textDecoder3.decode(view);
           if (log)
-            log(text);
+            log(text2);
         }
       }
     };
     const { instance } = await WebAssembly.instantiate(bytes, imports);
     const exports = instance.exports;
     memory = exports.memory ?? null;
-    const required = [
-      "memory",
-      "restty_create",
-      "restty_destroy",
-      "restty_write",
-      "restty_resize",
-      "restty_render_update",
-      "restty_alloc",
-      "restty_free"
-    ];
-    for (const name of required) {
+    for (const name of requiredWasmExports) {
       if (!(name in exports)) {
         throw new Error(`missing WASM export: ${name}`);
       }
@@ -14011,7 +14474,7 @@ class ResttyWasm {
     if (this.exports.restty_output_consume) {
       this.exports.restty_output_consume(handle, len);
     }
-    return textDecoder2.decode(copy);
+    return textDecoder3.decode(copy);
   }
   getKittyKeyboardFlags(handle) {
     if (!this.exports.restty_kitty_keyboard_flags)
@@ -14019,48 +14482,12 @@ class ResttyWasm {
     return this.exports.restty_kitty_keyboard_flags(handle) >>> 0;
   }
   getKittyPlacements(handle) {
-    if (!this.exports.restty_kitty_placement_count || !this.exports.restty_kitty_placements_ptr) {
-      return [];
-    }
-    const count = this.exports.restty_kitty_placement_count(handle) >>> 0;
-    if (!count)
-      return [];
-    const ptr = this.exports.restty_kitty_placements_ptr(handle) >>> 0;
-    if (!ptr)
-      return [];
-    const stride = this.exports.restty_kitty_placement_stride ? this.exports.restty_kitty_placement_stride() >>> 0 : 68;
-    if (!stride)
-      return [];
-    const view = new DataView(this.memory.buffer, ptr, count * stride);
-    const placements = new Array(count);
-    for (let i = 0;i < count; i += 1) {
-      const base = i * stride;
-      placements[i] = {
-        imageId: view.getUint32(base + 0, true),
-        imageFormat: view.getUint8(base + 4),
-        imageWidth: view.getUint32(base + 8, true),
-        imageHeight: view.getUint32(base + 12, true),
-        imageDataPtr: view.getUint32(base + 16, true),
-        imageDataLen: view.getUint32(base + 20, true),
-        x: view.getInt32(base + 24, true),
-        y: view.getInt32(base + 28, true),
-        z: view.getInt32(base + 32, true),
-        width: view.getUint32(base + 36, true),
-        height: view.getUint32(base + 40, true),
-        cellOffsetX: view.getUint32(base + 44, true),
-        cellOffsetY: view.getUint32(base + 48, true),
-        sourceX: view.getUint32(base + 52, true),
-        sourceY: view.getUint32(base + 56, true),
-        sourceWidth: view.getUint32(base + 60, true),
-        sourceHeight: view.getUint32(base + 64, true)
-      };
-    }
-    return placements;
+    return readKittyPlacements(this.exports, this.memory, handle);
   }
-  write(handle, text) {
-    if (!text)
+  write(handle, text2) {
+    if (!text2)
       return;
-    const bytes = textEncoder2.encode(text);
+    const bytes = textEncoder2.encode(text2);
     const ptr = this.exports.restty_alloc(bytes.length);
     if (!ptr)
       return;
@@ -14094,64 +14521,7 @@ class ResttyWasm {
     this.exports.restty_reset_palette(handle);
   }
   getRenderState(handle) {
-    const info = this.abi.kind === "info" ? readRenderInfo(this.exports, handle) : this.abi.kind === "render" ? readRenderPtrs(this.exports, handle) : readCellPtrs(this.exports, handle);
-    if (!info)
-      return null;
-    const { rows, cols } = info;
-    if (!rows || !cols)
-      return null;
-    const cellCount = rows * cols;
-    const mem = this.memory;
-    const cache = this.getRenderViewCache(handle);
-    const buffer = mem.buffer;
-    const codepoints = getCachedView(cache.codepoints, buffer, info.codepointsPtr, cellCount, Uint32Array);
-    const contentTags = getCachedView(cache.contentTags, buffer, info.contentTagsPtr, cellCount, Uint8Array);
-    const wide = getCachedView(cache.wide, buffer, info.widePtr, cellCount, Uint8Array);
-    const cellFlags = getCachedView(cache.cellFlags, buffer, info.flagsPtr, cellCount, Uint16Array);
-    const styleFlags = getCachedView(cache.styleFlags, buffer, info.styleFlagsPtr, cellCount, Uint16Array);
-    const linkIds = getCachedView(cache.linkIds, buffer, info.linkIdsPtr, cellCount, Uint32Array);
-    const fgBytes = getCachedView(cache.fgBytes, buffer, info.fgPtr, cellCount * 4, Uint8Array);
-    const bgBytes = getCachedView(cache.bgBytes, buffer, info.bgPtr, cellCount * 4, Uint8Array);
-    const ulBytes = getCachedView(cache.ulBytes, buffer, info.ulPtr, cellCount * 4, Uint8Array);
-    const ulStyle = getCachedView(cache.ulStyle, buffer, info.ulStylePtr, cellCount, Uint8Array);
-    const linkCount = this.exports.restty_link_count ? this.exports.restty_link_count(handle) : 0;
-    const linkOffsetsPtr = linkCount && this.exports.restty_link_offsets_ptr ? this.exports.restty_link_offsets_ptr(handle) : 0;
-    const linkLengthsPtr = linkCount && this.exports.restty_link_lengths_ptr ? this.exports.restty_link_lengths_ptr(handle) : 0;
-    const linkOffsets = getCachedView(cache.linkOffsets, buffer, linkOffsetsPtr, linkCount, Uint32Array);
-    const linkLengths = getCachedView(cache.linkLengths, buffer, linkLengthsPtr, linkCount, Uint32Array);
-    const linkBufferLen = this.exports.restty_link_buffer_len ? this.exports.restty_link_buffer_len(handle) : 0;
-    const linkBufferPtr = linkBufferLen && this.exports.restty_link_buffer_ptr ? this.exports.restty_link_buffer_ptr(handle) : 0;
-    const linkBuffer = getCachedView(cache.linkBuffer, buffer, linkBufferPtr, linkBufferLen, Uint8Array);
-    const graphemeOffset = getCachedView(cache.graphemeOffset, buffer, info.graphemeOffsetPtr, cellCount, Uint32Array);
-    const graphemeLen = getCachedView(cache.graphemeLen, buffer, info.graphemeLenPtr, cellCount, Uint32Array);
-    const graphemeBuffer = getCachedView(cache.graphemeBuffer, buffer, info.graphemeBufferPtr, info.graphemeBufferLen, Uint32Array);
-    const selectionStart = getCachedView(cache.selectionStart, buffer, info.selectionStartPtr, rows, Int16Array);
-    const selectionEnd = getCachedView(cache.selectionEnd, buffer, info.selectionEndPtr, rows, Int16Array);
-    const cursor = info.cursorPtr ? unpackCursor(buffer, info.cursorPtr) : null;
-    return {
-      rows,
-      cols,
-      cellCount,
-      codepoints,
-      contentTags,
-      wide,
-      cellFlags,
-      styleFlags,
-      linkIds,
-      fgBytes,
-      bgBytes,
-      ulBytes,
-      ulStyle,
-      linkOffsets,
-      linkLengths,
-      linkBuffer,
-      graphemeOffset,
-      graphemeLen,
-      graphemeBuffer,
-      selectionStart,
-      selectionEnd,
-      cursor
-    };
+    return readRenderState(this.abi, this.exports, this.memory, handle, this.getRenderViewCache(handle));
   }
 }
 async function loadResttyWasm(options = {}) {
@@ -14266,11 +14636,11 @@ function colorToFloats(color, alphaOverride) {
 function colorToRgbU32(color) {
   return (color.r & 255) << 16 | (color.g & 255) << 8 | color.b & 255;
 }
-function parseGhosttyTheme(text) {
+function parseGhosttyTheme(text2) {
   const raw = {};
   const palette = new Array(256).fill(undefined);
   const colors = { palette };
-  for (const line of text.split(/\r?\n/)) {
+  for (const line of text2.split(/\r?\n/)) {
     const trimmed = line.trim();
     if (!trimmed)
       continue;
@@ -25349,7 +25719,86 @@ function getBuiltinTheme(name) {
   parsedThemeCache.set(name, parsed);
   return parsed;
 }
-// src/app/panes-context-menu.ts
+// src/surface/panes/default-context-menu-items.ts
+function getResttyShortcutModifierLabel() {
+  const isMac = typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
+  return isMac ? "Cmd" : "Ctrl";
+}
+function createDefaultResttyPaneContextMenuItems(options) {
+  const { pane, manager, getPtyUrl } = options;
+  const mod = options.modKeyLabel ?? getResttyShortcutModifierLabel();
+  const closeEnabled = manager.getPanes().length > 1;
+  const pauseLabel = typeof pane.paused === "boolean" ? pane.paused ? "Resume Renderer" : "Pause Renderer" : "Toggle Renderer Pause";
+  return [
+    {
+      label: "Copy",
+      shortcut: `${mod}+C`,
+      action: async () => {
+        await pane.app.copySelectionToClipboard();
+      }
+    },
+    {
+      label: "Paste",
+      shortcut: `${mod}+V`,
+      action: async () => {
+        await pane.app.pasteFromClipboard();
+      }
+    },
+    "separator",
+    {
+      label: "Split Right",
+      shortcut: `${mod}+D`,
+      action: () => {
+        manager.splitPane(pane.id, "vertical");
+      }
+    },
+    {
+      label: "Split Down",
+      shortcut: `${mod}+Shift+D`,
+      action: () => {
+        manager.splitPane(pane.id, "horizontal");
+      }
+    },
+    {
+      label: "Close Pane",
+      enabled: closeEnabled,
+      danger: true,
+      action: () => {
+        manager.closePane(pane.id);
+      }
+    },
+    "separator",
+    {
+      label: "Clear Screen",
+      action: () => {
+        pane.app.clearScreen();
+      }
+    },
+    {
+      label: pane.app.isPtyConnected() ? "Disconnect PTY" : "Connect PTY",
+      action: () => {
+        if (pane.app.isPtyConnected()) {
+          pane.app.disconnectPty();
+          return;
+        }
+        const url = (getPtyUrl?.() ?? "").trim();
+        pane.app.connectPty(url);
+      }
+    },
+    {
+      label: pauseLabel,
+      action: () => {
+        if (typeof pane.setPaused === "function") {
+          pane.setPaused(!(pane.paused ?? false));
+          return;
+        }
+        pane.app.togglePause();
+      }
+    }
+  ];
+}
+
+// src/surface/panes-context-menu.ts
 function createPaneContextMenuController(options) {
   const contextMenuEl = options.doc.createElement("div");
   contextMenuEl.className = "pane-context-menu";
@@ -25395,14 +25844,14 @@ function createPaneContextMenuController(options) {
       contextMenuEl.appendChild(button);
     }
   };
-  const show = (pane, clientX, clientY, manager2) => {
-    const items = options.contextMenu.getItems(pane, manager2);
+  const show = (pane, clientX, clientY, manager) => {
+    const items = options.contextMenu.getItems(pane, manager);
     render(items);
     contextMenuEl.hidden = false;
     const margin = 8;
-    const rect = contextMenuEl.getBoundingClientRect();
-    const maxX = Math.max(margin, options.win.innerWidth - rect.width - margin);
-    const maxY = Math.max(margin, options.win.innerHeight - rect.height - margin);
+    const rect2 = contextMenuEl.getBoundingClientRect();
+    const maxX = Math.max(margin, options.win.innerWidth - rect2.width - margin);
+    const maxY = Math.max(margin, options.win.innerHeight - rect2.height - margin);
     const left = Math.min(Math.max(clientX, margin), maxX);
     const top = Math.min(Math.max(clientY, margin), maxY);
     contextMenuEl.style.left = `${left}px`;
@@ -25422,7 +25871,7 @@ function createPaneContextMenuController(options) {
   };
 }
 
-// src/app/panes-styles.ts
+// src/surface/panes-styles.ts
 var RESTTY_PANE_ROOT_CLASS = "restty-pane-root";
 var RESTTY_PANE_STYLE_MARKER = "data-restty-pane-styles";
 var RESTTY_PANE_STYLE_TEXT = `
@@ -25526,8 +25975,17 @@ body.is-resizing-split {
   position: fixed;
   left: 0;
   top: 0;
-  width: 1px;
-  height: 1px;
+  width: 1em;
+  height: 1em;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  overflow: hidden;
+  resize: none;
   opacity: 0;
   pointer-events: none;
 }
@@ -25648,289 +26106,92 @@ function clearPaneStyleOptionsFromRoot(root) {
   root.style.removeProperty("--restty-pane-divider-thickness");
 }
 
-// src/app/panes.ts
-function getResttyShortcutModifierLabel() {
-  const isMac = typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
-  return isMac ? "Cmd" : "Ctrl";
-}
-function createDefaultResttyPaneContextMenuItems(options) {
-  const { pane, manager: manager2, getPtyUrl } = options;
-  const mod = options.modKeyLabel ?? getResttyShortcutModifierLabel();
-  const closeEnabled = manager2.getPanes().length > 1;
-  const pauseLabel = typeof pane.paused === "boolean" ? pane.paused ? "Resume Renderer" : "Pause Renderer" : "Toggle Renderer Pause";
-  return [
-    {
-      label: "Copy",
-      shortcut: `${mod}+C`,
-      action: async () => {
-        await pane.app.copySelectionToClipboard();
-      }
-    },
-    {
-      label: "Paste",
-      shortcut: `${mod}+V`,
-      action: async () => {
-        await pane.app.pasteFromClipboard();
-      }
-    },
-    "separator",
-    {
-      label: "Split Right",
-      shortcut: `${mod}+D`,
-      action: () => {
-        manager2.splitPane(pane.id, "vertical");
-      }
-    },
-    {
-      label: "Split Down",
-      shortcut: `${mod}+Shift+D`,
-      action: () => {
-        manager2.splitPane(pane.id, "horizontal");
-      }
-    },
-    {
-      label: "Close Pane",
-      enabled: closeEnabled,
-      danger: true,
-      action: () => {
-        manager2.closePane(pane.id);
-      }
-    },
-    "separator",
-    {
-      label: "Clear Screen",
-      action: () => {
-        pane.app.clearScreen();
-      }
-    },
-    {
-      label: pane.app.isPtyConnected() ? "Disconnect PTY" : "Connect PTY",
-      action: () => {
-        if (pane.app.isPtyConnected()) {
-          pane.app.disconnectPty();
-          return;
-        }
-        const url = (getPtyUrl?.() ?? "").trim();
-        pane.app.connectPty(url);
-      }
-    },
-    {
-      label: pauseLabel,
-      action: () => {
-        if (typeof pane.setPaused === "function") {
-          pane.setPaused(!(pane.paused ?? false));
-          return;
-        }
-        pane.app.togglePause();
-      }
+// src/surface/panes/layout.ts
+var getSplitBranches = (split) => {
+  const branches = [];
+  for (const child of Array.from(split.children)) {
+    if (!(child instanceof HTMLElement))
+      continue;
+    if (child.classList.contains("pane-divider"))
+      continue;
+    branches.push(child);
+  }
+  return branches;
+};
+var getRectEdgeDistanceSquared = (sourceRect, targetRect) => {
+  const dx = Math.max(targetRect.left - sourceRect.right, sourceRect.left - targetRect.right, 0);
+  const dy = Math.max(targetRect.top - sourceRect.bottom, sourceRect.top - targetRect.bottom, 0);
+  return dx ** 2 + dy ** 2;
+};
+var getRectCenterDistanceSquared = (sourceRect, targetRect) => {
+  const sourceCenterX = sourceRect.left + sourceRect.width * 0.5;
+  const sourceCenterY = sourceRect.top + sourceRect.height * 0.5;
+  const targetCenterX = targetRect.left + targetRect.width * 0.5;
+  const targetCenterY = targetRect.top + targetRect.height * 0.5;
+  const dx = targetCenterX - sourceCenterX;
+  const dy = targetCenterY - sourceCenterY;
+  return dx ** 2 + dy ** 2;
+};
+function findClosestPaneToRect(sourceRect, panes) {
+  if (!sourceRect)
+    return null;
+  let closestPane = null;
+  let closestEdgeDistance = Number.POSITIVE_INFINITY;
+  let closestCenterDistance = Number.POSITIVE_INFINITY;
+  for (const candidate of panes) {
+    const targetRect = candidate.container.getBoundingClientRect();
+    const edgeDistance = getRectEdgeDistanceSquared(sourceRect, targetRect);
+    const centerDistance = getRectCenterDistanceSquared(sourceRect, targetRect);
+    if (edgeDistance < closestEdgeDistance || edgeDistance === closestEdgeDistance && centerDistance < closestCenterDistance) {
+      closestPane = candidate;
+      closestEdgeDistance = edgeDistance;
+      closestCenterDistance = centerDistance;
     }
-  ];
+  }
+  return closestPane;
 }
-function createResttyPaneManager(options) {
-  const { root, createPane } = options;
-  if (!(root instanceof HTMLElement)) {
-    throw new Error("createResttyPaneManager requires a root HTMLElement");
+function collapseSplitAncestors(start) {
+  let current = start;
+  while (current && current.classList.contains("pane-split")) {
+    const branches = getSplitBranches(current);
+    if (branches.length > 1)
+      return;
+    const onlyChild = branches[0];
+    const parent = current.parentElement;
+    if (!parent || !onlyChild)
+      return;
+    const inheritedFlex = current.style.flex;
+    if (inheritedFlex) {
+      onlyChild.style.flex = inheritedFlex;
+    } else {
+      onlyChild.style.flex = "";
+    }
+    parent.replaceChild(onlyChild, current);
+    current = parent;
   }
-  const panes = new Map;
-  const paneCleanupFns = new Map;
-  const minPaneSize = Number.isFinite(options.minPaneSize) ? Math.max(24, Number(options.minPaneSize)) : 96;
-  const shortcutOptions = typeof options.shortcuts === "object" ? options.shortcuts : { enabled: options.shortcuts !== false };
-  const stylesInput = typeof options.styles === "object" && options.styles ? options.styles : undefined;
-  const stylesEnabled = options.styles === false ? false : stylesInput?.enabled ?? true;
-  let styleOptions = normalizePaneStyleOptions({
-    ...DEFAULT_RESTTY_PANE_STYLE_OPTIONS,
-    ...stylesInput
-  });
-  if (stylesEnabled) {
-    const doc = root.ownerDocument ?? document;
-    ensureResttyPaneStylesDocument(doc);
-    applyPaneStyleOptionsToRoot(root, styleOptions);
-  }
-  let nextPaneId = 1;
-  let activePaneId = null;
-  let focusedPaneId = null;
-  let resizeRaf = 0;
+}
+function createSplitDividerFactory(options) {
   let splitResizeState = null;
-  const ownerDoc = root.ownerDocument ?? document;
-  const ownerWin = ownerDoc.defaultView ?? window;
-  const contextMenuController = options.contextMenu ? createPaneContextMenuController({
-    contextMenu: options.contextMenu,
-    doc: ownerDoc,
-    win: ownerWin
-  }) : null;
-  const requestLayoutSync = () => {
-    if (resizeRaf)
-      return;
-    resizeRaf = requestAnimationFrame(() => {
-      resizeRaf = 0;
-      options.onLayoutChanged?.();
-    });
-  };
-  const getStyleOptions = () => ({
-    ...styleOptions
-  });
-  const setStyleOptions = (next) => {
-    styleOptions = normalizePaneStyleOptions({
-      ...styleOptions,
-      ...next
-    });
-    if (!stylesEnabled)
-      return;
-    applyPaneStyleOptionsToRoot(root, styleOptions);
-  };
-  const getPanes = () => Array.from(panes.values());
-  const getPaneById = (id) => {
-    return panes.get(id) ?? null;
-  };
-  const findPaneByElement = (element) => {
-    if (!(element instanceof HTMLElement))
-      return null;
-    const host = element.closest(".pane");
-    if (!host)
-      return null;
-    const id = Number(host.dataset.paneId ?? "");
-    if (!Number.isFinite(id))
-      return null;
-    return panes.get(id) ?? null;
-  };
-  const getActivePane = () => {
-    if (activePaneId === null)
-      return null;
-    return panes.get(activePaneId) ?? null;
-  };
-  const getFocusedPane = () => {
-    if (focusedPaneId !== null) {
-      const focused = panes.get(focusedPaneId);
-      if (focused)
-        return focused;
-    }
-    if (typeof document === "undefined")
-      return null;
-    return findPaneByElement(document.activeElement);
-  };
-  const setActivePane = (id, config) => {
-    const pane = panes.get(id);
-    if (!pane)
-      return;
-    activePaneId = id;
-    for (const current of panes.values()) {
-      current.container.classList.toggle("is-active", current.id === id);
-    }
-    options.onActivePaneChange?.(pane);
-    if (config?.focus) {
-      const target = pane.focusTarget ?? pane.container;
-      if (target instanceof HTMLElement) {
-        target.focus({ preventScroll: true });
-      }
-    }
-  };
-  const markPaneFocused = (id, config) => {
-    focusedPaneId = id;
-    setActivePane(id, config);
-  };
-  const getSplitBranches = (split) => {
-    const branches = [];
-    for (const child of Array.from(split.children)) {
-      if (!(child instanceof HTMLElement))
-        continue;
-      if (child.classList.contains("pane-divider"))
-        continue;
-      branches.push(child);
-    }
-    return branches;
-  };
-  const getRectEdgeDistanceSquared = (sourceRect, targetRect) => {
-    const dx = Math.max(targetRect.left - sourceRect.right, sourceRect.left - targetRect.right, 0);
-    const dy = Math.max(targetRect.top - sourceRect.bottom, sourceRect.top - targetRect.bottom, 0);
-    return dx ** 2 + dy ** 2;
-  };
-  const getRectCenterDistanceSquared = (sourceRect, targetRect) => {
-    const sourceCenterX = sourceRect.left + sourceRect.width * 0.5;
-    const sourceCenterY = sourceRect.top + sourceRect.height * 0.5;
-    const targetCenterX = targetRect.left + targetRect.width * 0.5;
-    const targetCenterY = targetRect.top + targetRect.height * 0.5;
-    const dx = targetCenterX - sourceCenterX;
-    const dy = targetCenterY - sourceCenterY;
-    return dx ** 2 + dy ** 2;
-  };
-  const findClosestPaneToRect = (sourceRect) => {
-    if (!sourceRect)
-      return null;
-    let closestPane = null;
-    let closestEdgeDistance = Number.POSITIVE_INFINITY;
-    let closestCenterDistance = Number.POSITIVE_INFINITY;
-    for (const candidate of panes.values()) {
-      const targetRect = candidate.container.getBoundingClientRect();
-      const edgeDistance = getRectEdgeDistanceSquared(sourceRect, targetRect);
-      const centerDistance = getRectCenterDistanceSquared(sourceRect, targetRect);
-      if (edgeDistance < closestEdgeDistance || edgeDistance === closestEdgeDistance && centerDistance < closestCenterDistance) {
-        closestPane = candidate;
-        closestEdgeDistance = edgeDistance;
-        closestCenterDistance = centerDistance;
-      }
-    }
-    return closestPane;
-  };
-  const hideContextMenu = () => {
-    contextMenuController?.hide();
-  };
-  const bindPaneInteractions = (pane) => {
-    const cleanupFns = [];
-    const { id, container } = pane;
-    const onPointerDown = () => {
-      markPaneFocused(id);
-    };
-    container.addEventListener("pointerdown", onPointerDown);
-    cleanupFns.push(() => {
-      container.removeEventListener("pointerdown", onPointerDown);
-    });
-    const focusTarget = pane.focusTarget;
-    if (focusTarget) {
-      const onFocus = () => {
-        markPaneFocused(id);
-      };
-      focusTarget.addEventListener("focus", onFocus);
-      cleanupFns.push(() => {
-        focusTarget.removeEventListener("focus", onFocus);
-      });
-    }
-    if (options.contextMenu) {
-      const onContextMenu = (event) => {
-        if (options.contextMenu?.canOpen && !options.contextMenu.canOpen(event, pane)) {
-          return;
-        }
-        event.preventDefault();
-        event.stopPropagation();
-        markPaneFocused(id);
-        contextMenuController?.show(pane, event.clientX, event.clientY, api);
-      };
-      container.addEventListener("contextmenu", onContextMenu);
-      cleanupFns.push(() => {
-        container.removeEventListener("contextmenu", onContextMenu);
-      });
-    }
-    paneCleanupFns.set(id, cleanupFns);
-  };
   const createSplitDivider = (direction) => {
     const divider = document.createElement("div");
     divider.className = `pane-divider ${direction === "vertical" ? "is-vertical" : "is-horizontal"}`;
     divider.setAttribute("role", "separator");
     divider.setAttribute("aria-orientation", direction === "vertical" ? "vertical" : "horizontal");
     const onPointerMove = (event) => {
-      const state = splitResizeState;
-      if (!state || event.pointerId !== state.pointerId)
+      const state2 = splitResizeState;
+      if (!state2 || event.pointerId !== state2.pointerId)
         return;
       event.preventDefault();
-      const coord = state.axis === "x" ? event.clientX : event.clientY;
-      const delta = coord - state.startCoord;
-      const maxFirst = Math.max(minPaneSize, state.total - minPaneSize);
-      const nextFirst = Math.min(maxFirst, Math.max(minPaneSize, state.startFirst + delta));
-      const nextSecond = Math.max(minPaneSize, state.total - nextFirst);
+      const coord = state2.axis === "x" ? event.clientX : event.clientY;
+      const delta = coord - state2.startCoord;
+      const maxFirst = Math.max(options.minPaneSize, state2.total - options.minPaneSize);
+      const nextFirst = Math.min(maxFirst, Math.max(options.minPaneSize, state2.startFirst + delta));
+      const nextSecond = Math.max(options.minPaneSize, state2.total - nextFirst);
       const firstPercent = nextFirst / (nextFirst + nextSecond) * 100;
       const secondPercent = 100 - firstPercent;
-      state.first.style.flex = `0 0 ${firstPercent.toFixed(5)}%`;
-      state.second.style.flex = `0 0 ${secondPercent.toFixed(5)}%`;
-      requestLayoutSync();
+      state2.first.style.flex = `0 0 ${firstPercent.toFixed(5)}%`;
+      state2.second.style.flex = `0 0 ${secondPercent.toFixed(5)}%`;
+      options.requestLayoutSync();
     };
     const endResize = () => {
       if (!splitResizeState)
@@ -25986,6 +26247,214 @@ function createResttyPaneManager(options) {
     });
     return divider;
   };
+  return { createSplitDivider };
+}
+
+// src/surface/panes/pane-interactions.ts
+function createPaneInteractions(options) {
+  const paneCleanupFns = new Map;
+  const bindPaneInteractions = (pane) => {
+    const cleanupFns = [];
+    const { id, container } = pane;
+    const onPointerDown = () => {
+      options.markPaneFocused(id);
+    };
+    container.addEventListener("pointerdown", onPointerDown);
+    cleanupFns.push(() => {
+      container.removeEventListener("pointerdown", onPointerDown);
+    });
+    const focusTarget = pane.focusTarget;
+    if (focusTarget) {
+      const onFocus = () => {
+        options.markPaneFocused(id);
+      };
+      focusTarget.addEventListener("focus", onFocus);
+      cleanupFns.push(() => {
+        focusTarget.removeEventListener("focus", onFocus);
+      });
+    }
+    if (options.contextMenu) {
+      const onContextMenu = (event) => {
+        if (options.contextMenu?.canOpen && !options.contextMenu.canOpen(event, pane)) {
+          return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        options.markPaneFocused(id);
+        options.contextMenuController?.show(pane, event.clientX, event.clientY, options.getManager());
+      };
+      container.addEventListener("contextmenu", onContextMenu);
+      cleanupFns.push(() => {
+        container.removeEventListener("contextmenu", onContextMenu);
+      });
+    }
+    paneCleanupFns.set(id, cleanupFns);
+  };
+  const cleanupPaneInteractions = (id) => {
+    const cleanupFns = paneCleanupFns.get(id) ?? [];
+    paneCleanupFns.delete(id);
+    for (const cleanup of cleanupFns) {
+      cleanup();
+    }
+  };
+  return {
+    bindPaneInteractions,
+    cleanupPaneInteractions
+  };
+}
+
+// src/surface/panes/window-events.ts
+function attachPaneManagerWindowEvents(options) {
+  const onWindowPointerDown = (event) => {
+    if (!options.contextMenuController?.isOpen())
+      return;
+    if (options.contextMenuController.containsTarget(event.target))
+      return;
+    options.hideContextMenu();
+  };
+  const onWindowBlur = () => {
+    options.hideContextMenu();
+  };
+  const onWindowKeyDown = (event) => {
+    if (options.contextMenuController?.isOpen() && event.key === "Escape") {
+      options.hideContextMenu();
+      return;
+    }
+    if (options.shortcutOptions.enabled === false)
+      return;
+    if (options.shortcutOptions.canHandleEvent && !options.shortcutOptions.canHandleEvent(event)) {
+      return;
+    }
+    const target = event.target;
+    if (target && ["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(target.tagName)) {
+      const allowed = options.shortcutOptions.isAllowedInputTarget?.(target) ?? false;
+      if (!allowed)
+        return;
+    }
+    const isMac = typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
+    const hasCommandModifier = isMac ? event.metaKey : event.ctrlKey;
+    if (!hasCommandModifier || event.altKey || event.code !== "KeyD" || event.repeat) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    options.splitActivePane(event.shiftKey ? "horizontal" : "vertical");
+  };
+  window.addEventListener("pointerdown", onWindowPointerDown);
+  window.addEventListener("blur", onWindowBlur);
+  window.addEventListener("keydown", onWindowKeyDown, { capture: true });
+  return () => {
+    window.removeEventListener("pointerdown", onWindowPointerDown);
+    window.removeEventListener("blur", onWindowBlur);
+    window.removeEventListener("keydown", onWindowKeyDown, { capture: true });
+  };
+}
+
+// src/surface/panes/manager.ts
+function createResttyPaneManager(options) {
+  const { root, createPane } = options;
+  const isElementLike = typeof HTMLElement !== "undefined" ? root instanceof HTMLElement : !!root && typeof root.ownerDocument !== "undefined";
+  if (!isElementLike) {
+    throw new Error("createResttyPaneManager requires a root HTMLElement");
+  }
+  const panes = new Map;
+  const minPaneSize = Number.isFinite(options.minPaneSize) ? Math.max(24, Number(options.minPaneSize)) : 96;
+  const shortcutOptions = typeof options.shortcuts === "object" ? options.shortcuts : { enabled: options.shortcuts !== false };
+  const stylesInput = typeof options.styles === "object" && options.styles ? options.styles : undefined;
+  const stylesEnabled = options.styles === false ? false : stylesInput?.enabled ?? true;
+  let styleOptions = normalizePaneStyleOptions({
+    ...DEFAULT_RESTTY_PANE_STYLE_OPTIONS,
+    ...stylesInput
+  });
+  if (stylesEnabled) {
+    const doc = root.ownerDocument ?? document;
+    ensureResttyPaneStylesDocument(doc);
+    applyPaneStyleOptionsToRoot(root, styleOptions);
+  }
+  let nextPaneId = 1;
+  let activePaneId = null;
+  let focusedPaneId = null;
+  let resizeRaf = 0;
+  const ownerDoc = root.ownerDocument ?? document;
+  const ownerWin = ownerDoc.defaultView ?? window;
+  const contextMenuController = options.contextMenu ? createPaneContextMenuController({
+    contextMenu: options.contextMenu,
+    doc: ownerDoc,
+    win: ownerWin
+  }) : null;
+  const requestLayoutSync = () => {
+    if (resizeRaf)
+      return;
+    resizeRaf = requestAnimationFrame(() => {
+      resizeRaf = 0;
+      options.onLayoutChanged?.();
+    });
+  };
+  const { createSplitDivider } = createSplitDividerFactory({ minPaneSize, requestLayoutSync });
+  const getStyleOptions = () => ({
+    ...styleOptions
+  });
+  const setStyleOptions = (next) => {
+    styleOptions = normalizePaneStyleOptions({
+      ...styleOptions,
+      ...next
+    });
+    if (!stylesEnabled)
+      return;
+    applyPaneStyleOptionsToRoot(root, styleOptions);
+  };
+  const getPanes = () => Array.from(panes.values());
+  const getPaneById = (id) => panes.get(id) ?? null;
+  const findPaneByElement = (element) => {
+    if (!(element instanceof HTMLElement))
+      return null;
+    const host = element.closest(".pane");
+    if (!host)
+      return null;
+    const id = Number(host.dataset.paneId ?? "");
+    if (!Number.isFinite(id))
+      return null;
+    return panes.get(id) ?? null;
+  };
+  const getActivePane = () => activePaneId === null ? null : panes.get(activePaneId) ?? null;
+  const getFocusedPane = () => {
+    if (focusedPaneId !== null) {
+      const focused = panes.get(focusedPaneId);
+      if (focused)
+        return focused;
+    }
+    if (typeof document === "undefined")
+      return null;
+    return findPaneByElement(document.activeElement);
+  };
+  const setActivePane = (id, config) => {
+    const pane = panes.get(id);
+    if (!pane)
+      return;
+    activePaneId = id;
+    for (const current of panes.values()) {
+      current.container.classList.toggle("is-active", current.id === id);
+    }
+    options.onActivePaneChange?.(pane);
+    if (config?.focus) {
+      const target = pane.focusTarget ?? pane.container;
+      if (target instanceof HTMLElement) {
+        target.focus({ preventScroll: true });
+      }
+    }
+  };
+  const markPaneFocused = (id, config) => {
+    focusedPaneId = id;
+    setActivePane(id, config);
+  };
+  const hideContextMenu = () => contextMenuController?.hide();
+  let api;
+  const paneInteractions = createPaneInteractions({
+    contextMenu: options.contextMenu,
+    contextMenuController,
+    getManager: () => api,
+    markPaneFocused
+  });
   const createPaneInternal = (sourcePane) => {
     const id = nextPaneId;
     nextPaneId += 1;
@@ -25999,29 +26468,9 @@ function createResttyPaneManager(options) {
     pane.container.classList.add("pane");
     pane.container.dataset.paneId = `${id}`;
     panes.set(id, pane);
-    bindPaneInteractions(pane);
+    paneInteractions.bindPaneInteractions(pane);
     options.onPaneCreated?.(pane);
     return pane;
-  };
-  const collapseSplitAncestors = (start) => {
-    let current = start;
-    while (current && current.classList.contains("pane-split")) {
-      const branches = getSplitBranches(current);
-      if (branches.length > 1)
-        return;
-      const onlyChild = branches[0];
-      const parent = current.parentElement;
-      if (!parent || !onlyChild)
-        return;
-      const inheritedFlex = current.style.flex;
-      if (inheritedFlex) {
-        onlyChild.style.flex = inheritedFlex;
-      } else {
-        onlyChild.style.flex = "";
-      }
-      parent.replaceChild(onlyChild, current);
-      current = parent;
-    }
   };
   const splitPane = (id, direction) => {
     const target = panes.get(id);
@@ -26061,11 +26510,7 @@ function createResttyPaneManager(options) {
     if (!pane)
       return false;
     const closingRect = pane.container.getBoundingClientRect();
-    const cleanupFns = paneCleanupFns.get(id) ?? [];
-    paneCleanupFns.delete(id);
-    for (const cleanup of cleanupFns) {
-      cleanup();
-    }
+    paneInteractions.cleanupPaneInteractions(id);
     options.destroyPane?.(pane);
     panes.delete(id);
     if (activePaneId === id)
@@ -26075,7 +26520,7 @@ function createResttyPaneManager(options) {
     const parent = pane.container.parentElement;
     pane.container.remove();
     collapseSplitAncestors(parent);
-    const fallback = getActivePane() ?? findClosestPaneToRect(closingRect) ?? getPanes()[0] ?? null;
+    const fallback = getActivePane() ?? findClosestPaneToRect(closingRect, panes.values()) ?? getPanes()[0] ?? null;
     if (fallback) {
       markPaneFocused(fallback.id, { focus: true });
     } else {
@@ -26095,58 +26540,20 @@ function createResttyPaneManager(options) {
     requestLayoutSync();
     return first;
   };
-  const onWindowPointerDown = (event) => {
-    if (!contextMenuController?.isOpen())
-      return;
-    if (contextMenuController.containsTarget(event.target))
-      return;
-    hideContextMenu();
-  };
-  const onWindowBlur = () => {
-    hideContextMenu();
-  };
-  const onWindowKeyDown = (event) => {
-    if (contextMenuController?.isOpen() && event.key === "Escape") {
-      hideContextMenu();
-      return;
-    }
-    if (shortcutOptions.enabled === false)
-      return;
-    if (shortcutOptions.canHandleEvent && !shortcutOptions.canHandleEvent(event)) {
-      return;
-    }
-    const target = event.target;
-    if (target && ["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(target.tagName)) {
-      const allowed = shortcutOptions.isAllowedInputTarget?.(target) ?? false;
-      if (!allowed)
-        return;
-    }
-    const isMac = typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
-    const hasCommandModifier = isMac ? event.metaKey : event.ctrlKey;
-    if (!hasCommandModifier || event.altKey || event.code !== "KeyD" || event.repeat) {
-      return;
-    }
-    event.preventDefault();
-    event.stopPropagation();
-    splitActivePane(event.shiftKey ? "horizontal" : "vertical");
-  };
-  window.addEventListener("pointerdown", onWindowPointerDown);
-  window.addEventListener("blur", onWindowBlur);
-  window.addEventListener("keydown", onWindowKeyDown, { capture: true });
+  const removeWindowEvents = attachPaneManagerWindowEvents({
+    contextMenuController,
+    hideContextMenu,
+    shortcutOptions,
+    splitActivePane
+  });
   const destroy = () => {
-    window.removeEventListener("pointerdown", onWindowPointerDown);
-    window.removeEventListener("blur", onWindowBlur);
-    window.removeEventListener("keydown", onWindowKeyDown, { capture: true });
+    removeWindowEvents();
     if (resizeRaf) {
       cancelAnimationFrame(resizeRaf);
       resizeRaf = 0;
     }
     for (const pane of getPanes()) {
-      const cleanupFns = paneCleanupFns.get(pane.id) ?? [];
-      for (const cleanup of cleanupFns) {
-        cleanup();
-      }
-      paneCleanupFns.delete(pane.id);
+      paneInteractions.cleanupPaneInteractions(pane.id);
       options.destroyPane?.(pane);
     }
     panes.clear();
@@ -26159,7 +26566,7 @@ function createResttyPaneManager(options) {
       clearPaneStyleOptionsFromRoot(root);
     }
   };
-  const api = {
+  api = {
     getPanes,
     getPaneById,
     getActivePane,
@@ -26179,7 +26586,7 @@ function createResttyPaneManager(options) {
   return api;
 }
 
-// src/app/session.ts
+// src/runtime/session.ts
 function createResttyAppSession() {
   let wasmPromise = null;
   let webgpuCorePromise = null;
@@ -26218,7 +26625,7 @@ function getDefaultResttyAppSession() {
   return defaultResttyAppSession;
 }
 
-// src/app/atlas-builder.ts
+// src/runtime/atlas-builder.ts
 function buildFontAtlasIfNeeded(params) {
   const {
     entry,
@@ -26388,7 +26795,7 @@ function buildFontAtlasIfNeeded(params) {
   };
 }
 
-// src/app/font-sources.ts
+// src/runtime/font-sources.ts
 var DEFAULT_FONT_SOURCES = [
   {
     type: "local",
@@ -26534,11 +26941,11 @@ function validateFontSource(source, index) {
   }
   throw new Error(`fontSources[${index}] has unsupported source type`);
 }
-function normalizeFontSources(sources, preset) {
-  if (sources && sources.length) {
-    const normalized = new Array(sources.length);
-    for (let i = 0;i < sources.length; i += 1) {
-      normalized[i] = validateFontSource(sources[i], i);
+function normalizeFontSources(sources2, preset) {
+  if (sources2 && sources2.length) {
+    const normalized = new Array(sources2.length);
+    for (let i = 0;i < sources2.length; i += 1) {
+      normalized[i] = validateFontSource(sources2[i], i);
     }
     return normalized;
   }
@@ -49928,37 +50335,208 @@ function eG($) {
   return K.length;
 }
 
-// src/app/index.ts
-function normalizeTouchSelectionMode(value) {
-  if (value === "drag" || value === "long-press" || value === "off")
-    return value;
-  return "long-press";
+// src/runtime/pty-output-buffer.ts
+function createPtyOutputBufferController(options) {
+  const { idleMs, maxMs, onFlush } = options;
+  let buffer = "";
+  let idleTimer = 0;
+  let maxTimer = 0;
+  const cancel = () => {
+    if (idleTimer) {
+      clearTimeout(idleTimer);
+      idleTimer = 0;
+    }
+    if (maxTimer) {
+      clearTimeout(maxTimer);
+      maxTimer = 0;
+    }
+  };
+  const flush = () => {
+    const output = buffer;
+    buffer = "";
+    if (!output)
+      return;
+    onFlush(output);
+  };
+  const queue = (text2) => {
+    if (!text2)
+      return;
+    buffer += text2;
+    if (idleTimer) {
+      clearTimeout(idleTimer);
+    }
+    idleTimer = setTimeout(() => {
+      idleTimer = 0;
+      if (maxTimer) {
+        clearTimeout(maxTimer);
+        maxTimer = 0;
+      }
+      flush();
+    }, idleMs);
+    if (!maxTimer) {
+      maxTimer = setTimeout(() => {
+        maxTimer = 0;
+        if (idleTimer) {
+          clearTimeout(idleTimer);
+          idleTimer = 0;
+        }
+        flush();
+      }, maxMs);
+    }
+  };
+  const clear = () => {
+    buffer = "";
+  };
+  return {
+    queue,
+    flush,
+    cancel,
+    clear
+  };
 }
-function clampFiniteNumber(value, fallback, min, max, round = false) {
-  if (!Number.isFinite(value))
-    return fallback;
-  const numeric = round ? Math.round(value) : Number(value);
-  return Math.min(max, Math.max(min, numeric));
+
+// src/runtime/create-app-io-utils.ts
+function openLink(uri) {
+  if (!uri || typeof window === "undefined")
+    return;
+  try {
+    const url = new URL(uri, window.location.href);
+    if (!["http:", "https:", "mailto:"].includes(url.protocol))
+      return;
+    const win = window.open(url.toString(), "_blank", "noopener,noreferrer");
+    if (win)
+      win.opener = null;
+  } catch {}
 }
-function isRenderSymbolLike(cp) {
-  return isSymbolCp(cp) || isRendererSymbolFallbackRange(cp);
+function sourceLabelFromUrl(url, index) {
+  const trimmed = url.trim();
+  if (!trimmed)
+    return `font-${index + 1}`;
+  try {
+    const parsed = new URL(trimmed, typeof window !== "undefined" ? window.location.href : "");
+    const file = parsed.pathname.split("/").filter(Boolean).pop();
+    return file || parsed.hostname || `font-${index + 1}`;
+  } catch {
+    const parts = trimmed.split("/").filter(Boolean);
+    const file = parts[parts.length - 1] ?? "";
+    return file || `font-${index + 1}`;
+  }
 }
-function resolveSymbolConstraint(cp) {
-  return getNerdConstraint(cp);
+function sourceBufferFromView(view) {
+  const { buffer, byteOffset, byteLength } = view;
+  if (byteOffset === 0 && byteLength === buffer.byteLength) {
+    return buffer.slice(0);
+  }
+  return buffer.slice(byteOffset, byteOffset + byteLength);
 }
+function normalizeNewlines(text2) {
+  return text2.replace(/\r?\n/g, `\r
+`);
+}
+function fitTextTailToWidth(text2, maxWidthPx, measureWidthPx) {
+  if (!text2) {
+    return { text: "", offset: 0, widthPx: 0 };
+  }
+  const safeMaxWidth = Number.isFinite(maxWidthPx) ? Math.max(0, maxWidthPx) : 0;
+  if (safeMaxWidth <= 0) {
+    return { text: "", offset: text2.length, widthPx: 0 };
+  }
+  const fullWidth = measureWidthPx(text2);
+  if (fullWidth <= safeMaxWidth) {
+    return { text: text2, offset: 0, widthPx: fullWidth };
+  }
+  const boundaries = [];
+  let codeUnitOffset = 0;
+  for (const cp of text2) {
+    boundaries.push(codeUnitOffset);
+    codeUnitOffset += cp.length;
+  }
+  boundaries.push(text2.length);
+  let fallbackOffset = boundaries[Math.max(0, boundaries.length - 2)] ?? 0;
+  let fallbackText = text2.slice(fallbackOffset);
+  let fallbackWidth = measureWidthPx(fallbackText);
+  for (let i3 = 1;i3 < boundaries.length - 1; i3 += 1) {
+    const offset = boundaries[i3] ?? 0;
+    const candidate = text2.slice(offset);
+    const candidateWidth = measureWidthPx(candidate);
+    if (candidateWidth <= safeMaxWidth) {
+      return { text: candidate, offset, widthPx: candidateWidth };
+    }
+    fallbackOffset = offset;
+    fallbackText = candidate;
+    fallbackWidth = candidateWidth;
+  }
+  return {
+    text: fallbackText,
+    offset: fallbackOffset,
+    widthPx: Math.min(fallbackWidth, safeMaxWidth)
+  };
+}
+
+// src/runtime/text-decoration.ts
+function drawUnderlineStyle(underlineData, style, x3, rowY, cellW, cellH, baseY, underlineOffsetPx, underlineThicknessPx, color) {
+  if (style <= 0)
+    return;
+  const thickness = underlineThicknessPx;
+  const minY = rowY + 1;
+  const maxY = rowY + cellH - thickness - 1;
+  const underlineY = clamp(baseY + underlineOffsetPx, minY, maxY);
+  if (style === 1) {
+    pushRect(underlineData, x3, underlineY, cellW, thickness, color);
+    return;
+  }
+  if (style === 2) {
+    pushRect(underlineData, x3, underlineY, cellW, thickness, color);
+    const gap = Math.max(1, Math.round(thickness * 0.6));
+    let secondY = underlineY + thickness + gap;
+    if (secondY > maxY)
+      secondY = Math.max(minY, underlineY - thickness - gap);
+    pushRect(underlineData, x3, secondY, cellW, thickness, color);
+    return;
+  }
+  if (style === 3) {
+    const step = Math.max(2, Math.round(cellW * 0.25));
+    const waveOffset = Math.max(1, Math.round(thickness * 0.8));
+    for (let dx = 0;dx < cellW; dx += step) {
+      const up = Math.floor(dx / step) % 2 === 0;
+      const y = underlineY + (up ? 0 : waveOffset);
+      pushRect(underlineData, x3 + dx, y, Math.min(step, cellW - dx), thickness, color);
+    }
+    return;
+  }
+  if (style === 4) {
+    const dot = Math.max(1, Math.round(thickness));
+    const gap = Math.max(1, Math.round(dot));
+    for (let dx = 0;dx < cellW; dx += dot + gap) {
+      pushRect(underlineData, x3 + dx, underlineY, Math.min(dot, cellW - dx), thickness, color);
+    }
+    return;
+  }
+  if (style === 5) {
+    const dash = Math.max(1, Math.round(cellW * 0.6));
+    const gap = Math.max(1, Math.round(cellW * 0.2));
+    for (let dx = 0;dx < cellW; dx += dash + gap) {
+      pushRect(underlineData, x3 + dx, underlineY, Math.min(dash, cellW - dx), thickness, color);
+    }
+  }
+}
+function drawStrikethrough(underlineData, x3, rowY, cellW, cellH, color) {
+  const thickness = Math.max(1, Math.round(cellH * 0.08));
+  const y = Math.round(rowY + cellH * 0.5 - thickness * 0.5);
+  pushRect(underlineData, x3, y, cellW, thickness, color);
+}
+function drawOverline(underlineData, x3, rowY, cellW, color) {
+  const thickness = 1;
+  const y = Math.round(rowY + 1);
+  pushRect(underlineData, x3, y, cellW, thickness, color);
+}
+
+// src/runtime/create-app-symbols.ts
 var RENDERER_SYMBOL_FALLBACK_RANGES = [
   [8960, 9215],
   [9632, 9727],
   [11008, 11263]
 ];
-function isRendererSymbolFallbackRange(cp) {
-  for (let i3 = 0;i3 < RENDERER_SYMBOL_FALLBACK_RANGES.length; i3 += 1) {
-    const [start, end] = RENDERER_SYMBOL_FALLBACK_RANGES[i3];
-    if (cp >= start && cp <= end)
-      return true;
-  }
-  return false;
-}
 var DEFAULT_SYMBOL_CONSTRAINT = {
   size: "fit",
   align_horizontal: "center",
@@ -49978,577 +50556,2834 @@ var DEFAULT_EMOJI_CONSTRAINT = {
   pad_left: 0.025,
   pad_right: 0.025
 };
-function createResttyApp(options) {
-  const { canvas: canvasInput, imeInput: imeInputInput, elements, callbacks } = options;
-  const session = options.session ?? getDefaultResttyAppSession();
-  const textShaper = exports_dist;
-  if (!canvasInput) {
-    throw new Error("createResttyApp requires a canvas element");
+function normalizeTouchSelectionMode(value) {
+  if (value === "drag" || value === "long-press" || value === "off")
+    return value;
+  return "long-press";
+}
+function clampFiniteNumber(value, fallback, min, max, round = false) {
+  if (!Number.isFinite(value))
+    return fallback;
+  const numeric = round ? Math.round(value) : Number(value);
+  return Math.min(max, Math.max(min, numeric));
+}
+function isRenderSymbolLike(cp) {
+  return isSymbolCp(cp) || isRendererSymbolFallbackRange(cp);
+}
+function resolveSymbolConstraint(cp) {
+  return getNerdConstraint(cp);
+}
+function isRendererSymbolFallbackRange(cp) {
+  for (let i3 = 0;i3 < RENDERER_SYMBOL_FALLBACK_RANGES.length; i3 += 1) {
+    const [start, end] = RENDERER_SYMBOL_FALLBACK_RANGES[i3];
+    if (cp >= start && cp <= end)
+      return true;
   }
-  const {
-    Font,
-    UnicodeBuffer,
-    shape,
-    glyphBufferToShapedGlyphs,
-    buildAtlas,
-    atlasToRGBA,
-    rasterizeGlyph,
-    rasterizeGlyphWithTransform,
-    PixelMode
-  } = textShaper;
-  const attachWindowEvents = options.attachWindowEvents ?? true;
-  const attachCanvasEvents = options.attachCanvasEvents ?? true;
-  const autoResize = options.autoResize ?? true;
-  const debugExpose = options.debugExpose ?? false;
-  const touchSelectionMode = normalizeTouchSelectionMode(options.touchSelectionMode);
-  const touchSelectionLongPressMs = clampFiniteNumber(options.touchSelectionLongPressMs, 450, 120, 2000, true);
-  const touchSelectionMoveThresholdPx = clampFiniteNumber(options.touchSelectionMoveThresholdPx, 10, 1, 64);
-  const hasCoarsePointer = typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(any-pointer: coarse)").matches;
-  const hasTouchPoints = typeof navigator !== "undefined" && navigator.maxTouchPoints > 0;
-  const showOverlayScrollbar = !(hasCoarsePointer || hasTouchPoints);
-  const nerdIconScale = Number.isFinite(options.nerdIconScale) ? Number(options.nerdIconScale) : 1;
-  const alphaBlending = options.alphaBlending ?? "linear-corrected";
-  const srgbChannelToLinear = (c3) => c3 <= 0.04045 ? c3 / 12.92 : Math.pow((c3 + 0.055) / 1.055, 2.4);
-  const srgbToLinearColor = (color) => [
-    srgbChannelToLinear(color[0]),
-    srgbChannelToLinear(color[1]),
-    srgbChannelToLinear(color[2]),
+  return false;
+}
+
+// src/runtime/render-color-utils.ts
+function decodePackedRGBA(color) {
+  return [
+    (color & 255) / 255,
+    (color >>> 8 & 255) / 255,
+    (color >>> 16 & 255) / 255,
+    (color >>> 24 & 255) / 255
+  ];
+}
+function decodeRGBAWithCache(bytes, index, cache) {
+  const offset = index * 4;
+  const packed = ((bytes[offset] ?? 0) | (bytes[offset + 1] ?? 0) << 8 | (bytes[offset + 2] ?? 0) << 16 | (bytes[offset + 3] ?? 0) << 24) >>> 0;
+  const cached = cache.get(packed);
+  if (cached)
+    return cached;
+  const decoded = decodePackedRGBA(packed);
+  cache.set(packed, decoded);
+  return decoded;
+}
+function clamp01(value) {
+  return Math.max(0, Math.min(1, value));
+}
+function brighten(color, amount) {
+  return [
+    clamp01(color[0] + (1 - color[0]) * amount),
+    clamp01(color[1] + (1 - color[1]) * amount),
+    clamp01(color[2] + (1 - color[2]) * amount),
     color[3]
   ];
-  const resolveBlendFlags = (backendType, state) => {
-    if (alphaBlending === "native") {
-      return { useLinearBlending: false, useLinearCorrection: false };
-    }
-    if (backendType === "webgl2") {
-      return { useLinearBlending: false, useLinearCorrection: false };
-    }
-    if (backendType === "webgpu" && !state?.srgbSwapchain) {
-      return { useLinearBlending: false, useLinearCorrection: false };
-    }
-    return {
-      useLinearBlending: true,
-      useLinearCorrection: alphaBlending === "linear-corrected"
-    };
-  };
-  const cleanupFns = [];
-  const cleanupCanvasFns = [];
-  let canvas = canvasInput;
-  let currentContextType = null;
-  const backendEl = elements?.backendEl ?? null;
-  const fpsEl = elements?.fpsEl ?? null;
-  const dprEl = elements?.dprEl ?? null;
-  const sizeEl = elements?.sizeEl ?? null;
-  const gridEl = elements?.gridEl ?? null;
-  const cellEl = elements?.cellEl ?? null;
-  const termSizeEl = elements?.termSizeEl ?? null;
-  const cursorPosEl = elements?.cursorPosEl ?? null;
-  const inputDebugEl = elements?.inputDebugEl ?? null;
-  const dbgEl = elements?.dbgEl ?? null;
-  const ptyStatusEl = elements?.ptyStatusEl ?? null;
-  const mouseStatusEl = elements?.mouseStatusEl ?? null;
-  const termDebug = elements?.termDebugEl ?? null;
-  const atlasInfoEl = elements?.atlasInfoEl ?? null;
-  const atlasCanvas = elements?.atlasCanvas ?? null;
-  const logEl = elements?.logEl ?? null;
-  const DEFAULT_BG_BASE = [0.08, 0.09, 0.1, 1];
-  const DEFAULT_FG_BASE = [0.92, 0.93, 0.95, 1];
-  const SELECTION_BASE = [0.35, 0.55, 0.9, 0.45];
-  const CURSOR_BASE = [0.95, 0.95, 0.95, 1];
-  let defaultBg = [...DEFAULT_BG_BASE];
-  let defaultFg = [...DEFAULT_FG_BASE];
-  let selectionColor = [...SELECTION_BASE];
-  let cursorFallback = [...CURSOR_BASE];
-  const CURSOR_BLINK_MS = 600;
-  const FORCE_CURSOR_BLINK = false;
-  const STYLE_BOLD = 1 << 0;
-  const STYLE_ITALIC = 1 << 1;
-  const STYLE_FAINT = 1 << 2;
-  const STYLE_BLINK = 1 << 3;
-  const STYLE_INVERSE = 1 << 4;
-  const STYLE_INVISIBLE = 1 << 5;
-  const STYLE_STRIKE = 1 << 6;
-  const STYLE_OVERLINE = 1 << 7;
-  const STYLE_UNDERLINE_MASK = 1792;
-  const ITALIC_SLANT = 0.2;
-  const BOLD_BRIGHTEN = 0.18;
-  const BOLD_OFFSET = 0.06;
-  const FAINT_ALPHA = 0.6;
-  const TARGET_RENDER_FPS = 60;
-  const BACKGROUND_RENDER_FPS = 15;
-  const GLYPH_SHAPE_CACHE_LIMIT = 12000;
-  const FONT_PICK_CACHE_LIMIT = 16000;
-  const OVERLAY_SCROLLBAR_WIDTH_CSS_PX = 7;
-  const OVERLAY_SCROLLBAR_MARGIN_CSS_PX = 4;
-  const OVERLAY_SCROLLBAR_INSET_Y_CSS_PX = 2;
-  const OVERLAY_SCROLLBAR_MIN_THUMB_CSS_PX = 28;
-  const OVERLAY_SCROLLBAR_CAP_SUPERSAMPLE = 8;
-  let paused = false;
-  let backend = "none";
-  let preferredRenderer = options.renderer ?? "auto";
-  let rafId = 0;
-  let frameCount = 0;
-  let lastFpsTime = performance.now();
-  let currentDpr = window.devicePixelRatio || 1;
-  let wasm = null;
-  let wasmExports = null;
-  let wasmHandle = 0;
-  let wasmReady = false;
-  let activeState = null;
-  let sizeRaf = 0;
-  const RESIZE_OVERLAY_HOLD_MS = 500;
-  const RESIZE_OVERLAY_FADE_MS = 400;
-  const RESIZE_ACTIVE_MS = 180;
-  const RESIZE_COMMIT_DEBOUNCE_MS = 36;
-  const resizeState = {
-    active: false,
-    lastAt: 0,
-    cols: 0,
-    rows: 0,
-    dpr: 1
-  };
-  let needsRender = true;
-  let lastRenderTime = 0;
-  let resizeWasActive = false;
-  let pendingTerminalResize = null;
-  let terminalResizeTimer = 0;
-  const KEYDOWN_BEFOREINPUT_DEDUPE_MS = 80;
-  let lastKeydownSeq = "";
-  let lastKeydownSeqAt = 0;
-  let nextBlinkTime = performance.now() + CURSOR_BLINK_MS;
-  const ptyTransport = options.ptyTransport ?? createWebSocketPtyTransport();
-  const PTY_OUTPUT_IDLE_MS = 10;
-  const PTY_OUTPUT_MAX_MS = 40;
-  const SYNC_OUTPUT_RESET_MS = 1000;
-  const SYNC_OUTPUT_RESET_SEQ = "\x1B[?2026l";
-  let ptyOutputBuffer = "";
-  let ptyOutputIdleTimer = 0;
-  let ptyOutputMaxTimer = 0;
-  let syncOutputResetTimer = 0;
-  let lastCursorForCpr = { row: 1, col: 1 };
-  let inputHandler = null;
-  let activeTheme = null;
-  let lastReportedPtyStatus = "";
-  let lastReportedMouseStatus = "";
-  let lastReportedTermCols = -1;
-  let lastReportedTermRows = -1;
-  let lastReportedCursorCol = -1;
-  let lastReportedCursorRow = -1;
-  let lastReportedDebugText = "";
-  const webgpuUniforms = new Float32Array(8);
-  const logBuffer = [];
-  const LOG_LIMIT = 200;
-  const WASM_LOG_FILTERS = [
-    {
-      re: /warning\\(stream\\): ignoring CSI .* t/i,
-      note: "[wasm] note: CSI t window ops not implemented (safe to ignore)"
-    },
-    {
-      re: /warning\\(stream\\): unknown CSI m with intermediate/i,
-      note: "[wasm] note: CSI m intermediates ignored (safe to ignore)"
-    }
-  ];
-  const wasmLogNotes = new Set;
-  const ATLAS_PADDING = 4;
-  const SYMBOL_ATLAS_PADDING = 10;
-  const SYMBOL_ATLAS_MAX_SIZE = 4096;
-  const GLYPH_INSTANCE_FLOATS = 18;
-  const GLYPH_RENDER_MODE_MONO = 0;
-  const GLYPH_RENDER_MODE_COLOR = 1;
-  const KITTY_FMT_GRAY = 1;
-  const KITTY_FMT_GRAY_ALPHA = 2;
-  const KITTY_FMT_RGB = 3;
-  const KITTY_FMT_RGBA = 4;
-  const KITTY_FMT_PNG = 100;
-  const KITTY_PLACEHOLDER_CP = 1109742;
-  const KITTY_OVERLAY_DEBUG = typeof window !== "undefined" && (() => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("kittyDebug") === "1")
-        return true;
-      const value = window.localStorage?.getItem("restty.kittyDebug");
-      if (value != null)
-        return value === "1";
-      return window.localStorage?.getItem("restty.kittyDebug") === "1";
-    } catch {
-      return false;
-    }
-  })();
-  const textEncoder3 = new TextEncoder;
-  const textDecoder3 = new TextDecoder;
-  const COLOR_EMOJI_FONT_STACK = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","EmojiOne Color","Twemoji Mozilla",sans-serif';
-  let colorGlyphCanvas = null;
-  let colorGlyphCtx = null;
-  let kittyOverlayCanvas = null;
-  let kittyOverlayCtx = null;
-  const kittyImageCache = new Map;
-  const kittyDecodePending = new Set;
-  let kittyOverlayDebugLastSig = "";
-  let kittyOverlayLastHash = -1;
-  let isFocused = typeof document !== "undefined" ? document.activeElement === canvas : true;
-  const imeInput = imeInputInput ?? null;
-  const isMacPlatform = typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
-  const imeState = {
-    composing: false,
-    preedit: "",
-    selectionStart: 0,
-    selectionEnd: 0
-  };
-  function configureImeInputElement() {
-    if (!imeInput)
-      return;
-    const style = imeInput.style;
-    style.position = "fixed";
-    style.left = "0";
-    style.top = "0";
-    style.width = "1px";
-    style.height = "1px";
-    style.opacity = "0";
-    style.pointerEvents = "none";
-  }
-  configureImeInputElement();
-  const selectionState = {
-    active: false,
-    dragging: false,
-    anchor: null,
-    focus: null
-  };
-  const touchSelectionState = {
-    pendingPointerId: null,
-    activePointerId: null,
-    panPointerId: null,
-    pendingCell: null,
-    pendingStartedAt: 0,
-    pendingStartX: 0,
-    pendingStartY: 0,
-    panLastY: 0,
-    pendingTimer: 0
-  };
-  const linkState = {
-    hoverId: 0,
-    hoverUri: ""
-  };
-  let scrollRemainder = 0;
-  const scrollbarState = {
-    lastInputAt: 0,
-    lastTotal: 0,
-    lastOffset: 0,
-    lastLen: 0
-  };
-  const scrollbarDragState = {
-    pointerId: null,
-    thumbGrabRatio: 0.5
-  };
-  const KITTY_FLAG_REPORT_EVENTS2 = 1 << 1;
-  function updateCanvasCursor() {
-    if (!canvas)
-      return;
-    if (selectionState.dragging || selectionState.active) {
-      canvas.style.cursor = "text";
-      return;
-    }
-    canvas.style.cursor = linkState.hoverId ? "pointer" : "default";
-  }
-  function isTouchPointer(event) {
-    return event.pointerType === "touch";
-  }
-  function clearPendingTouchSelection() {
-    if (touchSelectionState.pendingTimer) {
-      clearTimeout(touchSelectionState.pendingTimer);
-      touchSelectionState.pendingTimer = 0;
-    }
-    touchSelectionState.pendingPointerId = null;
-    touchSelectionState.pendingCell = null;
-    touchSelectionState.pendingStartedAt = 0;
-  }
-  function tryActivatePendingTouchSelection(pointerId) {
-    if (touchSelectionMode !== "long-press")
-      return false;
-    if (touchSelectionState.pendingPointerId !== pointerId || !touchSelectionState.pendingCell) {
-      return false;
-    }
-    if (performance.now() - touchSelectionState.pendingStartedAt < touchSelectionLongPressMs) {
-      return false;
-    }
-    const pendingCell = touchSelectionState.pendingCell;
-    clearPendingTouchSelection();
-    beginSelectionDrag(pendingCell, pointerId);
+}
+function fade(color, factor) {
+  return [color[0], color[1], color[2], clamp01(color[3] * factor)];
+}
+
+// src/runtime/codepoint-utils.ts
+function isLikelyEmojiCodepoint(cp) {
+  if (cp >= 127462 && cp <= 127487)
     return true;
+  if (cp >= 127744 && cp <= 129791)
+    return true;
+  return false;
+}
+function isVariationSelectorCodepoint(cp) {
+  if (cp >= 65024 && cp <= 65039)
+    return true;
+  if (cp >= 917760 && cp <= 917999)
+    return true;
+  return false;
+}
+function isCombiningMarkCodepoint(cp) {
+  if (cp >= 768 && cp <= 879)
+    return true;
+  if (cp >= 6832 && cp <= 6911)
+    return true;
+  if (cp >= 7616 && cp <= 7679)
+    return true;
+  if (cp >= 8400 && cp <= 8447)
+    return true;
+  if (cp >= 65056 && cp <= 65071)
+    return true;
+  return false;
+}
+function isEmojiModifierCodepoint(cp) {
+  return cp >= 127995 && cp <= 127999;
+}
+function isCoverageIgnorableCodepoint(cp) {
+  if (cp === 8204 || cp === 8205)
+    return true;
+  if (isVariationSelectorCodepoint(cp))
+    return true;
+  if (isCombiningMarkCodepoint(cp))
+    return true;
+  if (cp >= 917536 && cp <= 917631)
+    return true;
+  return false;
+}
+function shouldMergeTrailingClusterCodepoint(cp) {
+  if (cp === 8204 || cp === 8205)
+    return true;
+  if (isVariationSelectorCodepoint(cp))
+    return true;
+  if (isCombiningMarkCodepoint(cp))
+    return true;
+  if (isEmojiModifierCodepoint(cp))
+    return true;
+  return false;
+}
+function resolvePresentationPreference(text2, chars) {
+  if (text2.includes("️"))
+    return "emoji";
+  if (text2.includes("︎"))
+    return "text";
+  if (text2.includes("‍"))
+    return "emoji";
+  for (let i3 = 0;i3 < chars.length; i3 += 1) {
+    const cp = chars[i3].codePointAt(0) ?? 0;
+    if (isLikelyEmojiCodepoint(cp))
+      return "emoji";
   }
-  function beginSelectionDrag(cell, pointerId) {
-    selectionState.active = true;
-    selectionState.dragging = true;
-    selectionState.anchor = cell;
-    selectionState.focus = cell;
-    touchSelectionState.activePointerId = pointerId;
-    touchSelectionState.panPointerId = null;
-    canvas.setPointerCapture?.(pointerId);
-    updateCanvasCursor();
-    needsRender = true;
+  return "auto";
+}
+function stylePreferenceFromFlags(bold, italic) {
+  if (bold && italic)
+    return "bold_italic";
+  if (bold)
+    return "bold";
+  if (italic)
+    return "italic";
+  return "regular";
+}
+function isAppleSymbolsFont(entry) {
+  return !!entry && /\bapple symbols\b/i.test(entry.label ?? "");
+}
+function fontEntryHasBoldStyle(entry) {
+  return !!entry && /\bbold\b/i.test(entry.label ?? "");
+}
+function fontEntryHasItalicStyle(entry) {
+  return !!entry && /\b(italic|oblique)\b/i.test(entry.label ?? "");
+}
+
+// src/runtime/font-atlas-utils/nerd-metrics-utils.ts
+var NERD_CELL_FIT_COVER_SCALE = 1;
+var NERD_ICON_FIT_COVER_SCALE = 2 / 3;
+function resolveFontScaleForAtlas(font, fontSize, sizeMode) {
+  if (font && typeof font.scaleForSize === "function") {
+    return font.scaleForSize(fontSize, sizeMode ?? undefined);
   }
-  function noteScrollActivity() {
-    scrollbarState.lastInputAt = performance.now();
-  }
-  function getViewportScrollOffset() {
-    if (!wasmHandle || !wasmExports?.restty_scrollbar_offset)
-      return 0;
-    return wasmExports.restty_scrollbar_offset(wasmHandle) || 0;
-  }
-  function shiftSelectionByRows(deltaRows) {
-    if (!deltaRows)
-      return;
-    if (!selectionState.active && !selectionState.dragging)
-      return;
-    if (!selectionState.anchor || !selectionState.focus)
-      return;
-    const maxAbs = Math.max(1024, (gridState.rows || 24) * 128);
-    selectionState.anchor = {
-      row: clamp(selectionState.anchor.row + deltaRows, -maxAbs, maxAbs),
-      col: selectionState.anchor.col
-    };
-    selectionState.focus = {
-      row: clamp(selectionState.focus.row + deltaRows, -maxAbs, maxAbs),
-      col: selectionState.focus.col
-    };
-    needsRender = true;
-  }
-  function scrollViewportByLines(lines) {
-    if (!wasmReady || !wasmHandle || !gridState.cellH)
-      return;
-    scrollRemainder += lines;
-    const delta = Math.trunc(scrollRemainder);
-    scrollRemainder -= delta;
-    if (!delta)
-      return;
-    const beforeOffset = getViewportScrollOffset();
-    wasm.scrollViewport(wasmHandle, delta);
-    const afterOffset = getViewportScrollOffset();
-    shiftSelectionByRows(beforeOffset - afterOffset);
-    if (linkState.hoverId)
-      updateLinkHover(null);
-    wasm.renderUpdate(wasmHandle);
-    needsRender = true;
-    noteScrollActivity();
-  }
-  function setViewportScrollOffset(nextOffset) {
-    if (!wasmReady || !wasmHandle || !wasmExports?.restty_scrollbar_total)
-      return;
-    const total = wasmExports.restty_scrollbar_total(wasmHandle) || 0;
-    const len = wasmExports.restty_scrollbar_len ? wasmExports.restty_scrollbar_len(wasmHandle) : 0;
-    const current = wasmExports.restty_scrollbar_offset ? wasmExports.restty_scrollbar_offset(wasmHandle) : 0;
-    const maxOffset = Math.max(0, total - len);
-    const clamped = clamp(Math.round(nextOffset), 0, maxOffset);
-    const delta = clamped - current;
-    if (!delta)
-      return;
-    const beforeOffset = getViewportScrollOffset();
-    wasm.scrollViewport(wasmHandle, delta);
-    const afterOffset = getViewportScrollOffset();
-    shiftSelectionByRows(beforeOffset - afterOffset);
-    if (linkState.hoverId)
-      updateLinkHover(null);
-    wasm.renderUpdate(wasmHandle);
-    needsRender = true;
-    noteScrollActivity();
-  }
-  function pointerToCanvasPx(event) {
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = rect.width > 0 ? canvas.width / rect.width : 1;
-    const scaleY = rect.height > 0 ? canvas.height / rect.height : 1;
-    return {
-      x: (event.clientX - rect.left) * scaleX,
-      y: (event.clientY - rect.top) * scaleY
-    };
-  }
-  function computeOverlayScrollbarLayout(total, offset, len) {
-    if (!(total > len && len > 0))
-      return null;
-    const dpr = Math.max(1, currentDpr || 1);
-    const width = Math.max(1, Math.round(OVERLAY_SCROLLBAR_WIDTH_CSS_PX * dpr));
-    const margin = Math.max(1, Math.round(OVERLAY_SCROLLBAR_MARGIN_CSS_PX * dpr));
-    const insetY = Math.max(0, Math.round(OVERLAY_SCROLLBAR_INSET_Y_CSS_PX * dpr));
-    const trackX = Math.max(0, canvas.width - margin - width);
-    const trackY = insetY;
-    const trackH = Math.max(width, canvas.height - insetY * 2);
-    const denom = Math.max(1, total - len);
-    const dynamicThumbH = Math.round(trackH * (len / total));
-    const minThumbH = Math.max(width, Math.round(OVERLAY_SCROLLBAR_MIN_THUMB_CSS_PX * dpr));
-    const thumbH = Math.min(trackH, Math.max(minThumbH, dynamicThumbH));
-    const thumbY = trackY + Math.round(offset / denom * (trackH - thumbH));
-    return { total, offset, len, denom, width, trackX, trackY, trackH, thumbY, thumbH };
-  }
-  function getOverlayScrollbarLayout() {
-    if (!showOverlayScrollbar || !wasmExports?.restty_scrollbar_total || !wasmHandle)
-      return null;
-    if (!gridState.rows)
-      return null;
-    const total = wasmExports.restty_scrollbar_total(wasmHandle) || 0;
-    const offset = wasmExports.restty_scrollbar_offset ? wasmExports.restty_scrollbar_offset(wasmHandle) : 0;
-    const len = wasmExports.restty_scrollbar_len ? wasmExports.restty_scrollbar_len(wasmHandle) : gridState.rows;
-    return computeOverlayScrollbarLayout(total, offset, len);
-  }
-  function isPointInScrollbarHitArea(layout, x3, y) {
-    const hitPadX = Math.max(3, Math.round(layout.width * 0.35));
-    return x3 >= layout.trackX - hitPadX && x3 <= layout.trackX + layout.width + hitPadX && y >= layout.trackY && y <= layout.trackY + layout.trackH;
-  }
-  function isPointInScrollbarThumb(layout, x3, y) {
-    return x3 >= layout.trackX && x3 <= layout.trackX + layout.width && y >= layout.thumbY && y <= layout.thumbY + layout.thumbH;
-  }
-  function scrollbarOffsetForPointerY(layout, pointerY, thumbGrabRatio) {
-    const thumbTop = pointerY - layout.thumbH * thumbGrabRatio;
-    const trackSpan = Math.max(1, layout.trackH - layout.thumbH);
-    const ratio = clamp((thumbTop - layout.trackY) / trackSpan, 0, 1);
-    return Math.round(ratio * layout.denom);
-  }
-  function pushRoundedVerticalBar(out, x3, y, w, h, color) {
-    const x02 = Math.round(x3);
-    const y02 = Math.round(y);
-    const width = Math.max(1, Math.round(w));
-    const height = Math.max(1, Math.round(h));
-    const radius = Math.min(width * 0.5, height * 0.5);
-    if (radius <= 0) {
-      pushRectBox(out, x02, y02, width, height, color);
-      return;
+  const upem = font?.unitsPerEm ?? font?.upem ?? 1000;
+  return upem > 0 ? fontSize / upem : 1;
+}
+function fontCapHeightUnits(font) {
+  if (!font)
+    return 1;
+  const capFromOs2 = font?.os2?.sCapHeight ?? font?._os2?.sCapHeight;
+  if (Number.isFinite(capFromOs2) && capFromOs2 > 0)
+    return capFromOs2;
+  if (typeof font.glyphIdForChar === "function" && typeof font.getGlyphBounds === "function") {
+    const capGlyphId = font.glyphIdForChar("H");
+    if (capGlyphId !== undefined && capGlyphId !== null && capGlyphId !== 0) {
+      const bounds = font.getGlyphBounds(capGlyphId);
+      const yMax = bounds?.yMax;
+      if (Number.isFinite(yMax) && yMax > 0)
+        return yMax;
+      const height = (bounds?.yMax ?? 0) - (bounds?.yMin ?? 0);
+      if (Number.isFinite(height) && height > 0)
+        return height;
     }
-    const capRows = Math.min(height, Math.max(1, Math.ceil(radius)));
-    const middleStart = capRows;
-    const middleEnd = Math.max(middleStart, height - capRows);
-    const middleH = middleEnd - middleStart;
-    if (middleH > 0) {
-      pushRectBox(out, x02, y02 + middleStart, width, middleH, color);
+  }
+  const ascender = font?.ascender;
+  if (Number.isFinite(ascender) && ascender > 0)
+    return ascender * 0.75;
+  const faceHeight = fontHeightUnits(font);
+  if (Number.isFinite(faceHeight) && faceHeight > 0)
+    return faceHeight * 0.6;
+  return 1;
+}
+function buildNerdMetrics(cellW, cellH, lineHeight, primaryFont, primaryScale, iconScale) {
+  let faceWidth = cellW;
+  if (primaryFont && typeof primaryFont.glyphIdForChar === "function" && typeof primaryFont.advanceWidth === "function") {
+    const mGlyphId = primaryFont.glyphIdForChar("M");
+    if (mGlyphId !== undefined && mGlyphId !== null && mGlyphId !== 0) {
+      const width = primaryFont.advanceWidth(mGlyphId) * primaryScale;
+      if (Number.isFinite(width) && width > 0)
+        faceWidth = width;
     }
-    const radiusSq = radius * radius;
-    const centerX = width * 0.5;
-    const topCenterY = radius;
-    const bottomCenterY = height - radius;
-    const samplesPerAxis = Math.max(1, OVERLAY_SCROLLBAR_CAP_SUPERSAMPLE | 0);
-    const totalSamples = samplesPerAxis * samplesPerAxis;
-    const invSamples = 1 / totalSamples;
-    const alphaBase = color[3];
-    const alphaEpsilon = 1 / 255;
-    const sampleCapPixelCoverage = (localX, localY, centerY) => {
-      let hits = 0;
-      for (let sy = 0;sy < samplesPerAxis; sy += 1) {
-        const sampleY = localY + (sy + 0.5) / samplesPerAxis;
-        for (let sx = 0;sx < samplesPerAxis; sx += 1) {
-          const sampleX = localX + (sx + 0.5) / samplesPerAxis;
-          const dx = sampleX - centerX;
-          const dy = sampleY - centerY;
-          if (dx * dx + dy * dy <= radiusSq)
-            hits += 1;
+  }
+  const capHeight = fontCapHeightUnits(primaryFont) * primaryScale;
+  const safeIconScale = Number.isFinite(iconScale) ? Math.max(0.5, Math.min(2, iconScale)) : 1;
+  const iconHeight = lineHeight * safeIconScale;
+  const iconHeightSingle = clamp((2 * capHeight + lineHeight) / 3 * safeIconScale, 1, iconHeight);
+  return {
+    cellWidth: cellW,
+    cellHeight: cellH,
+    faceWidth,
+    faceHeight: lineHeight,
+    faceY: (cellH - lineHeight) * 0.5,
+    iconHeight,
+    iconHeightSingle
+  };
+}
+function nerdConstraintSignature(glyphMeta, constraintContext) {
+  if (!glyphMeta?.size || !constraintContext)
+    return "";
+  const m = constraintContext.nerdMetrics;
+  return [
+    `ih:${m.iconHeight.toFixed(3)}`,
+    `ih1:${m.iconHeightSingle.toFixed(3)}`,
+    `iw:${m.cellWidth.toFixed(3)}`,
+    `cw:${constraintContext.cellW.toFixed(3)}`,
+    `ch:${constraintContext.cellH.toFixed(3)}`,
+    `is:${NERD_ICON_FIT_COVER_SCALE.toFixed(4)}`,
+    `cs:${NERD_CELL_FIT_COVER_SCALE.toFixed(4)}`
+  ].join("|");
+}
+function scaleGlyphBoxAroundCenter(box, factor) {
+  if (!Number.isFinite(factor) || factor <= 0 || Math.abs(factor - 1) < 0.000001)
+    return box;
+  const cx = box.x + box.width * 0.5;
+  const cy = box.y + box.height * 0.5;
+  const w = box.width * factor;
+  const h = box.height * factor;
+  return {
+    x: cx - w * 0.5,
+    y: cy - h * 0.5,
+    width: w,
+    height: h
+  };
+}
+function scaleGlyphBoxAnchoredLeft(box, factor) {
+  if (!Number.isFinite(factor) || factor <= 0 || Math.abs(factor - 1) < 0.000001)
+    return box;
+  const w = box.width * factor;
+  const h = box.height * factor;
+  return {
+    x: box.x,
+    y: box.y + (box.height - h) * 0.5,
+    width: w,
+    height: h
+  };
+}
+function tightenNerdConstraintBox(box, constraint) {
+  if (!constraint)
+    return box;
+  if (constraint.size !== "fit_cover1")
+    return box;
+  if (constraint.height === "icon") {
+    return scaleGlyphBoxAnchoredLeft(box, NERD_ICON_FIT_COVER_SCALE);
+  }
+  if (constraint.height !== undefined && constraint.height !== "cell")
+    return box;
+  return scaleGlyphBoxAroundCenter(box, NERD_CELL_FIT_COVER_SCALE);
+}
+
+// src/runtime/font-atlas-utils/bitmap-utils.ts
+function bitmapBytesPerPixel(pixelMode) {
+  if (pixelMode === 2 || pixelMode === 3)
+    return 3;
+  if (pixelMode === 4)
+    return 4;
+  return 1;
+}
+function createAtlasBitmap(width, height, pixelMode) {
+  const bytesPerPixel = bitmapBytesPerPixel(pixelMode);
+  const pitch = Math.max(1, Math.ceil(width * bytesPerPixel));
+  const size = pitch * height;
+  return {
+    width,
+    rows: height,
+    pitch,
+    buffer: new Uint8Array(size),
+    pixelMode,
+    numGrays: pixelMode === 0 ? 2 : 256
+  };
+}
+function cloneBitmap(bitmap, defaultPixelMode = 1) {
+  const pitch = bitmap?.pitch ?? 0;
+  const rows = bitmap?.rows ?? 0;
+  const size = pitch * rows;
+  const buffer = new Uint8Array(size);
+  if (bitmap?.buffer) {
+    buffer.set(bitmap.buffer.subarray(0, size));
+  }
+  return {
+    width: bitmap?.width ?? 0,
+    rows,
+    pitch,
+    buffer,
+    pixelMode: bitmap?.pixelMode ?? defaultPixelMode,
+    numGrays: bitmap?.numGrays ?? 256
+  };
+}
+function copyBitmapToAtlas(src, dst, dstX, dstY) {
+  const bytesPerPixel = bitmapBytesPerPixel(src.pixelMode ?? 1);
+  const rowBytes = src.width * bytesPerPixel;
+  for (let y = 0;y < src.rows; y += 1) {
+    const srcRow = y * src.pitch;
+    const dstRow = (dstY + y) * dst.pitch + dstX * bytesPerPixel;
+    dst.buffer.set(src.buffer.subarray(srcRow, srcRow + rowBytes), dstRow);
+  }
+}
+
+// src/runtime/font-atlas-utils/packing-utils.ts
+function nextPowerOf2(n) {
+  if (n <= 0)
+    return 1;
+  let v = n - 1;
+  v |= v >> 1;
+  v |= v >> 2;
+  v |= v >> 4;
+  v |= v >> 8;
+  v |= v >> 16;
+  return v + 1;
+}
+function packGlyphs(sizes, maxWidth, maxHeight) {
+  const shelves = [];
+  const placements = [];
+  let atlasWidth = 0;
+  let atlasHeight = 0;
+  for (let i3 = 0;i3 < sizes.length; i3 += 1) {
+    const size = sizes[i3];
+    let placed = false;
+    let bestShelf = -1;
+    let bestY = maxHeight;
+    for (let j = 0;j < shelves.length; j += 1) {
+      const shelf = shelves[j];
+      if (shelf.width + size.width <= maxWidth && size.height <= shelf.height) {
+        if (shelf.y < bestY) {
+          bestShelf = j;
+          bestY = shelf.y;
         }
       }
-      return hits * invSamples;
-    };
-    for (let row = 0;row < capRows; row += 1) {
-      const topY = y02 + row;
-      const bottomY = y02 + height - 1 - row;
-      for (let col = 0;col < width; col += 1) {
-        const coverageTop = sampleCapPixelCoverage(col, row, topCenterY);
-        if (coverageTop > 0) {
-          const alpha = alphaBase * coverageTop;
-          if (alpha > alphaEpsilon) {
-            out.push(x02 + col, topY, 1, 1, color[0], color[1], color[2], alpha);
+    }
+    if (bestShelf >= 0) {
+      const shelf = shelves[bestShelf];
+      placements.push({ x: shelf.width, y: shelf.y, placed: true });
+      shelf.width += size.width;
+      atlasWidth = Math.max(atlasWidth, shelf.width);
+      placed = true;
+    } else {
+      const newY = atlasHeight;
+      if (newY + size.height <= maxHeight && size.width <= maxWidth) {
+        shelves.push({ y: newY, height: size.height, width: size.width });
+        placements.push({ x: 0, y: newY, placed: true });
+        atlasHeight = newY + size.height;
+        atlasWidth = Math.max(atlasWidth, size.width);
+        placed = true;
+      }
+    }
+    if (!placed)
+      placements.push({ x: 0, y: 0, placed: false });
+  }
+  const finalWidth = nextPowerOf2(atlasWidth);
+  const finalHeight = nextPowerOf2(atlasHeight);
+  return {
+    width: Math.min(finalWidth, maxWidth),
+    height: Math.min(finalHeight, maxHeight),
+    placements
+  };
+}
+
+// src/runtime/font-atlas-utils/glyph-atlas-builder.ts
+function buildGlyphAtlasWithConstraints(options) {
+  const {
+    font,
+    glyphIds,
+    fontSize,
+    sizeMode,
+    padding,
+    maxWidth,
+    maxHeight,
+    pixelMode,
+    hinting,
+    rasterizeGlyph,
+    rasterizeGlyphWithTransform,
+    glyphMeta,
+    constraintContext
+  } = options;
+  const scale = resolveFontScaleForAtlas(font, fontSize, sizeMode);
+  const glyphData = [];
+  if (!rasterizeGlyph) {
+    return { atlas: null, constrainedGlyphWidths: null };
+  }
+  const rasterOptions = {
+    padding: 0,
+    pixelMode,
+    sizeMode,
+    hinting
+  };
+  for (let i3 = 0;i3 < glyphIds.length; i3 += 1) {
+    const glyphId = glyphIds[i3];
+    const raster = rasterizeGlyph(font, glyphId, fontSize, rasterOptions);
+    if (!raster)
+      continue;
+    let didConstraint = false;
+    const meta = glyphMeta?.get(glyphId);
+    const widthSet = meta?.widths && meta.widths.size ? Array.from(meta.widths.values()) : [Math.max(1, meta?.constraintWidth ?? 1)];
+    const widths = Array.from(new Set(widthSet.map((w) => Math.max(1, w)))).sort();
+    const constraint = meta?.cp ? getNerdConstraint(meta.cp) : null;
+    if (constraint && constraintContext && rasterizeGlyphWithTransform) {
+      for (let j = 0;j < widths.length; j += 1) {
+        const constraintWidth = widths[j];
+        const maxCellWidth = constraintContext.cellW * constraintWidth;
+        const maxCellHeight = constraintContext.cellH;
+        let bitmapScale = 1;
+        const widthUnits = glyphWidthUnits(constraintContext.fontEntry, glyphId);
+        let glyphWidthPx = widthUnits * constraintContext.fontScale;
+        if (!Number.isFinite(glyphWidthPx) || glyphWidthPx <= 0) {
+          glyphWidthPx = raster.bitmap?.width ?? 0;
+        }
+        if (glyphWidthPx > 0 && maxCellWidth > 0) {
+          const fit = maxCellWidth / glyphWidthPx;
+          if (fit > 0 && fit < 1)
+            bitmapScale = fit;
+        }
+        let gw = (raster.bitmap?.width ?? 0) * bitmapScale;
+        let gh = (raster.bitmap?.rows ?? 0) * bitmapScale;
+        if (gw > 0 && gh > 0 && maxCellWidth > 0 && maxCellHeight > 0) {
+          const fitScale = Math.min(1, maxCellWidth / gw, maxCellHeight / gh);
+          if (fitScale < 1) {
+            bitmapScale *= fitScale;
+            gw *= fitScale;
+            gh *= fitScale;
           }
         }
-        if (bottomY !== topY) {
-          const localBottomY = height - 1 - row;
-          const coverageBottom = sampleCapPixelCoverage(col, localBottomY, bottomCenterY);
-          if (coverageBottom > 0) {
-            const alpha = alphaBase * coverageBottom;
-            if (alpha > alphaEpsilon) {
-              out.push(x02 + col, bottomY, 1, 1, color[0], color[1], color[2], alpha);
+        const baseY = constraintContext.yPad + constraintContext.baselineOffset + constraintContext.baselineAdjust;
+        const scaledBox = {
+          x: raster.bearingX * bitmapScale,
+          y: baseY - raster.bearingY * bitmapScale,
+          width: gw,
+          height: gh
+        };
+        const adjusted = constrainGlyphBox(scaledBox, constraint, constraintContext.nerdMetrics, constraintWidth);
+        const tightened = tightenNerdConstraintBox(adjusted, constraint);
+        if (tightened.width > 0 && tightened.height > 0 && raster.bitmap?.width && raster.bitmap?.rows) {
+          const targetLeft = tightened.x;
+          const targetTop = baseY - tightened.y;
+          const scaleX = tightened.width / raster.bitmap.width;
+          const scaleY = tightened.height / raster.bitmap.rows;
+          if (Number.isFinite(scaleX) && scaleX > 0 && Number.isFinite(scaleY) && scaleY > 0) {
+            const tx = targetLeft - raster.bearingX * scaleX;
+            const ty = targetTop - raster.bearingY * scaleY;
+            const transformed = rasterizeGlyphWithTransform(font, glyphId, fontSize, [scaleX, 0, 0, scaleY, tx, ty], rasterOptions);
+            if (transformed) {
+              glyphData.push({
+                glyphId,
+                bitmap: cloneBitmap(transformed.bitmap),
+                bearingX: transformed.bearingX,
+                bearingY: transformed.bearingY,
+                advance: font.advanceWidth(glyphId) * scale,
+                constraintWidth
+              });
+              didConstraint = true;
             }
           }
         }
       }
     }
-  }
-  function appendOverlayScrollbar(overlayData, total, offset, len) {
-    if (!showOverlayScrollbar)
-      return;
-    const layout = computeOverlayScrollbarLayout(total, offset, len);
-    if (!layout)
-      return;
-    const since = performance.now() - scrollbarState.lastInputAt;
-    const fadeDelay = 160;
-    const fadeDuration = 520;
-    let alpha = 0;
-    if (since < fadeDelay) {
-      alpha = 0.68;
-    } else if (since < fadeDelay + fadeDuration) {
-      alpha = 0.68 * (1 - (since - fadeDelay) / fadeDuration);
+    if (!didConstraint) {
+      const advance = font.advanceWidth(glyphId) * scale;
+      glyphData.push({
+        glyphId,
+        bitmap: cloneBitmap(raster.bitmap),
+        bearingX: raster.bearingX,
+        bearingY: raster.bearingY,
+        advance,
+        constraintWidth: 0
+      });
     }
-    if (alpha <= 0.01)
-      return;
-    const thumbColor = [0.96, 0.96, 0.96, alpha * 0.75];
-    pushRoundedVerticalBar(overlayData, layout.trackX, layout.thumbY, layout.width, layout.thumbH, thumbColor);
   }
-  function releaseKittyImage(entry) {
+  glyphData.sort((a3, b3) => (b3.bitmap?.rows ?? 0) - (a3.bitmap?.rows ?? 0));
+  const {
+    width: atlasWidth,
+    height: atlasHeight,
+    placements
+  } = packGlyphs(glyphData.map((g) => ({
+    width: (g.bitmap?.width ?? 0) + padding * 2,
+    height: (g.bitmap?.rows ?? 0) + padding * 2
+  })), maxWidth, maxHeight);
+  const atlas = createAtlasBitmap(atlasWidth, atlasHeight, pixelMode);
+  const glyphMetrics = new Map;
+  const glyphMetricsByWidth = new Map;
+  for (let i3 = 0;i3 < glyphData.length; i3 += 1) {
+    const glyph = glyphData[i3];
+    const placement = placements[i3];
+    if (!placement?.placed || !glyph.bitmap)
+      continue;
+    copyBitmapToAtlas(glyph.bitmap, atlas, placement.x + padding, placement.y + padding);
+    const metrics = {
+      glyphId: glyph.glyphId,
+      atlasX: placement.x + padding,
+      atlasY: placement.y + padding,
+      width: glyph.bitmap.width,
+      height: glyph.bitmap.rows,
+      bearingX: glyph.bearingX,
+      bearingY: glyph.bearingY,
+      advance: glyph.advance
+    };
+    const widthKey = glyph.constraintWidth ?? 0;
+    if (widthKey > 0) {
+      let widthMap = glyphMetricsByWidth.get(widthKey);
+      if (!widthMap) {
+        widthMap = new Map;
+        glyphMetricsByWidth.set(widthKey, widthMap);
+      }
+      widthMap.set(glyph.glyphId, metrics);
+      if (!glyphMetrics.has(glyph.glyphId) || widthKey === 1) {
+        glyphMetrics.set(glyph.glyphId, metrics);
+      }
+    } else {
+      if (!glyphMetrics.has(glyph.glyphId)) {
+        glyphMetrics.set(glyph.glyphId, metrics);
+      }
+    }
+  }
+  return {
+    atlas: {
+      bitmap: atlas,
+      glyphs: glyphMetrics,
+      glyphsByWidth: glyphMetricsByWidth,
+      fontSize
+    },
+    constrainedGlyphWidths: null
+  };
+}
+
+// src/runtime/create-runtime/blend-utils.ts
+function srgbChannelToLinear(channel) {
+  return channel <= 0.04045 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4);
+}
+function srgbToLinearColor(color) {
+  return [
+    srgbChannelToLinear(color[0]),
+    srgbChannelToLinear(color[1]),
+    srgbChannelToLinear(color[2]),
+    color[3]
+  ];
+}
+function resolveBlendFlags(alphaBlending, backendType, state2) {
+  if (alphaBlending === "native") {
+    return { useLinearBlending: false, useLinearCorrection: false };
+  }
+  if (backendType === "webgl2") {
+    return { useLinearBlending: false, useLinearCorrection: false };
+  }
+  if (backendType === "webgpu" && !state2?.srgbSwapchain) {
+    return { useLinearBlending: false, useLinearCorrection: false };
+  }
+  return {
+    useLinearBlending: true,
+    useLinearCorrection: alphaBlending === "linear-corrected"
+  };
+}
+function floatsToRgb(color) {
+  return [
+    Math.round((color[0] ?? 0) * 255),
+    Math.round((color[1] ?? 0) * 255),
+    Math.round((color[2] ?? 0) * 255)
+  ];
+}
+
+// src/runtime/create-runtime/atlas-debug-utils.ts
+function atlasRegionToImageData(atlas, x3, y, width, height, pixelModeGray, pixelModeRgba) {
+  const rgba = new Uint8ClampedArray(width * height * 4);
+  const pixelMode = atlas.bitmap?.pixelMode ?? pixelModeGray;
+  const rgbaBitmap = pixelMode === pixelModeRgba || pixelMode === 4;
+  for (let row = 0;row < height; row += 1) {
+    const dstRow = row * width * 4;
+    if (rgbaBitmap) {
+      const srcRow2 = (y + row) * atlas.bitmap.pitch + x3 * 4;
+      for (let col = 0;col < width; col += 1) {
+        const srcIdx = srcRow2 + col * 4;
+        const dstIdx = dstRow + col * 4;
+        rgba[dstIdx] = atlas.bitmap.buffer[srcIdx] ?? 0;
+        rgba[dstIdx + 1] = atlas.bitmap.buffer[srcIdx + 1] ?? 0;
+        rgba[dstIdx + 2] = atlas.bitmap.buffer[srcIdx + 2] ?? 0;
+        rgba[dstIdx + 3] = atlas.bitmap.buffer[srcIdx + 3] ?? 0;
+      }
+      continue;
+    }
+    const srcRow = (y + row) * atlas.bitmap.pitch + x3;
+    for (let col = 0;col < width; col += 1) {
+      const alpha = atlas.bitmap.buffer[srcRow + col] ?? 0;
+      const dstIdx = dstRow + col * 4;
+      rgba[dstIdx] = 255;
+      rgba[dstIdx + 1] = 255;
+      rgba[dstIdx + 2] = 255;
+      rgba[dstIdx + 3] = alpha;
+    }
+  }
+  return new ImageData(rgba, width, height);
+}
+function padAtlasRGBA(rgba, atlas, padding) {
+  if (!padding || padding <= 0 || !atlas?.glyphs)
+    return rgba;
+  const width = atlas.bitmap?.width ?? 0;
+  const height = atlas.bitmap?.rows ?? 0;
+  if (!width || !height)
+    return rgba;
+  const out = new Uint8Array(rgba);
+  const clamp2 = (v, min, max) => Math.max(min, Math.min(max, v));
+  const writePixel = (dstX, dstY, srcX, srcY) => {
+    if (dstX < 0 || dstY < 0 || dstX >= width || dstY >= height)
+      return;
+    if (srcX < 0 || srcY < 0 || srcX >= width || srcY >= height)
+      return;
+    const srcIdx = (srcY * width + srcX) * 4;
+    const dstIdx = (dstY * width + dstX) * 4;
+    out[dstIdx] = out[srcIdx];
+    out[dstIdx + 1] = out[srcIdx + 1];
+    out[dstIdx + 2] = out[srcIdx + 2];
+    out[dstIdx + 3] = out[srcIdx + 3];
+  };
+  const padMetrics = (metrics) => {
+    const x02 = metrics.atlasX;
+    const y02 = metrics.atlasY;
+    const x12 = metrics.atlasX + metrics.width - 1;
+    const y12 = metrics.atlasY + metrics.height - 1;
+    if (x02 < 0 || y02 < 0 || x12 < x02 || y12 < y02)
+      return;
+    const pad = padding;
+    for (let y = y02;y <= y12; y += 1) {
+      for (let px = 1;px <= pad; px += 1) {
+        writePixel(x02 - px, y, x02, y);
+        writePixel(x12 + px, y, x12, y);
+      }
+    }
+    for (let x3 = x02 - pad;x3 <= x12 + pad; x3 += 1) {
+      const clampedX = clamp2(x3, 0, width - 1);
+      for (let py = 1;py <= pad; py += 1) {
+        writePixel(clampedX, y02 - py, clampedX, y02);
+        writePixel(clampedX, y12 + py, clampedX, y12);
+      }
+    }
+  };
+  for (const metrics of atlas.glyphs.values()) {
+    padMetrics(metrics);
+  }
+  const glyphsByWidth = atlas.glyphsByWidth;
+  if (glyphsByWidth && typeof glyphsByWidth.values === "function") {
+    for (const map of glyphsByWidth.values()) {
+      if (!map?.values)
+        continue;
+      for (const metrics of map.values()) {
+        padMetrics(metrics);
+      }
+    }
+  }
+  return out;
+}
+function resolveGlyphPixelMode(entry, pixelModeGray, pixelModeRgba, isColorEmojiFont2) {
+  if (pixelModeRgba !== undefined && pixelModeRgba !== null && isColorEmojiFont2(entry)) {
+    return pixelModeRgba;
+  }
+  return pixelModeGray;
+}
+function atlasBitmapToRGBA(atlas, pixelModeRgba, atlasToRGBA) {
+  const bitmap = atlas?.bitmap;
+  if (!bitmap?.width || !bitmap?.rows)
+    return null;
+  if (bitmap.pixelMode === pixelModeRgba || bitmap.pixelMode === 4) {
+    const width = bitmap.width;
+    const height = bitmap.rows;
+    const rgba = new Uint8Array(width * height * 4);
+    for (let row = 0;row < height; row += 1) {
+      const srcStart = row * bitmap.pitch;
+      const srcEnd = srcStart + width * 4;
+      const dstStart = row * width * 4;
+      rgba.set(bitmap.buffer.subarray(srcStart, srcEnd), dstStart);
+    }
+    return rgba;
+  }
+  return atlasToRGBA(atlas);
+}
+
+// src/runtime/create-runtime/format-utils.ts
+function formatPasteText(text2, bracketedPasteEnabled) {
+  if (!bracketedPasteEnabled)
+    return text2;
+  return `\x1B[200~${text2}\x1B[201~`;
+}
+function formatCodepoint(cp) {
+  const hex = cp.toString(16).toUpperCase();
+  return `U+${hex.padStart(4, "0")}`;
+}
+
+// src/runtime/create-runtime/runtime-logger.ts
+var DEFAULT_LOG_LIMIT = 200;
+var DEFAULT_WASM_LOG_FILTERS = [
+  {
+    re: /warning\\(stream\\): ignoring CSI .* t/i,
+    note: "[wasm] note: CSI t window ops not implemented (safe to ignore)"
+  },
+  {
+    re: /warning\\(stream\\): unknown CSI m with intermediate/i,
+    note: "[wasm] note: CSI m intermediates ignored (safe to ignore)"
+  }
+];
+function createRuntimeLogger(options) {
+  const logEl = options.logEl ?? null;
+  const onLog = options.onLog ?? null;
+  const logLimit = options.logLimit ?? DEFAULT_LOG_LIMIT;
+  const wasmLogFilters = options.wasmLogFilters ?? DEFAULT_WASM_LOG_FILTERS;
+  const logBuffer = [];
+  const wasmLogNotes = new Set;
+  function appendLog(line) {
+    const timestamp = new Date().toISOString().slice(11, 23);
+    const entry = `${timestamp} ${line}`;
+    logBuffer.push(entry);
+    if (logBuffer.length > logLimit) {
+      logBuffer.splice(0, logBuffer.length - logLimit);
+    }
+    if (logEl)
+      logEl.textContent = line;
+    onLog?.(entry);
+  }
+  function log(msg) {
+    appendLog(`[ui] ${msg}`);
+  }
+  function shouldSuppressWasmLog(text2) {
+    for (const filter of wasmLogFilters) {
+      if (!filter.re.test(text2))
+        continue;
+      if (!wasmLogNotes.has(filter.note)) {
+        wasmLogNotes.add(filter.note);
+        appendLog(filter.note);
+      }
+      return true;
+    }
+    return false;
+  }
+  return {
+    log,
+    appendLog,
+    shouldSuppressWasmLog
+  };
+}
+
+// src/runtime/shader-stages.ts
+var RESTTY_SHADER_STAGE_UNIFORM_CAP = 8;
+var MODE_RANK = {
+  "before-main": 0,
+  "after-main": 1,
+  "replace-main": 2
+};
+function isStageMode(value) {
+  return value === "before-main" || value === "after-main" || value === "replace-main";
+}
+function isStageBackend(value) {
+  return value === "webgpu" || value === "webgl2" || value === "both";
+}
+function cloneShaderStage(stage) {
+  return {
+    ...stage,
+    shader: { ...stage.shader },
+    uniforms: stage.uniforms ? [...stage.uniforms] : undefined
+  };
+}
+function cloneShaderStages(stages) {
+  return stages.map((stage) => cloneShaderStage(stage));
+}
+function normalizeShaderStage(stage) {
+  if (!stage || typeof stage !== "object") {
+    throw new Error("Restty shader stage must be an object");
+  }
+  const id = stage.id?.trim?.() ?? "";
+  if (!id) {
+    throw new Error("Restty shader stage id is required");
+  }
+  const mode = isStageMode(stage.mode) ? stage.mode : "after-main";
+  const backend = isStageBackend(stage.backend) ? stage.backend : "both";
+  const priority = Number.isFinite(stage.priority) ? Number(stage.priority) : 0;
+  const enabled = stage.enabled ?? true;
+  const uniforms = (stage.uniforms ?? []).filter((value) => Number.isFinite(value)).slice(0, RESTTY_SHADER_STAGE_UNIFORM_CAP);
+  const shader = {
+    wgsl: stage.shader?.wgsl?.trim?.() || undefined,
+    glsl: stage.shader?.glsl?.trim?.() || undefined
+  };
+  return {
+    id,
+    mode,
+    backend,
+    priority,
+    enabled: Boolean(enabled),
+    uniforms,
+    shader,
+    onError: stage.onError
+  };
+}
+function normalizeShaderStages(stages) {
+  const normalized = [];
+  const ids = new Set;
+  for (let i3 = 0;i3 < stages.length; i3 += 1) {
+    const stage = normalizeShaderStage(stages[i3]);
+    if (ids.has(stage.id)) {
+      throw new Error(`Restty shader stage id ${stage.id} is duplicated`);
+    }
+    ids.add(stage.id);
+    normalized.push(stage);
+  }
+  return normalized;
+}
+function sortShaderStages(stages) {
+  const indexed = stages.map((stage, index) => ({ stage, index }));
+  indexed.sort((a3, b3) => {
+    const modeDiff = MODE_RANK[a3.stage.mode ?? "after-main"] - MODE_RANK[b3.stage.mode ?? "after-main"];
+    if (modeDiff !== 0)
+      return modeDiff;
+    const priorityDiff = (a3.stage.priority ?? 0) - (b3.stage.priority ?? 0);
+    if (priorityDiff !== 0)
+      return priorityDiff;
+    return a3.index - b3.index;
+  });
+  return indexed.map((entry) => entry.stage);
+}
+function packShaderStageUniforms(stage) {
+  const out = new Float32Array(RESTTY_SHADER_STAGE_UNIFORM_CAP);
+  const input = stage.uniforms ?? [];
+  const count = input.length > RESTTY_SHADER_STAGE_UNIFORM_CAP ? RESTTY_SHADER_STAGE_UNIFORM_CAP : input.length;
+  for (let i3 = 0;i3 < count; i3 += 1) {
+    const value = input[i3];
+    if (Number.isFinite(value))
+      out[i3] = Number(value);
+  }
+  return out;
+}
+function isShaderStageEnabledForBackend(stage, backend) {
+  if (stage.enabled === false)
+    return false;
+  const target = stage.backend ?? "both";
+  if (target === "both")
+    return true;
+  return target === backend;
+}
+
+// src/runtime/render-stage-shaders.ts
+var STAGE_UNIFORM_BUFFER_FLOATS = 12;
+var FULLSCREEN_STAGE_VERTEX_SHADER_GL = `#version 300 es
+precision highp float;
+layout(location = 0) in vec2 a_quad;
+out vec2 v_uv;
+void main() {
+  v_uv = a_quad;
+  vec2 clip = vec2(a_quad.x * 2.0 - 1.0, 1.0 - a_quad.y * 2.0);
+  gl_Position = vec4(clip, 0.0, 1.0);
+}
+`;
+var FULLSCREEN_STAGE_SHADER_GL_PREFIX = `#version 300 es
+precision highp float;
+uniform sampler2D u_source;
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform vec4 u_params0;
+uniform vec4 u_params1;
+in vec2 v_uv;
+out vec4 fragColor;
+`;
+var FULLSCREEN_STAGE_SHADER_GL_SUFFIX = `
+void main() {
+  vec4 color = texture(u_source, v_uv);
+  fragColor = resttyStage(color, v_uv, u_time, u_params0, u_params1);
+}
+`;
+var FULLSCREEN_STAGE_SHADER_WGSL_PREFIX = `
+struct StageUniforms {
+  resolution: vec2f,
+  time: f32,
+  _pad0: f32,
+  params0: vec4f,
+  params1: vec4f,
+};
+
+@group(0) @binding(0) var sourceSampler: sampler;
+@group(0) @binding(1) var sourceTex: texture_2d<f32>;
+@group(0) @binding(2) var<uniform> stageUniforms: StageUniforms;
+
+struct VSOut {
+  @builtin(position) position: vec4f,
+  @location(0) uv: vec2f,
+};
+
+@vertex
+fn vsMain(@location(0) quad: vec2f) -> VSOut {
+  var out: VSOut;
+  out.uv = quad;
+  let clip = vec2f(quad.x * 2.0 - 1.0, 1.0 - quad.y * 2.0);
+  out.position = vec4f(clip.x, clip.y, 0.0, 1.0);
+  return out;
+}
+`;
+var FULLSCREEN_STAGE_SHADER_WGSL_SUFFIX = `
+@fragment
+fn fsMain(input: VSOut) -> @location(0) vec4f {
+  let color = textureSample(sourceTex, sourceSampler, input.uv);
+  return resttyStage(
+    color,
+    input.uv,
+    stageUniforms.time,
+    stageUniforms.params0,
+    stageUniforms.params1,
+  );
+}
+`;
+
+// src/runtime/render-stage-runtime.ts
+function compileShaderStageProgram(options) {
+  const { gl, stage, reportError } = options;
+  const createShader = (type, source) => {
+    const shader = gl.createShader(type);
+    if (!shader)
+      return null;
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      const error = gl.getShaderInfoLog(shader) ?? "unknown compile error";
+      reportError(stage, `GLSL compile failed: ${error}`);
+      gl.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  };
+  const vert = createShader(gl.VERTEX_SHADER, FULLSCREEN_STAGE_VERTEX_SHADER_GL);
+  const frag = createShader(gl.FRAGMENT_SHADER, `${FULLSCREEN_STAGE_SHADER_GL_PREFIX}${stage.shader.glsl ?? ""}${FULLSCREEN_STAGE_SHADER_GL_SUFFIX}`);
+  if (!vert || !frag) {
+    if (vert)
+      gl.deleteShader(vert);
+    if (frag)
+      gl.deleteShader(frag);
+    return null;
+  }
+  const program = gl.createProgram();
+  if (!program) {
+    gl.deleteShader(vert);
+    gl.deleteShader(frag);
+    reportError(stage, "GLSL link failed: program allocation failed");
+    return null;
+  }
+  gl.attachShader(program, vert);
+  gl.attachShader(program, frag);
+  gl.linkProgram(program);
+  gl.deleteShader(vert);
+  gl.deleteShader(frag);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    const error = gl.getProgramInfoLog(program) ?? "unknown link error";
+    reportError(stage, `GLSL link failed: ${error}`);
+    gl.deleteProgram(program);
+    return null;
+  }
+  const sourceLoc = gl.getUniformLocation(program, "u_source");
+  const resolutionLoc = gl.getUniformLocation(program, "u_resolution");
+  const timeLoc = gl.getUniformLocation(program, "u_time");
+  const params0Loc = gl.getUniformLocation(program, "u_params0");
+  const params1Loc = gl.getUniformLocation(program, "u_params1");
+  if (!sourceLoc || !resolutionLoc || !timeLoc || !params0Loc || !params1Loc) {
+    gl.deleteProgram(program);
+    reportError(stage, "GLSL link failed: required uniforms are missing");
+    return null;
+  }
+  return {
+    stage,
+    program,
+    sourceLoc,
+    resolutionLoc,
+    timeLoc,
+    params0Loc,
+    params1Loc,
+    params: packShaderStageUniforms(stage)
+  };
+}
+function createWebGLStageTexture(gl, width, height) {
+  const texture = gl.createTexture();
+  if (!texture)
+    return null;
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  return texture;
+}
+function createWebGLStageFramebuffer(gl, texture) {
+  const fb = gl.createFramebuffer();
+  if (!fb)
+    return null;
+  gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+  if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
+    gl.deleteFramebuffer(fb);
+    return null;
+  }
+  return fb;
+}
+function createWebGLStageTargets(gl, width, height) {
+  const quadBuffer = gl.createBuffer();
+  const quadVao = gl.createVertexArray();
+  if (!quadBuffer || !quadVao)
+    return null;
+  const quadVertices = new Float32Array([0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1]);
+  gl.bindBuffer(gl.ARRAY_BUFFER, quadBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, quadVertices, gl.STATIC_DRAW);
+  gl.bindVertexArray(quadVao);
+  gl.enableVertexAttribArray(0);
+  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  gl.bindVertexArray(null);
+  const sceneTexture = createWebGLStageTexture(gl, width, height);
+  const pingTexture = createWebGLStageTexture(gl, width, height);
+  const pongTexture = createWebGLStageTexture(gl, width, height);
+  if (!sceneTexture || !pingTexture || !pongTexture) {
+    return null;
+  }
+  const sceneFramebuffer = createWebGLStageFramebuffer(gl, sceneTexture);
+  const pingFramebuffer = createWebGLStageFramebuffer(gl, pingTexture);
+  const pongFramebuffer = createWebGLStageFramebuffer(gl, pongTexture);
+  if (!sceneFramebuffer || !pingFramebuffer || !pongFramebuffer) {
+    return null;
+  }
+  return {
+    width,
+    height,
+    quadVao,
+    quadBuffer,
+    sceneTexture,
+    sceneFramebuffer,
+    pingTexture,
+    pingFramebuffer,
+    pongTexture,
+    pongFramebuffer
+  };
+}
+function compileShaderStagePipelineWebGPU(options) {
+  const { device, format, stage, reportError } = options;
+  const shaderSource = `${FULLSCREEN_STAGE_SHADER_WGSL_PREFIX}${stage.shader.wgsl ?? ""}${FULLSCREEN_STAGE_SHADER_WGSL_SUFFIX}`;
+  try {
+    const module = device.createShaderModule({ code: shaderSource });
+    const pipeline = device.createRenderPipeline({
+      layout: "auto",
+      vertex: {
+        module,
+        entryPoint: "vsMain",
+        buffers: [
+          { arrayStride: 8, attributes: [{ shaderLocation: 0, offset: 0, format: "float32x2" }] }
+        ]
+      },
+      fragment: {
+        module,
+        entryPoint: "fsMain",
+        targets: [{ format }]
+      },
+      primitive: { topology: "triangle-list", cullMode: "none" }
+    });
+    const uniformBuffer = device.createBuffer({
+      size: STAGE_UNIFORM_BUFFER_FLOATS * 4,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+    const sampler = device.createSampler({
+      magFilter: "linear",
+      minFilter: "linear",
+      addressModeU: "clamp-to-edge",
+      addressModeV: "clamp-to-edge"
+    });
+    return {
+      stage,
+      pipeline,
+      uniformBuffer,
+      uniformData: new Float32Array(STAGE_UNIFORM_BUFFER_FLOATS),
+      params: packShaderStageUniforms(stage),
+      sampler,
+      bindGroupScene: null,
+      bindGroupPing: null,
+      bindGroupPong: null
+    };
+  } catch (error) {
+    reportError(stage, `WGSL compile failed: ${error?.message ?? error}`);
+    return null;
+  }
+}
+function createWebGPUStageTargets(device, format, width, height) {
+  const usage = GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING;
+  const sceneTexture = device.createTexture({
+    size: [width, height, 1],
+    format,
+    usage
+  });
+  const pingTexture = device.createTexture({
+    size: [width, height, 1],
+    format,
+    usage
+  });
+  const pongTexture = device.createTexture({
+    size: [width, height, 1],
+    format,
+    usage
+  });
+  return {
+    width,
+    height,
+    sceneTexture,
+    sceneView: sceneTexture.createView(),
+    pingTexture,
+    pingView: pingTexture.createView(),
+    pongTexture,
+    pongView: pongTexture.createView()
+  };
+}
+function rebuildWebGPUStageBindGroups(device, compiledStages, targets) {
+  for (let i3 = 0;i3 < compiledStages.length; i3 += 1) {
+    const stage = compiledStages[i3];
+    const layout = stage.pipeline.getBindGroupLayout(0);
+    stage.bindGroupScene = device.createBindGroup({
+      layout,
+      entries: [
+        { binding: 0, resource: stage.sampler },
+        { binding: 1, resource: targets.sceneView },
+        { binding: 2, resource: { buffer: stage.uniformBuffer } }
+      ]
+    });
+    stage.bindGroupPing = device.createBindGroup({
+      layout,
+      entries: [
+        { binding: 0, resource: stage.sampler },
+        { binding: 1, resource: targets.pingView },
+        { binding: 2, resource: { buffer: stage.uniformBuffer } }
+      ]
+    });
+    stage.bindGroupPong = device.createBindGroup({
+      layout,
+      entries: [
+        { binding: 0, resource: stage.sampler },
+        { binding: 1, resource: targets.pongView },
+        { binding: 2, resource: { buffer: stage.uniformBuffer } }
+      ]
+    });
+  }
+}
+
+// src/runtime/create-runtime/shader-stage-runtime.ts
+function createShaderStageRuntime(options) {
+  let shaderStages = [];
+  let compiledWebGPUShaderStages = [];
+  let compiledWebGLShaderStages = [];
+  let webgpuStageTargets = null;
+  let webglStageTargets = null;
+  let shaderStagesDirty = true;
+  function reportShaderStageError(stage, message) {
+    const text2 = `[shader-stage:${stage.id}] ${message}`;
+    options.appendLog(text2);
+    console.warn(text2);
+    try {
+      stage.onError?.(text2);
+    } catch {}
+  }
+  function parseShaderStages(stages) {
+    return sortShaderStages(normalizeShaderStages(cloneShaderStages(stages)));
+  }
+  function getActiveShaderStagesForBackend(target) {
+    const out = [];
+    for (let i3 = 0;i3 < shaderStages.length; i3 += 1) {
+      const stage = shaderStages[i3];
+      if (!isShaderStageEnabledForBackend(stage, target))
+        continue;
+      if (stage.mode === "replace-main") {
+        reportShaderStageError(stage, "replace-main is not supported yet; stage skipped");
+        continue;
+      }
+      if (target === "webgpu" && !stage.shader.wgsl) {
+        reportShaderStageError(stage, "missing WGSL source for webgpu backend; stage skipped");
+        continue;
+      }
+      if (target === "webgl2" && !stage.shader.glsl) {
+        reportShaderStageError(stage, "missing GLSL source for webgl2 backend; stage skipped");
+        continue;
+      }
+      out.push(stage);
+    }
+    return out;
+  }
+  function clearWebGPUShaderStages() {
+    for (let i3 = 0;i3 < compiledWebGPUShaderStages.length; i3 += 1) {
+      try {
+        compiledWebGPUShaderStages[i3].uniformBuffer.destroy();
+      } catch {}
+    }
+    compiledWebGPUShaderStages = [];
+  }
+  function clearWebGLShaderStages(state2) {
+    const gl = state2?.gl ?? options.getActiveWebGLState()?.gl ?? null;
+    if (!gl) {
+      compiledWebGLShaderStages = [];
+      return;
+    }
+    for (let i3 = 0;i3 < compiledWebGLShaderStages.length; i3 += 1) {
+      gl.deleteProgram(compiledWebGLShaderStages[i3].program);
+    }
+    compiledWebGLShaderStages = [];
+  }
+  function destroyWebGPUStageTargets() {
+    if (!webgpuStageTargets)
+      return;
+    try {
+      webgpuStageTargets.sceneTexture.destroy();
+      webgpuStageTargets.pingTexture.destroy();
+      webgpuStageTargets.pongTexture.destroy();
+    } catch {}
+    webgpuStageTargets = null;
+  }
+  function destroyWebGLStageTargets(state2) {
+    if (!webglStageTargets)
+      return;
+    const gl = state2?.gl ?? options.getActiveWebGLState()?.gl ?? null;
+    if (gl) {
+      gl.deleteVertexArray(webglStageTargets.quadVao);
+      gl.deleteBuffer(webglStageTargets.quadBuffer);
+      gl.deleteFramebuffer(webglStageTargets.sceneFramebuffer);
+      gl.deleteFramebuffer(webglStageTargets.pingFramebuffer);
+      gl.deleteFramebuffer(webglStageTargets.pongFramebuffer);
+      gl.deleteTexture(webglStageTargets.sceneTexture);
+      gl.deleteTexture(webglStageTargets.pingTexture);
+      gl.deleteTexture(webglStageTargets.pongTexture);
+    }
+    webglStageTargets = null;
+  }
+  function ensureWebGLStageTargets(state2) {
+    const { width, height } = options.getCanvasSize();
+    if (webglStageTargets && webglStageTargets.width === width && webglStageTargets.height === height) {
+      return webglStageTargets;
+    }
+    destroyWebGLStageTargets(state2);
+    webglStageTargets = createWebGLStageTargets(state2.gl, width, height);
+    return webglStageTargets;
+  }
+  function ensureWebGPUStageTargets(state2) {
+    const { width, height } = options.getCanvasSize();
+    if (webgpuStageTargets && webgpuStageTargets.width === width && webgpuStageTargets.height === height) {
+      return webgpuStageTargets;
+    }
+    destroyWebGPUStageTargets();
+    webgpuStageTargets = createWebGPUStageTargets(state2.device, state2.format, width, height);
+    if (compiledWebGPUShaderStages.length) {
+      rebuildWebGPUStageBindGroups(state2.device, compiledWebGPUShaderStages, webgpuStageTargets);
+    }
+    return webgpuStageTargets;
+  }
+  function rebuildWebGPUShaderStages(state2) {
+    clearWebGPUShaderStages();
+    const nextStages = getActiveShaderStagesForBackend("webgpu");
+    for (let i3 = 0;i3 < nextStages.length; i3 += 1) {
+      const compiled = compileShaderStagePipelineWebGPU({
+        device: state2.device,
+        format: state2.format,
+        stage: nextStages[i3],
+        reportError: reportShaderStageError
+      });
+      if (compiled)
+        compiledWebGPUShaderStages.push(compiled);
+    }
+    if (!compiledWebGPUShaderStages.length) {
+      destroyWebGPUStageTargets();
+      return;
+    }
+    const targets = ensureWebGPUStageTargets(state2);
+    if (!targets)
+      return;
+    rebuildWebGPUStageBindGroups(state2.device, compiledWebGPUShaderStages, targets);
+  }
+  function rebuildWebGLShaderStages(state2) {
+    clearWebGLShaderStages(state2);
+    const nextStages = getActiveShaderStagesForBackend("webgl2");
+    for (let i3 = 0;i3 < nextStages.length; i3 += 1) {
+      const compiled = compileShaderStageProgram({
+        gl: state2.gl,
+        stage: nextStages[i3],
+        reportError: reportShaderStageError
+      });
+      if (compiled)
+        compiledWebGLShaderStages.push(compiled);
+    }
+    if (!compiledWebGLShaderStages.length) {
+      destroyWebGLStageTargets(state2);
+    }
+  }
+  function setShaderStages(stages) {
+    try {
+      shaderStages = parseShaderStages(stages ?? []);
+    } catch (error) {
+      const text2 = `[shader-stage] invalid configuration: ${error instanceof Error ? error.message : String(error)}`;
+      options.appendLog(text2);
+      console.warn(text2);
+      shaderStages = [];
+    }
+    shaderStagesDirty = true;
+    options.onShaderStagesChanged();
+  }
+  return {
+    setShaderStages,
+    getShaderStages: () => cloneShaderStages(shaderStages),
+    isShaderStagesDirty: () => shaderStagesDirty,
+    setShaderStagesDirty: (value) => {
+      shaderStagesDirty = value;
+    },
+    getCompiledWebGPUShaderStages: () => compiledWebGPUShaderStages,
+    getCompiledWebGLShaderStages: () => compiledWebGLShaderStages,
+    clearWebGPUShaderStages,
+    clearWebGLShaderStages,
+    destroyWebGPUStageTargets,
+    destroyWebGLStageTargets,
+    ensureWebGPUStageTargets,
+    ensureWebGLStageTargets,
+    rebuildWebGPUShaderStages,
+    rebuildWebGLShaderStages
+  };
+}
+
+// src/runtime/create-runtime/color-glyph-atlas.ts
+var COLOR_EMOJI_FONT_STACK = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","EmojiOne Color","Twemoji Mozilla",sans-serif';
+function createColorGlyphAtlasHelpers(options) {
+  const { pixelModeRgba, atlasToRGBA } = options;
+  let colorGlyphCanvas = null;
+  let colorGlyphCtx = null;
+  const atlasBitmapToRGBA2 = (atlas) => atlasBitmapToRGBA(atlas, pixelModeRgba, atlasToRGBA);
+  function getColorGlyphContext() {
+    if (colorGlyphCtx)
+      return colorGlyphCtx;
+    if (typeof document === "undefined")
+      return null;
+    colorGlyphCanvas = document.createElement("canvas");
+    colorGlyphCtx = colorGlyphCanvas.getContext("2d", { willReadFrequently: true });
+    return colorGlyphCtx;
+  }
+  function resolveColorGlyphFontCss(entry, fontSize) {
+    const label = String(entry.label ?? "").split("(")[0].trim().replace(/"/g, "\\\"");
+    const families = [];
+    if (label && !/openmoji/i.test(label)) {
+      families.push(`"${label}"`);
+    }
+    families.push(COLOR_EMOJI_FONT_STACK);
+    return `${Math.max(1, Math.round(fontSize))}px ${families.join(",")}`;
+  }
+  function rasterizeColorGlyphWithCanvas(entry, text2, fontSize) {
+    if (!text2)
+      return null;
+    const ctx = getColorGlyphContext();
+    if (!ctx)
+      return null;
+    const fontCss = resolveColorGlyphFontCss(entry, fontSize);
+    ctx.save();
+    ctx.font = fontCss;
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    const metrics = ctx.measureText(text2);
+    const left = Math.max(0, metrics.actualBoundingBoxLeft ?? 0);
+    const right = Math.max(1, metrics.actualBoundingBoxRight ?? metrics.width ?? 1);
+    const ascent = Math.max(1, metrics.actualBoundingBoxAscent ?? fontSize * 0.8);
+    const descent = Math.max(0, metrics.actualBoundingBoxDescent ?? fontSize * 0.2);
+    const width = Math.max(1, Math.ceil(left + right + 1));
+    const height = Math.max(1, Math.ceil(ascent + descent + 1));
+    if (!colorGlyphCanvas) {
+      ctx.restore();
+      return null;
+    }
+    if (colorGlyphCanvas.width !== width || colorGlyphCanvas.height !== height) {
+      colorGlyphCanvas.width = width;
+      colorGlyphCanvas.height = height;
+    }
+    ctx.clearRect(0, 0, width, height);
+    ctx.font = fontCss;
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#fff";
+    ctx.fillText(text2, left, ascent);
+    const image = ctx.getImageData(0, 0, width, height);
+    ctx.restore();
+    return {
+      bitmap: {
+        width,
+        rows: height,
+        pitch: width * 4,
+        buffer: new Uint8Array(image.data),
+        pixelMode: pixelModeRgba,
+        numGrays: 256
+      },
+      bearingX: -left,
+      bearingY: ascent
+    };
+  }
+  function buildColorEmojiAtlasWithCanvas(options2) {
+    const {
+      font,
+      fontEntry,
+      glyphIds,
+      fontSize,
+      sizeMode,
+      padding,
+      maxWidth,
+      maxHeight,
+      pixelMode
+    } = options2;
+    if (pixelMode !== pixelModeRgba && pixelMode !== 4)
+      return null;
+    if (!fontEntry.colorGlyphTexts?.size)
+      return null;
+    const scale = resolveFontScaleForAtlas(font, fontSize, sizeMode);
+    const glyphData = [];
+    for (let i3 = 0;i3 < glyphIds.length; i3 += 1) {
+      const glyphId = glyphIds[i3];
+      const text2 = fontEntry.colorGlyphTexts.get(glyphId);
+      if (!text2)
+        continue;
+      const raster = rasterizeColorGlyphWithCanvas(fontEntry, text2, fontSize);
+      if (!raster)
+        continue;
+      glyphData.push({
+        glyphId,
+        bitmap: raster.bitmap,
+        bearingX: raster.bearingX,
+        bearingY: raster.bearingY,
+        advance: font.advanceWidth(glyphId) * scale
+      });
+    }
+    if (!glyphData.length)
+      return null;
+    glyphData.sort((a3, b3) => (b3.bitmap?.rows ?? 0) - (a3.bitmap?.rows ?? 0));
+    const {
+      width: atlasWidth,
+      height: atlasHeight,
+      placements
+    } = packGlyphs(glyphData.map((glyph) => ({
+      width: (glyph.bitmap?.width ?? 0) + padding * 2,
+      height: (glyph.bitmap?.rows ?? 0) + padding * 2
+    })), maxWidth, maxHeight);
+    const atlasBitmap = createAtlasBitmap(atlasWidth, atlasHeight, pixelModeRgba);
+    const glyphMetrics = new Map;
+    for (let i3 = 0;i3 < glyphData.length; i3 += 1) {
+      const glyph = glyphData[i3];
+      const placement = placements[i3];
+      if (!placement?.placed || !glyph.bitmap)
+        continue;
+      copyBitmapToAtlas(glyph.bitmap, atlasBitmap, placement.x + padding, placement.y + padding);
+      glyphMetrics.set(glyph.glyphId, {
+        glyphId: glyph.glyphId,
+        atlasX: placement.x + padding,
+        atlasY: placement.y + padding,
+        width: glyph.bitmap.width,
+        height: glyph.bitmap.rows,
+        bearingX: glyph.bearingX,
+        bearingY: glyph.bearingY,
+        advance: glyph.advance
+      });
+    }
+    return {
+      atlas: {
+        bitmap: atlasBitmap,
+        glyphs: glyphMetrics,
+        glyphsByWidth: new Map,
+        fontSize,
+        colorGlyphs: new Set(glyphMetrics.keys())
+      },
+      constrainedGlyphWidths: null
+    };
+  }
+  return {
+    atlasBitmapToRGBA: atlasBitmapToRGBA2,
+    buildColorEmojiAtlasWithCanvas
+  };
+}
+
+// src/runtime/create-runtime/debug-tools/diagnose-codepoint.ts
+function createDiagnoseCodepoint(options) {
+  const {
+    formatCodepoint: formatCodepoint2,
+    isNerdSymbolCodepoint: isNerdSymbolCodepoint2,
+    isSymbolCp: isSymbolCp2,
+    fontState,
+    isSymbolFont: isSymbolFont2,
+    fontHasGlyph: fontHasGlyph2,
+    pickFontIndexForText,
+    shapeClusterWithFont,
+    getNerdConstraint: getNerdConstraint2
+  } = options;
+  return function diagnoseCodepoint(cp) {
+    console.group(`Diagnosing codepoint ${formatCodepoint2(cp)}`);
+    const isNerd = isNerdSymbolCodepoint2(cp);
+    const isSymbol = isSymbolCp2(cp);
+    console.log(`isNerdSymbolCodepoint: ${isNerd}, isSymbolCp: ${isSymbol}`);
+    console.log(`Total fonts loaded: ${fontState.fonts.length}`);
+    fontState.fonts.forEach((entry, idx) => {
+      if (!entry?.font) {
+        console.log(`  Font ${idx}: not loaded`);
+        return;
+      }
+      const label = entry.label || "unknown";
+      const isSym = isSymbolFont2(entry);
+      const text3 = String.fromCodePoint(cp);
+      const hasGlyph = fontHasGlyph2(entry.font, text3);
+      const glyphId = entry.font.glyphIdForChar(text3);
+      console.log(`  Font ${idx}: "${label}" isSymbolFont=${isSym} hasGlyph=${hasGlyph} glyphId=${glyphId}`);
+    });
+    const text2 = String.fromCodePoint(cp);
+    const pickedIndex = pickFontIndexForText(text2, 1);
+    const pickedEntry = fontState.fonts[pickedIndex];
+    console.log(`Picked font index: ${pickedIndex} (${pickedEntry?.label || "none"})`);
+    if (pickedEntry?.font) {
+      const shaped = shapeClusterWithFont(pickedEntry, text2);
+      console.log(`Shaped glyphs: ${shaped.glyphs.length}, advance: ${shaped.advance}`);
+      shaped.glyphs.forEach((glyph, index) => {
+        console.log(`  Glyph ${index}: id=${glyph.glyphId} xAdvance=${glyph.xAdvance} xOffset=${glyph.xOffset} yOffset=${glyph.yOffset}`);
+      });
+    }
+    const constraint = getNerdConstraint2(cp);
+    console.log("Nerd constraint:", constraint || "none");
+    console.groupEnd();
+  };
+}
+
+// src/runtime/create-runtime/debug-tools/dump-atlas-for-codepoint.ts
+function createDumpAtlasForCodepoint(options) {
+  const {
+    getActiveState,
+    atlasCanvas,
+    atlasInfoEl,
+    pickFontIndexForText,
+    fontState,
+    formatCodepoint: formatCodepoint2,
+    ensureAtlasForFont,
+    gridState,
+    fontConfig,
+    isSymbolFont: isSymbolFont2,
+    symbolAtlasPadding,
+    atlasPadding,
+    pixelModeGray,
+    pixelModeRgba
+  } = options;
+  return function dumpAtlasForCodepoint(cp) {
+    if (!atlasCanvas || !atlasInfoEl)
+      return;
+    const state2 = getActiveState();
+    if (!state2 || !("device" in state2)) {
+      atlasInfoEl.textContent = "atlas debug unavailable (renderer not ready)";
+      return;
+    }
+    const entryText = String.fromCodePoint(cp);
+    const fontIndex = pickFontIndexForText(entryText, 1);
+    const entry = fontState.fonts[fontIndex];
+    if (!entry?.font) {
+      atlasInfoEl.textContent = "font not ready";
+      return;
+    }
+    const glyphId = entry.font.glyphIdForChar(entryText);
+    if (!glyphId) {
+      atlasInfoEl.textContent = `missing glyph for ${formatCodepoint2(cp)}`;
+      return;
+    }
+    const atlasScale = entry.atlasScale ?? 1;
+    ensureAtlasForFont(state2.device, state2, entry, new Set([glyphId]), gridState.fontSizePx || fontConfig.sizePx, fontIndex, atlasScale);
+    const atlas = entry.atlas;
+    if (!atlas) {
+      atlasInfoEl.textContent = "atlas missing";
+      return;
+    }
+    const metrics = atlas.glyphs.get(glyphId);
+    if (!metrics) {
+      atlasInfoEl.textContent = `glyph not in atlas (${formatCodepoint2(cp)})`;
+      return;
+    }
+    const width = Math.max(1, metrics.width);
+    const height = Math.max(1, metrics.height);
+    atlasCanvas.width = width;
+    atlasCanvas.height = height;
+    const ctx = atlasCanvas.getContext("2d");
+    if (!ctx)
+      return;
+    ctx.imageSmoothingEnabled = false;
+    const imageData = atlasRegionToImageData(atlas, metrics.atlasX, metrics.atlasY, width, height, pixelModeGray, pixelModeRgba);
+    ctx.putImageData(imageData, 0, 0);
+    atlasInfoEl.textContent = [
+      `cp ${formatCodepoint2(cp)} glyph ${glyphId}`,
+      `font ${fontIndex}: ${entry.label ?? "unknown"}`,
+      `atlas ${atlas.bitmap.width}x${atlas.bitmap.rows} pad ${isSymbolFont2(entry) ? symbolAtlasPadding : atlasPadding}`,
+      `glyph ${metrics.width}x${metrics.height} bearing ${metrics.bearingX},${metrics.bearingY}`
+    ].join(`
+`);
+  };
+}
+
+// src/runtime/create-runtime/debug-tools/read-texture-to-image-data.ts
+async function readTextureToImageData(device, texture, width, height, origin) {
+  const bytesPerRow = width * 4;
+  const alignedBytesPerRow = Math.ceil(bytesPerRow / 256) * 256;
+  const buffer = device.createBuffer({
+    size: alignedBytesPerRow * height,
+    usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
+  });
+  const encoder = device.createCommandEncoder();
+  encoder.copyTextureToBuffer({ texture, origin }, { buffer, bytesPerRow: alignedBytesPerRow, rowsPerImage: height }, { width, height, depthOrArrayLayers: 1 });
+  device.queue.submit([encoder.finish()]);
+  await buffer.mapAsync(GPUMapMode.READ);
+  const mapped = new Uint8Array(buffer.getMappedRange());
+  const out = new Uint8ClampedArray(width * height * 4);
+  for (let row = 0;row < height; row += 1) {
+    const srcStart = row * alignedBytesPerRow;
+    const srcEnd = srcStart + bytesPerRow;
+    const dstStart = row * bytesPerRow;
+    out.set(mapped.subarray(srcStart, srcEnd), dstStart);
+  }
+  buffer.unmap();
+  return new ImageData(out, width, height);
+}
+
+// src/runtime/create-runtime/debug-tools/create-dump-glyph-render.ts
+function createDumpGlyphRender(options) {
+  const {
+    getActiveState,
+    pickFontIndexForText,
+    fontState,
+    getCanvas,
+    gridState,
+    fontConfig,
+    fontHeightUnits: fontHeightUnits2,
+    fontScaleOverride: fontScaleOverride2,
+    fontScaleOverrides,
+    isSymbolFont: isSymbolFont2,
+    isColorEmojiFont: isColorEmojiFont2,
+    fontAdvanceUnits: fontAdvanceUnits2,
+    fontMaxCellSpan: fontMaxCellSpan2,
+    clamp: clamp2,
+    buildNerdMetrics: buildNerdMetrics2,
+    nerdIconScale,
+    ensureAtlasForFont,
+    formatCodepoint: formatCodepoint2,
+    shapeClusterWithFont
+  } = options;
+  return async function dumpGlyphRender(cp, constraintWidth = 1) {
+    const state2 = getActiveState();
+    if (!state2 || !("device" in state2)) {
+      console.warn("WebGPU not active");
+      return null;
+    }
+    const text2 = String.fromCodePoint(cp);
+    const span = Math.max(1, constraintWidth || 1);
+    const fontIndex = pickFontIndexForText(text2, span);
+    const entry = fontState.fonts[fontIndex];
+    if (!entry?.font) {
+      console.warn("font not ready");
+      return null;
+    }
+    const glyphId = entry.font.glyphIdForChar(text2);
+    if (!glyphId) {
+      console.warn("missing glyph");
+      return null;
+    }
+    const runtimeCanvas = getCanvas();
+    const cellW = gridState.cellW || runtimeCanvas.width / Math.max(1, gridState.cols || 1);
+    const cellH = gridState.cellH || runtimeCanvas.height / Math.max(1, gridState.rows || 1);
+    const fontSizePx = gridState.fontSizePx || fontConfig.sizePx;
+    const primaryEntry = fontState.fonts[0];
+    const primaryScale = primaryEntry?.font ? primaryEntry.font.scaleForSize(fontSizePx, fontState.sizeMode) : 1;
+    const lineHeight = primaryEntry?.font ? fontHeightUnits2(primaryEntry.font) * primaryScale : cellH;
+    const baselineOffset = primaryEntry?.font ? primaryEntry.font.ascender * primaryScale : 0;
+    const yPad = gridState.yPad ?? (cellH - lineHeight) * 0.5;
+    const baseScale = entry.font.scaleForSize(fontSizePx, fontState.sizeMode) * fontScaleOverride2(entry, fontScaleOverrides);
+    let fontScale = baseScale;
+    if (!isSymbolFont2(entry) && !isColorEmojiFont2(entry)) {
+      const advanceUnits = fontAdvanceUnits2(entry, shapeClusterWithFont);
+      const maxSpan = fontMaxCellSpan2(entry);
+      const widthPx = advanceUnits * baseScale;
+      const widthAdjustRaw = widthPx > 0 ? cellW * maxSpan / widthPx : 1;
+      const widthAdjust = clamp2(widthAdjustRaw, 0.5, 2);
+      fontScale = baseScale * widthAdjust;
+      const adjustedHeightPx = fontHeightUnits2(entry.font) * fontScale;
+      if (adjustedHeightPx > lineHeight && adjustedHeightPx > 0) {
+        fontScale *= lineHeight / adjustedHeightPx;
+      }
+    }
+    const baselineAdjust = primaryEntry?.font ? primaryEntry.font.ascender * primaryScale - entry.font.ascender * fontScale : 0;
+    const atlasScale = clamp2(fontScale / (baseScale || 1), 0.5, 2);
+    const meta = new Map;
+    meta.set(glyphId, {
+      cp,
+      constraintWidth: span,
+      widths: new Set([span]),
+      variable: false
+    });
+    const constraintContext = {
+      cellW,
+      cellH,
+      yPad,
+      baselineOffset,
+      baselineAdjust,
+      fontScale,
+      nerdMetrics: buildNerdMetrics2(cellW, cellH, lineHeight, primaryEntry?.font, primaryScale, nerdIconScale),
+      fontEntry: entry
+    };
+    ensureAtlasForFont(state2.device, state2, entry, new Set([glyphId]), fontSizePx, fontIndex, atlasScale, meta, constraintContext);
+    const atlas = entry.atlas;
+    const atlasState = state2.glyphAtlases?.get(fontIndex);
+    if (!atlas || !atlasState) {
+      console.warn("atlas not ready");
+      return null;
+    }
+    const widthMap = atlas.glyphsByWidth?.get(span);
+    const metrics = widthMap?.get(glyphId) ?? atlas.glyphs.get(glyphId);
+    if (!metrics) {
+      console.warn("metrics missing");
+      return null;
+    }
+    const atlasW = atlas.bitmap.width;
+    const atlasH = atlas.bitmap.rows;
+    const baseInset = Number.isFinite(atlas.inset) ? atlas.inset : 0;
+    const uvInset = baseInset + (atlasState.nearest ? 0.5 : 0);
+    const insetX = Math.min(uvInset, (metrics.width - 1) * 0.5);
+    const insetY = Math.min(uvInset, (metrics.height - 1) * 0.5);
+    const u02 = (metrics.atlasX + insetX) / atlasW;
+    const v02 = (metrics.atlasY + insetY) / atlasH;
+    const u12 = (metrics.atlasX + metrics.width - insetX) / atlasW;
+    const v12 = (metrics.atlasY + metrics.height - insetY) / atlasH;
+    const outW = Math.max(1, metrics.width);
+    const outH = Math.max(1, metrics.height);
+    const uniformBuffer = state2.device.createBuffer({
+      size: 8 * 4,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+    const uniforms = new Float32Array([outW, outH, 0, 0, 0, 0, 0, 0]);
+    state2.device.queue.writeBuffer(uniformBuffer, 0, uniforms);
+    const instance = new Float32Array([
+      0,
+      0,
+      outW,
+      outH,
+      u02,
+      v02,
+      u12,
+      v12,
+      1,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0,
+      1
+    ]);
+    const instanceBuffer = state2.device.createBuffer({
+      size: instance.byteLength,
+      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+      mappedAtCreation: true
+    });
+    new Float32Array(instanceBuffer.getMappedRange()).set(instance);
+    instanceBuffer.unmap();
+    const renderTarget = state2.device.createTexture({
+      size: [outW, outH, 1],
+      format: state2.format,
+      usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC
+    });
+    const pipeline = atlasState.nearest ? state2.glyphPipelineNearest : state2.glyphPipeline;
+    const bindGroup = state2.device.createBindGroup({
+      layout: pipeline.getBindGroupLayout(0),
+      entries: atlasState.nearest ? [
+        { binding: 0, resource: { buffer: uniformBuffer } },
+        {
+          binding: 1,
+          resource: atlasState.samplerNearest ?? state2.device.createSampler({
+            magFilter: "nearest",
+            minFilter: "nearest",
+            addressModeU: "clamp-to-edge",
+            addressModeV: "clamp-to-edge"
+          })
+        },
+        { binding: 2, resource: atlasState.texture.createView() }
+      ] : [
+        { binding: 0, resource: { buffer: uniformBuffer } },
+        {
+          binding: 1,
+          resource: atlasState.sampler ?? state2.device.createSampler({
+            magFilter: "linear",
+            minFilter: "linear",
+            addressModeU: "clamp-to-edge",
+            addressModeV: "clamp-to-edge"
+          })
+        },
+        { binding: 2, resource: atlasState.texture.createView() }
+      ]
+    });
+    const encoder = state2.device.createCommandEncoder();
+    const pass = encoder.beginRenderPass({
+      colorAttachments: [
+        {
+          view: renderTarget.createView(),
+          clearValue: { r: 0, g: 0, b: 0, a: 1 },
+          loadOp: "clear",
+          storeOp: "store"
+        }
+      ]
+    });
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bindGroup);
+    pass.setVertexBuffer(0, state2.vertexBuffer);
+    pass.setVertexBuffer(1, instanceBuffer);
+    pass.draw(6, 1, 0, 0);
+    pass.end();
+    state2.device.queue.submit([encoder.finish()]);
+    const image = await readTextureToImageData(state2.device, renderTarget, outW, outH);
+    const canvas = document.createElement("canvas");
+    canvas.width = outW;
+    canvas.height = outH;
+    const ctx = canvas.getContext("2d");
+    if (ctx)
+      ctx.putImageData(image, 0, 0);
+    canvas.style.border = "1px solid #555";
+    canvas.style.margin = "6px";
+    canvas.style.imageRendering = "pixelated";
+    canvas.style.width = `${outW * 3}px`;
+    canvas.style.height = `${outH * 3}px`;
+    document.body.appendChild(canvas);
+    console.log("dumpGlyphRender", {
+      cp: formatCodepoint2(cp),
+      fontIndex,
+      glyphId,
+      constraintWidth: span,
+      metrics,
+      atlasW,
+      atlasH,
+      format: state2.format,
+      u0: u02,
+      v0: v02,
+      u1: u12,
+      v1: v12,
+      nearest: atlasState.nearest
+    });
+    return image;
+  };
+}
+
+// src/runtime/create-runtime/debug-tools/setup-debug-expose.ts
+function createSetupDebugExpose(options, diagnoseCodepoint) {
+  const { debugExpose, getWindow } = options;
+  return function setupDebugExpose() {
+    if (!debugExpose)
+      return;
+    const runtimeWindow = getWindow();
+    if (!runtimeWindow)
+      return;
+    const debugWindow = runtimeWindow;
+    debugWindow.diagnoseCodepoint = diagnoseCodepoint;
+    debugWindow.dumpGlyphMetrics = createDumpGlyphMetrics(options);
+    debugWindow.dumpAtlasRegion = createDumpAtlasRegion(options);
+    debugWindow.dumpGlyphRender = createDumpGlyphRender(options);
+  };
+  function createDumpGlyphMetrics({ pickFontIndexForText, fontState }) {
+    return (cp) => {
+      const text2 = String.fromCodePoint(cp);
+      const fontIndex = pickFontIndexForText(text2, 1);
+      const entry = fontState.fonts[fontIndex];
+      if (!entry?.font || !entry.atlas) {
+        console.warn("font/atlas not ready");
+        return null;
+      }
+      const glyphId = entry.font.glyphIdForChar(text2);
+      const atlas = entry.atlas;
+      const atlasW = atlas.bitmap.width;
+      const atlasH = atlas.bitmap.rows;
+      const report = (label, metrics) => {
+        if (!metrics) {
+          console.log(`${label}: missing`);
+          return;
+        }
+        const u02 = metrics.atlasX / atlasW;
+        const v02 = metrics.atlasY / atlasH;
+        const u12 = (metrics.atlasX + metrics.width) / atlasW;
+        const v12 = (metrics.atlasY + metrics.height) / atlasH;
+        console.log(`${label}:`, {
+          glyphId,
+          atlasX: metrics.atlasX,
+          atlasY: metrics.atlasY,
+          width: metrics.width,
+          height: metrics.height,
+          bearingX: metrics.bearingX,
+          bearingY: metrics.bearingY,
+          u0: u02,
+          v0: v02,
+          u1: u12,
+          v1: v12,
+          atlasW,
+          atlasH
+        });
+      };
+      console.group(`Glyph metrics U+${cp.toString(16).toUpperCase()}`);
+      report("default", atlas.glyphs.get(glyphId));
+      if (atlas.glyphsByWidth) {
+        report("width=1", atlas.glyphsByWidth.get(1)?.get(glyphId));
+        report("width=2", atlas.glyphsByWidth.get(2)?.get(glyphId));
+      }
+      console.groupEnd();
+      return { fontIndex, glyphId };
+    };
+  }
+  function createDumpAtlasRegion({
+    getActiveState
+  }) {
+    return async (fontIndex, x3, y, width, height) => {
+      const state2 = getActiveState();
+      if (!state2 || !("device" in state2)) {
+        console.warn("WebGPU not active");
+        return null;
+      }
+      const atlasState = state2.glyphAtlases?.get(fontIndex);
+      if (!atlasState) {
+        console.warn("atlas not ready");
+        return null;
+      }
+      const image = await readTextureToImageData(state2.device, atlasState.texture, width, height, { x: x3, y });
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (ctx)
+        ctx.putImageData(image, 0, 0);
+      canvas.style.border = "1px solid #555";
+      canvas.style.margin = "6px";
+      document.body.appendChild(canvas);
+      return image;
+    };
+  }
+}
+
+// src/runtime/create-runtime/debug-tools.ts
+function createRuntimeDebugTools(options) {
+  const dumpAtlasForCodepoint = createDumpAtlasForCodepoint(options);
+  const diagnoseCodepoint = createDiagnoseCodepoint(options);
+  const setupDebugExpose = createSetupDebugExpose(options, diagnoseCodepoint);
+  return {
+    dumpAtlasForCodepoint,
+    setupDebugExpose
+  };
+}
+
+// src/runtime/create-runtime/input-hooks.ts
+function createRuntimeInputHooks(options) {
+  const { beforeInputHook, beforeRenderOutputHook } = options;
+  function runHook(hook, text2, source, errorLabel) {
+    if (!hook)
+      return text2;
+    try {
+      const next = hook({ text: text2, source });
+      if (next === null)
+        return null;
+      if (typeof next === "string")
+        return next;
+      return text2;
+    } catch (error) {
+      console.error(errorLabel, error);
+      return text2;
+    }
+  }
+  return {
+    runBeforeInputHook: (text2, source) => runHook(beforeInputHook, text2, source, "[restty] beforeInput hook error:"),
+    runBeforeRenderOutputHook: (text2, source) => runHook(beforeRenderOutputHook, text2, source, "[restty] beforeRenderOutput hook error:")
+  };
+}
+
+// src/runtime/clipboard-paste.ts
+function readPastePayloadFromDataTransfer(dataTransfer) {
+  if (!dataTransfer)
+    return null;
+  const text2 = dataTransfer.getData("text/plain") || "";
+  return text2 ? {
+    kind: "text",
+    text: text2
+  } : null;
+}
+
+// src/runtime/create-runtime/pty-input-runtime.ts
+function formatError(err) {
+  if (err && typeof err === "object" && "message" in err) {
+    return String(err.message);
+  }
+  return String(err);
+}
+function createPtyInputRuntime(options) {
+  const {
+    ptyTransport,
+    ptyOutputBuffer,
+    inputHandler,
+    ptyStatusEl,
+    mouseStatusEl,
+    onPtyStatus,
+    onMouseStatus,
+    appendLog,
+    getGridSize,
+    getCursorForCpr,
+    sendInput,
+    runBeforeInputHook,
+    shouldClearSelection,
+    clearSelection,
+    syncOutputResetMs,
+    syncOutputResetSeq
+  } = options;
+  let lastReportedPtyStatus = "";
+  let lastReportedMouseStatus = "";
+  let syncOutputResetTimer = 0;
+  function setPtyStatus(text2) {
+    if (text2 === lastReportedPtyStatus)
+      return;
+    lastReportedPtyStatus = text2;
+    if (ptyStatusEl)
+      ptyStatusEl.textContent = text2;
+    onPtyStatus?.(text2);
+  }
+  function setMouseStatus(text2) {
+    if (text2 === lastReportedMouseStatus)
+      return;
+    lastReportedMouseStatus = text2;
+    if (mouseStatusEl)
+      mouseStatusEl.textContent = text2;
+    onMouseStatus?.(text2);
+  }
+  function updateMouseStatus() {
+    const status = inputHandler.getMouseStatus();
+    const label = status.active ? `${status.mode} (${status.detail})` : status.mode;
+    setMouseStatus(label);
+  }
+  function cancelPtyOutputFlush() {
+    ptyOutputBuffer.cancel();
+  }
+  function cancelSyncOutputReset() {
+    if (syncOutputResetTimer) {
+      clearTimeout(syncOutputResetTimer);
+      syncOutputResetTimer = 0;
+    }
+  }
+  function scheduleSyncOutputReset() {
+    if (syncOutputResetTimer)
+      return;
+    syncOutputResetTimer = setTimeout(() => {
+      syncOutputResetTimer = 0;
+      if (!inputHandler.isSynchronizedOutput())
+        return;
+      const sanitized = inputHandler.filterOutput(syncOutputResetSeq) || syncOutputResetSeq;
+      sendInput(sanitized, "pty");
+    }, syncOutputResetMs);
+  }
+  function flushPtyOutputBuffer() {
+    ptyOutputBuffer.flush();
+  }
+  function queuePtyOutput(text2) {
+    ptyOutputBuffer.queue(text2);
+  }
+  function disconnectPty2() {
+    flushPtyOutputBuffer();
+    cancelPtyOutputFlush();
+    cancelSyncOutputReset();
+    ptyOutputBuffer.clear();
+    ptyTransport.disconnect();
+    updateMouseStatus();
+    setPtyStatus("disconnected");
+  }
+  function connectPty2(url = "") {
+    if (ptyTransport.isConnected())
+      return;
+    const initialGrid = getGridSize();
+    setPtyStatus("connecting...");
+    try {
+      const connectResult = ptyTransport.connect({
+        url,
+        cols: initialGrid.cols || 80,
+        rows: initialGrid.rows || 24,
+        callbacks: {
+          onConnect: () => {
+            setPtyStatus("connected");
+            updateMouseStatus();
+            const connectedGrid = getGridSize();
+            if (connectedGrid.cols && connectedGrid.rows) {
+              ptyTransport.resize(connectedGrid.cols, connectedGrid.rows);
+            }
+            appendLog("[pty] connected");
+          },
+          onDisconnect: () => {
+            appendLog("[pty] disconnected");
+            setPtyStatus("disconnected");
+            updateMouseStatus();
+          },
+          onStatus: (shell) => {
+            appendLog(`[pty] shell ${shell ?? ""}`);
+          },
+          onError: (message, errors) => {
+            appendLog(`[pty] error ${message ?? ""}`);
+            if (errors) {
+              for (const err of errors)
+                appendLog(`[pty] spawn ${err}`);
+            }
+            disconnectPty2();
+          },
+          onExit: (code) => {
+            appendLog(`[pty] exit ${code ?? ""}`);
+            disconnectPty2();
+          },
+          onData: (text2) => {
+            const sanitized = inputHandler.filterOutput(text2);
+            updateMouseStatus();
+            if (sanitized)
+              queuePtyOutput(sanitized);
+          }
+        }
+      });
+      Promise.resolve(connectResult).catch((err) => {
+        appendLog(`[pty] error ${formatError(err)}`);
+        disconnectPty2();
+      });
+    } catch (err) {
+      appendLog(`[pty] error ${formatError(err)}`);
+      disconnectPty2();
+    }
+  }
+  function sendKeyInput(text2, source = "key") {
+    if (!text2)
+      return;
+    const intercepted = runBeforeInputHook(text2, source);
+    if (!intercepted)
+      return;
+    if (source !== "program" && shouldClearSelection()) {
+      clearSelection();
+    }
+    if (ptyTransport.isConnected()) {
+      const payload = inputHandler.mapKeyForPty(intercepted);
+      ptyTransport.sendInput(payload);
+      return;
+    }
+    sendInput(intercepted, source, { skipHooks: true });
+  }
+  function sendPasteText(text2) {
+    if (!text2)
+      return;
+    const bracketedPasteEnabled = !!inputHandler.isBracketedPaste();
+    sendKeyInput(formatPasteText(text2, bracketedPasteEnabled));
+  }
+  function sendPastePayloadFromDataTransfer(dataTransfer) {
+    const payload = readPastePayloadFromDataTransfer(dataTransfer);
+    if (!payload)
+      return false;
+    sendPasteText(payload.text);
+    return true;
+  }
+  function getCprPosition() {
+    return getCursorForCpr();
+  }
+  return {
+    setPtyStatus,
+    updateMouseStatus,
+    scheduleSyncOutputReset,
+    cancelSyncOutputReset,
+    connectPty: connectPty2,
+    disconnectPty: disconnectPty2,
+    sendKeyInput,
+    sendPasteText,
+    sendPastePayloadFromDataTransfer,
+    getCprPosition
+  };
+}
+
+// src/runtime/create-runtime/interaction-runtime/bind-ime-events.ts
+function bindImeEvents(options) {
+  const {
+    bindOptions,
+    imeInput,
+    imeState,
+    cleanupCanvasFns,
+    getWasmReady,
+    getWasmHandle,
+    setPreedit,
+    syncImeSelection
+  } = options;
+  const {
+    inputHandler,
+    sendKeyInput,
+    sendPasteText,
+    sendPastePayloadFromDataTransfer,
+    getLastKeydownSeq,
+    getLastKeydownSeqAt,
+    keydownBeforeinputDedupeMs
+  } = bindOptions;
+  let suppressNextInput = false;
+  const onCompositionStart = (event) => {
+    imeState.composing = true;
+    setPreedit(event.data || imeInput.value || "");
+    requestAnimationFrame(syncImeSelection);
+  };
+  const onCompositionUpdate = (event) => {
+    setPreedit(event.data || imeInput.value || "");
+    requestAnimationFrame(syncImeSelection);
+  };
+  const onCompositionEnd = (event) => {
+    imeState.composing = false;
+    setPreedit("", true);
+    imeState.selectionStart = 0;
+    imeState.selectionEnd = 0;
+    const text2 = event.data || "";
+    if (text2) {
+      suppressNextInput = true;
+      sendKeyInput(text2);
+    }
+    imeInput.value = "";
+  };
+  const onBeforeInput = (event) => {
+    if (!getWasmReady() || !getWasmHandle())
+      return;
+    if (imeState.composing)
+      return;
+    if (event.inputType === "insertFromPaste") {
+      event.preventDefault();
+      suppressNextInput = true;
+      const pasteText = event.dataTransfer?.getData("text/plain") || event.data || "";
+      if (pasteText) {
+        sendPasteText(pasteText);
+        imeInput.value = "";
+        return;
+      }
+      sendPastePayloadFromDataTransfer(event.dataTransfer);
+      imeInput.value = "";
+      return;
+    }
+    const text2 = inputHandler.encodeBeforeInput(event);
+    if (text2) {
+      const now = performance.now();
+      if (getLastKeydownSeq() && text2 === getLastKeydownSeq() && now - getLastKeydownSeqAt() <= keydownBeforeinputDedupeMs) {
+        event.preventDefault();
+        suppressNextInput = true;
+        imeInput.value = "";
+        return;
+      }
+      event.preventDefault();
+      suppressNextInput = true;
+      sendKeyInput(text2);
+      imeInput.value = "";
+    }
+  };
+  const onInput = (event) => {
+    if (!getWasmReady() || !getWasmHandle())
+      return;
+    if (imeState.composing)
+      return;
+    if (suppressNextInput) {
+      suppressNextInput = false;
+      imeInput.value = "";
+      return;
+    }
+    const text2 = event.data || imeInput.value;
+    if (text2) {
+      sendKeyInput(text2);
+      imeInput.value = "";
+    }
+  };
+  const onPaste = (event) => {
+    if (!getWasmReady() || !getWasmHandle())
+      return;
+    event.preventDefault();
+    suppressNextInput = true;
+    const text2 = event.clipboardData?.getData("text/plain") || "";
+    if (text2) {
+      sendPasteText(text2);
+      imeInput.value = "";
+      return;
+    }
+    sendPastePayloadFromDataTransfer(event.clipboardData);
+    imeInput.value = "";
+  };
+  imeInput.addEventListener("compositionstart", onCompositionStart);
+  imeInput.addEventListener("compositionupdate", onCompositionUpdate);
+  imeInput.addEventListener("compositionend", onCompositionEnd);
+  imeInput.addEventListener("beforeinput", onBeforeInput);
+  imeInput.addEventListener("input", onInput);
+  imeInput.addEventListener("paste", onPaste);
+  cleanupCanvasFns.push(() => {
+    imeInput.removeEventListener("compositionstart", onCompositionStart);
+    imeInput.removeEventListener("compositionupdate", onCompositionUpdate);
+    imeInput.removeEventListener("compositionend", onCompositionEnd);
+    imeInput.removeEventListener("beforeinput", onBeforeInput);
+    imeInput.removeEventListener("input", onInput);
+    imeInput.removeEventListener("paste", onPaste);
+  });
+}
+
+// src/runtime/overlay-scrollbar.ts
+var OVERLAY_SCROLLBAR_WIDTH_CSS_PX = 7;
+var OVERLAY_SCROLLBAR_MARGIN_CSS_PX = 4;
+var OVERLAY_SCROLLBAR_INSET_Y_CSS_PX = 2;
+var OVERLAY_SCROLLBAR_MIN_THUMB_CSS_PX = 28;
+var OVERLAY_SCROLLBAR_CAP_SUPERSAMPLE = 8;
+function computeOverlayScrollbarLayout(total, offset, len, canvasWidth, canvasHeight, currentDpr) {
+  if (!(total > len && len > 0))
+    return null;
+  const dpr = Math.max(1, currentDpr || 1);
+  const width = Math.max(1, Math.round(OVERLAY_SCROLLBAR_WIDTH_CSS_PX * dpr));
+  const margin = Math.max(1, Math.round(OVERLAY_SCROLLBAR_MARGIN_CSS_PX * dpr));
+  const insetY = Math.max(0, Math.round(OVERLAY_SCROLLBAR_INSET_Y_CSS_PX * dpr));
+  const trackX = Math.max(0, canvasWidth - margin - width);
+  const trackY = insetY;
+  const trackH = Math.max(width, canvasHeight - insetY * 2);
+  const denom = Math.max(1, total - len);
+  const dynamicThumbH = Math.round(trackH * (len / total));
+  const minThumbH = Math.max(width, Math.round(OVERLAY_SCROLLBAR_MIN_THUMB_CSS_PX * dpr));
+  const thumbH = Math.min(trackH, Math.max(minThumbH, dynamicThumbH));
+  const thumbY = trackY + Math.round(offset / denom * (trackH - thumbH));
+  return { total, offset, len, denom, width, trackX, trackY, trackH, thumbY, thumbH };
+}
+function isPointInScrollbarHitArea(layout, x3, y) {
+  const hitPadX = Math.max(3, Math.round(layout.width * 0.35));
+  return x3 >= layout.trackX - hitPadX && x3 <= layout.trackX + layout.width + hitPadX && y >= layout.trackY && y <= layout.trackY + layout.trackH;
+}
+function isPointInScrollbarThumb(layout, x3, y) {
+  return x3 >= layout.trackX && x3 <= layout.trackX + layout.width && y >= layout.thumbY && y <= layout.thumbY + layout.thumbH;
+}
+function scrollbarOffsetForPointerY(layout, pointerY, thumbGrabRatio) {
+  const thumbTop = pointerY - layout.thumbH * thumbGrabRatio;
+  const trackSpan = Math.max(1, layout.trackH - layout.thumbH);
+  const ratio = clamp((thumbTop - layout.trackY) / trackSpan, 0, 1);
+  return Math.round(ratio * layout.denom);
+}
+function pushRoundedVerticalBar(out, x3, y, w, h, color, capSupersample = OVERLAY_SCROLLBAR_CAP_SUPERSAMPLE) {
+  const x02 = Math.round(x3);
+  const y02 = Math.round(y);
+  const width = Math.max(1, Math.round(w));
+  const height = Math.max(1, Math.round(h));
+  const radius = Math.min(width * 0.5, height * 0.5);
+  if (radius <= 0) {
+    pushRectBox(out, x02, y02, width, height, color);
+    return;
+  }
+  const capRows = Math.min(height, Math.max(1, Math.ceil(radius)));
+  const middleStart = capRows;
+  const middleEnd = Math.max(middleStart, height - capRows);
+  const middleH = middleEnd - middleStart;
+  if (middleH > 0) {
+    pushRectBox(out, x02, y02 + middleStart, width, middleH, color);
+  }
+  const radiusSq = radius * radius;
+  const centerX = width * 0.5;
+  const topCenterY = radius;
+  const bottomCenterY = height - radius;
+  const samplesPerAxis = Math.max(1, capSupersample | 0);
+  const totalSamples = samplesPerAxis * samplesPerAxis;
+  const invSamples = 1 / totalSamples;
+  const alphaBase = color[3];
+  const alphaEpsilon = 1 / 255;
+  const sampleCapPixelCoverage = (localX, localY, centerY) => {
+    let hits = 0;
+    for (let sy = 0;sy < samplesPerAxis; sy += 1) {
+      const sampleY = localY + (sy + 0.5) / samplesPerAxis;
+      for (let sx = 0;sx < samplesPerAxis; sx += 1) {
+        const sampleX = localX + (sx + 0.5) / samplesPerAxis;
+        const dx = sampleX - centerX;
+        const dy = sampleY - centerY;
+        if (dx * dx + dy * dy <= radiusSq)
+          hits += 1;
+      }
+    }
+    return hits * invSamples;
+  };
+  for (let row = 0;row < capRows; row += 1) {
+    const topY = y02 + row;
+    const bottomY = y02 + height - 1 - row;
+    for (let col = 0;col < width; col += 1) {
+      const coverageTop = sampleCapPixelCoverage(col, row, topCenterY);
+      if (coverageTop > 0) {
+        const alpha = alphaBase * coverageTop;
+        if (alpha > alphaEpsilon) {
+          out.push(x02 + col, topY, 1, 1, color[0], color[1], color[2], alpha);
+        }
+      }
+      if (bottomY !== topY) {
+        const localBottomY = height - 1 - row;
+        const coverageBottom = sampleCapPixelCoverage(col, localBottomY, bottomCenterY);
+        if (coverageBottom > 0) {
+          const alpha = alphaBase * coverageBottom;
+          if (alpha > alphaEpsilon) {
+            out.push(x02 + col, bottomY, 1, 1, color[0], color[1], color[2], alpha);
+          }
+        }
+      }
+    }
+  }
+}
+function resolveOverlayScrollbarAlpha(now, lastInputAt) {
+  const since = now - lastInputAt;
+  const fadeDelay = 160;
+  const fadeDuration = 520;
+  if (since < fadeDelay)
+    return 0.68;
+  if (since < fadeDelay + fadeDuration) {
+    return 0.68 * (1 - (since - fadeDelay) / fadeDuration);
+  }
+  return 0;
+}
+
+// src/runtime/create-runtime/interaction-runtime/bind-pointer-aux-handlers.ts
+function createPointerAuxHandlers(options) {
+  const {
+    inputHandler,
+    shouldRoutePointerToAppMouse,
+    scrollViewportByLines,
+    getWasmReady,
+    getWasmHandle,
+    getGridState,
+    updateLinkHover,
+    clearPendingDesktopSelection,
+    clearPendingTouchSelection,
+    isTouchPointer,
+    selectionState,
+    touchSelectionState,
+    desktopSelectionState,
+    scrollbarDragState,
+    updateCanvasCursor,
+    markNeedsRender
+  } = options;
+  const onPointerCancel = (event) => {
+    if (scrollbarDragState.pointerId === event.pointerId) {
+      scrollbarDragState.pointerId = null;
+    }
+    if (desktopSelectionState.pendingPointerId === event.pointerId) {
+      clearPendingDesktopSelection();
+    }
+    if (isTouchPointer(event)) {
+      if (touchSelectionState.pendingPointerId === event.pointerId) {
+        clearPendingTouchSelection();
+      }
+      if (touchSelectionState.panPointerId === event.pointerId) {
+        touchSelectionState.panPointerId = null;
+      }
+      if (touchSelectionState.activePointerId === event.pointerId) {
+        touchSelectionState.activePointerId = null;
+        if (selectionState.dragging) {
+          selectionState.dragging = false;
+          updateCanvasCursor();
+          markNeedsRender();
+        }
+      }
+    }
+  };
+  const onWheel = (event) => {
+    if (shouldRoutePointerToAppMouse(event.shiftKey)) {
+      if (inputHandler.sendMouseEvent("wheel", event)) {
+        event.preventDefault();
+        return;
+      }
+    }
+    if (!getWasmReady() || !getWasmHandle() || !getGridState().cellH)
+      return;
+    const speed = event.shiftKey ? 0.5 : 1.5;
+    let lines = 0;
+    if (event.deltaMode === 1) {
+      lines = event.deltaY;
+    } else if (event.deltaMode === 2) {
+      lines = event.deltaY * getGridState().rows;
+    } else {
+      lines = event.deltaY / getGridState().cellH;
+    }
+    scrollViewportByLines(lines * speed);
+    event.preventDefault();
+  };
+  const onContextMenu = (event) => {
+    if (inputHandler.isMouseActive())
+      event.preventDefault();
+  };
+  const onPointerLeave = () => {
+    updateLinkHover(null);
+  };
+  return {
+    onPointerCancel,
+    onWheel,
+    onContextMenu,
+    onPointerLeave
+  };
+}
+
+// src/runtime/create-runtime/interaction-runtime/bind-pointer-up-handler.ts
+function createPointerUpHandler(options) {
+  const {
+    inputHandler,
+    sendKeyInput,
+    openLink: openLink2,
+    scrollbarDragState,
+    isTouchPointer,
+    touchSelectionState,
+    selectionState,
+    normalizeSelectionCell: normalizeSelectionCell2,
+    positionToCell: positionToCell2,
+    clearPendingTouchSelection,
+    clearPendingDesktopSelection,
+    desktopSelectionState,
+    clearSelection,
+    updateCanvasCursor,
+    markNeedsRender,
+    shouldRoutePointerToAppMouse,
+    shouldPreferLocalPrimarySelection,
+    linkState,
+    updateLinkHover
+  } = options;
+  return (event) => {
+    if (scrollbarDragState.pointerId === event.pointerId) {
+      scrollbarDragState.pointerId = null;
+      event.preventDefault();
+      return;
+    }
+    if (isTouchPointer(event)) {
+      if (touchSelectionState.pendingPointerId === event.pointerId) {
+        clearPendingTouchSelection();
+        touchSelectionState.activePointerId = null;
+        touchSelectionState.panPointerId = null;
+        return;
+      }
+      if (selectionState.dragging && touchSelectionState.activePointerId === event.pointerId) {
+        const cell2 = normalizeSelectionCell2(positionToCell2(event));
+        event.preventDefault();
+        selectionState.dragging = false;
+        selectionState.focus = cell2;
+        touchSelectionState.activePointerId = null;
+        if (selectionState.anchor && selectionState.focus && selectionState.anchor.row === selectionState.focus.row && selectionState.anchor.col === selectionState.focus.col) {
+          clearSelection();
+        } else {
+          updateCanvasCursor();
+          markNeedsRender();
+        }
+        return;
+      }
+      if (touchSelectionState.panPointerId === event.pointerId) {
+        touchSelectionState.panPointerId = null;
+      }
+      return;
+    }
+    const cell = normalizeSelectionCell2(positionToCell2(event));
+    const clearSelectionFromClick = desktopSelectionState.pendingPointerId === event.pointerId && desktopSelectionState.startedWithActiveSelection && !selectionState.dragging;
+    if (desktopSelectionState.pendingPointerId === event.pointerId) {
+      clearPendingDesktopSelection();
+    }
+    if (clearSelectionFromClick)
+      clearSelection();
+    if (selectionState.dragging) {
+      event.preventDefault();
+      selectionState.dragging = false;
+      selectionState.focus = cell;
+      if (selectionState.anchor && selectionState.focus && selectionState.anchor.row === selectionState.focus.row && selectionState.anchor.col === selectionState.focus.col) {
+        clearSelection();
+      } else {
+        updateCanvasCursor();
+        markNeedsRender();
+      }
+    } else {
+      if (shouldRoutePointerToAppMouse(event.shiftKey) && !shouldPreferLocalPrimarySelection(event) && inputHandler.sendMouseEvent("up", event)) {
+        event.preventDefault();
+        return;
+      }
+      updateLinkHover(cell);
+    }
+    if (!selectionState.active && event.button === 0 && !event.shiftKey && !event.altKey && !event.ctrlKey && !event.metaKey && inputHandler.isPromptClickEventsEnabled()) {
+      const seq = inputHandler.encodePromptClickEvent(cell);
+      if (seq) {
+        event.preventDefault();
+        sendKeyInput(seq);
+        return;
+      }
+    }
+    if (!selectionState.active && event.button === 0 && linkState.hoverUri) {
+      openLink2(linkState.hoverUri);
+    }
+  };
+}
+
+// src/runtime/create-runtime/interaction-runtime/bind-pointer-events.ts
+function bindPointerEvents(options) {
+  const {
+    canvas,
+    bindOptions,
+    touchSelectionMode,
+    touchSelectionLongPressMs,
+    touchSelectionMoveThresholdPx,
+    selectionState,
+    touchSelectionState,
+    desktopSelectionState,
+    scrollbarDragState,
+    linkState,
+    cleanupCanvasFns,
+    isTouchPointer,
+    clearPendingTouchSelection,
+    clearPendingDesktopSelection,
+    tryActivatePendingTouchSelection,
+    beginSelectionDrag,
+    noteScrollActivity,
+    getOverlayScrollbarLayout,
+    pointerToCanvasPx,
+    setViewportScrollOffset,
+    normalizeSelectionCell: normalizeSelectionCell2,
+    positionToCell: positionToCell2,
+    scrollViewportByLines,
+    clearSelection,
+    updateCanvasCursor,
+    markNeedsRender,
+    updateLinkHover,
+    getGridState,
+    getWasmReady,
+    getWasmHandle
+  } = options;
+  const { inputHandler, sendKeyInput, openLink: openLink2 } = bindOptions;
+  const shouldRoutePointerToAppMouse = (shiftKey) => {
+    if (shiftKey)
+      return false;
+    if (!inputHandler.isMouseActive())
+      return false;
+    return inputHandler.isAltScreen ? inputHandler.isAltScreen() : false;
+  };
+  const shouldPreferLocalPrimarySelection = (event) => !isTouchPointer(event) && event.button === 0 && !event.altKey;
+  canvas.style.touchAction = touchSelectionMode === "long-press" || touchSelectionMode === "drag" ? "none" : "pan-y pinch-zoom";
+  const onPointerDown = (event) => {
+    if (!isTouchPointer(event) && event.button === 0) {
+      const layout = getOverlayScrollbarLayout();
+      if (layout) {
+        const point = pointerToCanvasPx(event);
+        if (isPointInScrollbarHitArea(layout, point.x, point.y)) {
+          event.preventDefault();
+          noteScrollActivity();
+          const hitThumb = isPointInScrollbarThumb(layout, point.x, point.y);
+          scrollbarDragState.pointerId = event.pointerId;
+          scrollbarDragState.thumbGrabRatio = hitThumb ? clamp((point.y - layout.thumbY) / Math.max(1, layout.thumbH), 0, 1) : 0.5;
+          const targetOffset = scrollbarOffsetForPointerY(layout, point.y, scrollbarDragState.thumbGrabRatio);
+          setViewportScrollOffset(targetOffset);
+          canvas.setPointerCapture?.(event.pointerId);
+          return;
+        }
+      }
+    }
+    if (shouldRoutePointerToAppMouse(event.shiftKey) && !shouldPreferLocalPrimarySelection(event) && inputHandler.sendMouseEvent("down", event)) {
+      clearPendingDesktopSelection();
+      event.preventDefault();
+      canvas.setPointerCapture?.(event.pointerId);
+      return;
+    }
+    if (isTouchPointer(event)) {
+      if (event.button !== 0)
+        return;
+      const cell2 = normalizeSelectionCell2(positionToCell2(event));
+      touchSelectionState.activePointerId = null;
+      touchSelectionState.panPointerId = null;
+      if (touchSelectionMode === "off")
+        return;
+      if (touchSelectionMode === "drag") {
+        event.preventDefault();
+        beginSelectionDrag(cell2, event.pointerId);
+        return;
+      }
+      clearPendingTouchSelection();
+      touchSelectionState.pendingPointerId = event.pointerId;
+      touchSelectionState.pendingCell = cell2;
+      touchSelectionState.pendingStartedAt = performance.now();
+      touchSelectionState.pendingStartX = event.clientX;
+      touchSelectionState.pendingStartY = event.clientY;
+      touchSelectionState.panPointerId = event.pointerId;
+      touchSelectionState.panLastY = event.clientY;
+      touchSelectionState.pendingTimer = setTimeout(() => {
+        tryActivatePendingTouchSelection(event.pointerId);
+      }, touchSelectionLongPressMs);
+      return;
+    }
+    if (event.button !== 0)
+      return;
+    event.preventDefault();
+    const cell = normalizeSelectionCell2(positionToCell2(event));
+    updateLinkHover(cell);
+    desktopSelectionState.pendingPointerId = event.pointerId;
+    desktopSelectionState.pendingCell = cell;
+    desktopSelectionState.startedWithActiveSelection = selectionState.active;
+  };
+  const onPointerMove = (event) => {
+    if (scrollbarDragState.pointerId === event.pointerId) {
+      const layout = getOverlayScrollbarLayout();
+      if (!layout) {
+        scrollbarDragState.pointerId = null;
+        return;
+      }
+      const point = pointerToCanvasPx(event);
+      const targetOffset = scrollbarOffsetForPointerY(layout, point.y, scrollbarDragState.thumbGrabRatio);
+      setViewportScrollOffset(targetOffset);
+      event.preventDefault();
+      return;
+    }
+    if (isTouchPointer(event)) {
+      if (touchSelectionState.pendingPointerId === event.pointerId) {
+        const dx = event.clientX - touchSelectionState.pendingStartX;
+        const dy = event.clientY - touchSelectionState.pendingStartY;
+        if (dx * dx + dy * dy >= touchSelectionMoveThresholdPx * touchSelectionMoveThresholdPx) {
+          clearPendingTouchSelection();
+        } else {
+          tryActivatePendingTouchSelection(event.pointerId);
+        }
+        if (touchSelectionState.pendingPointerId === event.pointerId) {
+          if (touchSelectionMode === "long-press" && touchSelectionState.panPointerId === event.pointerId) {
+            const deltaPx = touchSelectionState.panLastY - event.clientY;
+            touchSelectionState.panLastY = event.clientY;
+            scrollViewportByLines(deltaPx / Math.max(1, getGridState().cellH) * 1.5);
+            event.preventDefault();
+          }
+          return;
+        }
+      }
+      if (selectionState.dragging && touchSelectionState.activePointerId === event.pointerId) {
+        const cell2 = normalizeSelectionCell2(positionToCell2(event));
+        event.preventDefault();
+        selectionState.focus = cell2;
+        updateLinkHover(null);
+        updateCanvasCursor();
+        markNeedsRender();
+        return;
+      }
+      if (touchSelectionMode === "long-press" && touchSelectionState.panPointerId === event.pointerId) {
+        const deltaPx = touchSelectionState.panLastY - event.clientY;
+        touchSelectionState.panLastY = event.clientY;
+        scrollViewportByLines(deltaPx / Math.max(1, getGridState().cellH) * 1.5);
+        event.preventDefault();
+      }
+      return;
+    }
+    const cell = normalizeSelectionCell2(positionToCell2(event));
+    if (desktopSelectionState.pendingPointerId === event.pointerId && desktopSelectionState.pendingCell) {
+      const anchor = desktopSelectionState.pendingCell;
+      if (anchor.row !== cell.row || anchor.col !== cell.col) {
+        beginSelectionDrag(anchor, event.pointerId);
+        selectionState.focus = cell;
+        updateLinkHover(null);
+        updateCanvasCursor();
+        markNeedsRender();
+        return;
+      }
+      updateLinkHover(cell);
+      return;
+    }
+    if (selectionState.dragging) {
+      event.preventDefault();
+      selectionState.focus = cell;
+      updateLinkHover(null);
+      updateCanvasCursor();
+      markNeedsRender();
+      return;
+    }
+    if (shouldRoutePointerToAppMouse(event.shiftKey) && inputHandler.sendMouseEvent("move", event)) {
+      event.preventDefault();
+      return;
+    }
+    updateLinkHover(cell);
+  };
+  const onPointerUp = createPointerUpHandler({
+    inputHandler,
+    sendKeyInput,
+    openLink: openLink2,
+    scrollbarDragState,
+    isTouchPointer,
+    touchSelectionState,
+    selectionState,
+    normalizeSelectionCell: normalizeSelectionCell2,
+    positionToCell: positionToCell2,
+    clearPendingTouchSelection,
+    clearPendingDesktopSelection,
+    desktopSelectionState,
+    clearSelection,
+    updateCanvasCursor,
+    markNeedsRender,
+    shouldRoutePointerToAppMouse,
+    shouldPreferLocalPrimarySelection,
+    linkState,
+    updateLinkHover
+  });
+  const { onPointerCancel, onWheel, onContextMenu, onPointerLeave } = createPointerAuxHandlers({
+    inputHandler,
+    shouldRoutePointerToAppMouse,
+    scrollViewportByLines,
+    getWasmReady,
+    getWasmHandle,
+    getGridState,
+    updateLinkHover,
+    clearPendingDesktopSelection,
+    clearPendingTouchSelection,
+    isTouchPointer,
+    selectionState,
+    touchSelectionState,
+    desktopSelectionState,
+    scrollbarDragState,
+    updateCanvasCursor,
+    markNeedsRender
+  });
+  canvas.addEventListener("pointerdown", onPointerDown);
+  canvas.addEventListener("pointermove", onPointerMove);
+  canvas.addEventListener("pointerup", onPointerUp);
+  canvas.addEventListener("pointercancel", onPointerCancel);
+  canvas.addEventListener("pointerleave", onPointerLeave);
+  canvas.addEventListener("wheel", onWheel, { passive: false });
+  canvas.addEventListener("contextmenu", onContextMenu);
+  cleanupCanvasFns.push(() => {
+    canvas.removeEventListener("pointerdown", onPointerDown);
+    canvas.removeEventListener("pointermove", onPointerMove);
+    canvas.removeEventListener("pointerup", onPointerUp);
+    canvas.removeEventListener("pointercancel", onPointerCancel);
+    canvas.removeEventListener("pointerleave", onPointerLeave);
+    canvas.removeEventListener("wheel", onWheel);
+    canvas.removeEventListener("contextmenu", onContextMenu);
+    clearPendingTouchSelection();
+    scrollbarDragState.pointerId = null;
+  });
+}
+
+// src/runtime/create-runtime/interaction-runtime/kitty-image-cache.ts
+var KITTY_FMT_GRAY = 1;
+var KITTY_FMT_GRAY_ALPHA = 2;
+var KITTY_FMT_RGB = 3;
+var KITTY_FMT_RGBA = 4;
+var KITTY_FMT_PNG = 100;
+function createKittyImageCache(options) {
+  const { getWasm, markNeedsRender } = options;
+  const kittyImageCache = new Map;
+  const kittyDecodePending = new Set;
+  const releaseKittyImage = (entry) => {
     const source = entry?.source;
     if (source && typeof source.close === "function") {
       try {
         source.close();
       } catch {}
     }
-  }
-  function ensureKittyOverlayCanvas() {
-    const parent = canvas.parentElement;
-    if (!parent || typeof document === "undefined")
-      return;
-    if (kittyOverlayCanvas && kittyOverlayCanvas.parentElement === parent)
-      return;
-    if (kittyOverlayCanvas?.parentElement) {
-      kittyOverlayCanvas.parentElement.removeChild(kittyOverlayCanvas);
-    }
-    const parentStyle = window.getComputedStyle(parent);
-    if (parentStyle.position === "static") {
-      parent.style.position = "relative";
-    }
-    const overlay = document.createElement("canvas");
-    overlay.className = "restty-kitty-overlay";
-    overlay.style.position = "absolute";
-    overlay.style.left = "0";
-    overlay.style.top = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.pointerEvents = "none";
-    overlay.style.imageRendering = "pixelated";
-    overlay.style.zIndex = "2";
-    parent.appendChild(overlay);
-    kittyOverlayCanvas = overlay;
-    kittyOverlayCtx = overlay.getContext("2d");
-  }
-  function syncKittyOverlaySize() {
-    if (!kittyOverlayCanvas)
-      return;
-    if (kittyOverlayCanvas.width !== canvas.width || kittyOverlayCanvas.height !== canvas.height) {
-      kittyOverlayCanvas.width = canvas.width;
-      kittyOverlayCanvas.height = canvas.height;
-      kittyOverlayLastHash = -1;
-    }
-  }
-  function clearKittyOverlay() {
-    ensureKittyOverlayCanvas();
-    syncKittyOverlaySize();
-    if (!kittyOverlayCtx || !kittyOverlayCanvas)
-      return;
-    kittyOverlayCtx.clearRect(0, 0, kittyOverlayCanvas.width, kittyOverlayCanvas.height);
-    kittyOverlayLastHash = -1;
-  }
-  function kittyHashInt(hash, value) {
-    let h = hash >>> 0;
-    h ^= value | 0;
-    h = Math.imul(h, 16777619) >>> 0;
-    return h;
-  }
-  function kittyHashString(hash, value) {
-    let h = hash >>> 0;
-    for (let i3 = 0;i3 < value.length; i3 += 1) {
-      h = kittyHashInt(h, value.charCodeAt(i3));
-    }
-    return h;
-  }
-  function decodeRawKittyImage(placement, key, bytes) {
+  };
+  const decodeRawKittyImage = (placement, key, bytes) => {
     const width = placement.imageWidth >>> 0;
     const height = placement.imageHeight >>> 0;
     if (!width || !height || typeof document === "undefined")
@@ -50604,8 +53439,9 @@ function createResttyApp(options) {
       return null;
     ctx.putImageData(new ImageData(out, width, height), 0, 0);
     return { key, width, height, source: surface };
-  }
-  function resolveKittyImage(placement) {
+  };
+  const resolveKittyImage = (placement) => {
+    const wasm = getWasm();
     if (!wasm)
       return null;
     const ptr = placement.imageDataPtr >>> 0;
@@ -50643,7 +53479,7 @@ function createResttyApp(options) {
           height: bitmap.height,
           source: bitmap
         });
-        needsRender = true;
+        markNeedsRender();
       }).catch(() => {
         kittyDecodePending.delete(key);
       });
@@ -50656,168 +53492,261 @@ function createResttyApp(options) {
       releaseKittyImage(cached);
     kittyImageCache.set(placement.imageId, decoded);
     return decoded;
-  }
-  function toKittySlice(placement, decoded, cellW, cellH) {
-    const srcW = decoded.width >>> 0;
-    const srcH = decoded.height >>> 0;
-    if (!srcW || !srcH)
-      return null;
-    if (!placement.width || !placement.height)
-      return null;
-    const sxRaw = Math.max(0, Math.min(placement.sourceX >>> 0, srcW));
-    const syRaw = Math.max(0, Math.min(placement.sourceY >>> 0, srcH));
-    const swMax = Math.max(0, srcW - sxRaw);
-    const shMax = Math.max(0, srcH - syRaw);
-    let sx = sxRaw;
-    let sy = syRaw;
-    const rawSw = Math.max(0, Math.min(placement.sourceWidth >>> 0, swMax));
-    const rawSh = Math.max(0, Math.min(placement.sourceHeight >>> 0, shMax));
-    let sw = rawSw;
-    let sh = rawSh;
-    if (sw === 0) {
-      sx = Math.min(sxRaw, srcW - 1);
-      sw = 1;
-    }
-    if (sh === 0) {
-      sy = Math.min(syRaw, srcH - 1);
-      sh = 1;
-    }
-    const dx = placement.x * cellW + placement.cellOffsetX;
-    const dy = placement.y * cellH + placement.cellOffsetY;
-    return {
-      sx,
-      sy,
-      sw,
-      sh,
-      rawSw,
-      rawSh,
-      dx,
-      dy,
-      dw: placement.width,
-      dh: placement.height
-    };
-  }
-  function median(values) {
-    if (!values.length)
-      return 0;
-    const sorted = [...values].sort((a3, b3) => a3 - b3);
-    const mid = Math.floor(sorted.length / 2);
-    if (sorted.length % 2 === 1)
-      return sorted[mid] ?? 0;
-    return ((sorted[mid - 1] ?? 0) + (sorted[mid] ?? 0)) * 0.5;
-  }
-  function computeKittyPartialVirtualFallback(placements, slices, decoded, cellW, cellH) {
-    if (!placements.some((p3) => p3.z === -1))
-      return null;
-    const srcW = decoded.width >>> 0;
-    const srcH = decoded.height >>> 0;
-    if (!srcW || !srcH)
-      return null;
-    const usable = slices.filter((s3) => s3.rawSw > 0 && s3.rawSh > 0 && s3.dw > 0 && s3.dh > 0);
-    let boundMinX = Number.POSITIVE_INFINITY;
-    let boundMinY = Number.POSITIVE_INFINITY;
-    let boundMaxX = Number.NEGATIVE_INFINITY;
-    let boundMaxY = Number.NEGATIVE_INFINITY;
-    for (const p3 of placements) {
-      if (!p3.width || !p3.height)
+  };
+  const pruneInactiveImages = (activeImageIds) => {
+    let cacheDirty = false;
+    for (const [imageId, entry] of kittyImageCache.entries()) {
+      if (activeImageIds.has(imageId))
         continue;
-      const dx2 = p3.x * cellW + p3.cellOffsetX;
-      const dy2 = p3.y * cellH + p3.cellOffsetY;
-      boundMinX = Math.min(boundMinX, dx2);
-      boundMinY = Math.min(boundMinY, dy2);
-      boundMaxX = Math.max(boundMaxX, dx2 + p3.width);
-      boundMaxY = Math.max(boundMaxY, dy2 + p3.height);
+      releaseKittyImage(entry);
+      kittyImageCache.delete(imageId);
+      cacheDirty = true;
     }
-    const boundsW = Math.max(0, boundMaxX - boundMinX);
-    const boundsH = Math.max(0, boundMaxY - boundMinY);
-    const containFromBounds = () => {
-      if (!Number.isFinite(boundMinX) || !Number.isFinite(boundMinY))
-        return null;
-      if (!Number.isFinite(boundMaxX) || !Number.isFinite(boundMaxY))
-        return null;
-      if (boundsW <= 0 || boundsH <= 0)
-        return null;
-      const scale = Math.min(boundsW / srcW, boundsH / srcH);
-      if (!Number.isFinite(scale) || scale <= 0)
-        return null;
-      const dw2 = srcW * scale;
-      const dh2 = srcH * scale;
-      const dx2 = boundMinX + (boundsW - dw2) / 2;
-      const dy2 = boundMinY + (boundsH - dh2) / 2;
-      if (!Number.isFinite(dx2) || !Number.isFinite(dy2))
-        return null;
-      if (dw2 <= 0 || dh2 <= 0)
-        return null;
-      return { dx: dx2, dy: dy2, dw: dw2, dh: dh2 };
-    };
-    if (usable.length < 2) {
-      return containFromBounds();
+    return cacheDirty;
+  };
+  const clearKittyImageCache = () => {
+    for (const entry of kittyImageCache.values()) {
+      releaseKittyImage(entry);
     }
-    let srcMinX = Number.POSITIVE_INFINITY;
-    let srcMaxX = 0;
-    let srcMinY = Number.POSITIVE_INFINITY;
-    let srcMaxY = 0;
-    for (const s3 of usable) {
-      srcMinX = Math.min(srcMinX, s3.sx);
-      srcMaxX = Math.max(srcMaxX, s3.sx + s3.rawSw);
-      srcMinY = Math.min(srcMinY, s3.sy);
-      srcMaxY = Math.max(srcMaxY, s3.sy + s3.rawSh);
-    }
-    const covX = Math.max(0, srcMaxX - srcMinX) / srcW;
-    const covY = Math.max(0, srcMaxY - srcMinY) / srcH;
-    if (covX >= 0.9 && covY >= 0.9)
-      return null;
-    const scaleXs = [];
-    const scaleYs = [];
-    const anchorXs = [];
-    const anchorYs = [];
-    for (const s3 of usable) {
-      const scaleX2 = s3.dw / s3.rawSw;
-      const scaleY2 = s3.dh / s3.rawSh;
-      if (!Number.isFinite(scaleX2) || !Number.isFinite(scaleY2) || scaleX2 <= 0 || scaleY2 <= 0) {
-        continue;
-      }
-      scaleXs.push(scaleX2);
-      scaleYs.push(scaleY2);
-    }
-    if (!scaleXs.length || !scaleYs.length)
-      return null;
-    const scaleX = median(scaleXs);
-    const scaleY = median(scaleYs);
-    if (!Number.isFinite(scaleX) || !Number.isFinite(scaleY) || scaleX <= 0 || scaleY <= 0) {
-      return null;
-    }
-    for (const s3 of usable) {
-      anchorXs.push(s3.dx - s3.sx * scaleX);
-      anchorYs.push(s3.dy - s3.sy * scaleY);
-    }
-    if (!anchorXs.length || !anchorYs.length)
-      return null;
-    const dx = median(anchorXs);
-    const dy = median(anchorYs);
-    const dw = srcW * scaleX;
-    const dh = srcH * scaleY;
-    if (!Number.isFinite(dx) || !Number.isFinite(dy) || !Number.isFinite(dw) || !Number.isFinite(dh)) {
-      return null;
-    }
-    if (dw <= 0 || dh <= 0)
-      return null;
-    const xErrs = [];
-    const yErrs = [];
-    for (const s3 of usable) {
-      const px = dx + s3.sx * scaleX;
-      const py = dy + s3.sy * scaleY;
-      xErrs.push(Math.abs(px - s3.dx));
-      yErrs.push(Math.abs(py - s3.dy));
-    }
-    const maxXErr = Math.max(2, cellW * 0.75);
-    const maxYErr = Math.max(2, cellH * 0.75);
-    if (median(xErrs) > maxXErr || median(yErrs) > maxYErr) {
-      return containFromBounds();
-    }
-    return { dx, dy, dw, dh };
+    kittyImageCache.clear();
+    kittyDecodePending.clear();
+  };
+  return {
+    resolveKittyImage,
+    clearKittyImageCache,
+    pruneInactiveImages
+  };
+}
+
+// src/runtime/create-runtime/kitty-overlay-utils.ts
+function kittyHashInt(hash, value) {
+  let h = hash >>> 0;
+  h ^= value | 0;
+  h = Math.imul(h, 16777619) >>> 0;
+  return h;
+}
+function kittyHashString(hash, value) {
+  let h = hash >>> 0;
+  for (let i3 = 0;i3 < value.length; i3 += 1) {
+    h = kittyHashInt(h, value.charCodeAt(i3));
   }
-  function drawKittyOverlay(placements, cellW, cellH) {
+  return h;
+}
+function toKittySlice(placement, decoded, cellW, cellH) {
+  const srcW = decoded.width >>> 0;
+  const srcH = decoded.height >>> 0;
+  if (!srcW || !srcH)
+    return null;
+  if (!placement.width || !placement.height)
+    return null;
+  const sxRaw = Math.max(0, Math.min(placement.sourceX >>> 0, srcW));
+  const syRaw = Math.max(0, Math.min(placement.sourceY >>> 0, srcH));
+  const swMax = Math.max(0, srcW - sxRaw);
+  const shMax = Math.max(0, srcH - syRaw);
+  let sx = sxRaw;
+  let sy = syRaw;
+  const rawSw = Math.max(0, Math.min(placement.sourceWidth >>> 0, swMax));
+  const rawSh = Math.max(0, Math.min(placement.sourceHeight >>> 0, shMax));
+  let sw = rawSw;
+  let sh = rawSh;
+  if (sw === 0) {
+    sx = Math.min(sxRaw, srcW - 1);
+    sw = 1;
+  }
+  if (sh === 0) {
+    sy = Math.min(syRaw, srcH - 1);
+    sh = 1;
+  }
+  const dx = placement.x * cellW + placement.cellOffsetX;
+  const dy = placement.y * cellH + placement.cellOffsetY;
+  return {
+    sx,
+    sy,
+    sw,
+    sh,
+    rawSw,
+    rawSh,
+    dx,
+    dy,
+    dw: placement.width,
+    dh: placement.height
+  };
+}
+function median(values) {
+  if (!values.length)
+    return 0;
+  const sorted = [...values].sort((a3, b3) => a3 - b3);
+  const mid = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 === 1)
+    return sorted[mid] ?? 0;
+  return ((sorted[mid - 1] ?? 0) + (sorted[mid] ?? 0)) * 0.5;
+}
+function computeKittyPartialVirtualFallback(placements, slices, decoded, cellW, cellH) {
+  if (!placements.some((p3) => p3.z === -1))
+    return null;
+  const srcW = decoded.width >>> 0;
+  const srcH = decoded.height >>> 0;
+  if (!srcW || !srcH)
+    return null;
+  const usable = slices.filter((s3) => s3.rawSw > 0 && s3.rawSh > 0 && s3.dw > 0 && s3.dh > 0);
+  let boundMinX = Number.POSITIVE_INFINITY;
+  let boundMinY = Number.POSITIVE_INFINITY;
+  let boundMaxX = Number.NEGATIVE_INFINITY;
+  let boundMaxY = Number.NEGATIVE_INFINITY;
+  for (const p3 of placements) {
+    if (!p3.width || !p3.height)
+      continue;
+    const dx2 = p3.x * cellW + p3.cellOffsetX;
+    const dy2 = p3.y * cellH + p3.cellOffsetY;
+    boundMinX = Math.min(boundMinX, dx2);
+    boundMinY = Math.min(boundMinY, dy2);
+    boundMaxX = Math.max(boundMaxX, dx2 + p3.width);
+    boundMaxY = Math.max(boundMaxY, dy2 + p3.height);
+  }
+  const boundsW = Math.max(0, boundMaxX - boundMinX);
+  const boundsH = Math.max(0, boundMaxY - boundMinY);
+  const containFromBounds = () => {
+    if (!Number.isFinite(boundMinX) || !Number.isFinite(boundMinY))
+      return null;
+    if (!Number.isFinite(boundMaxX) || !Number.isFinite(boundMaxY))
+      return null;
+    if (boundsW <= 0 || boundsH <= 0)
+      return null;
+    const scale = Math.min(boundsW / srcW, boundsH / srcH);
+    if (!Number.isFinite(scale) || scale <= 0)
+      return null;
+    const dw2 = srcW * scale;
+    const dh2 = srcH * scale;
+    const dx2 = boundMinX + (boundsW - dw2) / 2;
+    const dy2 = boundMinY + (boundsH - dh2) / 2;
+    if (!Number.isFinite(dx2) || !Number.isFinite(dy2))
+      return null;
+    if (dw2 <= 0 || dh2 <= 0)
+      return null;
+    return { dx: dx2, dy: dy2, dw: dw2, dh: dh2 };
+  };
+  if (usable.length < 2) {
+    return containFromBounds();
+  }
+  let srcMinX = Number.POSITIVE_INFINITY;
+  let srcMaxX = 0;
+  let srcMinY = Number.POSITIVE_INFINITY;
+  let srcMaxY = 0;
+  for (const s3 of usable) {
+    srcMinX = Math.min(srcMinX, s3.sx);
+    srcMaxX = Math.max(srcMaxX, s3.sx + s3.rawSw);
+    srcMinY = Math.min(srcMinY, s3.sy);
+    srcMaxY = Math.max(srcMaxY, s3.sy + s3.rawSh);
+  }
+  const covX = Math.max(0, srcMaxX - srcMinX) / srcW;
+  const covY = Math.max(0, srcMaxY - srcMinY) / srcH;
+  if (covX >= 0.9 && covY >= 0.9)
+    return null;
+  const scaleXs = [];
+  const scaleYs = [];
+  const anchorXs = [];
+  const anchorYs = [];
+  for (const s3 of usable) {
+    const scaleX2 = s3.dw / s3.rawSw;
+    const scaleY2 = s3.dh / s3.rawSh;
+    if (!Number.isFinite(scaleX2) || !Number.isFinite(scaleY2) || scaleX2 <= 0 || scaleY2 <= 0) {
+      continue;
+    }
+    scaleXs.push(scaleX2);
+    scaleYs.push(scaleY2);
+  }
+  if (!scaleXs.length || !scaleYs.length)
+    return null;
+  const scaleX = median(scaleXs);
+  const scaleY = median(scaleYs);
+  if (!Number.isFinite(scaleX) || !Number.isFinite(scaleY) || scaleX <= 0 || scaleY <= 0) {
+    return null;
+  }
+  for (const s3 of usable) {
+    anchorXs.push(s3.dx - s3.sx * scaleX);
+    anchorYs.push(s3.dy - s3.sy * scaleY);
+  }
+  if (!anchorXs.length || !anchorYs.length)
+    return null;
+  const dx = median(anchorXs);
+  const dy = median(anchorYs);
+  const dw = srcW * scaleX;
+  const dh = srcH * scaleY;
+  if (!Number.isFinite(dx) || !Number.isFinite(dy) || !Number.isFinite(dw) || !Number.isFinite(dh)) {
+    return null;
+  }
+  if (dw <= 0 || dh <= 0)
+    return null;
+  const xErrs = [];
+  const yErrs = [];
+  for (const s3 of usable) {
+    const px = dx + s3.sx * scaleX;
+    const py = dy + s3.sy * scaleY;
+    xErrs.push(Math.abs(px - s3.dx));
+    yErrs.push(Math.abs(py - s3.dy));
+  }
+  const maxXErr = Math.max(2, cellW * 0.75);
+  const maxYErr = Math.max(2, cellH * 0.75);
+  if (median(xErrs) > maxXErr || median(yErrs) > maxYErr) {
+    return containFromBounds();
+  }
+  return { dx, dy, dw, dh };
+}
+
+// src/runtime/create-runtime/interaction-runtime/kitty-overlay-runtime.ts
+function createKittyOverlayRuntime(options) {
+  const { getCanvas, kittyOverlayDebugEnabled, kittyImageCache } = options;
+  let kittyOverlayCanvas = null;
+  let kittyOverlayCtx = null;
+  let kittyOverlayDebugLastSig = "";
+  let kittyOverlayLastHash = -1;
+  const ensureKittyOverlayCanvas = () => {
+    const canvas = getCanvas();
+    const parent = canvas.parentElement;
+    if (!parent || typeof document === "undefined")
+      return;
+    if (kittyOverlayCanvas && kittyOverlayCanvas.parentElement === parent)
+      return;
+    if (kittyOverlayCanvas?.parentElement) {
+      kittyOverlayCanvas.parentElement.removeChild(kittyOverlayCanvas);
+    }
+    const parentStyle = window.getComputedStyle(parent);
+    if (parentStyle.position === "static") {
+      parent.style.position = "relative";
+    }
+    const overlay = document.createElement("canvas");
+    overlay.className = "restty-kitty-overlay";
+    overlay.style.position = "absolute";
+    overlay.style.left = "0";
+    overlay.style.top = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.pointerEvents = "none";
+    overlay.style.imageRendering = "pixelated";
+    overlay.style.zIndex = "2";
+    parent.appendChild(overlay);
+    kittyOverlayCanvas = overlay;
+    kittyOverlayCtx = overlay.getContext("2d");
+  };
+  const syncKittyOverlaySize = () => {
+    const canvas = getCanvas();
+    if (!kittyOverlayCanvas)
+      return;
+    if (kittyOverlayCanvas.width !== canvas.width || kittyOverlayCanvas.height !== canvas.height) {
+      kittyOverlayCanvas.width = canvas.width;
+      kittyOverlayCanvas.height = canvas.height;
+      kittyOverlayLastHash = -1;
+    }
+  };
+  const clearKittyOverlay = () => {
+    ensureKittyOverlayCanvas();
+    syncKittyOverlaySize();
+    if (!kittyOverlayCtx || !kittyOverlayCanvas)
+      return;
+    kittyOverlayCtx.clearRect(0, 0, kittyOverlayCanvas.width, kittyOverlayCanvas.height);
+    kittyOverlayLastHash = -1;
+  };
+  const drawKittyOverlay = (placements, cellW, cellH) => {
     ensureKittyOverlayCanvas();
     syncKittyOverlaySize();
     if (!kittyOverlayCtx || !kittyOverlayCanvas)
@@ -50829,19 +53758,19 @@ function createResttyApp(options) {
       }
       return;
     }
-    if (KITTY_OVERLAY_DEBUG) {
+    if (kittyOverlayDebugEnabled) {
       const groups = new Map;
-      for (const p3 of placements) {
-        groups.set(p3.imageId, (groups.get(p3.imageId) ?? 0) + 1);
+      for (const placement of placements) {
+        groups.set(placement.imageId, (groups.get(placement.imageId) ?? 0) + 1);
       }
-      const sample = placements.slice(0, 6).map((p3) => [
-        `i=${p3.imageId}`,
-        `fmt=${p3.imageFormat}`,
-        `xy=${p3.x},${p3.y}`,
-        `wh=${p3.width}x${p3.height}`,
-        `src=${p3.sourceX},${p3.sourceY},${p3.sourceWidth}x${p3.sourceHeight}`,
-        `off=${p3.cellOffsetX},${p3.cellOffsetY}`,
-        `img=${p3.imageWidth}x${p3.imageHeight}`
+      const sample = placements.slice(0, 6).map((placement) => [
+        `i=${placement.imageId}`,
+        `fmt=${placement.imageFormat}`,
+        `xy=${placement.x},${placement.y}`,
+        `wh=${placement.width}x${placement.height}`,
+        `src=${placement.sourceX},${placement.sourceY},${placement.sourceWidth}x${placement.sourceHeight}`,
+        `off=${placement.cellOffsetX},${placement.cellOffsetY}`,
+        `img=${placement.imageWidth}x${placement.imageHeight}`
       ].join(" ")).join(" | ");
       const byImage = [...groups.entries()].map(([id, count]) => `${id}:${count}`).join(",");
       const sig = `${placements.length}|${byImage}|${sample}`;
@@ -50886,7 +53815,7 @@ function createResttyApp(options) {
       const group = grouped.get(imageId);
       if (!group?.length)
         continue;
-      const decoded = resolveKittyImage(group[group.length - 1] ?? group[0]);
+      const decoded = kittyImageCache.resolveKittyImage(group[group.length - 1] ?? group[0]);
       if (!decoded) {
         hash = kittyHashInt(hash, imageId);
         hash = kittyHashInt(hash, -1);
@@ -50906,7 +53835,7 @@ function createResttyApp(options) {
         continue;
       const fallback = computeKittyPartialVirtualFallback(group, slices, decoded, cellW, cellH);
       if (fallback) {
-        if (KITTY_OVERLAY_DEBUG) {
+        if (kittyOverlayDebugEnabled) {
           console.log(`[kitty-overlay] partial-fallback i=${imageId} draw=${Math.round(fallback.dw)}x${Math.round(fallback.dh)} at ${Math.round(fallback.dx)},${Math.round(fallback.dy)} src=${decoded.width}x${decoded.height}`);
         }
         hash = kittyHashInt(hash, 65261);
@@ -50929,26 +53858,19 @@ function createResttyApp(options) {
         continue;
       }
       hash = kittyHashInt(hash, slices.length);
-      for (const s3 of slices) {
-        hash = kittyHashInt(hash, s3.sx);
-        hash = kittyHashInt(hash, s3.sy);
-        hash = kittyHashInt(hash, s3.sw);
-        hash = kittyHashInt(hash, s3.sh);
-        hash = kittyHashInt(hash, Math.round(s3.dx));
-        hash = kittyHashInt(hash, Math.round(s3.dy));
-        hash = kittyHashInt(hash, Math.round(s3.dw));
-        hash = kittyHashInt(hash, Math.round(s3.dh));
+      for (const slice of slices) {
+        hash = kittyHashInt(hash, slice.sx);
+        hash = kittyHashInt(hash, slice.sy);
+        hash = kittyHashInt(hash, slice.sw);
+        hash = kittyHashInt(hash, slice.sh);
+        hash = kittyHashInt(hash, Math.round(slice.dx));
+        hash = kittyHashInt(hash, Math.round(slice.dy));
+        hash = kittyHashInt(hash, Math.round(slice.dw));
+        hash = kittyHashInt(hash, Math.round(slice.dh));
       }
       drawPlans.push({ type: "slice", source: decoded.source, slices });
     }
-    let cacheDirty = false;
-    for (const [imageId, entry] of kittyImageCache.entries()) {
-      if (activeImageIds.has(imageId))
-        continue;
-      releaseKittyImage(entry);
-      kittyImageCache.delete(imageId);
-      cacheDirty = true;
-    }
+    const cacheDirty = kittyImageCache.pruneInactiveImages(activeImageIds);
     if (!cacheDirty && kittyOverlayLastHash === (hash | 0)) {
       return;
     }
@@ -50958,1801 +53880,690 @@ function createResttyApp(options) {
         kittyOverlayCtx.drawImage(plan.source, plan.sx, plan.sy, plan.sw, plan.sh, plan.dx, plan.dy, plan.dw, plan.dh);
         continue;
       }
-      for (const s3 of plan.slices) {
-        kittyOverlayCtx.drawImage(plan.source, s3.sx, s3.sy, s3.sw, s3.sh, s3.dx, s3.dy, s3.dw, s3.dh);
+      for (const slice of plan.slices) {
+        kittyOverlayCtx.drawImage(plan.source, slice.sx, slice.sy, slice.sw, slice.sh, slice.dx, slice.dy, slice.dw, slice.dh);
       }
     }
     kittyOverlayLastHash = hash | 0;
-  }
-  let lastRenderState = null;
-  function positionToCell(event) {
-    const rect = canvas.getBoundingClientRect();
-    const x3 = (event.clientX - rect.left) * currentDpr;
-    const y = (event.clientY - rect.top) * currentDpr;
-    const col = clamp(Math.floor(x3 / (gridState.cellW || 1)), 0, (gridState.cols || 1) - 1);
-    const row = clamp(Math.floor(y / (gridState.cellH || 1)), 0, (gridState.rows || 1) - 1);
-    return { row, col };
-  }
-  function positionToPixel(event) {
-    const rect = canvas.getBoundingClientRect();
-    const x3 = (event.clientX - rect.left) * currentDpr;
-    const y = (event.clientY - rect.top) * currentDpr;
+  };
+  const detachKittyOverlayCanvas = () => {
+    if (kittyOverlayCanvas?.parentElement) {
+      kittyOverlayCanvas.parentElement.removeChild(kittyOverlayCanvas);
+    }
+    kittyOverlayCanvas = null;
+    kittyOverlayCtx = null;
+    kittyOverlayLastHash = -1;
+  };
+  return {
+    syncKittyOverlaySize,
+    clearKittyOverlay,
+    drawKittyOverlay,
+    detachKittyOverlayCanvas
+  };
+}
+
+// src/runtime/create-runtime/interaction-runtime/scrollbar-runtime.ts
+function createScrollbarRuntime(options) {
+  const {
+    showOverlayScrollbar,
+    scrollbarState,
+    selectionState,
+    linkState,
+    getCanvas,
+    getCurrentDpr,
+    getGridState,
+    getWasmReady,
+    getWasm,
+    getWasmHandle,
+    getWasmExports,
+    updateLinkHover,
+    markNeedsRender
+  } = options;
+  let scrollRemainder = 0;
+  const getViewportScrollOffset = () => {
+    const wasmHandle = getWasmHandle();
+    const wasmExports = getWasmExports();
+    if (!wasmHandle || !wasmExports?.restty_scrollbar_offset)
+      return 0;
+    return wasmExports.restty_scrollbar_offset(wasmHandle) || 0;
+  };
+  const shiftSelectionByRows = (deltaRows) => {
+    if (!deltaRows)
+      return;
+    if (!selectionState.active && !selectionState.dragging)
+      return;
+    if (!selectionState.anchor || !selectionState.focus)
+      return;
+    const { rows } = getGridState();
+    const maxAbs = Math.max(1024, (rows || 24) * 128);
+    selectionState.anchor = {
+      row: clamp(selectionState.anchor.row + deltaRows, -maxAbs, maxAbs),
+      col: selectionState.anchor.col
+    };
+    selectionState.focus = {
+      row: clamp(selectionState.focus.row + deltaRows, -maxAbs, maxAbs),
+      col: selectionState.focus.col
+    };
+    markNeedsRender();
+  };
+  const noteScrollActivity = () => {
+    scrollbarState.lastInputAt = performance.now();
+  };
+  const scrollViewportByLines = (lines) => {
+    const wasm = getWasm();
+    const wasmHandle = getWasmHandle();
+    const { cellH } = getGridState();
+    if (!getWasmReady() || !wasm || !wasmHandle || !cellH)
+      return;
+    scrollRemainder += lines;
+    const delta = Math.trunc(scrollRemainder);
+    scrollRemainder -= delta;
+    if (!delta)
+      return;
+    const beforeOffset = getViewportScrollOffset();
+    wasm.scrollViewport(wasmHandle, delta);
+    const afterOffset = getViewportScrollOffset();
+    shiftSelectionByRows(beforeOffset - afterOffset);
+    if (linkState.hoverId)
+      updateLinkHover(null);
+    wasm.renderUpdate(wasmHandle);
+    markNeedsRender();
+    noteScrollActivity();
+  };
+  const setViewportScrollOffset = (nextOffset) => {
+    const wasm = getWasm();
+    const wasmHandle = getWasmHandle();
+    const wasmExports = getWasmExports();
+    if (!getWasmReady() || !wasm || !wasmHandle || !wasmExports?.restty_scrollbar_total)
+      return;
+    const total = wasmExports.restty_scrollbar_total(wasmHandle) || 0;
+    const len = wasmExports.restty_scrollbar_len ? wasmExports.restty_scrollbar_len(wasmHandle) : 0;
+    const current = wasmExports.restty_scrollbar_offset ? wasmExports.restty_scrollbar_offset(wasmHandle) : 0;
+    const maxOffset = Math.max(0, total - len);
+    const clamped = clamp(Math.round(nextOffset), 0, maxOffset);
+    const delta = clamped - current;
+    if (!delta)
+      return;
+    const beforeOffset = getViewportScrollOffset();
+    wasm.scrollViewport(wasmHandle, delta);
+    const afterOffset = getViewportScrollOffset();
+    shiftSelectionByRows(beforeOffset - afterOffset);
+    if (linkState.hoverId)
+      updateLinkHover(null);
+    wasm.renderUpdate(wasmHandle);
+    markNeedsRender();
+    noteScrollActivity();
+  };
+  const pointerToCanvasPx = (event) => {
+    const canvas = getCanvas();
+    const rect2 = canvas.getBoundingClientRect();
+    const scaleX = rect2.width > 0 ? canvas.width / rect2.width : 1;
+    const scaleY = rect2.height > 0 ? canvas.height / rect2.height : 1;
+    return {
+      x: (event.clientX - rect2.left) * scaleX,
+      y: (event.clientY - rect2.top) * scaleY
+    };
+  };
+  const getOverlayScrollbarLayout = () => {
+    const wasmHandle = getWasmHandle();
+    const wasmExports = getWasmExports();
+    const { rows } = getGridState();
+    if (!showOverlayScrollbar || !wasmExports?.restty_scrollbar_total || !wasmHandle)
+      return null;
+    if (!rows)
+      return null;
+    const total = wasmExports.restty_scrollbar_total(wasmHandle) || 0;
+    const offset = wasmExports.restty_scrollbar_offset ? wasmExports.restty_scrollbar_offset(wasmHandle) : 0;
+    const len = wasmExports.restty_scrollbar_len ? wasmExports.restty_scrollbar_len(wasmHandle) : rows;
+    const canvas = getCanvas();
+    return computeOverlayScrollbarLayout(total, offset, len, canvas.width, canvas.height, getCurrentDpr());
+  };
+  const appendOverlayScrollbar = (overlayData, total, offset, len) => {
+    if (!showOverlayScrollbar)
+      return;
+    const canvas = getCanvas();
+    const layout = computeOverlayScrollbarLayout(total, offset, len, canvas.width, canvas.height, getCurrentDpr());
+    if (!layout)
+      return;
+    const alpha = resolveOverlayScrollbarAlpha(performance.now(), scrollbarState.lastInputAt);
+    if (alpha <= 0.01)
+      return;
+    const thumbColor = [0.96, 0.96, 0.96, alpha * 0.75];
+    pushRoundedVerticalBar(overlayData, layout.trackX, layout.thumbY, layout.width, layout.thumbH, thumbColor);
+  };
+  return {
+    noteScrollActivity,
+    scrollViewportByLines,
+    setViewportScrollOffset,
+    pointerToCanvasPx,
+    getOverlayScrollbarLayout,
+    appendOverlayScrollbar
+  };
+}
+
+// src/runtime/create-runtime/interaction-runtime.ts
+function createRuntimeInteraction(options) {
+  const {
+    attachCanvasEvents,
+    touchSelectionMode,
+    touchSelectionLongPressMs,
+    touchSelectionMoveThresholdPx,
+    showOverlayScrollbar,
+    kittyOverlayDebugEnabled,
+    imeInput,
+    cleanupCanvasFns,
+    getCanvas,
+    getCurrentDpr,
+    getGridState,
+    getLastRenderState,
+    getWasmReady,
+    getWasm,
+    getWasmHandle,
+    getWasmExports,
+    updateLinkHover,
+    markNeedsRender
+  } = options;
+  const selectionState = createSelectionState();
+  const touchSelectionState = {
+    pendingPointerId: null,
+    activePointerId: null,
+    panPointerId: null,
+    pendingCell: null,
+    pendingStartedAt: 0,
+    pendingStartX: 0,
+    pendingStartY: 0,
+    panLastY: 0,
+    pendingTimer: 0
+  };
+  const desktopSelectionState = {
+    pendingPointerId: null,
+    pendingCell: null,
+    startedWithActiveSelection: false
+  };
+  const linkState = {
+    hoverId: 0,
+    hoverUri: ""
+  };
+  const scrollbarState = {
+    lastInputAt: 0,
+    lastTotal: 0,
+    lastOffset: 0,
+    lastLen: 0
+  };
+  const scrollbarDragState = {
+    pointerId: null,
+    thumbGrabRatio: 0.5
+  };
+  const imeState = {
+    composing: false,
+    preedit: "",
+    selectionStart: 0,
+    selectionEnd: 0
+  };
+  const updateCanvasCursor = () => {
+    const canvas = getCanvas();
+    if (!canvas)
+      return;
+    canvas.style.cursor = "text";
+  };
+  const isTouchPointer = (event) => {
+    return event.pointerType === "touch";
+  };
+  const clearPendingTouchSelection = () => {
+    if (touchSelectionState.pendingTimer) {
+      clearTimeout(touchSelectionState.pendingTimer);
+      touchSelectionState.pendingTimer = 0;
+    }
+    touchSelectionState.pendingPointerId = null;
+    touchSelectionState.pendingCell = null;
+    touchSelectionState.pendingStartedAt = 0;
+  };
+  const clearPendingDesktopSelection = () => {
+    desktopSelectionState.pendingPointerId = null;
+    desktopSelectionState.pendingCell = null;
+    desktopSelectionState.startedWithActiveSelection = false;
+  };
+  const beginSelectionDrag = (cell, pointerId) => {
+    clearPendingDesktopSelection();
+    selectionState.active = true;
+    selectionState.dragging = true;
+    selectionState.anchor = cell;
+    selectionState.focus = cell;
+    touchSelectionState.activePointerId = pointerId;
+    touchSelectionState.panPointerId = null;
+    getCanvas().setPointerCapture?.(pointerId);
+    updateCanvasCursor();
+    markNeedsRender();
+  };
+  const tryActivatePendingTouchSelection = (pointerId) => {
+    if (touchSelectionMode !== "long-press")
+      return false;
+    if (touchSelectionState.pendingPointerId !== pointerId || !touchSelectionState.pendingCell) {
+      return false;
+    }
+    if (performance.now() - touchSelectionState.pendingStartedAt < touchSelectionLongPressMs) {
+      return false;
+    }
+    const pendingCell = touchSelectionState.pendingCell;
+    clearPendingTouchSelection();
+    beginSelectionDrag(pendingCell, pointerId);
+    return true;
+  };
+  const scrollbarRuntime = createScrollbarRuntime({
+    showOverlayScrollbar,
+    scrollbarState,
+    selectionState,
+    linkState,
+    getCanvas,
+    getCurrentDpr,
+    getGridState,
+    getWasmReady,
+    getWasm,
+    getWasmHandle,
+    getWasmExports,
+    updateLinkHover: () => updateLinkHover(null),
+    markNeedsRender
+  });
+  const kittyImageCache = createKittyImageCache({
+    getWasm,
+    markNeedsRender
+  });
+  const kittyOverlayRuntime = createKittyOverlayRuntime({
+    getCanvas,
+    kittyOverlayDebugEnabled,
+    kittyImageCache
+  });
+  const positionToCell2 = (event) => {
+    const canvas = getCanvas();
+    const rect2 = canvas.getBoundingClientRect();
+    const { cellW, cellH, cols, rows } = getGridState();
+    return positionToCell(event.clientX, event.clientY, rect2, getCurrentDpr(), cellW || 1, cellH || 1, cols || 1, rows || 1);
+  };
+  const positionToPixel = (event) => {
+    const canvas = getCanvas();
+    const rect2 = canvas.getBoundingClientRect();
+    const x3 = (event.clientX - rect2.left) * getCurrentDpr();
+    const y = (event.clientY - rect2.top) * getCurrentDpr();
     return {
       x: Math.max(1, Math.round(x3 + 1)),
       y: Math.max(1, Math.round(y + 1))
     };
-  }
-  function normalizeSelectionCell(cell) {
-    if (!cell)
-      return cell;
-    const rows = lastRenderState?.rows ?? gridState.rows ?? 0;
-    const cols = lastRenderState?.cols ?? gridState.cols ?? 0;
-    if (!rows || !cols)
-      return cell;
-    const row = clamp(cell.row, 0, rows - 1);
-    const col = clamp(cell.col, 0, cols - 1);
-    const wide = lastRenderState?.wide;
-    if (!wide)
-      return { row, col };
-    const idx = row * cols + col;
-    const flag = wide[idx] ?? 0;
-    if (flag === 2) {
-      const left = col > 0 ? col - 1 : col;
-      return { row, col: left };
-    }
-    if (flag === 3 && row > 0) {
-      const prevRow = row - 1;
-      for (let c3 = cols - 1;c3 >= 0; c3 -= 1) {
-        const f = wide[prevRow * cols + c3] ?? 0;
-        if (f !== 2 && f !== 3)
-          return { row: prevRow, col: c3 };
-      }
-    }
-    return { row, col };
-  }
-  function floatsToRgb(color) {
-    return [
-      Math.round((color[0] ?? 0) * 255),
-      Math.round((color[1] ?? 0) * 255),
-      Math.round((color[2] ?? 0) * 255)
-    ];
-  }
-  inputHandler = createInputHandler({
-    getCursorPosition: () => lastCursorForCpr,
-    sendReply: (data) => {
-      ptyTransport.sendInput(data);
-    },
-    positionToCell,
-    positionToPixel,
-    getDefaultColors: () => ({
-      fg: floatsToRgb(defaultFg),
-      bg: floatsToRgb(defaultBg),
-      cursor: floatsToRgb(cursorFallback)
-    }),
-    getWindowMetrics: () => {
-      const cols = Math.max(1, gridState.cols || 1);
-      const rows = Math.max(1, gridState.rows || 1);
-      const widthPx = Math.max(1, Math.round(canvas.width));
-      const heightPx = Math.max(1, Math.round(canvas.height));
-      const cellWidthPx = Math.max(1, Math.round(gridState.cellW || widthPx / Math.max(1, cols)));
-      const cellHeightPx = Math.max(1, Math.round(gridState.cellH || heightPx / Math.max(1, rows)));
-      return { rows, cols, widthPx, heightPx, cellWidthPx, cellHeightPx };
-    },
-    onClipboardWrite: async (text) => {
-      if (!text)
-        return;
-      try {
-        await navigator.clipboard.writeText(text);
-      } catch {
-        const temp = document.createElement("textarea");
-        temp.value = text;
-        temp.style.position = "fixed";
-        temp.style.opacity = "0";
-        document.body.appendChild(temp);
-        temp.focus();
-        temp.select();
-        try {
-          document.execCommand("copy");
-        } finally {
-          document.body.removeChild(temp);
-        }
-      }
-    },
-    onClipboardRead: async () => {
-      try {
-        return await navigator.clipboard.readText();
-      } catch {
-        return "";
-      }
-    },
-    getKittyKeyboardFlags: () => {
-      if (!wasm || !wasmHandle)
-        return 0;
-      return wasm.getKittyKeyboardFlags(wasmHandle);
-    },
-    onWindowOp: (op) => {
-      appendLog(`[term] window op ${op.type} ${op.params.join(";")}`);
-    }
-  });
-  inputHandler.setMouseMode("auto");
-  function clearSelection() {
+  };
+  const normalizeSelectionCell2 = (cell) => {
+    const renderState = getLastRenderState();
+    const { rows, cols } = getGridState();
+    return normalizeSelectionCell(cell, renderState?.rows ?? rows ?? 0, renderState?.cols ?? cols ?? 0, renderState?.wide);
+  };
+  const clearSelection = () => {
+    clearPendingDesktopSelection();
     selectionState.active = false;
     selectionState.dragging = false;
     selectionState.anchor = null;
     selectionState.focus = null;
     touchSelectionState.activePointerId = null;
     updateCanvasCursor();
-    needsRender = true;
-  }
-  function setPreedit(text, updateInput = false) {
-    imeState.preedit = text || "";
+    markNeedsRender();
+  };
+  const setPreedit = (text2, updateInput = false) => {
+    imeState.preedit = text2 || "";
     if (imeInput && updateInput) {
       imeInput.value = imeState.preedit;
     }
-    needsRender = true;
-  }
-  function updateImePosition(cursor, cellW, cellH) {
+    markNeedsRender();
+  };
+  const updateImePosition = (cursor, cellW, cellH) => {
     if (!imeInput || !cursor)
       return;
-    const rect = canvas.getBoundingClientRect();
-    const scale = currentDpr || 1;
-    const x3 = rect.left + cursor.col * (cellW / scale);
-    const y = rect.top + cursor.row * (cellH / scale);
+    const rect2 = getCanvas().getBoundingClientRect();
+    const scale = getCurrentDpr() || 1;
+    const x3 = rect2.left + cursor.col * (cellW / scale);
+    const y = rect2.top + cursor.row * (cellH / scale);
     imeInput.style.transform = `translate(${Math.round(x3)}px, ${Math.round(y)}px)`;
-  }
-  function syncImeSelection() {
+  };
+  const syncImeSelection = () => {
     if (!imeInput)
       return;
     const start = imeInput.selectionStart ?? 0;
     const end = imeInput.selectionEnd ?? start;
     imeState.selectionStart = Math.max(0, Math.min(start, imeInput.value.length));
     imeState.selectionEnd = Math.max(imeState.selectionStart, Math.min(end, imeInput.value.length));
-  }
-  function setPtyStatus(text) {
-    if (text === lastReportedPtyStatus)
-      return;
-    lastReportedPtyStatus = text;
-    if (ptyStatusEl)
-      ptyStatusEl.textContent = text;
-    callbacks?.onPtyStatus?.(text);
-  }
-  function setMouseStatus(text) {
-    if (text === lastReportedMouseStatus)
-      return;
-    lastReportedMouseStatus = text;
-    if (mouseStatusEl)
-      mouseStatusEl.textContent = text;
-    callbacks?.onMouseStatus?.(text);
-  }
-  function updateMouseStatus() {
-    if (!inputHandler)
-      return;
-    const status = inputHandler.getMouseStatus();
-    const label = status.active ? `${status.mode} (${status.detail})` : status.mode;
-    setMouseStatus(label);
-  }
-  function cancelPtyOutputFlush() {
-    if (ptyOutputIdleTimer) {
-      clearTimeout(ptyOutputIdleTimer);
-      ptyOutputIdleTimer = 0;
-    }
-    if (ptyOutputMaxTimer) {
-      clearTimeout(ptyOutputMaxTimer);
-      ptyOutputMaxTimer = 0;
-    }
-  }
-  function cancelSyncOutputReset() {
-    if (syncOutputResetTimer) {
-      clearTimeout(syncOutputResetTimer);
-      syncOutputResetTimer = 0;
-    }
-  }
-  function scheduleSyncOutputReset() {
-    if (syncOutputResetTimer)
-      return;
-    syncOutputResetTimer = setTimeout(() => {
-      syncOutputResetTimer = 0;
-      if (!inputHandler?.isSynchronizedOutput?.())
-        return;
-      const sanitized = inputHandler.filterOutput(SYNC_OUTPUT_RESET_SEQ) || SYNC_OUTPUT_RESET_SEQ;
-      sendInput(sanitized, "pty");
-    }, SYNC_OUTPUT_RESET_MS);
-  }
-  function flushPtyOutputBuffer() {
-    const output = ptyOutputBuffer;
-    ptyOutputBuffer = "";
-    if (!output)
-      return;
-    sendInput(output, "pty");
-  }
-  function queuePtyOutput(text) {
-    if (!text)
-      return;
-    ptyOutputBuffer += text;
-    if (ptyOutputIdleTimer) {
-      clearTimeout(ptyOutputIdleTimer);
-    }
-    ptyOutputIdleTimer = setTimeout(() => {
-      ptyOutputIdleTimer = 0;
-      if (ptyOutputMaxTimer) {
-        clearTimeout(ptyOutputMaxTimer);
-        ptyOutputMaxTimer = 0;
-      }
-      flushPtyOutputBuffer();
-    }, PTY_OUTPUT_IDLE_MS);
-    if (!ptyOutputMaxTimer) {
-      ptyOutputMaxTimer = setTimeout(() => {
-        ptyOutputMaxTimer = 0;
-        if (ptyOutputIdleTimer) {
-          clearTimeout(ptyOutputIdleTimer);
-          ptyOutputIdleTimer = 0;
-        }
-        flushPtyOutputBuffer();
-      }, PTY_OUTPUT_MAX_MS);
-    }
-  }
-  function disconnectPty2() {
-    flushPtyOutputBuffer();
-    cancelPtyOutputFlush();
-    cancelSyncOutputReset();
-    ptyOutputBuffer = "";
-    ptyTransport.disconnect();
-    updateMouseStatus();
-    setPtyStatus("disconnected");
-  }
-  function connectPty2(url = "") {
-    if (ptyTransport.isConnected())
-      return;
-    setPtyStatus("connecting...");
-    try {
-      const connectResult = ptyTransport.connect({
-        url,
-        cols: gridState.cols || 80,
-        rows: gridState.rows || 24,
-        callbacks: {
-          onConnect: () => {
-            setPtyStatus("connected");
-            updateMouseStatus();
-            if (gridState.cols && gridState.rows) {
-              ptyTransport.resize(gridState.cols, gridState.rows);
-            }
-            appendLog("[pty] connected");
-          },
-          onDisconnect: () => {
-            appendLog("[pty] disconnected");
-            setPtyStatus("disconnected");
-            updateMouseStatus();
-          },
-          onStatus: (shell) => {
-            appendLog(`[pty] shell ${shell ?? ""}`);
-          },
-          onError: (message, errors) => {
-            appendLog(`[pty] error ${message ?? ""}`);
-            if (errors) {
-              for (const err of errors)
-                appendLog(`[pty] spawn ${err}`);
-            }
-            disconnectPty2();
-          },
-          onExit: (code) => {
-            appendLog(`[pty] exit ${code ?? ""}`);
-            disconnectPty2();
-          },
-          onData: (text) => {
-            const sanitized = inputHandler ? inputHandler.filterOutput(text) : text;
-            updateMouseStatus();
-            if (sanitized)
-              queuePtyOutput(sanitized);
-          }
-        }
-      });
-      Promise.resolve(connectResult).catch((err) => {
-        appendLog(`[pty] error ${err?.message ?? err}`);
-        disconnectPty2();
-      });
-    } catch (err) {
-      appendLog(`[pty] error ${err?.message ?? err}`);
-      disconnectPty2();
-    }
-  }
-  function sendKeyInput(text, source = "key") {
-    if (!text)
-      return;
-    if (source !== "program" && (selectionState.active || selectionState.dragging)) {
-      clearSelection();
-    }
-    if (ptyTransport.isConnected()) {
-      const payload = inputHandler.mapKeyForPty(text);
-      ptyTransport.sendInput(payload);
-      return;
-    }
-    sendInput(text, source);
-  }
-  function formatPasteText(text) {
-    if (!inputHandler?.isBracketedPaste?.())
-      return text;
-    return `\x1B[200~${text}\x1B[201~`;
-  }
-  function sendPasteText(text) {
-    if (!text)
-      return;
-    sendKeyInput(formatPasteText(text));
-  }
-  function openLink(uri) {
-    if (!uri || typeof window === "undefined")
-      return;
-    try {
-      const url = new URL(uri, window.location.href);
-      if (!["http:", "https:", "mailto:"].includes(url.protocol))
-        return;
-      const win = window.open(url.toString(), "_blank", "noopener,noreferrer");
-      if (win)
-        win.opener = null;
-    } catch {}
-  }
-  function getCprPosition() {
-    return lastCursorForCpr;
-  }
-  inputHandler.setCursorProvider(getCprPosition);
-  function bindCanvasEvents() {
+  };
+  const bindCanvasEvents = (bindOptions) => {
     if (!attachCanvasEvents)
       return;
-    const shouldRoutePointerToAppMouse = (shiftKey) => {
-      if (shiftKey)
-        return false;
-      if (!inputHandler.isMouseActive())
-        return false;
-      return inputHandler.isAltScreen ? inputHandler.isAltScreen() : false;
-    };
-    const shouldPreferLocalPrimarySelection = (event) => !isTouchPointer(event) && event.button === 0 && !event.altKey;
-    canvas.style.touchAction = touchSelectionMode === "long-press" || touchSelectionMode === "drag" ? "none" : "pan-y pinch-zoom";
-    const onPointerDown = (event) => {
-      if (!isTouchPointer(event) && event.button === 0) {
-        const layout = getOverlayScrollbarLayout();
-        if (layout) {
-          const point = pointerToCanvasPx(event);
-          if (isPointInScrollbarHitArea(layout, point.x, point.y)) {
-            event.preventDefault();
-            noteScrollActivity();
-            const hitThumb = isPointInScrollbarThumb(layout, point.x, point.y);
-            scrollbarDragState.pointerId = event.pointerId;
-            scrollbarDragState.thumbGrabRatio = hitThumb ? clamp((point.y - layout.thumbY) / Math.max(1, layout.thumbH), 0, 1) : 0.5;
-            const targetOffset = scrollbarOffsetForPointerY(layout, point.y, scrollbarDragState.thumbGrabRatio);
-            setViewportScrollOffset(targetOffset);
-            canvas.setPointerCapture?.(event.pointerId);
-            return;
-          }
-        }
-      }
-      if (shouldRoutePointerToAppMouse(event.shiftKey) && !shouldPreferLocalPrimarySelection(event) && inputHandler.sendMouseEvent("down", event)) {
-        event.preventDefault();
-        canvas.setPointerCapture?.(event.pointerId);
-        return;
-      }
-      if (isTouchPointer(event)) {
-        if (event.button !== 0)
-          return;
-        const cell2 = normalizeSelectionCell(positionToCell(event));
-        touchSelectionState.activePointerId = null;
-        touchSelectionState.panPointerId = null;
-        if (touchSelectionMode === "off")
-          return;
-        if (touchSelectionMode === "drag") {
-          event.preventDefault();
-          beginSelectionDrag(cell2, event.pointerId);
-          return;
-        }
-        clearPendingTouchSelection();
-        touchSelectionState.pendingPointerId = event.pointerId;
-        touchSelectionState.pendingCell = cell2;
-        touchSelectionState.pendingStartedAt = performance.now();
-        touchSelectionState.pendingStartX = event.clientX;
-        touchSelectionState.pendingStartY = event.clientY;
-        touchSelectionState.panPointerId = event.pointerId;
-        touchSelectionState.panLastY = event.clientY;
-        touchSelectionState.pendingTimer = setTimeout(() => {
-          tryActivatePendingTouchSelection(event.pointerId);
-        }, touchSelectionLongPressMs);
-        return;
-      }
-      if (event.button !== 0)
-        return;
-      event.preventDefault();
-      const cell = normalizeSelectionCell(positionToCell(event));
-      updateLinkHover(cell);
-      beginSelectionDrag(cell, event.pointerId);
-    };
-    const onPointerMove = (event) => {
-      if (scrollbarDragState.pointerId === event.pointerId) {
-        const layout = getOverlayScrollbarLayout();
-        if (!layout) {
-          scrollbarDragState.pointerId = null;
-          return;
-        }
-        const point = pointerToCanvasPx(event);
-        const targetOffset = scrollbarOffsetForPointerY(layout, point.y, scrollbarDragState.thumbGrabRatio);
-        setViewportScrollOffset(targetOffset);
-        event.preventDefault();
-        return;
-      }
-      if (isTouchPointer(event)) {
-        if (touchSelectionState.pendingPointerId === event.pointerId) {
-          const dx = event.clientX - touchSelectionState.pendingStartX;
-          const dy = event.clientY - touchSelectionState.pendingStartY;
-          if (dx * dx + dy * dy >= touchSelectionMoveThresholdPx * touchSelectionMoveThresholdPx) {
-            clearPendingTouchSelection();
-          } else {
-            tryActivatePendingTouchSelection(event.pointerId);
-          }
-          if (touchSelectionState.pendingPointerId === event.pointerId) {
-            if (touchSelectionMode === "long-press" && touchSelectionState.panPointerId === event.pointerId) {
-              const deltaPx = touchSelectionState.panLastY - event.clientY;
-              touchSelectionState.panLastY = event.clientY;
-              scrollViewportByLines(deltaPx / Math.max(1, gridState.cellH) * 1.5);
-              event.preventDefault();
-            }
-            return;
-          }
-        }
-        if (selectionState.dragging && touchSelectionState.activePointerId === event.pointerId) {
-          const cell2 = normalizeSelectionCell(positionToCell(event));
-          event.preventDefault();
-          selectionState.focus = cell2;
-          updateLinkHover(null);
-          updateCanvasCursor();
-          needsRender = true;
-          return;
-        }
-        if (touchSelectionMode === "long-press" && touchSelectionState.panPointerId === event.pointerId) {
-          const deltaPx = touchSelectionState.panLastY - event.clientY;
-          touchSelectionState.panLastY = event.clientY;
-          scrollViewportByLines(deltaPx / Math.max(1, gridState.cellH) * 1.5);
-          event.preventDefault();
-        }
-        return;
-      }
-      const cell = normalizeSelectionCell(positionToCell(event));
-      if (selectionState.dragging) {
-        event.preventDefault();
-        selectionState.focus = cell;
-        updateLinkHover(null);
-        updateCanvasCursor();
-        needsRender = true;
-        return;
-      }
-      if (shouldRoutePointerToAppMouse(event.shiftKey) && inputHandler.sendMouseEvent("move", event)) {
-        event.preventDefault();
-        return;
-      }
-      updateLinkHover(cell);
-    };
-    const onPointerUp = (event) => {
-      if (scrollbarDragState.pointerId === event.pointerId) {
-        scrollbarDragState.pointerId = null;
-        event.preventDefault();
-        return;
-      }
-      if (isTouchPointer(event)) {
-        if (touchSelectionState.pendingPointerId === event.pointerId) {
-          clearPendingTouchSelection();
-          touchSelectionState.activePointerId = null;
-          touchSelectionState.panPointerId = null;
-          return;
-        }
-        if (selectionState.dragging && touchSelectionState.activePointerId === event.pointerId) {
-          const cell2 = normalizeSelectionCell(positionToCell(event));
-          event.preventDefault();
-          selectionState.dragging = false;
-          selectionState.focus = cell2;
-          touchSelectionState.activePointerId = null;
-          if (selectionState.anchor && selectionState.focus && selectionState.anchor.row === selectionState.focus.row && selectionState.anchor.col === selectionState.focus.col) {
-            clearSelection();
-          } else {
-            updateCanvasCursor();
-            needsRender = true;
-          }
-          return;
-        }
-        if (touchSelectionState.panPointerId === event.pointerId) {
-          touchSelectionState.panPointerId = null;
-        }
-        return;
-      }
-      const cell = normalizeSelectionCell(positionToCell(event));
-      if (selectionState.dragging) {
-        event.preventDefault();
-        selectionState.dragging = false;
-        selectionState.focus = cell;
-        if (selectionState.anchor && selectionState.focus && selectionState.anchor.row === selectionState.focus.row && selectionState.anchor.col === selectionState.focus.col) {
-          clearSelection();
-        } else {
-          updateCanvasCursor();
-          needsRender = true;
-        }
-      } else {
-        if (shouldRoutePointerToAppMouse(event.shiftKey) && !shouldPreferLocalPrimarySelection(event) && inputHandler.sendMouseEvent("up", event)) {
-          event.preventDefault();
-          return;
-        }
-        updateLinkHover(cell);
-      }
-      if (!selectionState.active && event.button === 0 && linkState.hoverUri) {
-        openLink(linkState.hoverUri);
-      }
-    };
-    const onPointerCancel = (event) => {
-      if (scrollbarDragState.pointerId === event.pointerId) {
-        scrollbarDragState.pointerId = null;
-      }
-      if (isTouchPointer(event)) {
-        if (touchSelectionState.pendingPointerId === event.pointerId) {
-          clearPendingTouchSelection();
-        }
-        if (touchSelectionState.panPointerId === event.pointerId) {
-          touchSelectionState.panPointerId = null;
-        }
-        if (touchSelectionState.activePointerId === event.pointerId) {
-          touchSelectionState.activePointerId = null;
-          if (selectionState.dragging) {
-            selectionState.dragging = false;
-            updateCanvasCursor();
-            needsRender = true;
-          }
-        }
-      }
-    };
-    const onWheel = (event) => {
-      if (shouldRoutePointerToAppMouse(event.shiftKey)) {
-        if (inputHandler.sendMouseEvent("wheel", event)) {
-          event.preventDefault();
-          return;
-        }
-      }
-      if (!wasmReady || !wasmHandle || !gridState.cellH)
-        return;
-      const speed = event.shiftKey ? 0.5 : 1.5;
-      let lines = 0;
-      if (event.deltaMode === 1) {
-        lines = event.deltaY;
-      } else if (event.deltaMode === 2) {
-        lines = event.deltaY * gridState.rows;
-      } else {
-        lines = event.deltaY / gridState.cellH;
-      }
-      scrollViewportByLines(lines * speed);
-      event.preventDefault();
-    };
-    const onContextMenu = (event) => {
-      if (inputHandler.isMouseActive())
-        event.preventDefault();
-    };
-    const onPointerLeave = () => {
-      updateLinkHover(null);
-    };
-    canvas.addEventListener("pointerdown", onPointerDown);
-    canvas.addEventListener("pointermove", onPointerMove);
-    canvas.addEventListener("pointerup", onPointerUp);
-    canvas.addEventListener("pointercancel", onPointerCancel);
-    canvas.addEventListener("pointerleave", onPointerLeave);
-    canvas.addEventListener("wheel", onWheel, { passive: false });
-    canvas.addEventListener("contextmenu", onContextMenu);
-    cleanupCanvasFns.push(() => {
-      canvas.removeEventListener("pointerdown", onPointerDown);
-      canvas.removeEventListener("pointermove", onPointerMove);
-      canvas.removeEventListener("pointerup", onPointerUp);
-      canvas.removeEventListener("pointercancel", onPointerCancel);
-      canvas.removeEventListener("pointerleave", onPointerLeave);
-      canvas.removeEventListener("wheel", onWheel);
-      canvas.removeEventListener("contextmenu", onContextMenu);
-      clearPendingTouchSelection();
-      scrollbarDragState.pointerId = null;
+    const canvas = getCanvas();
+    bindPointerEvents({
+      canvas,
+      bindOptions,
+      touchSelectionMode,
+      touchSelectionLongPressMs,
+      touchSelectionMoveThresholdPx,
+      selectionState,
+      touchSelectionState,
+      desktopSelectionState,
+      scrollbarDragState,
+      linkState,
+      cleanupCanvasFns,
+      isTouchPointer,
+      clearPendingTouchSelection,
+      clearPendingDesktopSelection,
+      tryActivatePendingTouchSelection,
+      beginSelectionDrag,
+      noteScrollActivity: scrollbarRuntime.noteScrollActivity,
+      getOverlayScrollbarLayout: scrollbarRuntime.getOverlayScrollbarLayout,
+      pointerToCanvasPx: scrollbarRuntime.pointerToCanvasPx,
+      setViewportScrollOffset: scrollbarRuntime.setViewportScrollOffset,
+      normalizeSelectionCell: normalizeSelectionCell2,
+      positionToCell: positionToCell2,
+      scrollViewportByLines: scrollbarRuntime.scrollViewportByLines,
+      clearSelection,
+      updateCanvasCursor,
+      markNeedsRender,
+      updateLinkHover,
+      getGridState,
+      getWasmReady,
+      getWasmHandle
     });
     if (imeInput) {
-      let suppressNextInput = false;
-      const onCompositionStart = (event) => {
-        imeState.composing = true;
-        setPreedit(event.data || imeInput.value || "");
-        requestAnimationFrame(syncImeSelection);
-      };
-      const onCompositionUpdate = (event) => {
-        setPreedit(event.data || imeInput.value || "");
-        requestAnimationFrame(syncImeSelection);
-      };
-      const onCompositionEnd = (event) => {
-        imeState.composing = false;
-        setPreedit("", true);
-        imeState.selectionStart = 0;
-        imeState.selectionEnd = 0;
-        const text = event.data || "";
-        if (text) {
-          suppressNextInput = true;
-          sendKeyInput(text);
-        }
-        imeInput.value = "";
-      };
-      const onBeforeInput = (event) => {
-        if (!wasmReady || !wasmHandle)
-          return;
-        if (imeState.composing)
-          return;
-        if (event.inputType === "insertFromPaste") {
-          const pasteText = event.dataTransfer?.getData("text/plain") || event.data || "";
-          if (pasteText) {
-            event.preventDefault();
-            suppressNextInput = true;
-            sendPasteText(pasteText);
-            imeInput.value = "";
-          }
-          return;
-        }
-        const text = inputHandler.encodeBeforeInput(event);
-        if (text) {
-          const now = performance.now();
-          if (lastKeydownSeq && text === lastKeydownSeq && now - lastKeydownSeqAt <= KEYDOWN_BEFOREINPUT_DEDUPE_MS) {
-            event.preventDefault();
-            suppressNextInput = true;
-            imeInput.value = "";
-            return;
-          }
-          event.preventDefault();
-          suppressNextInput = true;
-          sendKeyInput(text);
-          imeInput.value = "";
-        }
-      };
-      const onInput = (event) => {
-        if (!wasmReady || !wasmHandle)
-          return;
-        if (imeState.composing)
-          return;
-        if (suppressNextInput) {
-          suppressNextInput = false;
-          imeInput.value = "";
-          return;
-        }
-        const text = event.data || imeInput.value;
-        if (text) {
-          sendKeyInput(text);
-          imeInput.value = "";
-        }
-      };
-      const onPaste = (event) => {
-        if (!wasmReady || !wasmHandle)
-          return;
-        const text = event.clipboardData?.getData("text/plain") || "";
-        if (text) {
-          event.preventDefault();
-          suppressNextInput = true;
-          sendPasteText(text);
-          imeInput.value = "";
-        }
-      };
-      imeInput.addEventListener("compositionstart", onCompositionStart);
-      imeInput.addEventListener("compositionupdate", onCompositionUpdate);
-      imeInput.addEventListener("compositionend", onCompositionEnd);
-      imeInput.addEventListener("beforeinput", onBeforeInput);
-      imeInput.addEventListener("input", onInput);
-      imeInput.addEventListener("paste", onPaste);
-      cleanupCanvasFns.push(() => {
-        imeInput.removeEventListener("compositionstart", onCompositionStart);
-        imeInput.removeEventListener("compositionupdate", onCompositionUpdate);
-        imeInput.removeEventListener("compositionend", onCompositionEnd);
-        imeInput.removeEventListener("beforeinput", onBeforeInput);
-        imeInput.removeEventListener("input", onInput);
-        imeInput.removeEventListener("paste", onPaste);
+      bindImeEvents({
+        bindOptions,
+        imeInput,
+        imeState,
+        cleanupCanvasFns,
+        getWasmReady,
+        getWasmHandle,
+        setPreedit,
+        syncImeSelection
       });
     }
-  }
-  bindCanvasEvents();
-  bindFocusEvents();
-  const fontState = {
-    font: null,
-    fonts: [],
-    fontSizePx: 0,
-    sizeMode: options.fontSizeMode === "em" ? "em" : "height",
-    fontPickCache: new Map
   };
-  const fontConfig = {
-    sizePx: Number.isFinite(options.fontSize) ? Math.max(1, Math.round(options.fontSize)) : 18
+  return {
+    selectionState,
+    linkState,
+    scrollbarState,
+    imeState,
+    updateCanvasCursor,
+    syncKittyOverlaySize: kittyOverlayRuntime.syncKittyOverlaySize,
+    clearKittyOverlay: kittyOverlayRuntime.clearKittyOverlay,
+    drawKittyOverlay: kittyOverlayRuntime.drawKittyOverlay,
+    positionToCell: positionToCell2,
+    positionToPixel,
+    clearSelection,
+    updateImePosition,
+    appendOverlayScrollbar: scrollbarRuntime.appendOverlayScrollbar,
+    bindCanvasEvents,
+    detachKittyOverlayCanvas: kittyOverlayRuntime.detachKittyOverlayCanvas,
+    clearKittyImageCache: kittyImageCache.clearKittyImageCache
   };
-  const FONT_SCALE_OVERRIDES = options.fontScaleOverrides ?? [];
-  function applyFontSize(value) {
-    if (!Number.isFinite(value))
+}
+
+// src/runtime/create-runtime/lifecycle-theme-size-canvas.ts
+function createLifecycleCanvasHandlers(deps) {
+  let sizeRaf = 0;
+  let savedCanvasState = null;
+  function saveCanvasState() {
+    const canvas = deps.getCanvas();
+    savedCanvasState = {
+      width: canvas.width,
+      height: canvas.height,
+      dpr: deps.getCurrentDpr(),
+      gridCols: deps.gridState.cols,
+      gridRows: deps.gridState.rows,
+      cellW: deps.gridState.cellW,
+      cellH: deps.gridState.cellH,
+      fontSizePx: deps.gridState.fontSizePx
+    };
+    console.log(`[saveCanvasState] ${savedCanvasState.width}x${savedCanvasState.height} grid=${savedCanvasState.gridCols}x${savedCanvasState.gridRows}`);
+  }
+  function restoreCanvasState() {
+    if (!savedCanvasState)
       return;
-    const clamped = Math.max(10, Math.min(64, Math.round(value)));
-    if (fontConfig.sizePx === clamped)
+    const canvas = deps.getCanvas();
+    canvas.width = savedCanvasState.width;
+    canvas.height = savedCanvasState.height;
+    deps.setCurrentDpr(savedCanvasState.dpr);
+    deps.gridState.cols = savedCanvasState.gridCols;
+    deps.gridState.rows = savedCanvasState.gridRows;
+    deps.gridState.cellW = savedCanvasState.cellW;
+    deps.gridState.cellH = savedCanvasState.cellH;
+    deps.gridState.fontSizePx = savedCanvasState.fontSizePx;
+    console.log(`[restoreCanvasState] ${canvas.width}x${canvas.height} grid=${deps.gridState.cols}x${deps.gridState.rows}`);
+    savedCanvasState = null;
+  }
+  function replaceCanvas() {
+    const canvas = deps.getCanvas();
+    const parent = canvas.parentElement;
+    if (!parent)
       return;
-    fontConfig.sizePx = clamped;
-    for (const entry of fontState.fonts)
-      resetFontEntry(entry);
-    if (activeState && activeState.glyphAtlases) {
-      activeState.glyphAtlases = new Map;
+    saveCanvasState();
+    for (const cleanup of deps.cleanupCanvasFns)
+      cleanup();
+    deps.cleanupCanvasFns.length = 0;
+    deps.detachKittyOverlayCanvas();
+    deps.destroyWebGPUStageTargets();
+    const activeState = deps.getActiveState();
+    if (activeState && "gl" in activeState) {
+      deps.clearWebGLShaderStages(activeState);
+      deps.destroyWebGLStageTargets(activeState);
+    } else {
+      deps.clearWebGLShaderStages();
+      deps.destroyWebGLStageTargets();
     }
-    updateGrid();
-    wasm?.renderUpdate?.(wasmHandle);
-    needsRender = true;
-    appendLog(`[ui] font size ${clamped}px`);
-  }
-  function formatCodepoint(cp) {
-    const hex = cp.toString(16).toUpperCase();
-    return `U+${hex.padStart(4, "0")}`;
-  }
-  function atlasRegionToImageData(atlas, x3, y, width, height) {
-    const rgba = new Uint8ClampedArray(width * height * 4);
-    const pixelMode = atlas.bitmap?.pixelMode ?? PixelMode.Gray;
-    const rgbaBitmap = pixelMode === (PixelMode.RGBA ?? 4) || pixelMode === 4;
-    for (let row = 0;row < height; row += 1) {
-      const dstRow = row * width * 4;
-      if (rgbaBitmap) {
-        const srcRow2 = (y + row) * atlas.bitmap.pitch + x3 * 4;
-        for (let col = 0;col < width; col += 1) {
-          const srcIdx = srcRow2 + col * 4;
-          const dstIdx = dstRow + col * 4;
-          rgba[dstIdx] = atlas.bitmap.buffer[srcIdx] ?? 0;
-          rgba[dstIdx + 1] = atlas.bitmap.buffer[srcIdx + 1] ?? 0;
-          rgba[dstIdx + 2] = atlas.bitmap.buffer[srcIdx + 2] ?? 0;
-          rgba[dstIdx + 3] = atlas.bitmap.buffer[srcIdx + 3] ?? 0;
-        }
-        continue;
-      }
-      const srcRow = (y + row) * atlas.bitmap.pitch + x3;
-      for (let col = 0;col < width; col += 1) {
-        const alpha = atlas.bitmap.buffer[srcRow + col] ?? 0;
-        const dstIdx = dstRow + col * 4;
-        rgba[dstIdx] = 255;
-        rgba[dstIdx + 1] = 255;
-        rgba[dstIdx + 2] = 255;
-        rgba[dstIdx + 3] = alpha;
+    const newCanvas = document.createElement("canvas");
+    newCanvas.id = canvas.id;
+    newCanvas.className = canvas.className;
+    parent.replaceChild(newCanvas, canvas);
+    deps.setCanvas(newCanvas);
+    deps.setIsFocused(typeof document !== "undefined" ? document.activeElement === deps.getCanvas() : true);
+    restoreCanvasState();
+    deps.bindCanvasEvents();
+    bindFocusEvents();
+    deps.setCurrentContextType(null);
+    for (const entry of deps.fontState.fonts) {
+      if (entry) {
+        entry.atlas = null;
+        entry.glyphIds = new Set;
+        entry.fontSizePx = 0;
       }
     }
-    return new ImageData(rgba, width, height);
-  }
-  function padAtlasRGBA(rgba, atlas, padding) {
-    if (!padding || padding <= 0 || !atlas?.glyphs)
-      return rgba;
-    const width = atlas.bitmap?.width ?? 0;
-    const height = atlas.bitmap?.rows ?? 0;
-    if (!width || !height)
-      return rgba;
-    const out = new Uint8Array(rgba);
-    const clamp2 = (v, min, max) => Math.max(min, Math.min(max, v));
-    const writePixel = (dstX, dstY, srcX, srcY) => {
-      if (dstX < 0 || dstY < 0 || dstX >= width || dstY >= height)
-        return;
-      if (srcX < 0 || srcY < 0 || srcX >= width || srcY >= height)
-        return;
-      const srcIdx = (srcY * width + srcX) * 4;
-      const dstIdx = (dstY * width + dstX) * 4;
-      out[dstIdx] = out[srcIdx];
-      out[dstIdx + 1] = out[srcIdx + 1];
-      out[dstIdx + 2] = out[srcIdx + 2];
-      out[dstIdx + 3] = out[srcIdx + 3];
-    };
-    const padMetrics = (metrics) => {
-      const x02 = metrics.atlasX;
-      const y02 = metrics.atlasY;
-      const x12 = metrics.atlasX + metrics.width - 1;
-      const y12 = metrics.atlasY + metrics.height - 1;
-      if (x02 < 0 || y02 < 0 || x12 < x02 || y12 < y02)
-        return;
-      const pad = padding;
-      for (let y = y02;y <= y12; y += 1) {
-        for (let px = 1;px <= pad; px += 1) {
-          writePixel(x02 - px, y, x02, y);
-          writePixel(x12 + px, y, x12, y);
-        }
-      }
-      for (let x3 = x02 - pad;x3 <= x12 + pad; x3 += 1) {
-        const clampedX = clamp2(x3, 0, width - 1);
-        for (let py = 1;py <= pad; py += 1) {
-          writePixel(clampedX, y02 - py, clampedX, y02);
-          writePixel(clampedX, y12 + py, clampedX, y12);
-        }
-      }
-    };
-    for (const metrics of atlas.glyphs.values()) {
-      padMetrics(metrics);
+    const nextActiveState = deps.getActiveState();
+    if (nextActiveState && nextActiveState.glyphAtlases) {
+      nextActiveState.glyphAtlases.clear();
     }
-    const glyphsByWidth = atlas.glyphsByWidth;
-    if (glyphsByWidth && typeof glyphsByWidth.values === "function") {
-      for (const map of glyphsByWidth.values()) {
-        if (!map?.values)
-          continue;
-        for (const metrics of map.values()) {
-          padMetrics(metrics);
-        }
-      }
-    }
-    return out;
+    deps.setShaderStagesDirty(true);
   }
-  function bitmapBytesPerPixel(pixelMode) {
-    if (pixelMode === 2 || pixelMode === 3)
-      return 3;
-    if (pixelMode === 4)
-      return 4;
-    return 1;
-  }
-  function resolveGlyphPixelMode(entry) {
-    const colorMode = PixelMode.RGBA;
-    if (colorMode !== undefined && colorMode !== null && isColorEmojiFont(entry)) {
-      return colorMode;
-    }
-    return PixelMode.Gray;
-  }
-  function atlasBitmapToRGBA(atlas) {
-    const bitmap = atlas?.bitmap;
-    if (!bitmap?.width || !bitmap?.rows)
-      return null;
-    const rgbaMode = PixelMode.RGBA ?? 4;
-    if (bitmap.pixelMode === rgbaMode || bitmap.pixelMode === 4) {
-      const width = bitmap.width;
-      const height = bitmap.rows;
-      const rgba = new Uint8Array(width * height * 4);
-      for (let row = 0;row < height; row += 1) {
-        const srcStart = row * bitmap.pitch;
-        const srcEnd = srcStart + width * 4;
-        const dstStart = row * width * 4;
-        rgba.set(bitmap.buffer.subarray(srcStart, srcEnd), dstStart);
-      }
-      return rgba;
-    }
-    return atlasToRGBA(atlas);
-  }
-  function getColorGlyphContext() {
-    if (colorGlyphCtx)
-      return colorGlyphCtx;
-    if (typeof document === "undefined")
-      return null;
-    colorGlyphCanvas = document.createElement("canvas");
-    colorGlyphCtx = colorGlyphCanvas.getContext("2d", { willReadFrequently: true });
-    return colorGlyphCtx;
-  }
-  function resolveColorGlyphFontCss(entry, fontSize) {
-    const label = String(entry.label ?? "").split("(")[0].trim().replace(/"/g, "\\\"");
-    const families = [];
-    if (label && !/openmoji/i.test(label)) {
-      families.push(`"${label}"`);
-    }
-    families.push(COLOR_EMOJI_FONT_STACK);
-    return `${Math.max(1, Math.round(fontSize))}px ${families.join(",")}`;
-  }
-  function rasterizeColorGlyphWithCanvas(entry, text, fontSize) {
-    if (!text)
-      return null;
-    const ctx = getColorGlyphContext();
-    if (!ctx)
-      return null;
-    const rgbaMode = PixelMode.RGBA ?? 4;
-    const fontCss = resolveColorGlyphFontCss(entry, fontSize);
-    ctx.save();
-    ctx.font = fontCss;
-    ctx.textBaseline = "alphabetic";
-    ctx.textAlign = "left";
-    const metrics = ctx.measureText(text);
-    const left = Math.max(0, metrics.actualBoundingBoxLeft ?? 0);
-    const right = Math.max(1, metrics.actualBoundingBoxRight ?? metrics.width ?? 1);
-    const ascent = Math.max(1, metrics.actualBoundingBoxAscent ?? fontSize * 0.8);
-    const descent = Math.max(0, metrics.actualBoundingBoxDescent ?? fontSize * 0.2);
-    const width = Math.max(1, Math.ceil(left + right + 1));
-    const height = Math.max(1, Math.ceil(ascent + descent + 1));
-    if (!colorGlyphCanvas) {
-      ctx.restore();
-      return null;
-    }
-    if (colorGlyphCanvas.width !== width || colorGlyphCanvas.height !== height) {
-      colorGlyphCanvas.width = width;
-      colorGlyphCanvas.height = height;
-    }
-    ctx.clearRect(0, 0, width, height);
-    ctx.font = fontCss;
-    ctx.textBaseline = "alphabetic";
-    ctx.textAlign = "left";
-    ctx.fillStyle = "#fff";
-    ctx.fillText(text, left, ascent);
-    const image = ctx.getImageData(0, 0, width, height);
-    ctx.restore();
-    return {
-      bitmap: {
-        width,
-        rows: height,
-        pitch: width * 4,
-        buffer: new Uint8Array(image.data),
-        pixelMode: rgbaMode,
-        numGrays: 256
-      },
-      bearingX: -left,
-      bearingY: ascent
-    };
-  }
-  function buildColorEmojiAtlasWithCanvas(options2) {
-    const {
-      font,
-      fontEntry,
-      glyphIds,
-      fontSize,
-      sizeMode,
-      padding,
-      maxWidth,
-      maxHeight,
-      pixelMode
-    } = options2;
-    const rgbaMode = PixelMode.RGBA ?? 4;
-    if (pixelMode !== rgbaMode && pixelMode !== 4)
-      return null;
-    if (!fontEntry.colorGlyphTexts?.size)
-      return null;
-    const scale = resolveFontScaleForAtlas(font, fontSize, sizeMode);
-    const glyphData = [];
-    for (let i3 = 0;i3 < glyphIds.length; i3 += 1) {
-      const glyphId = glyphIds[i3];
-      const text = fontEntry.colorGlyphTexts.get(glyphId);
-      if (!text)
-        continue;
-      const raster = rasterizeColorGlyphWithCanvas(fontEntry, text, fontSize);
-      if (!raster)
-        continue;
-      glyphData.push({
-        glyphId,
-        bitmap: raster.bitmap,
-        bearingX: raster.bearingX,
-        bearingY: raster.bearingY,
-        advance: font.advanceWidth(glyphId) * scale
-      });
-    }
-    if (!glyphData.length)
-      return null;
-    glyphData.sort((a3, b3) => (b3.bitmap?.rows ?? 0) - (a3.bitmap?.rows ?? 0));
-    const {
-      width: atlasWidth,
-      height: atlasHeight,
-      placements
-    } = packGlyphs(glyphData.map((g) => ({
-      width: (g.bitmap?.width ?? 0) + padding * 2,
-      height: (g.bitmap?.rows ?? 0) + padding * 2
-    })), maxWidth, maxHeight);
-    const atlasBitmap = createAtlasBitmap(atlasWidth, atlasHeight, rgbaMode);
-    const glyphMetrics = new Map;
-    for (let i3 = 0;i3 < glyphData.length; i3 += 1) {
-      const glyph = glyphData[i3];
-      const placement = placements[i3];
-      if (!placement?.placed || !glyph.bitmap)
-        continue;
-      copyBitmapToAtlas(glyph.bitmap, atlasBitmap, placement.x + padding, placement.y + padding);
-      glyphMetrics.set(glyph.glyphId, {
-        glyphId: glyph.glyphId,
-        atlasX: placement.x + padding,
-        atlasY: placement.y + padding,
-        width: glyph.bitmap.width,
-        height: glyph.bitmap.rows,
-        bearingX: glyph.bearingX,
-        bearingY: glyph.bearingY,
-        advance: glyph.advance
-      });
-    }
-    return {
-      atlas: {
-        bitmap: atlasBitmap,
-        glyphs: glyphMetrics,
-        glyphsByWidth: new Map,
-        fontSize,
-        colorGlyphs: new Set(glyphMetrics.keys())
-      },
-      constrainedGlyphWidths: null
-    };
-  }
-  function createAtlasBitmap(width, height, pixelMode) {
-    const bytesPerPixel = bitmapBytesPerPixel(pixelMode);
-    const pitch = Math.max(1, Math.ceil(width * bytesPerPixel));
-    const size = pitch * height;
-    return {
-      width,
-      rows: height,
-      pitch,
-      buffer: new Uint8Array(size),
-      pixelMode,
-      numGrays: pixelMode === 0 ? 2 : 256
-    };
-  }
-  function cloneBitmap(bitmap) {
-    const pitch = bitmap?.pitch ?? 0;
-    const rows = bitmap?.rows ?? 0;
-    const size = pitch * rows;
-    const buffer = new Uint8Array(size);
-    if (bitmap?.buffer) {
-      buffer.set(bitmap.buffer.subarray(0, size));
-    }
-    return {
-      width: bitmap?.width ?? 0,
-      rows,
-      pitch,
-      buffer,
-      pixelMode: bitmap?.pixelMode ?? PixelMode.Gray,
-      numGrays: bitmap?.numGrays ?? 256
-    };
-  }
-  function copyBitmapToAtlas(src, dst, dstX, dstY) {
-    const bytesPerPixel = bitmapBytesPerPixel(src.pixelMode ?? 1);
-    const rowBytes = src.width * bytesPerPixel;
-    for (let y = 0;y < src.rows; y += 1) {
-      const srcRow = y * src.pitch;
-      const dstRow = (dstY + y) * dst.pitch + dstX * bytesPerPixel;
-      dst.buffer.set(src.buffer.subarray(srcRow, srcRow + rowBytes), dstRow);
-    }
-  }
-  function nextPowerOf2(n) {
-    if (n <= 0)
-      return 1;
-    let v = n - 1;
-    v |= v >> 1;
-    v |= v >> 2;
-    v |= v >> 4;
-    v |= v >> 8;
-    v |= v >> 16;
-    return v + 1;
-  }
-  function packGlyphs(sizes, maxWidth, maxHeight) {
-    const shelves = [];
-    const placements = [];
-    let atlasWidth = 0;
-    let atlasHeight = 0;
-    for (let i3 = 0;i3 < sizes.length; i3 += 1) {
-      const size = sizes[i3];
-      let placed = false;
-      let bestShelf = -1;
-      let bestY = maxHeight;
-      for (let j = 0;j < shelves.length; j += 1) {
-        const shelf = shelves[j];
-        if (shelf.width + size.width <= maxWidth && size.height <= shelf.height) {
-          if (shelf.y < bestY) {
-            bestShelf = j;
-            bestY = shelf.y;
-          }
-        }
-      }
-      if (bestShelf >= 0) {
-        const shelf = shelves[bestShelf];
-        placements.push({ x: shelf.width, y: shelf.y, placed: true });
-        shelf.width += size.width;
-        atlasWidth = Math.max(atlasWidth, shelf.width);
-        placed = true;
-      } else {
-        const newY = atlasHeight;
-        if (newY + size.height <= maxHeight && size.width <= maxWidth) {
-          shelves.push({ y: newY, height: size.height, width: size.width });
-          placements.push({ x: 0, y: newY, placed: true });
-          atlasHeight = newY + size.height;
-          atlasWidth = Math.max(atlasWidth, size.width);
-          placed = true;
-        }
-      }
-      if (!placed)
-        placements.push({ x: 0, y: 0, placed: false });
-    }
-    const finalWidth = nextPowerOf2(atlasWidth);
-    const finalHeight = nextPowerOf2(atlasHeight);
-    return {
-      width: Math.min(finalWidth, maxWidth),
-      height: Math.min(finalHeight, maxHeight),
-      placements
-    };
-  }
-  function resolveFontScaleForAtlas(font, fontSize, sizeMode) {
-    if (font && typeof font.scaleForSize === "function") {
-      return font.scaleForSize(fontSize, sizeMode ?? undefined);
-    }
-    const upem = font?.unitsPerEm ?? font?.upem ?? 1000;
-    return upem > 0 ? fontSize / upem : 1;
-  }
-  function fontCapHeightUnits(font) {
-    if (!font)
-      return 1;
-    const capFromOs2 = font?.os2?.sCapHeight ?? font?._os2?.sCapHeight;
-    if (Number.isFinite(capFromOs2) && capFromOs2 > 0)
-      return capFromOs2;
-    if (typeof font.glyphIdForChar === "function" && typeof font.getGlyphBounds === "function") {
-      const capGlyphId = font.glyphIdForChar("H");
-      if (capGlyphId !== undefined && capGlyphId !== null && capGlyphId !== 0) {
-        const bounds = font.getGlyphBounds(capGlyphId);
-        const yMax = bounds?.yMax;
-        if (Number.isFinite(yMax) && yMax > 0)
-          return yMax;
-        const height = (bounds?.yMax ?? 0) - (bounds?.yMin ?? 0);
-        if (Number.isFinite(height) && height > 0)
-          return height;
-      }
-    }
-    const ascender = font?.ascender;
-    if (Number.isFinite(ascender) && ascender > 0)
-      return ascender * 0.75;
-    const faceHeight = fontHeightUnits(font);
-    if (Number.isFinite(faceHeight) && faceHeight > 0)
-      return faceHeight * 0.6;
-    return 1;
-  }
-  function buildNerdMetrics(cellW, cellH, lineHeight, primaryFont, primaryScale, iconScale) {
-    let faceWidth = cellW;
-    if (primaryFont && typeof primaryFont.glyphIdForChar === "function" && typeof primaryFont.advanceWidth === "function") {
-      const mGlyphId = primaryFont.glyphIdForChar("M");
-      if (mGlyphId !== undefined && mGlyphId !== null && mGlyphId !== 0) {
-        const width = primaryFont.advanceWidth(mGlyphId) * primaryScale;
-        if (Number.isFinite(width) && width > 0)
-          faceWidth = width;
-      }
-    }
-    const capHeight = fontCapHeightUnits(primaryFont) * primaryScale;
-    const safeIconScale = Number.isFinite(iconScale) ? Math.max(0.5, Math.min(2, iconScale)) : 1;
-    const iconHeight = lineHeight * safeIconScale;
-    const iconHeightSingle = clamp((2 * capHeight + lineHeight) / 3 * safeIconScale, 1, iconHeight);
-    return {
-      cellWidth: cellW,
-      cellHeight: cellH,
-      faceWidth,
-      faceHeight: lineHeight,
-      faceY: (cellH - lineHeight) * 0.5,
-      iconHeight,
-      iconHeightSingle
-    };
-  }
-  const NERD_CELL_FIT_COVER_SCALE = 1;
-  const NERD_ICON_FIT_COVER_SCALE = 2 / 3;
-  function nerdConstraintSignature(glyphMeta, constraintContext) {
-    if (!glyphMeta?.size || !constraintContext)
-      return "";
-    const m = constraintContext.nerdMetrics;
-    return [
-      `ih:${m.iconHeight.toFixed(3)}`,
-      `ih1:${m.iconHeightSingle.toFixed(3)}`,
-      `iw:${m.cellWidth.toFixed(3)}`,
-      `cw:${constraintContext.cellW.toFixed(3)}`,
-      `ch:${constraintContext.cellH.toFixed(3)}`,
-      `is:${NERD_ICON_FIT_COVER_SCALE.toFixed(4)}`,
-      `cs:${NERD_CELL_FIT_COVER_SCALE.toFixed(4)}`
-    ].join("|");
-  }
-  function scaleGlyphBoxAroundCenter(box, factor) {
-    if (!Number.isFinite(factor) || factor <= 0 || Math.abs(factor - 1) < 0.000001)
-      return box;
-    const cx = box.x + box.width * 0.5;
-    const cy = box.y + box.height * 0.5;
-    const w = box.width * factor;
-    const h = box.height * factor;
-    return {
-      x: cx - w * 0.5,
-      y: cy - h * 0.5,
-      width: w,
-      height: h
-    };
-  }
-  function scaleGlyphBoxAnchoredLeft(box, factor) {
-    if (!Number.isFinite(factor) || factor <= 0 || Math.abs(factor - 1) < 0.000001)
-      return box;
-    const w = box.width * factor;
-    const h = box.height * factor;
-    return {
-      x: box.x,
-      y: box.y + (box.height - h) * 0.5,
-      width: w,
-      height: h
-    };
-  }
-  function tightenNerdConstraintBox(box, constraint) {
-    if (!constraint)
-      return box;
-    if (constraint.size !== "fit_cover1")
-      return box;
-    if (constraint.height === "icon") {
-      return scaleGlyphBoxAnchoredLeft(box, NERD_ICON_FIT_COVER_SCALE);
-    }
-    if (constraint.height !== undefined && constraint.height !== "cell")
-      return box;
-    return scaleGlyphBoxAroundCenter(box, NERD_CELL_FIT_COVER_SCALE);
-  }
-  function buildGlyphAtlasWithConstraints(options2) {
-    const {
-      font,
-      glyphIds,
-      fontSize,
-      sizeMode,
-      padding,
-      maxWidth,
-      maxHeight,
-      pixelMode,
-      hinting,
-      rasterizeGlyph: rasterizeGlyph2,
-      rasterizeGlyphWithTransform: rasterizeGlyphWithTransform2,
-      glyphMeta,
-      constraintContext
-    } = options2;
-    const scale = resolveFontScaleForAtlas(font, fontSize, sizeMode);
-    const glyphData = [];
-    if (!rasterizeGlyph2) {
-      return { atlas: null, constrainedGlyphWidths: null };
-    }
-    const rasterOptions = {
-      padding: 0,
-      pixelMode,
-      sizeMode,
-      hinting
-    };
-    for (let i3 = 0;i3 < glyphIds.length; i3 += 1) {
-      const glyphId = glyphIds[i3];
-      let raster = rasterizeGlyph2(font, glyphId, fontSize, rasterOptions);
-      if (!raster)
-        continue;
-      let didConstraint = false;
-      const meta = glyphMeta?.get(glyphId);
-      const widthSet = meta?.widths && meta.widths.size ? Array.from(meta.widths.values()) : [Math.max(1, meta?.constraintWidth ?? 1)];
-      const widths = Array.from(new Set(widthSet.map((w) => Math.max(1, w)))).sort();
-      const constraint = meta?.cp ? getNerdConstraint(meta.cp) : null;
-      if (constraint && constraintContext && rasterizeGlyphWithTransform2) {
-        for (const constraintWidth of widths) {
-          const maxCellWidth = constraintContext.cellW * constraintWidth;
-          const maxCellHeight = constraintContext.cellH;
-          let bitmapScale = 1;
-          const widthUnits = glyphWidthUnits(constraintContext.fontEntry, glyphId);
-          let glyphWidthPx = widthUnits * constraintContext.fontScale;
-          if (!Number.isFinite(glyphWidthPx) || glyphWidthPx <= 0) {
-            glyphWidthPx = raster.bitmap?.width ?? 0;
-          }
-          if (glyphWidthPx > 0 && maxCellWidth > 0) {
-            const fit = maxCellWidth / glyphWidthPx;
-            if (fit > 0 && fit < 1)
-              bitmapScale = fit;
-          }
-          let gw = (raster.bitmap?.width ?? 0) * bitmapScale;
-          let gh = (raster.bitmap?.rows ?? 0) * bitmapScale;
-          if (gw > 0 && gh > 0 && maxCellWidth > 0 && maxCellHeight > 0) {
-            const fitScale = Math.min(1, maxCellWidth / gw, maxCellHeight / gh);
-            if (fitScale < 1) {
-              bitmapScale *= fitScale;
-              gw *= fitScale;
-              gh *= fitScale;
-            }
-          }
-          const baseY = constraintContext.yPad + constraintContext.baselineOffset + constraintContext.baselineAdjust;
-          const scaledBox = {
-            x: raster.bearingX * bitmapScale,
-            y: baseY - raster.bearingY * bitmapScale,
-            width: gw,
-            height: gh
-          };
-          const adjusted = constrainGlyphBox(scaledBox, constraint, constraintContext.nerdMetrics, constraintWidth);
-          const tightened = tightenNerdConstraintBox(adjusted, constraint);
-          if (tightened.width > 0 && tightened.height > 0 && raster.bitmap?.width && raster.bitmap?.rows) {
-            const targetLeft = tightened.x;
-            const targetTop = baseY - tightened.y;
-            const scaleX = tightened.width / raster.bitmap.width;
-            const scaleY = tightened.height / raster.bitmap.rows;
-            if (Number.isFinite(scaleX) && scaleX > 0 && Number.isFinite(scaleY) && scaleY > 0) {
-              const tx = targetLeft - raster.bearingX * scaleX;
-              const ty = targetTop - raster.bearingY * scaleY;
-              const transformed = rasterizeGlyphWithTransform2(font, glyphId, fontSize, [scaleX, 0, 0, scaleY, tx, ty], rasterOptions);
-              if (transformed) {
-                glyphData.push({
-                  glyphId,
-                  bitmap: cloneBitmap(transformed.bitmap),
-                  bearingX: transformed.bearingX,
-                  bearingY: transformed.bearingY,
-                  advance: font.advanceWidth(glyphId) * scale,
-                  constraintWidth
-                });
-                didConstraint = true;
-              }
-            }
-          }
-        }
-      }
-      if (!didConstraint) {
-        const advance = font.advanceWidth(glyphId) * scale;
-        glyphData.push({
-          glyphId,
-          bitmap: cloneBitmap(raster.bitmap),
-          bearingX: raster.bearingX,
-          bearingY: raster.bearingY,
-          advance,
-          constraintWidth: 0
-        });
-      }
-    }
-    glyphData.sort((a3, b3) => (b3.bitmap?.rows ?? 0) - (a3.bitmap?.rows ?? 0));
-    const {
-      width: atlasWidth,
-      height: atlasHeight,
-      placements
-    } = packGlyphs(glyphData.map((g) => ({
-      width: (g.bitmap?.width ?? 0) + padding * 2,
-      height: (g.bitmap?.rows ?? 0) + padding * 2
-    })), maxWidth, maxHeight);
-    const atlas = createAtlasBitmap(atlasWidth, atlasHeight, pixelMode);
-    const glyphMetrics = new Map;
-    const glyphMetricsByWidth = new Map;
-    for (let i3 = 0;i3 < glyphData.length; i3 += 1) {
-      const glyph = glyphData[i3];
-      const placement = placements[i3];
-      if (!placement?.placed || !glyph.bitmap)
-        continue;
-      copyBitmapToAtlas(glyph.bitmap, atlas, placement.x + padding, placement.y + padding);
-      const metrics = {
-        glyphId: glyph.glyphId,
-        atlasX: placement.x + padding,
-        atlasY: placement.y + padding,
-        width: glyph.bitmap.width,
-        height: glyph.bitmap.rows,
-        bearingX: glyph.bearingX,
-        bearingY: glyph.bearingY,
-        advance: glyph.advance
-      };
-      const widthKey = glyph.constraintWidth ?? 0;
-      if (widthKey > 0) {
-        let widthMap = glyphMetricsByWidth.get(widthKey);
-        if (!widthMap) {
-          widthMap = new Map;
-          glyphMetricsByWidth.set(widthKey, widthMap);
-        }
-        widthMap.set(glyph.glyphId, metrics);
-        if (!glyphMetrics.has(glyph.glyphId) || widthKey === 1) {
-          glyphMetrics.set(glyph.glyphId, metrics);
-        }
-      } else {
-        if (!glyphMetrics.has(glyph.glyphId)) {
-          glyphMetrics.set(glyph.glyphId, metrics);
-        }
-      }
-    }
-    return {
-      atlas: {
-        bitmap: atlas,
-        glyphs: glyphMetrics,
-        glyphsByWidth: glyphMetricsByWidth,
-        fontSize
-      },
-      constrainedGlyphWidths: null
-    };
-  }
-  function dumpAtlasForCodepoint(cp) {
-    if (!atlasCanvas || !atlasInfoEl)
+  function updateSize(force = false) {
+    const canvas = deps.getCanvas();
+    const dpr = window.devicePixelRatio || 1;
+    const rect2 = canvas.getBoundingClientRect();
+    const nextWidth = Math.max(1, Math.floor(rect2.width * dpr));
+    const nextHeight = Math.max(1, Math.floor(rect2.height * dpr));
+    const sizeChanged = nextWidth !== canvas.width || nextHeight !== canvas.height || dpr !== deps.getCurrentDpr();
+    if (!sizeChanged && !force)
       return;
-    if (!activeState || !activeState.device) {
-      atlasInfoEl.textContent = "atlas debug unavailable (renderer not ready)";
-      return;
+    canvas.width = nextWidth;
+    canvas.height = nextHeight;
+    if (deps.dprEl)
+      deps.dprEl.textContent = dpr.toFixed(2);
+    deps.callbacks?.onDpr?.(dpr);
+    if (deps.sizeEl)
+      deps.sizeEl.textContent = `${canvas.width}x${canvas.height}`;
+    deps.callbacks?.onCanvasSize?.(canvas.width, canvas.height);
+    deps.setCurrentDpr(dpr);
+    deps.resizeState.dpr = dpr;
+    deps.resizeState.active = true;
+    deps.resizeState.lastAt = performance.now();
+    const metrics = deps.computeCellMetrics();
+    if (metrics?.cellW && metrics?.cellH) {
+      deps.resizeState.cols = Math.max(1, Math.floor(canvas.width / metrics.cellW));
+      deps.resizeState.rows = Math.max(1, Math.floor(canvas.height / metrics.cellH));
     }
-    const entryText = String.fromCodePoint(cp);
-    const fontIndex = pickFontIndexForText(entryText, 1);
-    const entry = fontState.fonts[fontIndex];
-    if (!entry?.font) {
-      atlasInfoEl.textContent = "font not ready";
-      return;
-    }
-    const glyphId = entry.font.glyphIdForChar(entryText);
-    if (!glyphId) {
-      atlasInfoEl.textContent = `missing glyph for ${formatCodepoint(cp)}`;
-      return;
-    }
-    const needed = new Set([glyphId]);
-    const atlasScale = entry.atlasScale ?? 1;
-    ensureAtlasForFont(activeState.device, activeState, entry, needed, gridState.fontSizePx || fontConfig.sizePx, fontIndex, atlasScale);
-    const atlas = entry.atlas;
-    if (!atlas) {
-      atlasInfoEl.textContent = "atlas missing";
-      return;
-    }
-    const metrics = atlas.glyphs.get(glyphId);
-    if (!metrics) {
-      atlasInfoEl.textContent = `glyph not in atlas (${formatCodepoint(cp)})`;
-      return;
-    }
-    const width = Math.max(1, metrics.width);
-    const height = Math.max(1, metrics.height);
-    atlasCanvas.width = width;
-    atlasCanvas.height = height;
-    const ctx = atlasCanvas.getContext("2d");
-    if (!ctx)
-      return;
-    ctx.imageSmoothingEnabled = false;
-    const imageData = atlasRegionToImageData(atlas, metrics.atlasX, metrics.atlasY, width, height);
-    ctx.putImageData(imageData, 0, 0);
-    atlasInfoEl.textContent = [
-      `cp ${formatCodepoint(cp)} glyph ${glyphId}`,
-      `font ${fontIndex}: ${entry.label ?? "unknown"}`,
-      `atlas ${atlas.bitmap.width}x${atlas.bitmap.rows} pad ${isSymbolFont(entry) ? SYMBOL_ATLAS_PADDING : ATLAS_PADDING}`,
-      `glyph ${metrics.width}x${metrics.height} bearing ${metrics.bearingX},${metrics.bearingY}`
-    ].join(`
-`);
+    deps.syncKittyOverlaySize();
+    deps.updateGrid();
+    deps.markNeedsRender();
+    deps.resetLastRenderTime();
   }
-  function diagnoseCodepoint(cp) {
-    console.group(`Diagnosing codepoint ${formatCodepoint(cp)}`);
-    const isNerd = isNerdSymbolCodepoint(cp);
-    const isSymbol = isSymbolCp(cp);
-    console.log(`isNerdSymbolCodepoint: ${isNerd}, isSymbolCp: ${isSymbol}`);
-    console.log(`Total fonts loaded: ${fontState.fonts.length}`);
-    fontState.fonts.forEach((entry, idx) => {
-      if (!entry?.font) {
-        console.log(`  Font ${idx}: not loaded`);
-        return;
-      }
-      const label = entry.label || "unknown";
-      const isSym = isSymbolFont(entry);
-      const text2 = String.fromCodePoint(cp);
-      const hasGlyph = fontHasGlyph(entry.font, text2);
-      const glyphId = entry.font.glyphIdForChar(text2);
-      console.log(`  Font ${idx}: "${label}" isSymbolFont=${isSym} hasGlyph=${hasGlyph} glyphId=${glyphId}`);
+  function resize(cols, rows) {
+    const nextCols = Math.max(1, Math.floor(Number(cols)));
+    const nextRows = Math.max(1, Math.floor(Number(rows)));
+    if (!Number.isFinite(nextCols) || !Number.isFinite(nextRows))
+      return;
+    const dpr = window.devicePixelRatio || 1;
+    if (dpr !== deps.getCurrentDpr()) {
+      deps.setCurrentDpr(dpr);
+      if (deps.dprEl)
+        deps.dprEl.textContent = dpr.toFixed(2);
+      deps.callbacks?.onDpr?.(dpr);
+    }
+    const metrics = deps.computeCellMetrics();
+    if (!metrics)
+      return;
+    const canvas = deps.getCanvas();
+    canvas.width = Math.max(1, nextCols * metrics.cellW);
+    canvas.height = Math.max(1, nextRows * metrics.cellH);
+    if (deps.sizeEl)
+      deps.sizeEl.textContent = `${canvas.width}x${canvas.height}`;
+    deps.callbacks?.onCanvasSize?.(canvas.width, canvas.height);
+    deps.resizeState.dpr = deps.getCurrentDpr();
+    deps.resizeState.active = true;
+    deps.resizeState.lastAt = performance.now();
+    deps.resizeState.cols = nextCols;
+    deps.resizeState.rows = nextRows;
+    deps.updateGrid();
+    deps.scheduleTerminalResizeCommit(nextCols, nextRows, { immediate: true });
+    deps.markNeedsRender();
+    deps.resetLastRenderTime();
+  }
+  function scheduleSizeUpdate() {
+    updateSize();
+    if (sizeRaf)
+      return;
+    sizeRaf = requestAnimationFrame(() => {
+      sizeRaf = 0;
+      updateSize();
     });
-    const text = String.fromCodePoint(cp);
-    const pickedIndex = pickFontIndexForText(text, 1);
-    const pickedEntry = fontState.fonts[pickedIndex];
-    console.log(`Picked font index: ${pickedIndex} (${pickedEntry?.label || "none"})`);
-    if (pickedEntry?.font) {
-      const shaped = shapeClusterWithFont(pickedEntry, text);
-      console.log(`Shaped glyphs: ${shaped.glyphs.length}, advance: ${shaped.advance}`);
-      shaped.glyphs.forEach((g, i3) => {
-        console.log(`  Glyph ${i3}: id=${g.glyphId} xAdvance=${g.xAdvance} xOffset=${g.xOffset} yOffset=${g.yOffset}`);
-      });
-    }
-    const constraint = getNerdConstraint(cp);
-    console.log(`Nerd constraint:`, constraint || "none");
-    console.groupEnd();
   }
-  if (debugExpose && typeof window !== "undefined") {
-    const debugWindow = window;
-    debugWindow.diagnoseCodepoint = diagnoseCodepoint;
-    debugWindow.dumpGlyphMetrics = (cp) => {
-      const text = String.fromCodePoint(cp);
-      const fontIndex = pickFontIndexForText(text, 1);
-      const entry = fontState.fonts[fontIndex];
-      if (!entry?.font || !entry.atlas) {
-        console.warn("font/atlas not ready");
-        return null;
-      }
-      const glyphId = entry.font.glyphIdForChar(text);
-      const atlas = entry.atlas;
-      const atlasW = atlas.bitmap.width;
-      const atlasH = atlas.bitmap.rows;
-      const report = (label, metrics) => {
-        if (!metrics) {
-          console.log(`${label}: missing`);
-          return;
-        }
-        const u02 = metrics.atlasX / atlasW;
-        const v02 = metrics.atlasY / atlasH;
-        const u12 = (metrics.atlasX + metrics.width) / atlasW;
-        const v12 = (metrics.atlasY + metrics.height) / atlasH;
-        console.log(`${label}:`, {
-          glyphId,
-          atlasX: metrics.atlasX,
-          atlasY: metrics.atlasY,
-          width: metrics.width,
-          height: metrics.height,
-          bearingX: metrics.bearingX,
-          bearingY: metrics.bearingY,
-          u0: u02,
-          v0: v02,
-          u1: u12,
-          v1: v12,
-          atlasW,
-          atlasH
-        });
-      };
-      console.group(`Glyph metrics U+${cp.toString(16).toUpperCase()}`);
-      report("default", atlas.glyphs.get(glyphId));
-      if (atlas.glyphsByWidth) {
-        report("width=1", atlas.glyphsByWidth.get(1)?.get(glyphId));
-        report("width=2", atlas.glyphsByWidth.get(2)?.get(glyphId));
-      }
-      console.groupEnd();
-      return { fontIndex, glyphId };
-    };
-    debugWindow.dumpAtlasRegion = async (fontIndex, x3, y, width, height) => {
-      const state = activeState;
-      if (!state || !("device" in state)) {
-        console.warn("WebGPU not active");
-        return null;
-      }
-      const atlasState = state.glyphAtlases?.get(fontIndex);
-      if (!atlasState) {
-        console.warn("atlas not ready");
-        return null;
-      }
-      const device = state.device;
-      const bytesPerRow = width * 4;
-      const alignedBytesPerRow = Math.ceil(bytesPerRow / 256) * 256;
-      const buffer = device.createBuffer({
-        size: alignedBytesPerRow * height,
-        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
-      });
-      const encoder = device.createCommandEncoder();
-      encoder.copyTextureToBuffer({ texture: atlasState.texture, origin: { x: x3, y } }, { buffer, bytesPerRow: alignedBytesPerRow, rowsPerImage: height }, { width, height, depthOrArrayLayers: 1 });
-      device.queue.submit([encoder.finish()]);
-      await buffer.mapAsync(GPUMapMode.READ);
-      const mapped = new Uint8Array(buffer.getMappedRange());
-      const out = new Uint8ClampedArray(width * height * 4);
-      for (let row = 0;row < height; row += 1) {
-        const srcStart = row * alignedBytesPerRow;
-        const srcEnd = srcStart + bytesPerRow;
-        const dstStart = row * bytesPerRow;
-        out.set(mapped.subarray(srcStart, srcEnd), dstStart);
-      }
-      buffer.unmap();
-      const image = new ImageData(out, width, height);
-      const canvas2 = document.createElement("canvas");
-      canvas2.width = width;
-      canvas2.height = height;
-      const ctx = canvas2.getContext("2d");
-      if (ctx)
-        ctx.putImageData(image, 0, 0);
-      canvas2.style.border = "1px solid #555";
-      canvas2.style.margin = "6px";
-      document.body.appendChild(canvas2);
-      return image;
-    };
-    debugWindow.dumpGlyphRender = async (cp, constraintWidth = 1) => {
-      const state = activeState;
-      if (!state || !("device" in state)) {
-        console.warn("WebGPU not active");
-        return null;
-      }
-      const text = String.fromCodePoint(cp);
-      const span = Math.max(1, constraintWidth || 1);
-      const fontIndex = pickFontIndexForText(text, span);
-      const entry = fontState.fonts[fontIndex];
-      if (!entry?.font) {
-        console.warn("font not ready");
-        return null;
-      }
-      const glyphId = entry.font.glyphIdForChar(text);
-      if (!glyphId) {
-        console.warn("missing glyph");
-        return null;
-      }
-      const cellW = gridState.cellW || canvas.width / Math.max(1, gridState.cols || 1);
-      const cellH = gridState.cellH || canvas.height / Math.max(1, gridState.rows || 1);
-      const fontSizePx = gridState.fontSizePx || fontConfig.sizePx;
-      const primaryEntry = fontState.fonts[0];
-      const primaryScale = primaryEntry?.font ? primaryEntry.font.scaleForSize(fontSizePx, fontState.sizeMode) : 1;
-      const lineHeight = primaryEntry?.font ? fontHeightUnits(primaryEntry.font) * primaryScale : cellH;
-      const baselineOffset = primaryEntry?.font ? primaryEntry.font.ascender * primaryScale : 0;
-      const yPad = gridState.yPad ?? (cellH - lineHeight) * 0.5;
-      const baseScale = entry.font.scaleForSize(fontSizePx, fontState.sizeMode) * fontScaleOverride(entry, FONT_SCALE_OVERRIDES);
-      let fontScale = baseScale;
-      if (!isSymbolFont(entry) && !isColorEmojiFont(entry)) {
-        const advanceUnits = fontAdvanceUnits(entry, shapeClusterWithFont);
-        const maxSpan = fontMaxCellSpan(entry);
-        const widthPx = advanceUnits * baseScale;
-        const widthAdjustRaw = widthPx > 0 ? cellW * maxSpan / widthPx : 1;
-        const widthAdjust = clamp(widthAdjustRaw, 0.5, 2);
-        fontScale = baseScale * widthAdjust;
-        const adjustedHeightPx = fontHeightUnits(entry.font) * fontScale;
-        if (adjustedHeightPx > lineHeight && adjustedHeightPx > 0) {
-          fontScale *= lineHeight / adjustedHeightPx;
-        }
-      }
-      const baselineAdjust = primaryEntry?.font ? primaryEntry.font.ascender * primaryScale - entry.font.ascender * fontScale : 0;
-      const atlasScale = clamp(fontScale / (baseScale || 1), 0.5, 2);
-      const meta = new Map;
-      meta.set(glyphId, {
-        cp,
-        constraintWidth: span,
-        widths: new Set([span]),
-        variable: false
-      });
-      const constraintContext = {
-        cellW,
-        cellH,
-        yPad,
-        baselineOffset,
-        baselineAdjust,
-        fontScale,
-        nerdMetrics: buildNerdMetrics(cellW, cellH, lineHeight, primaryEntry?.font, primaryScale, nerdIconScale),
-        fontEntry: entry
-      };
-      ensureAtlasForFont(state.device, state, entry, new Set([glyphId]), fontSizePx, fontIndex, atlasScale, meta, constraintContext);
-      const atlas = entry.atlas;
-      const atlasState = state.glyphAtlases?.get(fontIndex);
-      if (!atlas || !atlasState) {
-        console.warn("atlas not ready");
-        return null;
-      }
-      const widthMap = atlas.glyphsByWidth?.get(span);
-      const metrics = widthMap?.get(glyphId) ?? atlas.glyphs.get(glyphId);
-      if (!metrics) {
-        console.warn("metrics missing");
-        return null;
-      }
-      const atlasW = atlas.bitmap.width;
-      const atlasH = atlas.bitmap.rows;
-      const baseInset = Number.isFinite(atlas.inset) ? atlas.inset : 0;
-      const uvInset = baseInset + (atlasState.nearest ? 0.5 : 0);
-      const insetX = Math.min(uvInset, (metrics.width - 1) * 0.5);
-      const insetY = Math.min(uvInset, (metrics.height - 1) * 0.5);
-      const u02 = (metrics.atlasX + insetX) / atlasW;
-      const v02 = (metrics.atlasY + insetY) / atlasH;
-      const u12 = (metrics.atlasX + metrics.width - insetX) / atlasW;
-      const v12 = (metrics.atlasY + metrics.height - insetY) / atlasH;
-      const outW = Math.max(1, metrics.width);
-      const outH = Math.max(1, metrics.height);
-      const uniformBuffer = state.device.createBuffer({
-        size: 8 * 4,
-        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
-      });
-      const uniforms = new Float32Array([outW, outH, 0, 0, 0, 0, 0, 0]);
-      state.device.queue.writeBuffer(uniformBuffer, 0, uniforms);
-      const instance = new Float32Array([0, 0, outW, outH, u02, v02, u12, v12, 1, 1, 1, 1, 0, 0, 0, 1]);
-      const instanceBuffer = state.device.createBuffer({
-        size: instance.byteLength,
-        usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
-        mappedAtCreation: true
-      });
-      new Float32Array(instanceBuffer.getMappedRange()).set(instance);
-      instanceBuffer.unmap();
-      const renderTarget = state.device.createTexture({
-        size: [outW, outH, 1],
-        format: state.format,
-        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC
-      });
-      const pipeline = atlasState.nearest ? state.glyphPipelineNearest : state.glyphPipeline;
-      const bindGroup = state.device.createBindGroup({
-        layout: pipeline.getBindGroupLayout(0),
-        entries: atlasState.nearest ? [
-          { binding: 0, resource: { buffer: uniformBuffer } },
-          {
-            binding: 1,
-            resource: atlasState.samplerNearest ?? state.device.createSampler({
-              magFilter: "nearest",
-              minFilter: "nearest",
-              addressModeU: "clamp-to-edge",
-              addressModeV: "clamp-to-edge"
-            })
-          },
-          { binding: 2, resource: atlasState.texture.createView() }
-        ] : [
-          { binding: 0, resource: { buffer: uniformBuffer } },
-          {
-            binding: 1,
-            resource: atlasState.sampler ?? state.device.createSampler({
-              magFilter: "linear",
-              minFilter: "linear",
-              addressModeU: "clamp-to-edge",
-              addressModeV: "clamp-to-edge"
-            })
-          },
-          { binding: 2, resource: atlasState.texture.createView() }
-        ]
-      });
-      const encoder = state.device.createCommandEncoder();
-      const pass = encoder.beginRenderPass({
-        colorAttachments: [
-          {
-            view: renderTarget.createView(),
-            clearValue: { r: 0, g: 0, b: 0, a: 1 },
-            loadOp: "clear",
-            storeOp: "store"
-          }
-        ]
-      });
-      pass.setPipeline(pipeline);
-      pass.setBindGroup(0, bindGroup);
-      pass.setVertexBuffer(0, state.vertexBuffer);
-      pass.setVertexBuffer(1, instanceBuffer);
-      pass.draw(6, 1, 0, 0);
-      pass.end();
-      state.device.queue.submit([encoder.finish()]);
-      const bytesPerRow = outW * 4;
-      const alignedBytesPerRow = Math.ceil(bytesPerRow / 256) * 256;
-      const buffer = state.device.createBuffer({
-        size: alignedBytesPerRow * outH,
-        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ
-      });
-      const readEncoder = state.device.createCommandEncoder();
-      readEncoder.copyTextureToBuffer({ texture: renderTarget }, { buffer, bytesPerRow: alignedBytesPerRow, rowsPerImage: outH }, { width: outW, height: outH, depthOrArrayLayers: 1 });
-      state.device.queue.submit([readEncoder.finish()]);
-      await buffer.mapAsync(GPUMapMode.READ);
-      const mapped = new Uint8Array(buffer.getMappedRange());
-      const out = new Uint8ClampedArray(outW * outH * 4);
-      for (let row = 0;row < outH; row += 1) {
-        const srcStart = row * alignedBytesPerRow;
-        const srcEnd = srcStart + bytesPerRow;
-        const dstStart = row * bytesPerRow;
-        out.set(mapped.subarray(srcStart, srcEnd), dstStart);
-      }
-      buffer.unmap();
-      const image = new ImageData(out, outW, outH);
-      const canvasEl = document.createElement("canvas");
-      canvasEl.width = outW;
-      canvasEl.height = outH;
-      const ctx = canvasEl.getContext("2d");
-      if (ctx)
-        ctx.putImageData(image, 0, 0);
-      canvasEl.style.border = "1px solid #555";
-      canvasEl.style.margin = "6px";
-      canvasEl.style.imageRendering = "pixelated";
-      canvasEl.style.width = `${outW * 3}px`;
-      canvasEl.style.height = `${outH * 3}px`;
-      document.body.appendChild(canvasEl);
-      console.log("dumpGlyphRender", {
-        cp: formatCodepoint(cp),
-        fontIndex,
-        glyphId,
-        constraintWidth: span,
-        metrics,
-        atlasW,
-        atlasH,
-        format: state.format,
-        u0: u02,
-        v0: v02,
-        u1: u12,
-        v1: v12,
-        nearest: atlasState.nearest
-      });
-      return image;
-    };
-  }
-  let configuredFontSources = normalizeFontSources(options.fontSources, options.fontPreset);
-  const gridState = {
-    cols: 0,
-    rows: 0,
-    cellW: 0,
-    cellH: 0,
-    fontSizePx: 0,
-    scale: 1,
-    lineHeight: 0,
-    baselineOffset: 0,
-    yPad: 0
-  };
-  let fontPromise = null;
-  let fontError = null;
-  function log(msg) {
-    appendLog(`[ui] ${msg}`);
-  }
-  function setBoundedMap(map, key, value, limit) {
-    if (map.has(key)) {
-      map.delete(key);
-    }
-    map.set(key, value);
-    if (map.size <= limit)
+  function focusTypingInput() {
+    const canvas = deps.getCanvas();
+    canvas.focus({ preventScroll: true });
+    if (!deps.imeInput)
       return;
-    const oldest = map.keys().next().value;
-    if (oldest !== undefined) {
-      map.delete(oldest);
+    deps.imeInput.focus({ preventScroll: true });
+    if (typeof document !== "undefined" && document.activeElement !== deps.imeInput) {
+      requestAnimationFrame(() => {
+        if (document.activeElement === canvas)
+          deps.imeInput?.focus({ preventScroll: true });
+      });
     }
   }
-  function shouldSuppressWasmLog(text) {
-    for (const filter of WASM_LOG_FILTERS) {
-      if (filter.re.test(text)) {
-        if (!wasmLogNotes.has(filter.note)) {
-          wasmLogNotes.add(filter.note);
-          appendLog(filter.note);
-        }
-        return true;
+  function focus() {
+    focusTypingInput();
+    const canvas = deps.getCanvas();
+    deps.setIsFocused(typeof document !== "undefined" && deps.imeInput ? document.activeElement === canvas || document.activeElement === deps.imeInput : true);
+  }
+  function blur() {
+    const canvas = deps.getCanvas();
+    if (deps.imeInput && document.activeElement === deps.imeInput) {
+      deps.imeInput.blur();
+    }
+    if (document.activeElement === canvas) {
+      canvas.blur();
+    }
+    deps.setIsFocused(false);
+  }
+  function bindFocusEvents() {
+    if (!deps.attachCanvasEvents)
+      return;
+    const canvas = deps.getCanvas();
+    canvas.tabIndex = 0;
+    const handleFocus = () => {
+      deps.setIsFocused(true);
+      focusTypingInput();
+      deps.markNeedsRender();
+      deps.resetLastRenderTime();
+      if (deps.getInputHandler()?.isFocusReporting?.()) {
+        deps.sendKeyInput("\x1B[I", "program");
       }
-    }
-    return false;
+    };
+    const handleBlur = () => {
+      const stillFocused = typeof document !== "undefined" && deps.imeInput ? document.activeElement === deps.imeInput : false;
+      deps.setIsFocused(stillFocused);
+      deps.markNeedsRender();
+      deps.resetLastRenderTime();
+      if (!stillFocused && deps.getInputHandler()?.isFocusReporting?.()) {
+        deps.sendKeyInput("\x1B[O", "program");
+      }
+    };
+    const handlePointerFocus = () => {
+      focusTypingInput();
+    };
+    canvas.addEventListener("pointerdown", handlePointerFocus);
+    canvas.addEventListener("focus", handleFocus);
+    canvas.addEventListener("blur", handleBlur);
+    deps.cleanupCanvasFns.push(() => {
+      canvas.removeEventListener("pointerdown", handlePointerFocus);
+      canvas.removeEventListener("focus", handleFocus);
+      canvas.removeEventListener("blur", handleBlur);
+    });
   }
-  function appendLog(line) {
-    const timestamp = new Date().toISOString().slice(11, 23);
-    const entry = `${timestamp} ${line}`;
-    logBuffer.push(entry);
-    if (logBuffer.length > LOG_LIMIT) {
-      logBuffer.splice(0, logBuffer.length - LOG_LIMIT);
+  function bindAutoResizeEvents() {
+    const hasResizeObserver = deps.autoResize && "ResizeObserver" in window;
+    if (deps.attachWindowEvents && deps.autoResize && !hasResizeObserver) {
+      window.addEventListener("resize", scheduleSizeUpdate);
+      window.addEventListener("load", scheduleSizeUpdate);
+      deps.cleanupFns.push(() => {
+        window.removeEventListener("resize", scheduleSizeUpdate);
+        window.removeEventListener("load", scheduleSizeUpdate);
+      });
     }
-    if (logEl)
-      logEl.textContent = line;
-    callbacks?.onLog?.(entry);
+    if (hasResizeObserver) {
+      const ro = new ResizeObserver(() => scheduleSizeUpdate());
+      const target = deps.getCanvas().parentElement ?? document.body;
+      ro.observe(target);
+      deps.cleanupFns.push(() => ro.disconnect());
+    }
   }
+  function cancelScheduledSizeUpdate() {
+    if (!sizeRaf)
+      return;
+    cancelAnimationFrame(sizeRaf);
+    sizeRaf = 0;
+  }
+  return {
+    replaceCanvas,
+    updateSize,
+    resize,
+    scheduleSizeUpdate,
+    focusTypingInput,
+    focus,
+    blur,
+    bindFocusEvents,
+    bindAutoResizeEvents,
+    cancelScheduledSizeUpdate
+  };
+}
+
+// src/runtime/create-runtime/lifecycle-theme-size-theme.ts
+function createLifecycleThemeHandlers(deps) {
   function applyTheme(theme, sourceLabel = "theme") {
     if (!theme)
       return;
     if (theme.colors.background) {
-      defaultBg = colorToFloats(theme.colors.background, 1);
+      deps.setDefaultBg(colorToFloats(theme.colors.background, 1));
     }
     if (theme.colors.foreground) {
-      defaultFg = colorToFloats(theme.colors.foreground, 1);
+      deps.setDefaultFg(colorToFloats(theme.colors.foreground, 1));
     }
     if (theme.colors.selectionBackground) {
-      selectionColor = colorToFloats(theme.colors.selectionBackground);
+      deps.setSelectionColor(colorToFloats(theme.colors.selectionBackground));
     }
     if (theme.colors.cursor) {
-      cursorFallback = colorToFloats(theme.colors.cursor, 1);
+      deps.setCursorFallback(colorToFloats(theme.colors.cursor, 1));
     }
-    activeTheme = theme;
+    deps.setActiveTheme(theme);
+    const wasmReady = deps.getWasmReady();
+    const wasm = deps.getWasm();
+    const wasmHandle = deps.getWasmHandle();
     if (wasmReady && wasm && wasmHandle) {
       const fg = theme.colors.foreground ? colorToRgbU32(theme.colors.foreground) : 4294967295;
       const bg = theme.colors.background ? colorToRgbU32(theme.colors.background) : 4294967295;
@@ -52784,15 +54595,18 @@ function createResttyApp(options) {
       }
       wasm.renderUpdate(wasmHandle);
     }
-    needsRender = true;
-    appendLog(`[ui] theme applied (${sourceLabel})`);
+    deps.markNeedsRender();
+    deps.appendLog(`[ui] theme applied (${sourceLabel})`);
   }
   function resetTheme() {
-    defaultBg = [...DEFAULT_BG_BASE];
-    defaultFg = [...DEFAULT_FG_BASE];
-    selectionColor = [...SELECTION_BASE];
-    cursorFallback = [...CURSOR_BASE];
-    activeTheme = null;
+    deps.setDefaultBg([...deps.defaultBgBase]);
+    deps.setDefaultFg([...deps.defaultFgBase]);
+    deps.setSelectionColor([...deps.selectionBase]);
+    deps.setCursorFallback([...deps.cursorBase]);
+    deps.setActiveTheme(null);
+    const wasmReady = deps.getWasmReady();
+    const wasm = deps.getWasm();
+    const wasmHandle = deps.getWasmHandle();
     if (wasmReady && wasm && wasmHandle) {
       const fg = 16777215;
       const bg = 0;
@@ -52805,255 +54619,4282 @@ function createResttyApp(options) {
       }
       wasm.renderUpdate(wasmHandle);
     }
-    needsRender = true;
-    appendLog("[ui] theme reset (default)");
+    deps.markNeedsRender();
+    deps.appendLog("[ui] theme reset (default)");
   }
-  let savedCanvasState = null;
-  function saveCanvasState() {
-    savedCanvasState = {
-      width: canvas.width,
-      height: canvas.height,
-      dpr: currentDpr,
-      gridCols: gridState.cols,
-      gridRows: gridState.rows,
-      cellW: gridState.cellW,
-      cellH: gridState.cellH,
-      fontSizePx: gridState.fontSizePx
+  return { applyTheme, resetTheme };
+}
+
+// src/runtime/create-runtime/lifecycle-theme-size.ts
+function createRuntimeLifecycleThemeSize(deps) {
+  const { applyTheme, resetTheme } = createLifecycleThemeHandlers(deps);
+  const {
+    replaceCanvas,
+    updateSize,
+    resize,
+    scheduleSizeUpdate,
+    focusTypingInput,
+    focus,
+    blur,
+    bindFocusEvents,
+    bindAutoResizeEvents,
+    cancelScheduledSizeUpdate
+  } = createLifecycleCanvasHandlers(deps);
+  return {
+    applyTheme,
+    resetTheme,
+    replaceCanvas,
+    updateSize,
+    resize,
+    scheduleSizeUpdate,
+    focusTypingInput,
+    focus,
+    blur,
+    bindFocusEvents,
+    bindAutoResizeEvents,
+    cancelScheduledSizeUpdate,
+    getActiveTheme: deps.getActiveTheme
+  };
+}
+
+// src/runtime/create-runtime/render-tick-webgl-context.ts
+function buildWebGLTickContext(deps, state2) {
+  const {
+    isShaderStagesDirty,
+    rebuildWebGLShaderStages,
+    setShaderStagesDirty,
+    getCompiledWebGLShaderStages,
+    ensureWebGLStageTargets,
+    canvas,
+    defaultBg,
+    fontError,
+    termDebug,
+    reportDebugText,
+    updateGrid,
+    getRenderState,
+    fontState,
+    clearKittyOverlay,
+    resolveBlendFlags: resolveBlendFlags2,
+    alphaBlending,
+    reportTermSize,
+    resolveCursorPosition,
+    reportCursor,
+    FORCE_CURSOR_BLINK,
+    CURSOR_BLINK_MS,
+    imeInput,
+    resolveCursorStyle,
+    isFocused,
+    imeState,
+    resolveImeAnchor: resolveImeAnchor2,
+    gridState,
+    fontHeightUnits: fontHeightUnits2,
+    updateImePosition,
+    fontScaleOverride: fontScaleOverride2,
+    FONT_SCALE_OVERRIDES,
+    isSymbolFont: isSymbolFont2,
+    isColorEmojiFont: isColorEmojiFont2,
+    fontAdvanceUnits: fontAdvanceUnits2,
+    shapeClusterWithFont,
+    fontMaxCellSpan: fontMaxCellSpan2,
+    clamp: clamp2,
+    buildNerdMetrics: buildNerdMetrics2,
+    nerdIconScale
+  } = deps;
+  const { gl } = state2;
+  if (isShaderStagesDirty()) {
+    rebuildWebGLShaderStages(state2);
+    setShaderStagesDirty(false);
+  }
+  const compiledWebGLStages = getCompiledWebGLShaderStages();
+  const stageTargets = compiledWebGLStages.length > 0 ? ensureWebGLStageTargets(state2) : null;
+  const hasShaderStages = compiledWebGLStages.length > 0 && !!stageTargets;
+  gl.viewport(0, 0, canvas.width, canvas.height);
+  gl.bindFramebuffer(gl.FRAMEBUFFER, hasShaderStages && stageTargets ? stageTargets.sceneFramebuffer : null);
+  gl.clearColor(defaultBg[0], defaultBg[1], defaultBg[2], defaultBg[3]);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  if (fontError) {
+    const text2 = `Font error: ${fontError.message}`;
+    if (termDebug)
+      termDebug.textContent = text2;
+    reportDebugText(text2);
+  }
+  updateGrid();
+  const render = getRenderState();
+  if (!render || !fontState.font) {
+    clearKittyOverlay();
+    return null;
+  }
+  deps.lastRenderState = render;
+  const {
+    rows,
+    cols,
+    codepoints,
+    contentTags,
+    wide,
+    styleFlags,
+    linkIds,
+    fgBytes,
+    bgBytes,
+    ulBytes,
+    ulStyle,
+    graphemeOffset,
+    graphemeLen,
+    graphemeBuffer,
+    cursor
+  } = render;
+  if (!codepoints || !fgBytes) {
+    clearKittyOverlay();
+    return null;
+  }
+  const mergedEmojiSkip = new Uint8Array(codepoints.length);
+  const readCellCluster = (cellIndex) => {
+    const flag = wide ? wide[cellIndex] ?? 0 : 0;
+    if (flag === 2 || flag === 3)
+      return null;
+    const cp = codepoints[cellIndex] ?? 0;
+    if (!cp)
+      return null;
+    let text2 = String.fromCodePoint(cp);
+    const extra = graphemeLen && graphemeOffset && graphemeBuffer ? graphemeLen[cellIndex] ?? 0 : 0;
+    if (extra > 0 && graphemeOffset && graphemeBuffer) {
+      const start = graphemeOffset[cellIndex] ?? 0;
+      const cps = [cp];
+      for (let j = 0;j < extra; j += 1) {
+        const extraCp = graphemeBuffer[start + j];
+        if (extraCp)
+          cps.push(extraCp);
+      }
+      text2 = String.fromCodePoint(...cps);
+    }
+    return { cp, text: text2, span: flag === 1 ? 2 : 1 };
+  };
+  const { useLinearBlending, useLinearCorrection } = resolveBlendFlags2(alphaBlending, "webgl2");
+  reportTermSize(cols, rows);
+  const cursorPos = cursor ? resolveCursorPosition(cursor) : null;
+  reportCursor(cursorPos);
+  const isBlinking = (cursor?.blinking || 0) !== 0 || FORCE_CURSOR_BLINK;
+  const blinkVisible = !isBlinking || Math.floor(performance.now() / CURSOR_BLINK_MS) % 2 === 0;
+  const imeFocused = typeof document !== "undefined" && imeInput ? document.activeElement === imeInput : false;
+  const cursorStyle = cursor ? resolveCursorStyle(cursor, {
+    focused: isFocused || imeFocused,
+    preedit: Boolean(imeState.preedit),
+    blinkVisible
+  }) : null;
+  let cursorCell = null;
+  if (cursorStyle !== null && cursorPos) {
+    let col = cursorPos.col;
+    const row = cursorPos.row;
+    let wideCell = false;
+    if (cursorPos.wideTail && col > 0) {
+      col -= 1;
+      wideCell = true;
+    }
+    cursorCell = { row, col, wide: wideCell };
+  }
+  const cursorImeAnchor = resolveImeAnchor2(cursorPos, cols, rows);
+  const cellW = gridState.cellW || canvas.width / cols;
+  const cellH = gridState.cellH || canvas.height / rows;
+  const fontSizePx = gridState.fontSizePx || Math.max(1, Math.round(cellH));
+  const primaryEntry = fontState.fonts[0];
+  const primaryScale = gridState.scale || fontState.font.scaleForSize(fontSizePx, fontState.sizeMode);
+  const lineHeight = gridState.lineHeight || fontHeightUnits2(fontState.font) * primaryScale;
+  const baselineOffset = gridState.baselineOffset || fontState.font.ascender * primaryScale;
+  const yPad = gridState.yPad ?? (cellH - lineHeight) / 2;
+  const post = fontState.font.post;
+  const underlinePosition = post?.underlinePosition ?? Math.round(-fontState.font.upem * 0.08);
+  const underlineThickness = post?.underlineThickness ?? Math.round(fontState.font.upem * 0.05);
+  const underlineOffsetPx = -underlinePosition * primaryScale;
+  const underlineThicknessPx = Math.max(1, Math.ceil(underlineThickness * primaryScale));
+  if (cursorImeAnchor) {
+    updateImePosition(cursorImeAnchor, cellW, cellH);
+  }
+  const bgData = [];
+  const selectionData = [];
+  const underlineData = [];
+  const cursorData = [];
+  const fgRectData = [];
+  const overlayData = [];
+  const glyphDataByFont = new Map;
+  const glyphQueueByFont = new Map;
+  const overlayGlyphDataByFont = new Map;
+  const overlayGlyphQueueByFont = new Map;
+  const neededGlyphIdsByFont = new Map;
+  const neededGlyphMetaByFont = new Map;
+  const fgColorCache = new Map;
+  const bgColorCache = new Map;
+  const ulColorCache = new Map;
+  const baseScaleByFont = fontState.fonts.map((entry, idx) => {
+    if (!entry?.font)
+      return primaryScale;
+    if (idx === 0)
+      return primaryScale;
+    return entry.font.scaleForSize(fontSizePx, fontState.sizeMode) * fontScaleOverride2(entry, FONT_SCALE_OVERRIDES);
+  });
+  const scaleByFont = fontState.fonts.map((entry, idx) => {
+    if (!entry?.font)
+      return primaryScale;
+    if (idx === 0)
+      return primaryScale;
+    const baseScale = baseScaleByFont[idx] ?? primaryScale;
+    if (isSymbolFont2(entry) || isColorEmojiFont2(entry))
+      return baseScale;
+    const advanceUnits = fontAdvanceUnits2(entry, shapeClusterWithFont);
+    const maxSpan = fontMaxCellSpan2(entry);
+    const widthPx = advanceUnits * baseScale;
+    const widthAdjustRaw = widthPx > 0 ? cellW * maxSpan / widthPx : 1;
+    const widthAdjust = clamp2(widthAdjustRaw, 0.5, 2);
+    let adjustedScale = baseScale * widthAdjust;
+    const adjustedHeightPx = fontHeightUnits2(entry.font) * adjustedScale;
+    if (adjustedHeightPx > lineHeight && adjustedHeightPx > 0) {
+      adjustedScale *= lineHeight / adjustedHeightPx;
+    }
+    return adjustedScale;
+  });
+  const bitmapScaleByFont = fontState.fonts.map((entry, idx) => {
+    if (!entry?.font || idx === 0)
+      return 1;
+    if (isSymbolFont2(entry))
+      return 1;
+    const baseScale = baseScaleByFont[idx] ?? 0;
+    if (baseScale <= 0)
+      return 1;
+    const targetScale = scaleByFont[idx] ?? baseScale;
+    return clamp2(targetScale / baseScale, 0.5, 2);
+  });
+  const baselineAdjustByFont = fontState.fonts.map((entry, idx) => {
+    if (!entry?.font || idx === 0 || !primaryEntry?.font)
+      return 0;
+    const scale = scaleByFont[idx] ?? primaryScale;
+    return primaryEntry.font.ascender * primaryScale - entry.font.ascender * scale;
+  });
+  const nerdMetrics = buildNerdMetrics2(cellW, cellH, lineHeight, primaryEntry?.font, primaryScale, nerdIconScale);
+  const getGlyphQueue = (fontIndex) => {
+    if (!glyphQueueByFont.has(fontIndex))
+      glyphQueueByFont.set(fontIndex, []);
+    return glyphQueueByFont.get(fontIndex);
+  };
+  const getOverlayGlyphQueue = (fontIndex) => {
+    if (!overlayGlyphQueueByFont.has(fontIndex))
+      overlayGlyphQueueByFont.set(fontIndex, []);
+    return overlayGlyphQueueByFont.get(fontIndex);
+  };
+  const getGlyphSet = (fontIndex) => {
+    if (!neededGlyphIdsByFont.has(fontIndex))
+      neededGlyphIdsByFont.set(fontIndex, new Set);
+    return neededGlyphIdsByFont.get(fontIndex);
+  };
+  const getGlyphMeta = (fontIndex) => {
+    if (!neededGlyphMetaByFont.has(fontIndex))
+      neededGlyphMetaByFont.set(fontIndex, new Map);
+    return neededGlyphMetaByFont.get(fontIndex);
+  };
+  const noteGlyphMeta = (fontIndex, glyphId, cp, constraintWidth) => {
+    if (!glyphId || !cp)
+      return;
+    const meta = getGlyphMeta(fontIndex);
+    const prev = meta.get(glyphId);
+    if (!prev) {
+      const width = Math.max(1, constraintWidth || 1);
+      meta.set(glyphId, {
+        cp,
+        constraintWidth: width,
+        widths: new Set([width]),
+        variable: false
+      });
+      return;
+    }
+    if (prev.constraintWidth !== constraintWidth) {
+      prev.widths?.add(Math.max(1, constraintWidth || 1));
+      meta.set(glyphId, {
+        ...prev,
+        constraintWidth: Math.min(prev.constraintWidth, Math.max(1, constraintWidth || 1)),
+        variable: true
+      });
+    }
+  };
+  const getGlyphData = (map, fontIndex) => {
+    if (!map.has(fontIndex))
+      map.set(fontIndex, []);
+    return map.get(fontIndex);
+  };
+  return {
+    deps,
+    state: state2,
+    rows,
+    cols,
+    codepoints,
+    contentTags,
+    wide,
+    styleFlags,
+    linkIds,
+    fgBytes,
+    bgBytes,
+    ulBytes,
+    ulStyle,
+    graphemeOffset,
+    graphemeLen,
+    graphemeBuffer,
+    cursor,
+    mergedEmojiSkip,
+    readCellCluster,
+    useLinearBlending,
+    useLinearCorrection,
+    blinkVisible,
+    cursorPos,
+    cursorStyle,
+    cursorCell,
+    cursorImeAnchor,
+    cellW,
+    cellH,
+    fontSizePx,
+    primaryEntry,
+    primaryScale,
+    lineHeight,
+    baselineOffset,
+    yPad,
+    underlineOffsetPx,
+    underlineThicknessPx,
+    bgData,
+    selectionData,
+    underlineData,
+    cursorData,
+    fgRectData,
+    overlayData,
+    glyphDataByFont,
+    glyphQueueByFont,
+    overlayGlyphDataByFont,
+    overlayGlyphQueueByFont,
+    neededGlyphIdsByFont,
+    neededGlyphMetaByFont,
+    fgColorCache,
+    bgColorCache,
+    ulColorCache,
+    scaleByFont,
+    bitmapScaleByFont,
+    baselineAdjustByFont,
+    nerdMetrics,
+    getGlyphQueue,
+    getOverlayGlyphQueue,
+    getGlyphSet,
+    noteGlyphMeta,
+    getGlyphData,
+    compiledWebGLStages,
+    stageTargets,
+    hasShaderStages
+  };
+}
+
+// src/runtime/create-runtime/render-tick-webgl-glyph-pipeline.ts
+function renderWebGLGlyphPipeline(ctx) {
+  const {
+    deps,
+    state: state2,
+    cellW,
+    cellH,
+    fontSizePx,
+    primaryScale,
+    baselineOffset,
+    yPad,
+    bgData,
+    selectionData,
+    underlineData,
+    cursorData,
+    fgRectData,
+    overlayData,
+    glyphDataByFont,
+    glyphQueueByFont,
+    overlayGlyphDataByFont,
+    overlayGlyphQueueByFont,
+    neededGlyphIdsByFont,
+    neededGlyphMetaByFont,
+    scaleByFont,
+    bitmapScaleByFont,
+    baselineAdjustByFont,
+    nerdMetrics,
+    getGlyphData,
+    useLinearBlending,
+    useLinearCorrection,
+    compiledWebGLStages,
+    stageTargets,
+    hasShaderStages
+  } = ctx;
+  const {
+    fontState,
+    defaultBg,
+    buildFontAtlasIfNeeded: buildFontAtlasIfNeeded2,
+    FONT_SCALE_OVERRIDES,
+    isSymbolFont: isSymbolFont2,
+    fontScaleOverride: fontScaleOverride2,
+    resolveGlyphPixelMode: resolveGlyphPixelMode2,
+    atlasBitmapToRGBA: atlasBitmapToRGBA2,
+    padAtlasRGBA: padAtlasRGBA2,
+    buildAtlas,
+    buildGlyphAtlasWithConstraints: buildGlyphAtlasWithConstraints2,
+    buildColorEmojiAtlasWithCanvas,
+    rasterizeGlyph,
+    rasterizeGlyphWithTransform,
+    nerdConstraintSignature: nerdConstraintSignature2,
+    ATLAS_PADDING,
+    SYMBOL_ATLAS_PADDING,
+    SYMBOL_ATLAS_MAX_SIZE,
+    PixelMode,
+    resolveSymbolConstraint: resolveSymbolConstraint2,
+    isAppleSymbolsFont: isAppleSymbolsFont2,
+    DEFAULT_APPLE_SYMBOLS_CONSTRAINT: DEFAULT_APPLE_SYMBOLS_CONSTRAINT2,
+    DEFAULT_SYMBOL_CONSTRAINT: DEFAULT_SYMBOL_CONSTRAINT2,
+    DEFAULT_EMOJI_CONSTRAINT: DEFAULT_EMOJI_CONSTRAINT2,
+    constrainGlyphBox: constrainGlyphBox2,
+    tightenNerdConstraintBox: tightenNerdConstraintBox2,
+    fontEntryHasItalicStyle: fontEntryHasItalicStyle2,
+    fontEntryHasBoldStyle: fontEntryHasBoldStyle2,
+    ITALIC_SLANT,
+    BOLD_OFFSET,
+    GLYPH_RENDER_MODE_COLOR,
+    GLYPH_RENDER_MODE_MONO,
+    ensureGLInstanceBuffer: ensureGLInstanceBuffer2,
+    GLYPH_INSTANCE_FLOATS,
+    clamp: clamp2,
+    canvas
+  } = deps;
+  const { gl } = state2;
+  for (const [fontIndex, neededIds] of neededGlyphIdsByFont.entries()) {
+    const fontEntry = fontState.fonts[fontIndex];
+    if (!fontEntry?.font)
+      continue;
+    let atlasState = state2.glyphAtlases.get(fontIndex);
+    const meta = neededGlyphMetaByFont.get(fontIndex);
+    const bitmapScale = bitmapScaleByFont[fontIndex] ?? 1;
+    const constraintContext = meta ? {
+      cellW,
+      cellH,
+      yPad,
+      baselineOffset,
+      baselineAdjust: baselineAdjustByFont[fontIndex] ?? 0,
+      fontScale: scaleByFont[fontIndex] ?? primaryScale,
+      nerdMetrics,
+      fontEntry
+    } : null;
+    const built = buildFontAtlasIfNeeded2({
+      entry: fontEntry,
+      neededGlyphIds: neededIds,
+      glyphMeta: meta,
+      fontSizePx,
+      atlasScale: bitmapScale,
+      fontIndex,
+      constraintContext,
+      deps: {
+        fontScaleOverrides: FONT_SCALE_OVERRIDES,
+        sizeMode: fontState.sizeMode,
+        isSymbolFont: isSymbolFont2,
+        fontScaleOverride: fontScaleOverride2,
+        resolveGlyphPixelMode: resolveGlyphPixelMode2,
+        atlasBitmapToRGBA: atlasBitmapToRGBA2,
+        padAtlasRGBA: padAtlasRGBA2,
+        buildAtlas,
+        buildGlyphAtlasWithConstraints: buildGlyphAtlasWithConstraints2,
+        buildColorEmojiAtlasWithCanvas,
+        rasterizeGlyph,
+        rasterizeGlyphWithTransform,
+        nerdConstraintSignature: nerdConstraintSignature2,
+        constants: {
+          atlasPadding: ATLAS_PADDING,
+          symbolAtlasPadding: SYMBOL_ATLAS_PADDING,
+          symbolAtlasMaxSize: SYMBOL_ATLAS_MAX_SIZE,
+          defaultAtlasMaxSize: 2048,
+          pixelModeRgbaValue: PixelMode.RGBA ?? 4
+        },
+        resolvePreferNearest: ({ fontIndex: idx, isSymbol }) => idx === 0 || isSymbol
+      }
+    });
+    if (!built.rebuilt || !built.atlas || !built.rgba)
+      continue;
+    const atlas = built.atlas;
+    const colorGlyphs = built.colorGlyphs;
+    const rgba = built.rgba;
+    const preferNearest = built.preferNearest;
+    if (atlasState) {
+      gl.deleteTexture(atlasState.texture);
+    }
+    const texture = gl.createTexture();
+    if (!texture)
+      continue;
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, atlas.bitmap.width, atlas.bitmap.rows, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(rgba));
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, preferNearest ? gl.NEAREST : gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, preferNearest ? gl.NEAREST : gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    atlasState = {
+      texture,
+      width: atlas.bitmap.width,
+      height: atlas.bitmap.rows,
+      inset: atlas.inset,
+      colorGlyphs,
+      nearest: preferNearest
     };
-    console.log(`[saveCanvasState] ${savedCanvasState.width}x${savedCanvasState.height} grid=${savedCanvasState.gridCols}x${savedCanvasState.gridRows}`);
+    state2.glyphAtlases.set(fontIndex, atlasState);
   }
-  function restoreCanvasState() {
-    if (!savedCanvasState)
+  const emitGlyphs = (queueByFont, targetMap) => {
+    for (const [fontIndex, queue] of queueByFont.entries()) {
+      const entry = fontState.fonts[fontIndex];
+      const atlasState = state2.glyphAtlases?.get(fontIndex);
+      if (!entry || !entry.atlas || !atlasState)
+        continue;
+      const atlas = entry.atlas;
+      const atlasW = atlas.bitmap.width;
+      const atlasH = atlas.bitmap.rows;
+      const baseInset = Number.isFinite(atlas.inset) ? atlas.inset : 0;
+      const uvInset = baseInset + (atlasState.nearest ? 0.5 : 0);
+      const colorGlyphs = atlasState.colorGlyphs ?? atlas.colorGlyphs;
+      const glyphData = getGlyphData(targetMap, fontIndex);
+      for (const item of queue) {
+        const bg = item.bg ?? defaultBg;
+        let penX = 0;
+        const scale = item.scale ?? primaryScale;
+        const maxWidth = item.cellWidth ?? cellW;
+        const maxHeight = cellH;
+        const symbolLike = item.symbolLike;
+        const symbolConstraint = item.symbolConstraint;
+        let itemScale = scale;
+        if (!symbolConstraint) {
+          if (item.forceFit && item.glyphWidthPx && maxWidth > 0) {
+            const fit = maxWidth / item.glyphWidthPx;
+            if (fit > 0 && fit < 1)
+              itemScale = scale * fit;
+          }
+          if (!symbolLike) {
+            const advancePx = item.shaped.advance * scale;
+            if (advancePx > maxWidth && advancePx > 0) {
+              itemScale = scale * (maxWidth / advancePx);
+            }
+          }
+        }
+        const scaleFactor = scale > 0 ? itemScale / scale : 1;
+        const widthKey = item.constraintWidth ?? 0;
+        const widthMap = atlas.glyphsByWidth?.get(widthKey);
+        for (const glyph of item.shaped.glyphs) {
+          const colorGlyph = !!colorGlyphs?.has(glyph.glyphId);
+          const metrics = widthMap?.get(glyph.glyphId) ?? atlas.glyphs.get(glyph.glyphId);
+          if (!metrics)
+            continue;
+          let bitmapScale = scaleFactor;
+          const glyphConstrained = symbolLike && !!widthMap?.has(glyph.glyphId);
+          if (glyphConstrained)
+            bitmapScale = 1;
+          if (fontIndex > 0 && !symbolLike) {
+            const widthScale = maxWidth > 0 ? maxWidth / metrics.width : 1;
+            const heightScale = maxHeight > 0 ? maxHeight / metrics.height : 1;
+            const clampScale = Math.min(1, widthScale, heightScale);
+            bitmapScale *= clampScale;
+          }
+          const baselineAdjust = baselineAdjustByFont[fontIndex] ?? 0;
+          let gw = metrics.width * bitmapScale;
+          let gh = metrics.height * bitmapScale;
+          if (symbolLike && !glyphConstrained) {
+            const scaleToFit = gw > 0 && gh > 0 ? Math.min(maxWidth / gw, maxHeight / gh) : 1;
+            if (scaleToFit < 1) {
+              bitmapScale *= scaleToFit;
+              gw *= scaleToFit;
+              gh *= scaleToFit;
+            }
+            gw = Math.round(gw);
+            gh = Math.round(gh);
+          }
+          let x3 = item.x + item.xPad + (penX + glyph.xOffset) * itemScale + metrics.bearingX * bitmapScale;
+          if (fontIndex > 0 && item.shaped.glyphs.length === 1 && !symbolLike && maxWidth <= cellW * 1.05) {
+            const center = item.x + (maxWidth - gw) * 0.5;
+            x3 = center;
+          }
+          const minX = item.x;
+          const maxX = item.x + maxWidth;
+          if (x3 < minX)
+            x3 = minX;
+          if (x3 + gw > maxX)
+            x3 = Math.max(minX, maxX - gw);
+          let y = item.baseY + baselineAdjust - metrics.bearingY * bitmapScale - glyph.yOffset * itemScale;
+          if (!glyphConstrained && symbolLike && item.cp) {
+            const nerdConstraint = resolveSymbolConstraint2(item.cp);
+            const defaultConstraint = isAppleSymbolsFont2(entry) ? DEFAULT_APPLE_SYMBOLS_CONSTRAINT2 : DEFAULT_SYMBOL_CONSTRAINT2;
+            const constraint = nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT2 : defaultConstraint);
+            const rowY = item.baseY - yPad - baselineOffset;
+            const constraintWidth = Math.max(1, item.constraintWidth ?? Math.round(maxWidth / cellW));
+            const adjusted = constrainGlyphBox2({
+              x: x3 - item.x,
+              y: y - rowY,
+              width: gw,
+              height: gh
+            }, constraint, nerdMetrics, constraintWidth);
+            const tightened = nerdConstraint ? tightenNerdConstraintBox2(adjusted, nerdConstraint) : adjusted;
+            x3 = item.x + tightened.x;
+            y = rowY + tightened.y;
+            gw = tightened.width;
+            gh = tightened.height;
+          }
+          if (gw < 1)
+            gw = 1;
+          if (gh < 1)
+            gh = 1;
+          const px = Math.round(x3);
+          const py = Math.round(y);
+          const insetX = Math.min(uvInset, (metrics.width - 1) * 0.5);
+          const insetY = Math.min(uvInset, (metrics.height - 1) * 0.5);
+          const u02 = (metrics.atlasX + insetX) / atlasW;
+          const v02 = (metrics.atlasY + insetY) / atlasH;
+          const u12 = (metrics.atlasX + metrics.width - insetX) / atlasW;
+          const v12 = (metrics.atlasY + metrics.height - insetY) / atlasH;
+          const italic = !!item.italic;
+          const bold = !!item.bold;
+          const syntheticItalic = italic && !fontEntryHasItalicStyle2(entry);
+          const syntheticBold = bold && !fontEntryHasBoldStyle2(entry);
+          const slant = syntheticItalic && !colorGlyph ? gh * ITALIC_SLANT : 0;
+          const boldOffset = syntheticBold && !colorGlyph ? Math.max(1, Math.round(gw * BOLD_OFFSET)) : 0;
+          const renderMode = colorGlyph ? GLYPH_RENDER_MODE_COLOR : GLYPH_RENDER_MODE_MONO;
+          const pushGlyph = (xPos) => {
+            glyphData.push(xPos, py, gw, gh, u02, v02, u12, v12, item.fg[0], item.fg[1], item.fg[2], item.fg[3], bg[0], bg[1], bg[2], bg[3], slant, renderMode);
+          };
+          pushGlyph(px);
+          if (boldOffset > 0) {
+            const minGlyphX = Math.round(item.x);
+            const maxGlyphX = Math.round(item.x + maxWidth - gw);
+            let bx = clamp2(px + boldOffset, minGlyphX, maxGlyphX);
+            if (bx === px)
+              bx = clamp2(px - boldOffset, minGlyphX, maxGlyphX);
+            if (bx === px)
+              pushGlyph(px);
+            else
+              pushGlyph(bx);
+          }
+          penX += glyph.xAdvance;
+        }
+      }
+    }
+  };
+  emitGlyphs(glyphQueueByFont, glyphDataByFont);
+  emitGlyphs(overlayGlyphQueueByFont, overlayGlyphDataByFont);
+  const drawRects = (data) => {
+    if (!data.length)
       return;
-    canvas.width = savedCanvasState.width;
-    canvas.height = savedCanvasState.height;
-    currentDpr = savedCanvasState.dpr;
-    gridState.cols = savedCanvasState.gridCols;
-    gridState.rows = savedCanvasState.gridRows;
-    gridState.cellW = savedCanvasState.cellW;
-    gridState.cellH = savedCanvasState.cellH;
-    gridState.fontSizePx = savedCanvasState.fontSizePx;
-    console.log(`[restoreCanvasState] ${canvas.width}x${canvas.height} grid=${gridState.cols}x${gridState.rows}`);
-    savedCanvasState = null;
+    const rectArray = new Float32Array(data);
+    ensureGLInstanceBuffer2(state2, "rect", rectArray.byteLength);
+    gl.bindVertexArray(state2.rectVao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, state2.rectInstanceBuffer);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, rectArray);
+    gl.useProgram(state2.rectProgram);
+    gl.uniform2f(state2.rectResolutionLoc, canvas.width, canvas.height);
+    gl.uniform2f(state2.rectBlendLoc, useLinearBlending ? 1 : 0, useLinearCorrection ? 1 : 0);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, data.length / 8);
+    gl.bindVertexArray(null);
+  };
+  const drawGlyphs = (fontIndex, data) => {
+    if (!data.length)
+      return;
+    const atlasState = state2.glyphAtlases.get(fontIndex);
+    if (!atlasState)
+      return;
+    const glyphArray = new Float32Array(data);
+    ensureGLInstanceBuffer2(state2, "glyph", glyphArray.byteLength);
+    gl.bindVertexArray(state2.glyphVao);
+    gl.bindBuffer(gl.ARRAY_BUFFER, state2.glyphInstanceBuffer);
+    gl.bufferSubData(gl.ARRAY_BUFFER, 0, glyphArray);
+    gl.useProgram(state2.glyphProgram);
+    gl.uniform2f(state2.glyphResolutionLoc, canvas.width, canvas.height);
+    gl.uniform2f(state2.glyphBlendLoc, useLinearBlending ? 1 : 0, useLinearCorrection ? 1 : 0);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, atlasState.texture);
+    gl.uniform1i(state2.glyphAtlasLoc, 0);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+    gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, data.length / GLYPH_INSTANCE_FLOATS);
+    gl.bindVertexArray(null);
+  };
+  drawRects(bgData);
+  drawRects(selectionData);
+  drawRects(underlineData);
+  drawRects(fgRectData);
+  for (const [fontIndex, glyphData] of glyphDataByFont.entries()) {
+    drawGlyphs(fontIndex, glyphData);
   }
-  function replaceCanvas() {
-    const parent = canvas.parentElement;
-    if (!parent)
+  drawRects(cursorData);
+  drawRects(overlayData);
+  for (const [fontIndex, glyphData] of overlayGlyphDataByFont.entries()) {
+    drawGlyphs(fontIndex, glyphData);
+  }
+  if (hasShaderStages && stageTargets) {
+    gl.disable(gl.BLEND);
+    gl.bindVertexArray(stageTargets.quadVao);
+    const nowSec = performance.now() * 0.001;
+    let sourceTex = stageTargets.sceneTexture;
+    for (let i3 = 0;i3 < compiledWebGLStages.length; i3 += 1) {
+      const stage = compiledWebGLStages[i3];
+      const isLast = i3 === compiledWebGLStages.length - 1;
+      const nextIsPing = sourceTex === stageTargets.sceneTexture || sourceTex === stageTargets.pongTexture;
+      const targetFramebuffer = isLast ? null : nextIsPing ? stageTargets.pingFramebuffer : stageTargets.pongFramebuffer;
+      const nextTexture = nextIsPing ? stageTargets.pingTexture : stageTargets.pongTexture;
+      gl.bindFramebuffer(gl.FRAMEBUFFER, targetFramebuffer);
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.useProgram(stage.program);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, sourceTex);
+      gl.uniform1i(stage.sourceLoc, 0);
+      gl.uniform2f(stage.resolutionLoc, canvas.width, canvas.height);
+      gl.uniform1f(stage.timeLoc, nowSec);
+      gl.uniform4f(stage.params0Loc, stage.params[0] ?? 0, stage.params[1] ?? 0, stage.params[2] ?? 0, stage.params[3] ?? 0);
+      gl.uniform4f(stage.params1Loc, stage.params[4] ?? 0, stage.params[5] ?? 0, stage.params[6] ?? 0, stage.params[7] ?? 0);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+      sourceTex = nextTexture;
+    }
+    gl.bindVertexArray(null);
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+  } else {
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  }
+}
+
+// src/runtime/create-runtime/render-tick-webgl-overlays.ts
+function populateWebGLOverlays(ctx) {
+  const {
+    deps,
+    rows,
+    cols,
+    cursor,
+    cursorPos,
+    cursorStyle,
+    cursorCell,
+    cursorImeAnchor,
+    cellW,
+    cellH,
+    primaryScale,
+    lineHeight,
+    baselineOffset,
+    yPad,
+    underlineOffsetPx,
+    underlineThicknessPx,
+    bgData,
+    underlineData,
+    cursorData,
+    fgRectData,
+    overlayData,
+    scaleByFont,
+    getGlyphQueue,
+    getOverlayGlyphQueue,
+    getGlyphSet
+  } = ctx;
+  const {
+    fontState,
+    pickFontIndexForText,
+    fitTextTailToWidth: fitTextTailToWidth2,
+    shapeClusterWithFont,
+    noteColorGlyphText,
+    imeState,
+    PREEDIT_BG: PREEDIT_BG2,
+    PREEDIT_UL: PREEDIT_UL2,
+    PREEDIT_ACTIVE_BG: PREEDIT_ACTIVE_BG2,
+    PREEDIT_CARET: PREEDIT_CARET2,
+    PREEDIT_FG: PREEDIT_FG2,
+    resizeState,
+    RESIZE_OVERLAY_HOLD_MS,
+    RESIZE_OVERLAY_FADE_MS,
+    canvas,
+    pushRect: pushRect2,
+    pushRectBox: pushRectBox2,
+    decodePackedRGBA: decodePackedRGBA2,
+    cursorFallback,
+    clamp: clamp2,
+    wasmExports,
+    wasmHandle,
+    scrollbarState,
+    appendOverlayScrollbar
+  } = deps;
+  if (cursor && imeState.preedit) {
+    const preeditText = imeState.preedit;
+    const preeditFontIndex = pickFontIndexForText(preeditText, 1);
+    const preeditEntry = fontState.fonts[preeditFontIndex] ?? fontState.fonts[0];
+    const preeditScale = scaleByFont[preeditFontIndex] ?? primaryScale;
+    const preeditRow = cursorImeAnchor?.row ?? cursorCell?.row ?? cursor.row;
+    const preeditCol = cursorImeAnchor?.col ?? cursorCell?.col ?? cursor.col;
+    const maxPreeditWidthPx = Math.max(cellW, (cols - preeditCol) * cellW);
+    const fittedPreedit = fitTextTailToWidth2(preeditText, maxPreeditWidthPx, (value) => {
+      if (!value)
+        return 0;
+      return shapeClusterWithFont(preeditEntry, value).advance * preeditScale;
+    });
+    const visiblePreeditText = fittedPreedit.text;
+    if (!visiblePreeditText) {} else {
+      const shaped = shapeClusterWithFont(preeditEntry, visiblePreeditText);
+      noteColorGlyphText(preeditEntry, visiblePreeditText, shaped);
+      const glyphSet = getGlyphSet(preeditFontIndex);
+      for (const glyph of shaped.glyphs)
+        glyphSet.add(glyph.glyphId);
+      const baseY = preeditRow * cellH + yPad + baselineOffset;
+      const x3 = preeditCol * cellW;
+      const advancePx = shaped.advance * preeditScale;
+      const widthPx = Math.max(cellW, Math.min(maxPreeditWidthPx, Math.max(fittedPreedit.widthPx, advancePx)));
+      const rowY = preeditRow * cellH;
+      pushRect2(bgData, x3, rowY, widthPx, cellH, PREEDIT_BG2);
+      const thickness = underlineThicknessPx;
+      const underlineBaseY = clamp2(baseY + underlineOffsetPx, rowY + 1, rowY + cellH - thickness - 1);
+      pushRect2(underlineData, x3, underlineBaseY, widthPx, thickness, PREEDIT_UL2);
+      const selectionOffset = fittedPreedit.offset;
+      const rawSelStart = imeState.selectionStart || 0;
+      const rawSelEnd = imeState.selectionEnd || 0;
+      const selStart = Math.max(0, Math.min(visiblePreeditText.length, rawSelStart - selectionOffset));
+      const selEnd = Math.max(selStart, Math.min(visiblePreeditText.length, rawSelEnd - selectionOffset));
+      if (selEnd > selStart) {
+        const leftWidth = shapeClusterWithFont(preeditEntry, visiblePreeditText.slice(0, selStart)).advance * preeditScale;
+        const selWidth = shapeClusterWithFont(preeditEntry, visiblePreeditText.slice(selStart, selEnd)).advance * preeditScale;
+        pushRect2(bgData, x3 + leftWidth, rowY, selWidth, cellH, PREEDIT_ACTIVE_BG2);
+        pushRect2(underlineData, x3 + leftWidth, underlineBaseY, selWidth, thickness, PREEDIT_UL2);
+      } else {
+        const caretWidth = Math.max(1, Math.floor(cellW * 0.1));
+        const caretX = x3 + shapeClusterWithFont(preeditEntry, visiblePreeditText.slice(0, selStart)).advance * preeditScale;
+        pushRect2(cursorData, caretX, rowY + 2, caretWidth, cellH - 4, PREEDIT_CARET2);
+      }
+      getGlyphQueue(preeditFontIndex).push({
+        x: x3,
+        baseY,
+        xPad: 0,
+        fg: PREEDIT_FG2,
+        bg: PREEDIT_BG2,
+        shaped,
+        fontIndex: preeditFontIndex,
+        scale: preeditScale,
+        cellWidth: widthPx,
+        symbolLike: false
+      });
+    }
+  }
+  const resizeAge = performance.now() - resizeState.lastAt;
+  if (resizeState.cols > 0 && resizeState.rows > 0 && resizeAge >= 0 && resizeAge < RESIZE_OVERLAY_HOLD_MS + RESIZE_OVERLAY_FADE_MS) {
+    const fade2 = resizeAge <= RESIZE_OVERLAY_HOLD_MS ? 1 : 1 - (resizeAge - RESIZE_OVERLAY_HOLD_MS) / RESIZE_OVERLAY_FADE_MS;
+    const alpha = clamp2(fade2, 0, 1);
+    if (alpha > 0.01) {
+      const overlayText = `${resizeState.cols}x${resizeState.rows}`;
+      const overlayEntry = fontState.fonts[0];
+      if (overlayEntry?.font) {
+        const shaped = shapeClusterWithFont(overlayEntry, overlayText);
+        const glyphSet = getGlyphSet(0);
+        for (const glyph of shaped.glyphs)
+          glyphSet.add(glyph.glyphId);
+        const textWidth = shaped.advance * primaryScale;
+        const padX = Math.max(8, cellW * 0.6);
+        const padY = Math.max(6, cellH * 0.4);
+        const boxW = textWidth + padX * 2;
+        const boxH = lineHeight + padY * 2;
+        const boxX = (canvas.width - boxW) * 0.5;
+        const boxY = (canvas.height - boxH) * 0.5;
+        const overlayBg = [0, 0, 0, 0.6 * alpha];
+        pushRectBox2(overlayData, boxX, boxY, boxW, boxH, overlayBg);
+        pushRectBox2(overlayData, boxX, boxY, boxW, 1, [1, 1, 1, 0.12 * alpha]);
+        const textRowY = boxY + (boxH - lineHeight) * 0.5;
+        const baseY = textRowY + yPad + baselineOffset;
+        getOverlayGlyphQueue(0).push({
+          x: boxX + padX,
+          baseY,
+          xPad: 0,
+          fg: [1, 1, 1, alpha],
+          bg: overlayBg,
+          shaped,
+          fontIndex: 0,
+          scale: primaryScale,
+          cellWidth: textWidth,
+          symbolLike: false
+        });
+      }
+    }
+  }
+  if (cursorStyle !== null && cursorPos) {
+    let cursorCol = cursorPos.col;
+    let cursorRow = cursorPos.row;
+    let cursorWidth = cellW;
+    if (cursorPos.wideTail && cursorCol > 0) {
+      cursorCol -= 1;
+      cursorWidth = cellW * 2;
+    }
+    if (cursorRow < rows && cursorCol < cols) {
+      const x3 = cursorCol * cellW;
+      const y = cursorRow * cellH;
+      const cursorColor = cursor?.color ? decodePackedRGBA2(cursor.color) : cursorFallback;
+      const cursorThicknessPx = underlineThicknessPx;
+      if (cursorStyle === 0) {
+        pushRect2(fgRectData, x3, y, cursorWidth, cellH, cursorColor);
+      } else if (cursorStyle === 1) {
+        const offset = Math.floor((cursorThicknessPx + 1) / 2);
+        pushRect2(cursorData, x3 - offset, y, cursorThicknessPx, cellH, cursorColor);
+      } else if (cursorStyle === 2) {
+        const baseY = cursorRow * cellH + yPad + baselineOffset;
+        const underlineY = clamp2(baseY + underlineOffsetPx, y + 1, y + cellH - cursorThicknessPx - 1);
+        pushRect2(cursorData, x3, underlineY, cursorWidth, cursorThicknessPx, cursorColor);
+      } else if (cursorStyle === 3) {
+        pushRect2(cursorData, x3, y, cursorWidth, cursorThicknessPx, cursorColor);
+        pushRect2(cursorData, x3, y + cellH - cursorThicknessPx, cursorWidth, cursorThicknessPx, cursorColor);
+        pushRect2(cursorData, x3, y, cursorThicknessPx, cellH, cursorColor);
+        pushRect2(cursorData, x3 + cursorWidth - cursorThicknessPx, y, cursorThicknessPx, cellH, cursorColor);
+      } else {
+        pushRect2(cursorData, x3, y, cursorWidth, cellH, cursorColor);
+      }
+    }
+  }
+  if (wasmExports && wasmHandle && wasmExports.restty_scrollbar_total) {
+    const total = wasmExports.restty_scrollbar_total(wasmHandle) || 0;
+    const offset = wasmExports.restty_scrollbar_offset ? wasmExports.restty_scrollbar_offset(wasmHandle) : 0;
+    const len = wasmExports.restty_scrollbar_len ? wasmExports.restty_scrollbar_len(wasmHandle) : rows;
+    if (total !== scrollbarState.lastTotal || offset !== scrollbarState.lastOffset || len !== scrollbarState.lastLen) {
+      scrollbarState.lastTotal = total;
+      scrollbarState.lastOffset = offset;
+      scrollbarState.lastLen = len;
+    }
+    appendOverlayScrollbar(overlayData, total, offset, len);
+  }
+}
+
+// src/runtime/create-runtime/render-tick-webgl-scene.ts
+function populateWebGLSceneData(ctx) {
+  const {
+    deps,
+    rows,
+    cols,
+    codepoints,
+    contentTags,
+    styleFlags,
+    linkIds,
+    fgBytes,
+    bgBytes,
+    ulBytes,
+    ulStyle,
+    mergedEmojiSkip,
+    readCellCluster,
+    blinkVisible,
+    cursorStyle,
+    cursorCell,
+    cellW,
+    cellH,
+    primaryScale,
+    baselineOffset,
+    yPad,
+    underlineOffsetPx,
+    underlineThicknessPx,
+    bgData,
+    selectionData,
+    underlineData,
+    fgRectData,
+    fgColorCache,
+    bgColorCache,
+    ulColorCache,
+    scaleByFont,
+    getGlyphQueue,
+    getGlyphSet,
+    noteGlyphMeta
+  } = ctx;
+  const {
+    fontState,
+    defaultBg,
+    selectionState,
+    selectionForRow: selectionForRow2,
+    pushRect: pushRect2,
+    selectionColor,
+    STYLE_BOLD,
+    STYLE_ITALIC,
+    STYLE_FAINT,
+    STYLE_BLINK,
+    STYLE_INVERSE,
+    STYLE_INVISIBLE,
+    STYLE_STRIKE,
+    STYLE_OVERLINE,
+    STYLE_UNDERLINE_MASK,
+    decodeRGBAWithCache: decodeRGBAWithCache2,
+    brighten: brighten2,
+    BOLD_BRIGHTEN,
+    fade: fade2,
+    FAINT_ALPHA,
+    linkState,
+    drawUnderlineStyle: drawUnderlineStyle2,
+    drawStrikethrough: drawStrikethrough2,
+    drawOverline: drawOverline2,
+    KITTY_PLACEHOLDER_CP,
+    isSpaceCp: isSpaceCp2,
+    shouldMergeTrailingClusterCodepoint: shouldMergeTrailingClusterCodepoint2,
+    isBlockElement: isBlockElement2,
+    drawBlockElement: drawBlockElement2,
+    isBoxDrawing: isBoxDrawing2,
+    drawBoxDrawing: drawBoxDrawing2,
+    isBraille: isBraille2,
+    drawBraille: drawBraille2,
+    isPowerline: isPowerline2,
+    drawPowerline: drawPowerline2,
+    pickFontIndexForText,
+    stylePreferenceFromFlags: stylePreferenceFromFlags2,
+    noteColorGlyphText,
+    isRenderSymbolLike: isRenderSymbolLike2,
+    resolveSymbolConstraint: resolveSymbolConstraint2,
+    isGraphicsElement: isGraphicsElement2,
+    glyphWidthUnits: glyphWidthUnits2,
+    shapeClusterWithFont
+  } = deps;
+  const isRegionalIndicator = (value) => value >= 127462 && value <= 127487;
+  const cursorBlock = cursorStyle === 0 && !!cursorCell;
+  for (let row = 0;row < rows; row += 1) {
+    const rowY = row * cellH;
+    const baseY = rowY + yPad + baselineOffset;
+    const localSel = selectionState.active ? selectionForRow2(row, cols) : null;
+    const selStart = localSel?.start ?? -1;
+    const selEnd = localSel?.end ?? -1;
+    if (selStart >= 0 && selEnd > selStart) {
+      const start = Math.max(0, selStart);
+      const end = Math.min(cols, selEnd);
+      pushRect2(selectionData, start * cellW, rowY, (end - start) * cellW, cellH, selectionColor);
+    }
+    for (let col = 0;col < cols; col += 1) {
+      const idx = row * cols + col;
+      const x3 = col * cellW;
+      const tag = contentTags ? contentTags[idx] : 0;
+      const bgOnly = tag === 2 || tag === 3;
+      const flags = styleFlags ? styleFlags[idx] : 0;
+      const bold = (flags & STYLE_BOLD) !== 0;
+      const italic = (flags & STYLE_ITALIC) !== 0;
+      const faint = (flags & STYLE_FAINT) !== 0;
+      const blink = (flags & STYLE_BLINK) !== 0;
+      const inverse = (flags & STYLE_INVERSE) !== 0;
+      const invisible = (flags & STYLE_INVISIBLE) !== 0;
+      const strike = (flags & STYLE_STRIKE) !== 0;
+      const overline = (flags & STYLE_OVERLINE) !== 0;
+      const underlineStyle = ulStyle ? ulStyle[idx] : (flags & STYLE_UNDERLINE_MASK) >> 8;
+      let fg = decodeRGBAWithCache2(fgBytes, idx, fgColorCache);
+      let bg = bgBytes ? decodeRGBAWithCache2(bgBytes, idx, bgColorCache) : defaultBg;
+      let ul = ulBytes ? decodeRGBAWithCache2(ulBytes, idx, ulColorCache) : fg;
+      const underlineUsesFg = ul[0] === fg[0] && ul[1] === fg[1] && ul[2] === fg[2] && ul[3] === fg[3];
+      if (inverse) {
+        const tmp = fg;
+        fg = bg;
+        bg = tmp;
+        if (underlineUsesFg)
+          ul = fg;
+      }
+      if (bold) {
+        fg = brighten2(fg, BOLD_BRIGHTEN);
+        ul = brighten2(ul, BOLD_BRIGHTEN);
+      }
+      if (faint) {
+        fg = fade2(fg, FAINT_ALPHA);
+        ul = fade2(ul, FAINT_ALPHA);
+      }
+      const bgForText = bg[3] < 1 ? [
+        bg[0] + defaultBg[0] * (1 - bg[3]),
+        bg[1] + defaultBg[1] * (1 - bg[3]),
+        bg[2] + defaultBg[2] * (1 - bg[3]),
+        1
+      ] : bg;
+      if ((bgBytes || inverse) && bg[3] > 0)
+        pushRect2(bgData, x3, rowY, cellW, cellH, bg);
+      const linkId = linkIds ? linkIds[idx] ?? 0 : 0;
+      const linkHovered = linkId && linkId === linkState.hoverId;
+      const blinkOff = blink && !blinkVisible;
+      const textHidden = invisible || blinkOff;
+      if (!textHidden && !bgOnly) {
+        if (underlineStyle > 0 && ul[3] > 0) {
+          drawUnderlineStyle2(underlineData, underlineStyle, x3, rowY, cellW, cellH, baseY, underlineOffsetPx, underlineThicknessPx, ul);
+        }
+        if (linkHovered && !selectionState.active && !selectionState.dragging) {
+          drawUnderlineStyle2(underlineData, 1, x3, rowY, cellW, cellH, baseY, underlineOffsetPx, underlineThicknessPx, ul);
+        }
+        if (strike)
+          drawStrikethrough2(underlineData, x3, rowY, cellW, cellH, fg);
+        if (overline)
+          drawOverline2(underlineData, x3, rowY, cellW, fg);
+      }
+      if (bgOnly || textHidden)
+        continue;
+      if (mergedEmojiSkip[idx])
+        continue;
+      const cluster = readCellCluster(idx);
+      if (!cluster)
+        continue;
+      const cp = cluster.cp;
+      if (cp === KITTY_PLACEHOLDER_CP)
+        continue;
+      let text2 = cluster.text;
+      let baseSpan = cluster.span;
+      const rowEnd = row * cols + cols;
+      if (isRegionalIndicator(cp)) {
+        const nextIdx = idx + baseSpan;
+        if (nextIdx < rowEnd && !mergedEmojiSkip[nextIdx]) {
+          const next = readCellCluster(nextIdx);
+          if (next && isRegionalIndicator(next.cp)) {
+            text2 += next.text;
+            baseSpan += next.span;
+            mergedEmojiSkip[nextIdx] = 1;
+          }
+        }
+      }
+      let nextSeqIdx = idx + baseSpan;
+      let guard = 0;
+      while (nextSeqIdx < rowEnd && guard < 12) {
+        const next = readCellCluster(nextSeqIdx);
+        if (!next || !next.cp || isSpaceCp2(next.cp))
+          break;
+        const shouldMerge = text2.endsWith("‍") || shouldMergeTrailingClusterCodepoint2(next.cp);
+        if (!shouldMerge)
+          break;
+        text2 += next.text;
+        baseSpan += next.span;
+        mergedEmojiSkip[nextSeqIdx] = 1;
+        nextSeqIdx += next.span;
+        guard += 1;
+      }
+      const extra = text2.length > String.fromCodePoint(cp).length ? 1 : 0;
+      if (extra === 0 && isSpaceCp2(cp))
+        continue;
+      if (cursorBlock && cursorCell && row === cursorCell.row && col >= cursorCell.col && col < cursorCell.col + (cursorCell.wide ? 2 : 1)) {
+        fg = [bgForText[0], bgForText[1], bgForText[2], 1];
+      }
+      if (isBlockElement2(cp)) {
+        if (drawBlockElement2(cp, x3, rowY, cellW, cellH, fg, fgRectData))
+          continue;
+      }
+      if (isBoxDrawing2(cp)) {
+        if (drawBoxDrawing2(cp, x3, rowY, cellW, cellH, fg, fgRectData, underlineThicknessPx))
+          continue;
+      }
+      if (isBraille2(cp)) {
+        if (drawBraille2(cp, x3, rowY, cellW, cellH, fg, fgRectData))
+          continue;
+      }
+      if (isPowerline2(cp)) {
+        if (drawPowerline2(cp, x3, rowY, cellW, cellH, fg, fgRectData))
+          continue;
+      }
+      if (extra > 0 && text2.trim() === "")
+        continue;
+      const fontIndex = pickFontIndexForText(text2, baseSpan, stylePreferenceFromFlags2(bold, italic));
+      const fontEntry = fontState.fonts[fontIndex] ?? fontState.fonts[0];
+      const shaped = shapeClusterWithFont(fontEntry, text2);
+      if (!shaped.glyphs.length)
+        continue;
+      noteColorGlyphText(fontEntry, text2, shaped);
+      const glyphSet = getGlyphSet(fontIndex);
+      for (const glyph of shaped.glyphs)
+        glyphSet.add(glyph.glyphId);
+      const fontScale = scaleByFont[fontIndex] ?? primaryScale;
+      let cellSpan = baseSpan;
+      const symbolLike = isRenderSymbolLike2(cp);
+      const nerdConstraint = symbolLike ? resolveSymbolConstraint2(cp) : null;
+      const symbolConstraint = !!nerdConstraint;
+      let constraintWidth = baseSpan;
+      let forceFit = false;
+      let glyphWidthPx = 0;
+      if (symbolLike) {
+        if (baseSpan === 1) {
+          if (nerdConstraint?.height === "icon") {
+            constraintWidth = 1;
+            if (col < cols - 1) {
+              if (col > 0) {
+                const prevCp = codepoints[idx - 1];
+                if (isRenderSymbolLike2(prevCp) && !isGraphicsElement2(prevCp)) {
+                  constraintWidth = 1;
+                } else {
+                  const nextCp = codepoints[idx + 1];
+                  if (!nextCp || isSpaceCp2(nextCp))
+                    constraintWidth = 2;
+                }
+              } else {
+                const nextCp = codepoints[idx + 1];
+                if (!nextCp || isSpaceCp2(nextCp))
+                  constraintWidth = 2;
+              }
+            }
+          } else {
+            constraintWidth = 1;
+          }
+          cellSpan = constraintWidth;
+        }
+        if (shaped.glyphs.length === 1) {
+          const glyphId = shaped.glyphs[0].glyphId;
+          const widthUnits = glyphWidthUnits2(fontEntry, glyphId);
+          if (widthUnits > 0) {
+            glyphWidthPx = widthUnits * fontScale;
+          }
+        }
+        if (!glyphWidthPx) {
+          glyphWidthPx = shaped.advance * fontScale;
+        }
+        if (glyphWidthPx > cellW * cellSpan * 1.05) {
+          forceFit = true;
+        }
+      }
+      if (symbolConstraint) {
+        for (const glyph of shaped.glyphs) {
+          noteGlyphMeta(fontIndex, glyph.glyphId, cp, constraintWidth);
+        }
+      }
+      const cellWidthPx = cellW * cellSpan;
+      const xPad = 0;
+      getGlyphQueue(fontIndex).push({
+        x: x3,
+        baseY,
+        xPad,
+        fg,
+        bg: bgForText,
+        shaped,
+        fontIndex,
+        scale: fontScale,
+        cellWidth: cellWidthPx,
+        symbolLike,
+        symbolConstraint,
+        constraintWidth,
+        forceFit,
+        glyphWidthPx,
+        cp,
+        italic,
+        bold
+      });
+    }
+  }
+}
+
+// src/runtime/create-runtime/render-tick-webgl.ts
+function tickWebGL(deps, state2) {
+  const ctx = buildWebGLTickContext(deps, state2);
+  if (!ctx)
+    return;
+  populateWebGLSceneData(ctx);
+  populateWebGLOverlays(ctx);
+  renderWebGLGlyphPipeline(ctx);
+  const kittyPlacements = deps.wasm && deps.wasmHandle ? deps.wasm.getKittyPlacements(deps.wasmHandle) : [];
+  deps.drawKittyOverlay(kittyPlacements, ctx.cellW, ctx.cellH);
+}
+
+// src/runtime/create-runtime/render-tick-webgpu-cell-pass.ts
+function collectWebGPUCellPass(params) {
+  const {
+    deps,
+    render,
+    cellW,
+    cellH,
+    fontSizePx,
+    primaryScale,
+    lineHeight,
+    baselineOffset,
+    yPad,
+    underlineOffsetPx,
+    underlineThicknessPx,
+    cursorBlock,
+    cursorCell,
+    blinkVisible,
+    defaultBg
+  } = params;
+  const {
+    rows,
+    cols,
+    codepoints,
+    contentTags,
+    wide,
+    styleFlags,
+    linkIds,
+    fgBytes,
+    bgBytes,
+    ulBytes,
+    ulStyle,
+    graphemeOffset,
+    graphemeLen,
+    graphemeBuffer
+  } = render;
+  const {
+    fontState,
+    fontHeightUnits: fontHeightUnits2,
+    fontScaleOverride: fontScaleOverride2,
+    FONT_SCALE_OVERRIDES,
+    isSymbolFont: isSymbolFont2,
+    isColorEmojiFont: isColorEmojiFont2,
+    fontAdvanceUnits: fontAdvanceUnits2,
+    shapeClusterWithFont,
+    fontMaxCellSpan: fontMaxCellSpan2,
+    clamp: clamp2,
+    buildNerdMetrics: buildNerdMetrics2,
+    nerdIconScale,
+    selectionState,
+    selectionForRow: selectionForRow2,
+    pushRect: pushRect2,
+    selectionColor,
+    STYLE_BOLD,
+    STYLE_ITALIC,
+    STYLE_FAINT,
+    STYLE_BLINK,
+    STYLE_INVERSE,
+    STYLE_INVISIBLE,
+    STYLE_STRIKE,
+    STYLE_OVERLINE,
+    STYLE_UNDERLINE_MASK,
+    decodeRGBAWithCache: decodeRGBAWithCache2,
+    brighten: brighten2,
+    BOLD_BRIGHTEN,
+    fade: fade2,
+    FAINT_ALPHA,
+    linkState,
+    drawUnderlineStyle: drawUnderlineStyle2,
+    drawStrikethrough: drawStrikethrough2,
+    drawOverline: drawOverline2,
+    KITTY_PLACEHOLDER_CP,
+    isSpaceCp: isSpaceCp2,
+    shouldMergeTrailingClusterCodepoint: shouldMergeTrailingClusterCodepoint2,
+    isBlockElement: isBlockElement2,
+    drawBlockElement: drawBlockElement2,
+    isBoxDrawing: isBoxDrawing2,
+    drawBoxDrawing: drawBoxDrawing2,
+    isBraille: isBraille2,
+    drawBraille: drawBraille2,
+    isPowerline: isPowerline2,
+    drawPowerline: drawPowerline2,
+    pickFontIndexForText,
+    stylePreferenceFromFlags: stylePreferenceFromFlags2,
+    noteColorGlyphText,
+    isRenderSymbolLike: isRenderSymbolLike2,
+    resolveSymbolConstraint: resolveSymbolConstraint2,
+    isGraphicsElement: isGraphicsElement2,
+    glyphWidthUnits: glyphWidthUnits2
+  } = deps;
+  const bgData = [];
+  const selectionData = [];
+  const underlineData = [];
+  const cursorData = [];
+  const fgRectData = [];
+  const overlayData = [];
+  const glyphDataNearestByFont = new Map;
+  const glyphDataLinearByFont = new Map;
+  const glyphQueueByFont = new Map;
+  const overlayGlyphDataNearestByFont = new Map;
+  const overlayGlyphDataLinearByFont = new Map;
+  const overlayGlyphQueueByFont = new Map;
+  const neededGlyphIdsByFont = new Map;
+  const neededGlyphMetaByFont = new Map;
+  const fgColorCache = new Map;
+  const bgColorCache = new Map;
+  const ulColorCache = new Map;
+  const primaryEntry = fontState.fonts[0];
+  const baseScaleByFont = fontState.fonts.map((entry, idx) => {
+    if (!entry?.font)
+      return primaryScale;
+    if (idx === 0)
+      return primaryScale;
+    return entry.font.scaleForSize(fontSizePx, fontState.sizeMode) * fontScaleOverride2(entry, FONT_SCALE_OVERRIDES);
+  });
+  const scaleByFont = fontState.fonts.map((entry, idx) => {
+    if (!entry?.font)
+      return primaryScale;
+    if (idx === 0)
+      return primaryScale;
+    const baseScale = baseScaleByFont[idx] ?? primaryScale;
+    if (isSymbolFont2(entry) || isColorEmojiFont2(entry))
+      return baseScale;
+    const advanceUnits = fontAdvanceUnits2(entry, shapeClusterWithFont);
+    const maxSpan = fontMaxCellSpan2(entry);
+    const widthPx = advanceUnits * baseScale;
+    const widthAdjustRaw = widthPx > 0 ? cellW * maxSpan / widthPx : 1;
+    const widthAdjust = clamp2(widthAdjustRaw, 0.5, 2);
+    let adjustedScale = baseScale * widthAdjust;
+    const adjustedHeightPx = fontHeightUnits2(entry.font) * adjustedScale;
+    if (adjustedHeightPx > lineHeight && adjustedHeightPx > 0) {
+      adjustedScale *= lineHeight / adjustedHeightPx;
+    }
+    return adjustedScale;
+  });
+  const bitmapScaleByFont = fontState.fonts.map((entry, idx) => {
+    if (!entry?.font || idx === 0)
+      return 1;
+    if (isSymbolFont2(entry))
+      return 1;
+    const baseScale = baseScaleByFont[idx] ?? 0;
+    if (baseScale <= 0)
+      return 1;
+    const targetScale = scaleByFont[idx] ?? baseScale;
+    return clamp2(targetScale / baseScale, 0.5, 2);
+  });
+  const baselineAdjustByFont = fontState.fonts.map((entry, idx) => {
+    if (!entry?.font || idx === 0 || !primaryEntry?.font)
+      return 0;
+    const scale = scaleByFont[idx] ?? primaryScale;
+    return primaryEntry.font.ascender * primaryScale - entry.font.ascender * scale;
+  });
+  const nerdMetrics = buildNerdMetrics2(cellW, cellH, lineHeight, primaryEntry?.font, primaryScale, nerdIconScale);
+  const getGlyphQueue = (fontIndex) => {
+    if (!glyphQueueByFont.has(fontIndex))
+      glyphQueueByFont.set(fontIndex, []);
+    return glyphQueueByFont.get(fontIndex);
+  };
+  const getOverlayGlyphQueue = (fontIndex) => {
+    if (!overlayGlyphQueueByFont.has(fontIndex))
+      overlayGlyphQueueByFont.set(fontIndex, []);
+    return overlayGlyphQueueByFont.get(fontIndex);
+  };
+  const getGlyphSet = (fontIndex) => {
+    if (!neededGlyphIdsByFont.has(fontIndex))
+      neededGlyphIdsByFont.set(fontIndex, new Set);
+    return neededGlyphIdsByFont.get(fontIndex);
+  };
+  const getGlyphMeta = (fontIndex) => {
+    if (!neededGlyphMetaByFont.has(fontIndex))
+      neededGlyphMetaByFont.set(fontIndex, new Map);
+    return neededGlyphMetaByFont.get(fontIndex);
+  };
+  const noteGlyphMeta = (fontIndex, glyphId, cp, constraintWidth) => {
+    if (!glyphId || !cp)
       return;
-    saveCanvasState();
+    const meta = getGlyphMeta(fontIndex);
+    const prev = meta.get(glyphId);
+    if (!prev) {
+      const width = Math.max(1, constraintWidth || 1);
+      meta.set(glyphId, {
+        cp,
+        constraintWidth: width,
+        widths: new Set([width]),
+        variable: false
+      });
+      return;
+    }
+    if (prev.constraintWidth !== constraintWidth) {
+      prev.widths?.add(Math.max(1, constraintWidth || 1));
+      meta.set(glyphId, {
+        ...prev,
+        constraintWidth: Math.min(prev.constraintWidth, Math.max(1, constraintWidth || 1)),
+        variable: true
+      });
+    }
+  };
+  const mergedEmojiSkip = new Uint8Array(codepoints.length);
+  const isRegionalIndicator = (value) => value >= 127462 && value <= 127487;
+  const readCellCluster = (cellIndex) => {
+    const flag = wide ? wide[cellIndex] ?? 0 : 0;
+    if (flag === 2 || flag === 3)
+      return null;
+    const cp = codepoints[cellIndex] ?? 0;
+    if (!cp)
+      return null;
+    let text2 = String.fromCodePoint(cp);
+    const extra = graphemeLen && graphemeOffset && graphemeBuffer ? graphemeLen[cellIndex] ?? 0 : 0;
+    if (extra > 0 && graphemeOffset && graphemeBuffer) {
+      const start = graphemeOffset[cellIndex] ?? 0;
+      const cps = [cp];
+      for (let j = 0;j < extra; j += 1) {
+        const extraCp = graphemeBuffer[start + j];
+        if (extraCp)
+          cps.push(extraCp);
+      }
+      text2 = String.fromCodePoint(...cps);
+    }
+    return { cp, text: text2, span: flag === 1 ? 2 : 1 };
+  };
+  for (let row = 0;row < rows; row += 1) {
+    const rowY = row * cellH;
+    const baseY = rowY + yPad + baselineOffset;
+    const localSel = selectionState.active ? selectionForRow2(row, cols) : null;
+    const selStart = localSel?.start ?? -1;
+    const selEnd = localSel?.end ?? -1;
+    if (selStart >= 0 && selEnd > selStart) {
+      const start = Math.max(0, selStart);
+      const end = Math.min(cols, selEnd);
+      pushRect2(selectionData, start * cellW, rowY, (end - start) * cellW, cellH, selectionColor);
+    }
+    for (let col = 0;col < cols; col += 1) {
+      const idx = row * cols + col;
+      const x3 = col * cellW;
+      const tag = contentTags ? contentTags[idx] : 0;
+      const bgOnly = tag === 2 || tag === 3;
+      const flags = styleFlags ? styleFlags[idx] : 0;
+      const bold = (flags & STYLE_BOLD) !== 0;
+      const italic = (flags & STYLE_ITALIC) !== 0;
+      const faint = (flags & STYLE_FAINT) !== 0;
+      const blink = (flags & STYLE_BLINK) !== 0;
+      const inverse = (flags & STYLE_INVERSE) !== 0;
+      const invisible = (flags & STYLE_INVISIBLE) !== 0;
+      const strike = (flags & STYLE_STRIKE) !== 0;
+      const overline = (flags & STYLE_OVERLINE) !== 0;
+      const underlineStyle = ulStyle ? ulStyle[idx] : (flags & STYLE_UNDERLINE_MASK) >> 8;
+      let fg = decodeRGBAWithCache2(fgBytes, idx, fgColorCache);
+      let bg = bgBytes ? decodeRGBAWithCache2(bgBytes, idx, bgColorCache) : defaultBg;
+      let ul = ulBytes ? decodeRGBAWithCache2(ulBytes, idx, ulColorCache) : fg;
+      const underlineUsesFg = ul[0] === fg[0] && ul[1] === fg[1] && ul[2] === fg[2] && ul[3] === fg[3];
+      if (inverse) {
+        const tmp = fg;
+        fg = bg;
+        bg = tmp;
+        if (underlineUsesFg)
+          ul = fg;
+      }
+      if (bold) {
+        fg = brighten2(fg, BOLD_BRIGHTEN);
+        ul = brighten2(ul, BOLD_BRIGHTEN);
+      }
+      if (faint) {
+        fg = fade2(fg, FAINT_ALPHA);
+        ul = fade2(ul, FAINT_ALPHA);
+      }
+      const bgForText = bg[3] < 1 ? [
+        bg[0] + defaultBg[0] * (1 - bg[3]),
+        bg[1] + defaultBg[1] * (1 - bg[3]),
+        bg[2] + defaultBg[2] * (1 - bg[3]),
+        1
+      ] : bg;
+      if ((bgBytes || inverse) && bg[3] > 0)
+        pushRect2(bgData, x3, rowY, cellW, cellH, bg);
+      const linkId = linkIds ? linkIds[idx] ?? 0 : 0;
+      const linkHovered = linkId && linkId === linkState.hoverId;
+      const blinkOff = blink && !blinkVisible;
+      const textHidden = invisible || blinkOff;
+      if (!textHidden && !bgOnly) {
+        if (underlineStyle > 0 && ul[3] > 0) {
+          drawUnderlineStyle2(underlineData, underlineStyle, x3, rowY, cellW, cellH, baseY, underlineOffsetPx, underlineThicknessPx, ul);
+        }
+        if (linkHovered && !selectionState.active && !selectionState.dragging) {
+          drawUnderlineStyle2(underlineData, 1, x3, rowY, cellW, cellH, baseY, underlineOffsetPx, underlineThicknessPx, ul);
+        }
+        if (strike)
+          drawStrikethrough2(underlineData, x3, rowY, cellW, cellH, fg);
+        if (overline)
+          drawOverline2(underlineData, x3, rowY, cellW, fg);
+      }
+      if (bgOnly || textHidden)
+        continue;
+      if (mergedEmojiSkip[idx])
+        continue;
+      const cluster = readCellCluster(idx);
+      if (!cluster)
+        continue;
+      const cp = cluster.cp;
+      if (cp === KITTY_PLACEHOLDER_CP)
+        continue;
+      let text2 = cluster.text;
+      let baseSpan = cluster.span;
+      const rowEnd = row * cols + cols;
+      if (isRegionalIndicator(cp)) {
+        const nextIdx = idx + baseSpan;
+        if (nextIdx < rowEnd && !mergedEmojiSkip[nextIdx]) {
+          const next = readCellCluster(nextIdx);
+          if (next && isRegionalIndicator(next.cp)) {
+            text2 += next.text;
+            baseSpan += next.span;
+            mergedEmojiSkip[nextIdx] = 1;
+          }
+        }
+      }
+      let nextSeqIdx = idx + baseSpan;
+      let guard = 0;
+      while (nextSeqIdx < rowEnd && guard < 12) {
+        const next = readCellCluster(nextSeqIdx);
+        if (!next || !next.cp || isSpaceCp2(next.cp))
+          break;
+        const shouldMerge = text2.endsWith("‍") || shouldMergeTrailingClusterCodepoint2(next.cp);
+        if (!shouldMerge)
+          break;
+        text2 += next.text;
+        baseSpan += next.span;
+        mergedEmojiSkip[nextSeqIdx] = 1;
+        nextSeqIdx += next.span;
+        guard += 1;
+      }
+      const extra = text2.length > String.fromCodePoint(cp).length ? 1 : 0;
+      if (extra === 0 && isSpaceCp2(cp))
+        continue;
+      if (cursorBlock && cursorCell && row === cursorCell.row && col >= cursorCell.col && col < cursorCell.col + (cursorCell.wide ? 2 : 1)) {
+        fg = [bgForText[0], bgForText[1], bgForText[2], 1];
+      }
+      if (isBlockElement2(cp)) {
+        if (drawBlockElement2(cp, x3, rowY, cellW, cellH, fg, fgRectData))
+          continue;
+      }
+      if (isBoxDrawing2(cp)) {
+        if (drawBoxDrawing2(cp, x3, rowY, cellW, cellH, fg, fgRectData, underlineThicknessPx)) {
+          continue;
+        }
+      }
+      if (isBraille2(cp)) {
+        if (drawBraille2(cp, x3, rowY, cellW, cellH, fg, fgRectData))
+          continue;
+      }
+      if (isPowerline2(cp)) {
+        if (drawPowerline2(cp, x3, rowY, cellW, cellH, fg, fgRectData))
+          continue;
+      }
+      if (extra > 0 && text2.trim() === "")
+        continue;
+      const fontIndex = pickFontIndexForText(text2, baseSpan, stylePreferenceFromFlags2(bold, italic));
+      const fontEntry = fontState.fonts[fontIndex] ?? fontState.fonts[0];
+      const shaped = shapeClusterWithFont(fontEntry, text2);
+      if (!shaped.glyphs.length)
+        continue;
+      noteColorGlyphText(fontEntry, text2, shaped);
+      const glyphSet = getGlyphSet(fontIndex);
+      for (const glyph of shaped.glyphs)
+        glyphSet.add(glyph.glyphId);
+      const fontScale = scaleByFont[fontIndex] ?? primaryScale;
+      let cellSpan = baseSpan;
+      const symbolLike = isRenderSymbolLike2(cp);
+      const nerdConstraint = symbolLike ? resolveSymbolConstraint2(cp) : null;
+      const symbolConstraint = !!nerdConstraint;
+      let constraintWidth = baseSpan;
+      let forceFit = false;
+      let glyphWidthPx = 0;
+      if (symbolLike) {
+        if (baseSpan === 1) {
+          if (nerdConstraint?.height === "icon") {
+            constraintWidth = 1;
+            if (col < cols - 1) {
+              if (col > 0) {
+                const prevCp = codepoints[idx - 1];
+                if (isRenderSymbolLike2(prevCp) && !isGraphicsElement2(prevCp)) {
+                  constraintWidth = 1;
+                } else {
+                  const nextCp = codepoints[idx + 1];
+                  if (!nextCp || isSpaceCp2(nextCp))
+                    constraintWidth = 2;
+                }
+              } else {
+                const nextCp = codepoints[idx + 1];
+                if (!nextCp || isSpaceCp2(nextCp))
+                  constraintWidth = 2;
+              }
+            }
+          } else {
+            constraintWidth = 1;
+          }
+          cellSpan = constraintWidth;
+        }
+        if (shaped.glyphs.length === 1) {
+          const glyphId = shaped.glyphs[0].glyphId;
+          const widthUnits = glyphWidthUnits2(fontEntry, glyphId);
+          if (widthUnits > 0) {
+            glyphWidthPx = widthUnits * fontScale;
+          }
+        }
+        if (!glyphWidthPx) {
+          glyphWidthPx = shaped.advance * fontScale;
+        }
+        if (glyphWidthPx > cellW * cellSpan * 1.05) {
+          forceFit = true;
+        }
+      }
+      if (symbolConstraint) {
+        for (const glyph of shaped.glyphs) {
+          noteGlyphMeta(fontIndex, glyph.glyphId, cp, constraintWidth);
+        }
+      }
+      const cellWidthPx = cellW * cellSpan;
+      const xPad = 0;
+      getGlyphQueue(fontIndex).push({
+        x: x3,
+        baseY,
+        xPad,
+        fg,
+        bg: bgForText,
+        shaped,
+        fontIndex,
+        scale: fontScale,
+        cellWidth: cellWidthPx,
+        symbolLike,
+        symbolConstraint,
+        constraintWidth,
+        forceFit,
+        glyphWidthPx,
+        cp,
+        italic,
+        bold
+      });
+    }
+  }
+  return {
+    bgData,
+    selectionData,
+    underlineData,
+    cursorData,
+    fgRectData,
+    overlayData,
+    glyphDataNearestByFont,
+    glyphDataLinearByFont,
+    glyphQueueByFont,
+    overlayGlyphDataNearestByFont,
+    overlayGlyphDataLinearByFont,
+    overlayGlyphQueueByFont,
+    neededGlyphIdsByFont,
+    neededGlyphMetaByFont,
+    scaleByFont,
+    bitmapScaleByFont,
+    baselineAdjustByFont,
+    nerdMetrics,
+    getGlyphQueue,
+    getOverlayGlyphQueue,
+    getGlyphSet
+  };
+}
+
+// src/runtime/create-runtime/render-tick-webgpu-emit-glyphs.ts
+function emitWebGPUQueuedGlyphs(params) {
+  const {
+    deps,
+    state: state2,
+    frame,
+    queueByFont,
+    targetMaps,
+    cellW,
+    cellH,
+    yPad,
+    baselineOffset,
+    primaryScale
+  } = params;
+  const {
+    defaultBg,
+    resolveSymbolConstraint: resolveSymbolConstraint2,
+    isAppleSymbolsFont: isAppleSymbolsFont2,
+    DEFAULT_APPLE_SYMBOLS_CONSTRAINT: DEFAULT_APPLE_SYMBOLS_CONSTRAINT2,
+    DEFAULT_SYMBOL_CONSTRAINT: DEFAULT_SYMBOL_CONSTRAINT2,
+    DEFAULT_EMOJI_CONSTRAINT: DEFAULT_EMOJI_CONSTRAINT2,
+    constrainGlyphBox: constrainGlyphBox2,
+    tightenNerdConstraintBox: tightenNerdConstraintBox2,
+    fontEntryHasItalicStyle: fontEntryHasItalicStyle2,
+    fontEntryHasBoldStyle: fontEntryHasBoldStyle2,
+    ITALIC_SLANT,
+    BOLD_OFFSET,
+    GLYPH_RENDER_MODE_COLOR,
+    GLYPH_RENDER_MODE_MONO,
+    clamp: clamp2
+  } = deps;
+  const getGlyphData = (map, fontIndex) => {
+    if (!map.has(fontIndex))
+      map.set(fontIndex, []);
+    return map.get(fontIndex);
+  };
+  for (const [fontIndex, queue] of queueByFont.entries()) {
+    const entry = deps.fontState.fonts[fontIndex];
+    const atlasState = state2.glyphAtlases?.get(fontIndex);
+    if (!entry || !entry.atlas || !atlasState)
+      continue;
+    const atlas = entry.atlas;
+    const atlasW = atlas.bitmap.width;
+    const atlasH = atlas.bitmap.rows;
+    const baseInset = Number.isFinite(atlas.inset) ? atlas.inset : 0;
+    const colorGlyphs = atlasState.colorGlyphs ?? atlas.colorGlyphs;
+    for (const item of queue) {
+      const bg = item.bg ?? defaultBg;
+      let penX = 0;
+      const scale = item.scale ?? primaryScale;
+      const maxWidth = item.cellWidth ?? cellW;
+      const maxHeight = cellH;
+      const symbolLike = item.symbolLike;
+      const symbolConstraint = item.symbolConstraint;
+      const glyphDataNearest = getGlyphData(targetMaps.nearest, fontIndex);
+      const glyphDataLinear = getGlyphData(targetMaps.linear, fontIndex);
+      let itemScale = scale;
+      if (!symbolConstraint) {
+        if (item.forceFit && item.glyphWidthPx && maxWidth > 0) {
+          const fit = maxWidth / item.glyphWidthPx;
+          if (fit > 0 && fit < 1)
+            itemScale = scale * fit;
+        }
+        if (!symbolLike) {
+          const advancePx = item.shaped.advance * scale;
+          if (advancePx > maxWidth && advancePx > 0) {
+            itemScale = scale * (maxWidth / advancePx);
+          }
+        }
+      }
+      const scaleFactor = scale > 0 ? itemScale / scale : 1;
+      const widthKey = item.constraintWidth ?? 0;
+      const widthMap = atlas.glyphsByWidth?.get(widthKey);
+      for (const glyph of item.shaped.glyphs) {
+        const colorGlyph = !!colorGlyphs?.has(glyph.glyphId);
+        const metrics = widthMap?.get(glyph.glyphId) ?? atlas.glyphs.get(glyph.glyphId);
+        if (!metrics)
+          continue;
+        let bitmapScale = scaleFactor;
+        const glyphConstrained = symbolLike && !!widthMap?.has(glyph.glyphId);
+        if (glyphConstrained)
+          bitmapScale = 1;
+        if (fontIndex > 0 && !symbolLike) {
+          const widthScale = maxWidth > 0 ? maxWidth / metrics.width : 1;
+          const heightScale = maxHeight > 0 ? maxHeight / metrics.height : 1;
+          const clampScale = Math.min(1, widthScale, heightScale);
+          bitmapScale *= clampScale;
+        }
+        const baselineAdjust = frame.baselineAdjustByFont[fontIndex] ?? 0;
+        let gw = metrics.width * bitmapScale;
+        let gh = metrics.height * bitmapScale;
+        if (symbolLike && !glyphConstrained) {
+          const scaleToFit = gw > 0 && gh > 0 ? Math.min(maxWidth / gw, maxHeight / gh) : 1;
+          if (scaleToFit < 1) {
+            bitmapScale *= scaleToFit;
+            gw *= scaleToFit;
+            gh *= scaleToFit;
+          }
+          gw = Math.max(1, Math.round(gw));
+          gh = Math.max(1, Math.round(gh));
+        }
+        let x3 = item.x + item.xPad + (penX + glyph.xOffset) * itemScale + metrics.bearingX * bitmapScale;
+        if (fontIndex > 0 && item.shaped.glyphs.length === 1 && !symbolLike && maxWidth <= cellW * 1.05) {
+          x3 = item.x + (maxWidth - gw) * 0.5;
+        }
+        const minX = item.x;
+        const maxX = item.x + maxWidth;
+        if (x3 < minX)
+          x3 = minX;
+        if (x3 + gw > maxX)
+          x3 = Math.max(minX, maxX - gw);
+        let y = item.baseY + baselineAdjust - metrics.bearingY * bitmapScale - glyph.yOffset * itemScale;
+        if (!glyphConstrained && symbolLike && item.cp) {
+          const nerdConstraint = resolveSymbolConstraint2(item.cp);
+          const defaultConstraint = isAppleSymbolsFont2(entry) ? DEFAULT_APPLE_SYMBOLS_CONSTRAINT2 : DEFAULT_SYMBOL_CONSTRAINT2;
+          const constraint = nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT2 : defaultConstraint);
+          const rowY = item.baseY - yPad - baselineOffset;
+          const constraintWidth = Math.max(1, item.constraintWidth ?? Math.round(maxWidth / cellW));
+          const adjusted = constrainGlyphBox2({ x: x3 - item.x, y: y - rowY, width: gw, height: gh }, constraint, frame.nerdMetrics, constraintWidth);
+          const tightened = nerdConstraint ? tightenNerdConstraintBox2(adjusted, nerdConstraint) : adjusted;
+          x3 = item.x + tightened.x;
+          y = rowY + tightened.y;
+          gw = tightened.width;
+          gh = tightened.height;
+        }
+        if (gw < 1)
+          gw = 1;
+        if (gh < 1)
+          gh = 1;
+        const scaled = Math.abs(gw - metrics.width) > 0.01 || Math.abs(gh - metrics.height) > 0.01;
+        const useNearest = atlasState.nearest && !scaled;
+        if (useNearest) {
+          gw = metrics.width;
+          gh = metrics.height;
+        }
+        const uvInset = baseInset + (useNearest ? 0.5 : 0);
+        const px = Math.round(x3);
+        const py = Math.round(y);
+        const insetX = Math.min(uvInset, (metrics.width - 1) * 0.5);
+        const insetY = Math.min(uvInset, (metrics.height - 1) * 0.5);
+        const u02 = (metrics.atlasX + insetX) / atlasW;
+        const v02 = (metrics.atlasY + insetY) / atlasH;
+        const u12 = (metrics.atlasX + metrics.width - insetX) / atlasW;
+        const v12 = (metrics.atlasY + metrics.height - insetY) / atlasH;
+        const glyphData = useNearest ? glyphDataNearest : glyphDataLinear;
+        const italic = !!item.italic;
+        const bold = !!item.bold;
+        const syntheticItalic = italic && !fontEntryHasItalicStyle2(entry);
+        const syntheticBold = bold && !fontEntryHasBoldStyle2(entry);
+        const slant = syntheticItalic && !colorGlyph ? gh * ITALIC_SLANT : 0;
+        const boldOffset = syntheticBold && !colorGlyph ? Math.max(1, Math.round(gw * BOLD_OFFSET)) : 0;
+        const renderMode = colorGlyph ? GLYPH_RENDER_MODE_COLOR : GLYPH_RENDER_MODE_MONO;
+        const pushGlyph = (xPos) => {
+          glyphData.push(xPos, py, gw, gh, u02, v02, u12, v12, item.fg[0], item.fg[1], item.fg[2], item.fg[3], bg[0], bg[1], bg[2], bg[3], slant, renderMode);
+        };
+        pushGlyph(px);
+        if (boldOffset > 0) {
+          const minGlyphX = Math.round(item.x);
+          const maxGlyphX = Math.round(item.x + maxWidth - gw);
+          let bx = clamp2(px + boldOffset, minGlyphX, maxGlyphX);
+          if (bx === px)
+            bx = clamp2(px - boldOffset, minGlyphX, maxGlyphX);
+          if (bx === px)
+            pushGlyph(px);
+          else
+            pushGlyph(bx);
+        }
+        penX += glyph.xAdvance;
+      }
+    }
+  }
+}
+
+// src/runtime/create-runtime/render-tick-webgpu-draw-pass.ts
+function drawWebGPUFrame(params) {
+  const {
+    deps,
+    state: state2,
+    frame,
+    cursor,
+    cursorPos,
+    cursorStyle,
+    rows,
+    cols,
+    cellW,
+    cellH,
+    yPad,
+    baselineOffset,
+    underlineOffsetPx,
+    underlineThicknessPx,
+    primaryScale,
+    useLinearBlending,
+    useLinearCorrection,
+    clearColor,
+    hasShaderStages,
+    stageTargets,
+    compiledWebGPUStages
+  } = params;
+  const { device, context } = state2;
+  const {
+    wasmHandle,
+    wasmExports,
+    canvas,
+    decodePackedRGBA: decodePackedRGBA2,
+    cursorFallback,
+    clamp: clamp2,
+    scrollbarState,
+    appendOverlayScrollbar,
+    webgpuUniforms,
+    ensureInstanceBuffer: ensureInstanceBuffer2,
+    GLYPH_INSTANCE_FLOATS,
+    wasm,
+    drawKittyOverlay
+  } = deps;
+  emitWebGPUQueuedGlyphs({
+    deps,
+    state: state2,
+    frame,
+    queueByFont: frame.glyphQueueByFont,
+    targetMaps: {
+      nearest: frame.glyphDataNearestByFont,
+      linear: frame.glyphDataLinearByFont
+    },
+    cellW,
+    cellH,
+    yPad,
+    baselineOffset,
+    primaryScale
+  });
+  emitWebGPUQueuedGlyphs({
+    deps,
+    state: state2,
+    frame,
+    queueByFont: frame.overlayGlyphQueueByFont,
+    targetMaps: {
+      nearest: frame.overlayGlyphDataNearestByFont,
+      linear: frame.overlayGlyphDataLinearByFont
+    },
+    cellW,
+    cellH,
+    yPad,
+    baselineOffset,
+    primaryScale
+  });
+  if (cursorStyle !== null && cursorPos) {
+    let cursorCol = cursorPos.col;
+    let cursorRow = cursorPos.row;
+    let cursorWidth = cellW;
+    if (cursorPos.wideTail && cursorCol > 0) {
+      cursorCol -= 1;
+      cursorWidth = cellW * 2;
+    }
+    if (cursorRow < rows && cursorCol < cols) {
+      const x3 = cursorCol * cellW;
+      const y = cursorRow * cellH;
+      const cursorColor = cursor?.color ? decodePackedRGBA2(cursor.color) : cursorFallback;
+      const cursorThicknessPx = underlineThicknessPx;
+      if (cursorStyle === 0) {
+        deps.pushRect(frame.fgRectData, x3, y, cursorWidth, cellH, cursorColor);
+      } else if (cursorStyle === 1) {
+        const offset = Math.floor((cursorThicknessPx + 1) / 2);
+        deps.pushRect(frame.cursorData, x3 - offset, y, cursorThicknessPx, cellH, cursorColor);
+      } else if (cursorStyle === 2) {
+        const baseY = cursorRow * cellH + yPad + baselineOffset;
+        const underlineY = clamp2(baseY + underlineOffsetPx, y + 1, y + cellH - cursorThicknessPx - 1);
+        deps.pushRect(frame.cursorData, x3, underlineY, cursorWidth, cursorThicknessPx, cursorColor);
+      } else if (cursorStyle === 3) {
+        deps.pushRect(frame.cursorData, x3, y, cursorWidth, cursorThicknessPx, cursorColor);
+        deps.pushRect(frame.cursorData, x3, y + cellH - cursorThicknessPx, cursorWidth, cursorThicknessPx, cursorColor);
+        deps.pushRect(frame.cursorData, x3, y, cursorThicknessPx, cellH, cursorColor);
+        deps.pushRect(frame.cursorData, x3 + cursorWidth - cursorThicknessPx, y, cursorThicknessPx, cellH, cursorColor);
+      } else {
+        deps.pushRect(frame.cursorData, x3, y, cursorWidth, cellH, cursorColor);
+      }
+    }
+  }
+  if (wasmExports && wasmHandle && wasmExports.restty_scrollbar_total) {
+    const total = wasmExports.restty_scrollbar_total(wasmHandle) || 0;
+    const offset = wasmExports.restty_scrollbar_offset ? wasmExports.restty_scrollbar_offset(wasmHandle) : 0;
+    const len = wasmExports.restty_scrollbar_len ? wasmExports.restty_scrollbar_len(wasmHandle) : rows;
+    if (total !== scrollbarState.lastTotal || offset !== scrollbarState.lastOffset || len !== scrollbarState.lastLen) {
+      scrollbarState.lastTotal = total;
+      scrollbarState.lastOffset = offset;
+      scrollbarState.lastLen = len;
+    }
+    appendOverlayScrollbar(frame.overlayData, total, offset, len);
+  }
+  webgpuUniforms[0] = canvas.width;
+  webgpuUniforms[1] = canvas.height;
+  webgpuUniforms[2] = 0;
+  webgpuUniforms[3] = 0;
+  webgpuUniforms[4] = useLinearBlending ? 1 : 0;
+  webgpuUniforms[5] = useLinearCorrection ? 1 : 0;
+  webgpuUniforms[6] = 0;
+  webgpuUniforms[7] = 0;
+  device.queue.writeBuffer(state2.uniformBuffer, 0, webgpuUniforms);
+  const presentView = context.getCurrentTexture().createView();
+  const mainView = hasShaderStages && stageTargets ? stageTargets.sceneView : presentView;
+  const encoder = device.createCommandEncoder();
+  const pass = encoder.beginRenderPass({
+    colorAttachments: [
+      {
+        view: mainView,
+        clearValue: { r: clearColor[0], g: clearColor[1], b: clearColor[2], a: clearColor[3] },
+        loadOp: "clear",
+        storeOp: "store"
+      }
+    ]
+  });
+  const alignTo4 = (value) => value + 3 & ~3;
+  const uploadInstanceBatches = (kind, batches) => {
+    if (!batches.length)
+      return;
+    let totalBytes = 0;
+    for (const batch of batches) {
+      totalBytes = alignTo4(totalBytes);
+      batch.offset = totalBytes;
+      totalBytes += batch.array.byteLength;
+    }
+    ensureInstanceBuffer2(state2, kind, totalBytes);
+    const buffer = kind === "rect" ? state2.rectInstanceBuffer : state2.glyphInstanceBuffer;
+    for (const batch of batches) {
+      device.queue.writeBuffer(buffer, batch.offset, batch.array);
+    }
+  };
+  const rectPreBatches = [];
+  const rectPostBatches = [];
+  const pushRectBatch = (target, data) => {
+    if (!data.length)
+      return;
+    target.push({
+      array: new Float32Array(data),
+      offset: 0,
+      instances: data.length / 8
+    });
+  };
+  pushRectBatch(rectPreBatches, frame.bgData);
+  pushRectBatch(rectPreBatches, frame.selectionData);
+  pushRectBatch(rectPreBatches, frame.underlineData);
+  pushRectBatch(rectPreBatches, frame.fgRectData);
+  pushRectBatch(rectPostBatches, frame.cursorData);
+  pushRectBatch(rectPostBatches, frame.overlayData);
+  const glyphMainBatches = [];
+  const glyphOverlayBatches = [];
+  for (const [fontIndex, glyphData] of frame.glyphDataNearestByFont.entries()) {
+    if (!glyphData.length)
+      continue;
+    const atlasState = state2.glyphAtlases?.get(fontIndex);
+    if (!atlasState?.bindGroupNearest)
+      continue;
+    glyphMainBatches.push({
+      array: new Float32Array(glyphData),
+      offset: 0,
+      instances: glyphData.length / GLYPH_INSTANCE_FLOATS,
+      pipeline: state2.glyphPipelineNearest,
+      bindGroup: atlasState.bindGroupNearest
+    });
+  }
+  for (const [fontIndex, glyphData] of frame.glyphDataLinearByFont.entries()) {
+    if (!glyphData.length)
+      continue;
+    const atlasState = state2.glyphAtlases?.get(fontIndex);
+    if (!atlasState?.bindGroupLinear)
+      continue;
+    glyphMainBatches.push({
+      array: new Float32Array(glyphData),
+      offset: 0,
+      instances: glyphData.length / GLYPH_INSTANCE_FLOATS,
+      pipeline: state2.glyphPipeline,
+      bindGroup: atlasState.bindGroupLinear
+    });
+  }
+  for (const [fontIndex, glyphData] of frame.overlayGlyphDataNearestByFont.entries()) {
+    if (!glyphData.length)
+      continue;
+    const atlasState = state2.glyphAtlases?.get(fontIndex);
+    if (!atlasState?.bindGroupNearest)
+      continue;
+    glyphOverlayBatches.push({
+      array: new Float32Array(glyphData),
+      offset: 0,
+      instances: glyphData.length / GLYPH_INSTANCE_FLOATS,
+      pipeline: state2.glyphPipelineNearest,
+      bindGroup: atlasState.bindGroupNearest
+    });
+  }
+  for (const [fontIndex, glyphData] of frame.overlayGlyphDataLinearByFont.entries()) {
+    if (!glyphData.length)
+      continue;
+    const atlasState = state2.glyphAtlases?.get(fontIndex);
+    if (!atlasState?.bindGroupLinear)
+      continue;
+    glyphOverlayBatches.push({
+      array: new Float32Array(glyphData),
+      offset: 0,
+      instances: glyphData.length / GLYPH_INSTANCE_FLOATS,
+      pipeline: state2.glyphPipeline,
+      bindGroup: atlasState.bindGroupLinear
+    });
+  }
+  uploadInstanceBatches("rect", [...rectPreBatches, ...rectPostBatches]);
+  uploadInstanceBatches("glyph", [...glyphMainBatches, ...glyphOverlayBatches]);
+  pass.setVertexBuffer(0, state2.vertexBuffer);
+  const drawRectBatches = (batches) => {
+    if (!batches.length)
+      return;
+    pass.setPipeline(state2.rectPipeline);
+    pass.setBindGroup(0, state2.rectBindGroup);
+    for (const batch of batches) {
+      pass.setVertexBuffer(1, state2.rectInstanceBuffer, batch.offset, batch.array.byteLength);
+      pass.draw(6, batch.instances, 0, 0);
+    }
+  };
+  const drawGlyphBatches = (batches) => {
+    for (const batch of batches) {
+      pass.setPipeline(batch.pipeline);
+      pass.setBindGroup(0, batch.bindGroup);
+      pass.setVertexBuffer(1, state2.glyphInstanceBuffer, batch.offset, batch.array.byteLength);
+      pass.draw(6, batch.instances, 0, 0);
+    }
+  };
+  drawRectBatches(rectPreBatches);
+  drawGlyphBatches(glyphMainBatches);
+  drawRectBatches(rectPostBatches);
+  drawGlyphBatches(glyphOverlayBatches);
+  pass.end();
+  if (hasShaderStages && stageTargets) {
+    let source = "scene";
+    const nowSec = performance.now() * 0.001;
+    for (let i3 = 0;i3 < compiledWebGPUStages.length; i3 += 1) {
+      const stage = compiledWebGPUStages[i3];
+      stage.uniformData[0] = canvas.width;
+      stage.uniformData[1] = canvas.height;
+      stage.uniformData[2] = nowSec;
+      stage.uniformData[3] = 0;
+      stage.uniformData[4] = stage.params[0] ?? 0;
+      stage.uniformData[5] = stage.params[1] ?? 0;
+      stage.uniformData[6] = stage.params[2] ?? 0;
+      stage.uniformData[7] = stage.params[3] ?? 0;
+      stage.uniformData[8] = stage.params[4] ?? 0;
+      stage.uniformData[9] = stage.params[5] ?? 0;
+      stage.uniformData[10] = stage.params[6] ?? 0;
+      stage.uniformData[11] = stage.params[7] ?? 0;
+      device.queue.writeBuffer(stage.uniformBuffer, 0, stage.uniformData);
+      const isLast = i3 === compiledWebGPUStages.length - 1;
+      const target = !isLast ? source === "ping" ? stageTargets.pongView : stageTargets.pingView : presentView;
+      const bindGroup = source === "scene" ? stage.bindGroupScene : source === "ping" ? stage.bindGroupPing : stage.bindGroupPong;
+      if (!bindGroup)
+        continue;
+      const stagePass = encoder.beginRenderPass({
+        colorAttachments: [
+          {
+            view: target,
+            clearValue: { r: 0, g: 0, b: 0, a: 1 },
+            loadOp: "clear",
+            storeOp: "store"
+          }
+        ]
+      });
+      stagePass.setPipeline(stage.pipeline);
+      stagePass.setBindGroup(0, bindGroup);
+      stagePass.setVertexBuffer(0, state2.vertexBuffer);
+      stagePass.draw(6, 1, 0, 0);
+      stagePass.end();
+      if (!isLast) {
+        source = source === "ping" ? "pong" : "ping";
+      }
+    }
+  }
+  device.queue.submit([encoder.finish()]);
+  const kittyPlacements = wasm && wasmHandle ? wasm.getKittyPlacements(wasmHandle) : [];
+  drawKittyOverlay(kittyPlacements, cellW, cellH);
+}
+
+// src/runtime/create-runtime/render-tick-webgpu-overlays-atlas.ts
+function augmentWebGPUFrameWithOverlaysAndAtlas(params) {
+  const {
+    deps,
+    state: state2,
+    frame,
+    cursor,
+    cursorImeAnchor,
+    cursorCell,
+    cols,
+    cellW,
+    cellH,
+    yPad,
+    baselineOffset,
+    underlineOffsetPx,
+    underlineThicknessPx,
+    lineHeight,
+    primaryScale,
+    fontSizePx
+  } = params;
+  const {
+    fontState,
+    imeState,
+    pickFontIndexForText,
+    shapeClusterWithFont,
+    noteColorGlyphText,
+    fitTextTailToWidth: fitTextTailToWidth2,
+    PREEDIT_BG: PREEDIT_BG2,
+    PREEDIT_UL: PREEDIT_UL2,
+    PREEDIT_ACTIVE_BG: PREEDIT_ACTIVE_BG2,
+    PREEDIT_CARET: PREEDIT_CARET2,
+    PREEDIT_FG: PREEDIT_FG2,
+    resizeState,
+    RESIZE_OVERLAY_HOLD_MS,
+    RESIZE_OVERLAY_FADE_MS,
+    clamp: clamp2,
+    pushRect: pushRect2,
+    pushRectBox: pushRectBox2,
+    ensureAtlasForFont
+  } = deps;
+  if (cursor && imeState.preedit) {
+    const preeditText = imeState.preedit;
+    const preeditFontIndex = pickFontIndexForText(preeditText, 1);
+    const preeditEntry = fontState.fonts[preeditFontIndex] ?? fontState.fonts[0];
+    const preeditScale = frame.scaleByFont[preeditFontIndex] ?? primaryScale;
+    const preeditRow = cursorImeAnchor?.row ?? cursorCell?.row ?? cursor.row;
+    const preeditCol = cursorImeAnchor?.col ?? cursorCell?.col ?? cursor.col;
+    const maxPreeditWidthPx = Math.max(cellW, (cols - preeditCol) * cellW);
+    const fittedPreedit = fitTextTailToWidth2(preeditText, maxPreeditWidthPx, (value) => {
+      if (!value)
+        return 0;
+      return shapeClusterWithFont(preeditEntry, value).advance * preeditScale;
+    });
+    const visiblePreeditText = fittedPreedit.text;
+    if (visiblePreeditText) {
+      const shaped = shapeClusterWithFont(preeditEntry, visiblePreeditText);
+      noteColorGlyphText(preeditEntry, visiblePreeditText, shaped);
+      const glyphSet = frame.getGlyphSet(preeditFontIndex);
+      for (const glyph of shaped.glyphs)
+        glyphSet.add(glyph.glyphId);
+      const baseY = preeditRow * cellH + yPad + baselineOffset;
+      const x3 = preeditCol * cellW;
+      const advancePx = shaped.advance * preeditScale;
+      const widthPx = Math.max(cellW, Math.min(maxPreeditWidthPx, Math.max(fittedPreedit.widthPx, advancePx)));
+      const rowY = preeditRow * cellH;
+      pushRect2(frame.bgData, x3, rowY, widthPx, cellH, PREEDIT_BG2);
+      const thickness = underlineThicknessPx;
+      const underlineBaseY = clamp2(baseY + underlineOffsetPx, rowY + 1, rowY + cellH - thickness - 1);
+      pushRect2(frame.underlineData, x3, underlineBaseY, widthPx, thickness, PREEDIT_UL2);
+      const selectionOffset = fittedPreedit.offset;
+      const rawSelStart = imeState.selectionStart || 0;
+      const rawSelEnd = imeState.selectionEnd || 0;
+      const selStart = Math.max(0, Math.min(visiblePreeditText.length, rawSelStart - selectionOffset));
+      const selEnd = Math.max(selStart, Math.min(visiblePreeditText.length, rawSelEnd - selectionOffset));
+      if (selEnd > selStart) {
+        const leftWidth = shapeClusterWithFont(preeditEntry, visiblePreeditText.slice(0, selStart)).advance * preeditScale;
+        const selWidth = shapeClusterWithFont(preeditEntry, visiblePreeditText.slice(selStart, selEnd)).advance * preeditScale;
+        pushRect2(frame.bgData, x3 + leftWidth, rowY, selWidth, cellH, PREEDIT_ACTIVE_BG2);
+        pushRect2(frame.underlineData, x3 + leftWidth, underlineBaseY, selWidth, thickness, PREEDIT_UL2);
+      } else {
+        const caretWidth = Math.max(1, Math.floor(cellW * 0.1));
+        const caretX = x3 + shapeClusterWithFont(preeditEntry, visiblePreeditText.slice(0, selStart)).advance * preeditScale;
+        pushRect2(frame.cursorData, caretX, rowY + 2, caretWidth, cellH - 4, PREEDIT_CARET2);
+      }
+      frame.getGlyphQueue(preeditFontIndex).push({
+        x: x3,
+        baseY,
+        xPad: 0,
+        fg: PREEDIT_FG2,
+        bg: PREEDIT_BG2,
+        shaped,
+        fontIndex: preeditFontIndex,
+        scale: preeditScale,
+        cellWidth: widthPx,
+        symbolLike: false
+      });
+    }
+  }
+  const resizeAge = performance.now() - resizeState.lastAt;
+  if (resizeState.cols > 0 && resizeState.rows > 0 && resizeAge >= 0 && resizeAge < RESIZE_OVERLAY_HOLD_MS + RESIZE_OVERLAY_FADE_MS) {
+    const fade2 = resizeAge <= RESIZE_OVERLAY_HOLD_MS ? 1 : 1 - (resizeAge - RESIZE_OVERLAY_HOLD_MS) / RESIZE_OVERLAY_FADE_MS;
+    const alpha = clamp2(fade2, 0, 1);
+    if (alpha > 0.01) {
+      const overlayText = `${resizeState.cols}x${resizeState.rows}`;
+      const overlayEntry = fontState.fonts[0];
+      if (overlayEntry?.font) {
+        const shaped = shapeClusterWithFont(overlayEntry, overlayText);
+        const glyphSet = frame.getGlyphSet(0);
+        for (const glyph of shaped.glyphs)
+          glyphSet.add(glyph.glyphId);
+        const textWidth = shaped.advance * primaryScale;
+        const padX = Math.max(8, cellW * 0.6);
+        const padY = Math.max(6, cellH * 0.4);
+        const boxW = textWidth + padX * 2;
+        const boxH = lineHeight + padY * 2;
+        const boxX = (deps.canvas.width - boxW) * 0.5;
+        const boxY = (deps.canvas.height - boxH) * 0.5;
+        const overlayBg = [0, 0, 0, 0.6 * alpha];
+        pushRectBox2(frame.overlayData, boxX, boxY, boxW, boxH, overlayBg);
+        pushRectBox2(frame.overlayData, boxX, boxY, boxW, 1, [1, 1, 1, 0.12 * alpha]);
+        const textRowY = boxY + (boxH - lineHeight) * 0.5;
+        const baseY = textRowY + yPad + baselineOffset;
+        frame.getOverlayGlyphQueue(0).push({
+          x: boxX + padX,
+          baseY,
+          xPad: 0,
+          fg: [1, 1, 1, alpha],
+          bg: overlayBg,
+          shaped,
+          fontIndex: 0,
+          scale: primaryScale,
+          cellWidth: textWidth,
+          symbolLike: false
+        });
+      }
+    }
+  }
+  for (const [fontIndex, neededSet] of frame.neededGlyphIdsByFont.entries()) {
+    const entry = fontState.fonts[fontIndex];
+    if (!entry)
+      continue;
+    const atlasScale = frame.bitmapScaleByFont[fontIndex] ?? 1;
+    const meta = frame.neededGlyphMetaByFont.get(fontIndex);
+    const constraintContext = meta ? {
+      cellW,
+      cellH,
+      yPad,
+      baselineOffset,
+      baselineAdjust: frame.baselineAdjustByFont[fontIndex] ?? 0,
+      fontScale: frame.scaleByFont[fontIndex] ?? primaryScale,
+      nerdMetrics: frame.nerdMetrics,
+      fontEntry: entry
+    } : null;
+    ensureAtlasForFont(state2.device, state2, entry, neededSet, fontSizePx, fontIndex, atlasScale, meta, constraintContext);
+  }
+}
+
+// src/runtime/create-runtime/render-tick-webgpu.ts
+function tickWebGPU(deps, state2) {
+  const {
+    isShaderStagesDirty,
+    rebuildWebGPUShaderStages,
+    setShaderStagesDirty,
+    getCompiledWebGPUShaderStages,
+    ensureWebGPUStageTargets,
+    fontError,
+    termDebug,
+    reportDebugText,
+    updateGrid,
+    getRenderState,
+    fontState,
+    clearKittyOverlay,
+    resolveBlendFlags: resolveBlendFlags2,
+    alphaBlending,
+    srgbToLinearColor: srgbToLinearColor2,
+    defaultBg,
+    reportTermSize,
+    resolveCursorPosition,
+    reportCursor,
+    FORCE_CURSOR_BLINK,
+    CURSOR_BLINK_MS,
+    imeInput,
+    resolveCursorStyle,
+    isFocused,
+    imeState,
+    resolveImeAnchor: resolveImeAnchor2,
+    dbgEl,
+    wasmExports,
+    wasmHandle,
+    gridState,
+    canvas,
+    fontHeightUnits: fontHeightUnits2,
+    updateImePosition
+  } = deps;
+  const { device, context } = state2;
+  if (isShaderStagesDirty()) {
+    rebuildWebGPUShaderStages(state2);
+    setShaderStagesDirty(false);
+  }
+  const compiledWebGPUStages = getCompiledWebGPUShaderStages();
+  const shaderStageCount = compiledWebGPUStages.length;
+  const stageTargets = shaderStageCount > 0 ? ensureWebGPUStageTargets(state2) : null;
+  const hasShaderStages = shaderStageCount > 0 && !!stageTargets;
+  if (fontError) {
+    const text2 = `Font error: ${fontError.message}`;
+    if (termDebug)
+      termDebug.textContent = text2;
+    reportDebugText(text2);
+  }
+  updateGrid();
+  const render = getRenderState();
+  if (!render || !fontState.font) {
+    if (deps.lastRenderState) {
+      clearKittyOverlay();
+      return;
+    }
+    const { useLinearBlending: useLinearBlending2 } = resolveBlendFlags2(alphaBlending, "webgpu", state2);
+    const clearColor2 = useLinearBlending2 ? srgbToLinearColor2(defaultBg) : defaultBg;
+    const encoder = device.createCommandEncoder();
+    const presentView = context.getCurrentTexture().createView();
+    const pass = encoder.beginRenderPass({
+      colorAttachments: [
+        {
+          view: presentView,
+          clearValue: { r: clearColor2[0], g: clearColor2[1], b: clearColor2[2], a: clearColor2[3] },
+          loadOp: "clear",
+          storeOp: "store"
+        }
+      ]
+    });
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+    clearKittyOverlay();
+    return;
+  }
+  deps.lastRenderState = render;
+  const {
+    rows,
+    cols,
+    codepoints,
+    contentTags,
+    wide,
+    styleFlags,
+    linkIds,
+    fgBytes,
+    bgBytes,
+    ulBytes,
+    ulStyle,
+    graphemeOffset,
+    graphemeLen,
+    graphemeBuffer,
+    cursor
+  } = render;
+  if (!codepoints || !fgBytes)
+    return;
+  const { useLinearBlending, useLinearCorrection } = resolveBlendFlags2(alphaBlending, "webgpu", state2);
+  const clearColor = useLinearBlending ? srgbToLinearColor2(defaultBg) : defaultBg;
+  reportTermSize(cols, rows);
+  const cursorPos = cursor ? resolveCursorPosition(cursor) : null;
+  reportCursor(cursorPos);
+  const isBlinking = (cursor?.blinking || 0) !== 0 || FORCE_CURSOR_BLINK;
+  const blinkVisible = !isBlinking || Math.floor(performance.now() / CURSOR_BLINK_MS) % 2 === 0;
+  const imeFocused = typeof document !== "undefined" && imeInput ? document.activeElement === imeInput : false;
+  const cursorStyle = cursor ? resolveCursorStyle(cursor, {
+    focused: isFocused || imeFocused,
+    preedit: Boolean(imeState.preedit),
+    blinkVisible
+  }) : null;
+  let cursorCell = null;
+  if (cursorStyle !== null && cursorPos) {
+    let col = cursorPos.col;
+    const row = cursorPos.row;
+    let wideCell = false;
+    if (cursorPos.wideTail && col > 0) {
+      col -= 1;
+      wideCell = true;
+    }
+    cursorCell = { row, col, wide: wideCell };
+  }
+  const cursorImeAnchor = resolveImeAnchor2(cursorPos, cols, rows);
+  if (dbgEl && wasmExports && wasmHandle) {
+    const cx = wasmExports.restty_debug_cursor_x ? wasmExports.restty_debug_cursor_x(wasmHandle) : 0;
+    const cy = wasmExports.restty_debug_cursor_y ? wasmExports.restty_debug_cursor_y(wasmHandle) : 0;
+    const sl = wasmExports.restty_debug_scroll_left ? wasmExports.restty_debug_scroll_left(wasmHandle) : 0;
+    const sr = wasmExports.restty_debug_scroll_right ? wasmExports.restty_debug_scroll_right(wasmHandle) : 0;
+    const tc = wasmExports.restty_debug_term_cols ? wasmExports.restty_debug_term_cols(wasmHandle) : 0;
+    const tr = wasmExports.restty_debug_term_rows ? wasmExports.restty_debug_term_rows(wasmHandle) : 0;
+    const pc = wasmExports.restty_debug_page_cols ? wasmExports.restty_debug_page_cols(wasmHandle) : 0;
+    const pr = wasmExports.restty_debug_page_rows ? wasmExports.restty_debug_page_rows(wasmHandle) : 0;
+    const text2 = `${cx},${cy} | ${sl}-${sr} | t:${tc}x${tr} p:${pc}x${pr}`;
+    reportDebugText(text2);
+  }
+  const cellW = gridState.cellW || canvas.width / cols;
+  const cellH = gridState.cellH || canvas.height / rows;
+  const fontSizePx = gridState.fontSizePx || Math.max(1, Math.round(cellH));
+  const primaryScale = gridState.scale || fontState.font.scaleForSize(fontSizePx, fontState.sizeMode);
+  const lineHeight = gridState.lineHeight || fontHeightUnits2(fontState.font) * primaryScale;
+  const baselineOffset = gridState.baselineOffset || fontState.font.ascender * primaryScale;
+  const yPad = gridState.yPad ?? (cellH - lineHeight) / 2;
+  const post = fontState.font.post;
+  const underlinePosition = post?.underlinePosition ?? Math.round(-fontState.font.upem * 0.08);
+  const underlineThickness = post?.underlineThickness ?? Math.round(fontState.font.upem * 0.05);
+  const underlineOffsetPx = -underlinePosition * primaryScale;
+  const underlineThicknessPx = Math.max(1, Math.ceil(underlineThickness * primaryScale));
+  if (cursorImeAnchor) {
+    updateImePosition(cursorImeAnchor, cellW, cellH);
+  }
+  const frame = collectWebGPUCellPass({
+    deps,
+    render: {
+      rows,
+      cols,
+      codepoints,
+      contentTags,
+      wide,
+      styleFlags,
+      linkIds,
+      fgBytes,
+      bgBytes,
+      ulBytes,
+      ulStyle,
+      graphemeOffset,
+      graphemeLen,
+      graphemeBuffer
+    },
+    cellW,
+    cellH,
+    fontSizePx,
+    primaryScale,
+    lineHeight,
+    baselineOffset,
+    yPad,
+    underlineOffsetPx,
+    underlineThicknessPx,
+    cursorBlock: cursorStyle === 0 && !!cursorCell,
+    cursorCell,
+    blinkVisible,
+    defaultBg
+  });
+  augmentWebGPUFrameWithOverlaysAndAtlas({
+    deps,
+    state: state2,
+    frame,
+    cursor,
+    cursorImeAnchor,
+    cursorCell,
+    cols,
+    cellW,
+    cellH,
+    yPad,
+    baselineOffset,
+    underlineOffsetPx,
+    underlineThicknessPx,
+    lineHeight,
+    primaryScale,
+    fontSizePx
+  });
+  drawWebGPUFrame({
+    deps,
+    state: state2,
+    frame,
+    cursor,
+    cursorPos,
+    cursorStyle,
+    rows,
+    cols,
+    cellW,
+    cellH,
+    yPad,
+    baselineOffset,
+    underlineOffsetPx,
+    underlineThicknessPx,
+    primaryScale,
+    useLinearBlending,
+    useLinearCorrection,
+    clearColor,
+    hasShaderStages,
+    stageTargets,
+    compiledWebGPUStages
+  });
+}
+
+// src/runtime/create-runtime/render-ticks.ts
+function createRuntimeRenderTicks(deps) {
+  function tickWebGPU2(state2) {
+    return tickWebGPU(deps, state2);
+  }
+  function tickWebGL2(state2) {
+    return tickWebGL(deps, state2);
+  }
+  return { tickWebGPU: tickWebGPU2, tickWebGL: tickWebGL2 };
+}
+
+// src/runtime/create-runtime/font-runtime-grid-helpers.ts
+function createFontRuntimeGridHelpers(options) {
+  const {
+    fontState,
+    fontConfig,
+    gridState,
+    callbacks,
+    gridEl,
+    cellEl,
+    getCanvas,
+    getCurrentDpr,
+    getActiveState,
+    getWasmReady,
+    getWasm,
+    getWasmHandle,
+    ptyTransport,
+    setNeedsRender,
+    resizeState,
+    resizeActiveMs,
+    resizeCommitDebounceMs,
+    onSyncKittyOverlaySize,
+    shapeClusterWithFont
+  } = options;
+  let pendingTerminalResize = null;
+  let terminalResizeTimer = 0;
+  function computeCellMetrics() {
+    const primary = fontState.fonts[0];
+    if (!primary)
+      return null;
+    const fontSizePx = Math.max(1, Math.round(fontConfig.sizePx * getCurrentDpr()));
+    const scale = primary.font.scaleForSize(fontSizePx, fontState.sizeMode);
+    const glyphId = primary.font.glyphIdForChar("M");
+    const advanceUnits = glyphId !== undefined && glyphId !== null ? primary.font.advanceWidth(glyphId) : shapeClusterWithFont(primary, "M").advance;
+    const cellW = Math.max(1, Math.round(advanceUnits * scale));
+    const lineHeight = fontHeightUnits(primary.font) * scale;
+    const cellH = Math.max(1, Math.round(lineHeight));
+    const baselineOffset = primary.font.ascender * scale;
+    const yPad = Math.max(0, (cellH - lineHeight) * 0.5);
+    return { cellW, cellH, fontSizePx, scale, lineHeight, baselineOffset, yPad };
+  }
+  function commitTerminalResize(cols, rows) {
+    const wasmReady = getWasmReady();
+    const wasm = getWasm();
+    const wasmHandle = getWasmHandle();
+    if (wasmReady && wasm && wasmHandle) {
+      wasm.resize(wasmHandle, cols, rows);
+      wasm.renderUpdate(wasmHandle);
+    }
+    if (ptyTransport.isConnected()) {
+      ptyTransport.resize(cols, rows);
+    }
+    setNeedsRender();
+  }
+  function flushPendingTerminalResize() {
+    if (terminalResizeTimer) {
+      clearTimeout(terminalResizeTimer);
+      terminalResizeTimer = 0;
+    }
+    if (!pendingTerminalResize)
+      return;
+    const { cols, rows } = pendingTerminalResize;
+    pendingTerminalResize = null;
+    commitTerminalResize(cols, rows);
+  }
+  function scheduleTerminalResizeCommit(cols, rows, options2 = {}) {
+    pendingTerminalResize = { cols, rows };
+    if (options2.immediate) {
+      flushPendingTerminalResize();
+      return;
+    }
+    if (terminalResizeTimer) {
+      clearTimeout(terminalResizeTimer);
+      terminalResizeTimer = 0;
+    }
+    terminalResizeTimer = window.setTimeout(() => {
+      terminalResizeTimer = 0;
+      flushPendingTerminalResize();
+    }, resizeCommitDebounceMs);
+  }
+  function resetTerminalResizeScheduler() {
+    if (terminalResizeTimer) {
+      clearTimeout(terminalResizeTimer);
+      terminalResizeTimer = 0;
+    }
+    pendingTerminalResize = null;
+  }
+  function updateGrid() {
+    if (!fontState.fonts.length)
+      return;
+    const metrics = computeCellMetrics();
+    if (!metrics)
+      return;
+    const canvas = getCanvas();
+    const cols = Math.max(1, Math.floor(canvas.width / metrics.cellW));
+    const rows = Math.max(1, Math.floor(canvas.height / metrics.cellH));
+    if (!Number.isFinite(cols) || !Number.isFinite(rows))
+      return;
+    const gridSizeChanged = cols !== gridState.cols || rows !== gridState.rows;
+    const cellSizeChanged = metrics.cellW !== gridState.cellW || metrics.cellH !== gridState.cellH;
+    if (gridSizeChanged) {
+      if (gridEl)
+        gridEl.textContent = `${cols}x${rows}`;
+      callbacks?.onGridSize?.(cols, rows);
+    }
+    if (cellSizeChanged) {
+      if (cellEl)
+        cellEl.textContent = `${Math.round(metrics.cellW)}x${Math.round(metrics.cellH)}`;
+      callbacks?.onCellSize?.(metrics.cellW, metrics.cellH);
+    }
+    const changed = gridSizeChanged || metrics.fontSizePx !== gridState.fontSizePx || cellSizeChanged;
+    if (metrics.fontSizePx !== gridState.fontSizePx) {
+      for (const entry of fontState.fonts)
+        resetFontEntry(entry);
+      const activeState = getActiveState();
+      if (activeState && activeState.glyphAtlases) {
+        activeState.glyphAtlases = new Map;
+      }
+    }
+    Object.assign(gridState, metrics, { cols, rows });
+    const wasmReady = getWasmReady();
+    const wasm = getWasm();
+    const wasmHandle = getWasmHandle();
+    if (wasmReady && wasm && wasmHandle) {
+      wasm.setPixelSize(wasmHandle, canvas.width, canvas.height);
+    }
+    if (changed) {
+      const resizeActive = performance.now() - resizeState.lastAt <= resizeActiveMs;
+      scheduleTerminalResizeCommit(cols, rows, { immediate: !resizeActive });
+    }
+    onSyncKittyOverlaySize();
+  }
+  return {
+    computeCellMetrics,
+    updateGrid,
+    flushPendingTerminalResize,
+    scheduleTerminalResizeCommit,
+    resetTerminalResizeScheduler
+  };
+}
+
+// src/runtime/create-runtime/font-runtime-text-helpers.ts
+function setBoundedMap(map, key, value, limit) {
+  if (map.has(key)) {
+    map.delete(key);
+  }
+  map.set(key, value);
+  if (map.size <= limit)
+    return;
+  const oldest = map.keys().next().value;
+  if (oldest !== undefined) {
+    map.delete(oldest);
+  }
+}
+function createFontRuntimeTextHelpers(options) {
+  const {
+    fontState,
+    glyphShapeCacheLimit,
+    fontPickCacheLimit,
+    UnicodeBuffer,
+    shape,
+    glyphBufferToShapedGlyphs
+  } = options;
+  function shapeClusterWithFont(entry, text2) {
+    const cached = entry.glyphCache.get(text2);
+    if (cached)
+      return cached;
+    const buffer = new UnicodeBuffer;
+    buffer.addStr(text2);
+    const glyphBuffer = shape(entry.font, buffer);
+    const glyphs = glyphBufferToShapedGlyphs(glyphBuffer);
+    const advance = glyphs.reduce((sum, g) => sum + g.xAdvance, 0);
+    const shaped = { glyphs, advance };
+    setBoundedMap(entry.glyphCache, text2, shaped, glyphShapeCacheLimit);
+    return shaped;
+  }
+  function noteColorGlyphText(entry, text2, shaped) {
+    if (!isColorEmojiFont(entry) || shaped.glyphs.length !== 1)
+      return;
+    const glyphId = shaped.glyphs[0]?.glyphId;
+    if (!glyphId)
+      return;
+    if (!entry.colorGlyphTexts)
+      entry.colorGlyphTexts = new Map;
+    entry.colorGlyphTexts.set(glyphId, text2);
+  }
+  function fontHasGlyph2(font, ch) {
+    const glyphId = font.glyphIdForChar(ch);
+    return glyphId !== undefined && glyphId !== null && glyphId !== 0;
+  }
+  function pickFontIndexForText(text2, expectedSpan = 1, stylePreference = "regular") {
+    if (!fontState.fonts.length)
+      return 0;
+    const cacheKey = `${expectedSpan}:${stylePreference}:${text2}`;
+    const cached = fontState.fontPickCache.get(cacheKey);
+    if (cached !== undefined)
+      return cached;
+    const chars = Array.from(text2);
+    const requiredChars = chars.filter((ch) => {
+      const cp = ch.codePointAt(0) ?? 0;
+      return !isCoverageIgnorableCodepoint(cp);
+    });
+    const firstCp = text2.codePointAt(0) ?? 0;
+    const nerdSymbol = isNerdSymbolCodepoint(firstCp);
+    const presentation = resolvePresentationPreference(text2, chars);
+    const styleHintsEnabled = stylePreference !== "regular" && presentation !== "emoji" && !nerdSymbol;
+    const hasBoldHint = (entry) => /\bbold\b/i.test(entry.label ?? "");
+    const hasItalicHint = (entry) => /\b(italic|oblique)\b/i.test(entry.label ?? "");
+    const stylePredicates = stylePreference === "bold_italic" ? [
+      (entry) => hasBoldHint(entry) && hasItalicHint(entry),
+      (entry) => hasBoldHint(entry),
+      (entry) => hasItalicHint(entry)
+    ] : stylePreference === "bold" ? [
+      (entry) => hasBoldHint(entry) && !hasItalicHint(entry),
+      (entry) => hasBoldHint(entry)
+    ] : stylePreference === "italic" ? [
+      (entry) => hasItalicHint(entry) && !hasBoldHint(entry),
+      (entry) => hasItalicHint(entry)
+    ] : [];
+    const pickFirstMatch = (predicate, allowSequenceShapingFallback = false) => {
+      for (let i3 = 0;i3 < fontState.fonts.length; i3 += 1) {
+        const entry = fontState.fonts[i3];
+        if (!entry?.font)
+          continue;
+        if (predicate && !predicate(entry))
+          continue;
+        let ok = true;
+        for (const ch of requiredChars) {
+          if (!fontHasGlyph2(entry.font, ch)) {
+            ok = false;
+            break;
+          }
+        }
+        if (!ok && allowSequenceShapingFallback) {
+          const shaped = shapeClusterWithFont(entry, text2);
+          ok = shaped.glyphs.some((glyph) => (glyph.glyphId ?? 0) !== 0);
+        }
+        if (ok)
+          return i3;
+      }
+      return -1;
+    };
+    const pickWithStyle = (predicate, allowSequenceShapingFallback = false) => {
+      if (styleHintsEnabled) {
+        for (let i3 = 0;i3 < stylePredicates.length; i3 += 1) {
+          const stylePredicate = stylePredicates[i3];
+          const styledIndex = pickFirstMatch((entry) => {
+            if (!stylePredicate(entry))
+              return false;
+            return predicate ? !!predicate(entry) : true;
+          }, allowSequenceShapingFallback);
+          if (styledIndex >= 0)
+            return styledIndex;
+        }
+      }
+      return pickFirstMatch(predicate, allowSequenceShapingFallback);
+    };
+    const tryIndex = (index) => {
+      if (index < 0)
+        return null;
+      setBoundedMap(fontState.fontPickCache, cacheKey, index, fontPickCacheLimit);
+      return index;
+    };
+    if (nerdSymbol) {
+      const symbolIndex = pickWithStyle((entry) => isNerdSymbolFont(entry) || isSymbolFont(entry));
+      const result = tryIndex(symbolIndex);
+      if (result !== null)
+        return result;
+    }
+    if (presentation === "emoji") {
+      const emojiIndex = pickFirstMatch((entry) => isColorEmojiFont(entry), true);
+      const result = tryIndex(emojiIndex);
+      if (result !== null)
+        return result;
+    } else if (presentation === "text") {
+      const textIndex = pickFirstMatch((entry) => !isColorEmojiFont(entry));
+      const result = tryIndex(textIndex);
+      if (result !== null)
+        return result;
+    }
+    const firstIndex = pickWithStyle();
+    if (firstIndex >= 0) {
+      setBoundedMap(fontState.fontPickCache, cacheKey, firstIndex, fontPickCacheLimit);
+      return firstIndex;
+    }
+    setBoundedMap(fontState.fontPickCache, cacheKey, 0, fontPickCacheLimit);
+    return 0;
+  }
+  return {
+    shapeClusterWithFont,
+    noteColorGlyphText,
+    fontHasGlyph: fontHasGlyph2,
+    pickFontIndexForText
+  };
+}
+
+// src/runtime/create-runtime/font-runtime-webgpu-atlas.ts
+function createRuntimeWebGPUAtlasHelpers(options) {
+  const {
+    fontState,
+    fontScaleOverrides,
+    resolveGlyphPixelMode: resolveGlyphPixelMode2,
+    atlasBitmapToRGBA: atlasBitmapToRGBA2,
+    padAtlasRGBA: padAtlasRGBA2,
+    buildAtlas,
+    buildColorEmojiAtlasWithCanvas,
+    rasterizeGlyph,
+    rasterizeGlyphWithTransform,
+    pixelModeRgbaValue,
+    atlasPadding,
+    symbolAtlasPadding,
+    symbolAtlasMaxSize
+  } = options;
+  function ensureAtlasForFont(device, state2, entry, neededGlyphIds, fontSizePx, fontIndex, atlasScale, glyphMeta, constraintContext) {
+    const built = buildFontAtlasIfNeeded({
+      entry,
+      neededGlyphIds,
+      glyphMeta,
+      fontSizePx,
+      atlasScale,
+      fontIndex,
+      constraintContext,
+      deps: {
+        fontScaleOverrides,
+        sizeMode: fontState.sizeMode,
+        isSymbolFont,
+        fontScaleOverride,
+        resolveGlyphPixelMode: resolveGlyphPixelMode2,
+        atlasBitmapToRGBA: atlasBitmapToRGBA2,
+        padAtlasRGBA: padAtlasRGBA2,
+        buildAtlas,
+        buildGlyphAtlasWithConstraints,
+        buildColorEmojiAtlasWithCanvas,
+        rasterizeGlyph,
+        rasterizeGlyphWithTransform,
+        nerdConstraintSignature,
+        constants: {
+          atlasPadding,
+          symbolAtlasPadding,
+          symbolAtlasMaxSize,
+          defaultAtlasMaxSize: 2048,
+          pixelModeRgbaValue
+        },
+        resolvePreferNearest: ({ fontIndex: idx, isSymbol, atlasScale: scale }) => {
+          const scaleHint = scale ?? 1;
+          return idx === 0 || isSymbol || scaleHint >= 0.99;
+        }
+      }
+    });
+    if (!built.rebuilt || !built.atlas || !built.rgba)
+      return false;
+    const atlas = built.atlas;
+    const colorGlyphs = built.colorGlyphs;
+    const preferNearest = built.preferNearest;
+    const rgba = built.rgba;
+    const texture = device.createTexture({
+      size: [atlas.bitmap.width, atlas.bitmap.rows, 1],
+      format: "rgba8unorm",
+      usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
+    });
+    const width = atlas.bitmap.width;
+    const height = atlas.bitmap.rows;
+    const bytesPerRow = width * 4;
+    const alignedBytesPerRow = Math.ceil(bytesPerRow / 256) * 256;
+    let upload = rgba;
+    if (alignedBytesPerRow !== bytesPerRow) {
+      const padded = new Uint8Array(alignedBytesPerRow * height);
+      for (let row = 0;row < height; row += 1) {
+        const srcStart = row * bytesPerRow;
+        const srcEnd = srcStart + bytesPerRow;
+        const dstStart = row * alignedBytesPerRow;
+        padded.set(rgba.subarray(srcStart, srcEnd), dstStart);
+      }
+      upload = padded;
+    }
+    device.queue.writeTexture({ texture }, upload, { bytesPerRow: alignedBytesPerRow, rowsPerImage: height }, { width, height, depthOrArrayLayers: 1 });
+    const samplerNearest = device.createSampler({
+      magFilter: "nearest",
+      minFilter: "nearest",
+      addressModeU: "clamp-to-edge",
+      addressModeV: "clamp-to-edge"
+    });
+    const samplerLinear = device.createSampler({
+      magFilter: "linear",
+      minFilter: "linear",
+      addressModeU: "clamp-to-edge",
+      addressModeV: "clamp-to-edge"
+    });
+    const bindGroupNearest = device.createBindGroup({
+      layout: state2.glyphPipelineNearest.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: state2.uniformBuffer } },
+        { binding: 1, resource: samplerNearest },
+        { binding: 2, resource: texture.createView() }
+      ]
+    });
+    const bindGroupLinear = device.createBindGroup({
+      layout: state2.glyphPipeline.getBindGroupLayout(0),
+      entries: [
+        { binding: 0, resource: { buffer: state2.uniformBuffer } },
+        { binding: 1, resource: samplerLinear },
+        { binding: 2, resource: texture.createView() }
+      ]
+    });
+    if (!state2.glyphAtlases)
+      state2.glyphAtlases = new Map;
+    const inset = Number.isFinite(atlas.inset) ? atlas.inset : 0;
+    state2.glyphAtlases.set(fontIndex, {
+      texture,
+      sampler: preferNearest ? undefined : samplerLinear,
+      samplerNearest,
+      samplerLinear,
+      bindGroup: preferNearest ? bindGroupNearest : bindGroupLinear,
+      bindGroupNearest,
+      bindGroupLinear,
+      width: atlas.bitmap.width,
+      height: atlas.bitmap.rows,
+      inset,
+      colorGlyphs,
+      nearest: preferNearest
+    });
+    return true;
+  }
+  return {
+    ensureAtlasForFont
+  };
+}
+
+// src/runtime/create-runtime/font-runtime-helpers.ts
+function createRuntimeFontRuntimeHelpers(options) {
+  const {
+    fontState,
+    fontConfig,
+    gridState,
+    callbacks,
+    gridEl,
+    cellEl,
+    getCanvas,
+    getCurrentDpr,
+    getActiveState,
+    getWasmReady,
+    getWasm,
+    getWasmHandle,
+    ptyTransport,
+    setNeedsRender,
+    resizeState,
+    resizeActiveMs,
+    resizeCommitDebounceMs,
+    onSyncKittyOverlaySize,
+    fontScaleOverrides,
+    resolveGlyphPixelMode: resolveGlyphPixelMode2,
+    atlasBitmapToRGBA: atlasBitmapToRGBA2,
+    padAtlasRGBA: padAtlasRGBA2,
+    buildAtlas,
+    buildColorEmojiAtlasWithCanvas,
+    rasterizeGlyph,
+    rasterizeGlyphWithTransform,
+    pixelModeRgbaValue,
+    atlasPadding,
+    symbolAtlasPadding,
+    symbolAtlasMaxSize,
+    glyphShapeCacheLimit,
+    fontPickCacheLimit,
+    UnicodeBuffer,
+    shape,
+    glyphBufferToShapedGlyphs
+  } = options;
+  const textHelpers = createFontRuntimeTextHelpers({
+    fontState,
+    glyphShapeCacheLimit,
+    fontPickCacheLimit,
+    UnicodeBuffer,
+    shape,
+    glyphBufferToShapedGlyphs
+  });
+  const gridHelpers = createFontRuntimeGridHelpers({
+    fontState,
+    fontConfig,
+    gridState,
+    callbacks,
+    gridEl,
+    cellEl,
+    getCanvas,
+    getCurrentDpr,
+    getActiveState,
+    getWasmReady,
+    getWasm,
+    getWasmHandle,
+    ptyTransport,
+    setNeedsRender,
+    resizeState,
+    resizeActiveMs,
+    resizeCommitDebounceMs,
+    onSyncKittyOverlaySize,
+    shapeClusterWithFont: textHelpers.shapeClusterWithFont
+  });
+  const { ensureAtlasForFont } = createRuntimeWebGPUAtlasHelpers({
+    fontState,
+    fontScaleOverrides,
+    resolveGlyphPixelMode: resolveGlyphPixelMode2,
+    atlasBitmapToRGBA: atlasBitmapToRGBA2,
+    padAtlasRGBA: padAtlasRGBA2,
+    buildAtlas,
+    buildColorEmojiAtlasWithCanvas,
+    rasterizeGlyph,
+    rasterizeGlyphWithTransform,
+    pixelModeRgbaValue,
+    atlasPadding,
+    symbolAtlasPadding,
+    symbolAtlasMaxSize
+  });
+  return {
+    ...textHelpers,
+    ...gridHelpers,
+    ensureAtlasForFont
+  };
+}
+
+// src/runtime/create-runtime/runtime-reporting.ts
+function createRuntimeReporting(options) {
+  let lastReportedTermCols = -1;
+  let lastReportedTermRows = -1;
+  let lastReportedCursorCol = -1;
+  let lastReportedCursorRow = -1;
+  let lastReportedDebugText = "";
+  function selectionForRow2(row, cols) {
+    return selectionForRow(options.selectionState, row, cols);
+  }
+  function getCellText(render, idx) {
+    const cp = render.codepoints[idx];
+    if (!cp)
+      return " ";
+    let text2 = String.fromCodePoint(cp);
+    if (render.graphemeLen && render.graphemeOffset && render.graphemeBuffer) {
+      const extra = render.graphemeLen[idx] ?? 0;
+      if (extra > 0) {
+        const start = render.graphemeOffset[idx] ?? 0;
+        const cps = [cp];
+        for (let j = 0;j < extra; j += 1) {
+          const extraCp = render.graphemeBuffer[start + j];
+          if (extraCp)
+            cps.push(extraCp);
+        }
+        text2 = String.fromCodePoint(...cps);
+      }
+    }
+    return text2;
+  }
+  function getSelectionText2() {
+    const lastRenderState = options.getLastRenderState();
+    if (!lastRenderState)
+      return "";
+    const { rows, cols } = lastRenderState;
+    return getSelectionText(options.selectionState, rows, cols, (idx) => getCellText(lastRenderState, idx));
+  }
+  function getRenderState() {
+    const wasmReady = options.getWasmReady();
+    const wasm = options.getWasm();
+    const wasmHandle = options.getWasmHandle();
+    if (!wasmReady || !wasm || !wasmHandle)
+      return null;
+    return wasm.getRenderState(wasmHandle);
+  }
+  function resolveCursorPosition(cursor) {
+    if (!cursor)
+      return null;
+    let col = Number(cursor.col);
+    let row = Number(cursor.row);
+    const render = options.getLastRenderState();
+    const cols = render?.cols ?? 0;
+    const rows = render?.rows ?? 0;
+    const inBounds = (valueCol, valueRow) => {
+      if (!Number.isFinite(valueCol) || !Number.isFinite(valueRow))
+        return false;
+      if (cols <= 0 || rows <= 0)
+        return true;
+      return valueCol >= 0 && valueRow >= 0 && valueCol < cols && valueRow < rows;
+    };
+    const wasmExports = options.getWasmExports();
+    const wasmHandle = options.getWasmHandle();
+    if (!inBounds(col, row) && wasmExports?.restty_debug_cursor_x && wasmExports?.restty_debug_cursor_y && wasmHandle) {
+      const debugCol = wasmExports.restty_debug_cursor_x(wasmHandle);
+      const debugRow = wasmExports.restty_debug_cursor_y(wasmHandle);
+      if (inBounds(debugCol, debugRow)) {
+        col = debugCol;
+        row = debugRow;
+      }
+    }
+    if (cols > 0 && rows > 0) {
+      col = Math.max(0, Math.min(cols - 1, Math.floor(col)));
+      row = Math.max(0, Math.min(rows - 1, Math.floor(row)));
+    }
+    return { col, row, wideTail: cursor.wideTail === 1 };
+  }
+  function resolveCursorStyle(cursor, opts) {
+    if (!cursor)
+      return null;
+    const visible = cursor.visible !== 0;
+    if (!visible || opts.preedit)
+      return null;
+    if (!opts.focused)
+      return 3;
+    if (cursor.blinking && !opts.blinkVisible)
+      return null;
+    return cursor.style ?? 0;
+  }
+  function reportTermSize(cols, rows) {
+    if (cols === lastReportedTermCols && rows === lastReportedTermRows)
+      return;
+    lastReportedTermCols = cols;
+    lastReportedTermRows = rows;
+    if (options.termSizeEl)
+      options.termSizeEl.textContent = `${cols}x${rows}`;
+    options.callbacks?.onTermSize?.(cols, rows);
+  }
+  function reportCursor(cursorPos) {
+    if (!cursorPos)
+      return;
+    const { col, row } = cursorPos;
+    if (options.cursorPosEl && (col !== lastReportedCursorCol || row !== lastReportedCursorRow)) {
+      options.cursorPosEl.textContent = `${col},${row}`;
+    }
+    if (col !== lastReportedCursorCol || row !== lastReportedCursorRow) {
+      options.callbacks?.onCursor?.(col, row);
+      lastReportedCursorCol = col;
+      lastReportedCursorRow = row;
+    }
+    options.setCursorForCpr({ row: row + 1, col: col + 1 });
+  }
+  function reportDebugText(text2) {
+    if (text2 === lastReportedDebugText)
+      return;
+    lastReportedDebugText = text2;
+    if (options.dbgEl)
+      options.dbgEl.textContent = text2;
+    options.callbacks?.onDebug?.(text2);
+  }
+  return {
+    selectionForRow: selectionForRow2,
+    getSelectionText: getSelectionText2,
+    getRenderState,
+    resolveCursorPosition,
+    resolveCursorStyle,
+    reportTermSize,
+    reportCursor,
+    reportDebugText
+  };
+}
+
+// src/runtime/create-runtime/runtime-app-api.ts
+function createRuntimeAppApi(options) {
+  const {
+    session,
+    ptyTransport,
+    inputHandler,
+    ptyInputRuntime,
+    interaction,
+    lifecycleThemeSizeRuntime,
+    cleanupFns,
+    cleanupCanvasFns,
+    callbacks,
+    fpsEl,
+    backendEl,
+    inputDebugEl,
+    imeInput,
+    attachWindowEvents,
+    isMacPlatform,
+    textEncoder: textEncoder3,
+    readState,
+    writeState,
+    appendLog,
+    shouldSuppressWasmLog,
+    runBeforeInputHook,
+    runBeforeRenderOutputHook,
+    CURSOR_BLINK_MS,
+    RESIZE_ACTIVE_MS,
+    TARGET_RENDER_FPS,
+    BACKGROUND_RENDER_FPS,
+    KITTY_FLAG_REPORT_EVENTS: KITTY_FLAG_REPORT_EVENTS2,
+    resizeState,
+    flushPendingTerminalResize,
+    tickWebGPU: tickWebGPU2,
+    tickWebGL: tickWebGL2,
+    updateGrid,
+    gridState,
+    getCanvas,
+    applyTheme,
+    ensureFont,
+    updateSize,
+    log,
+    replaceCanvas,
+    rebuildWebGPUShaderStages,
+    rebuildWebGLShaderStages,
+    setShaderStagesDirty,
+    clearWebGPUShaderStages,
+    destroyWebGPUStageTargets,
+    clearWebGLShaderStages,
+    destroyWebGLStageTargets,
+    resetTerminalResizeScheduler
+  } = options;
+  const internalState = {
+    paused: false,
+    backend: "none",
+    preferredRenderer: options.initialPreferredRenderer,
+    rafId: 0,
+    frameCount: 0,
+    lastFpsTime: performance.now(),
+    resizeWasActive: false,
+    nextBlinkTime: performance.now() + CURSOR_BLINK_MS
+  };
+  function updateFps() {
+    internalState.frameCount += 1;
+    const now = performance.now();
+    if (now - internalState.lastFpsTime >= 500) {
+      const fps = Math.round(internalState.frameCount * 1000 / (now - internalState.lastFpsTime));
+      if (fpsEl)
+        fpsEl.textContent = `${fps}`;
+      callbacks?.onFps?.(fps);
+      internalState.frameCount = 0;
+      internalState.lastFpsTime = now;
+    }
+  }
+  function loop(state2) {
+    if (!internalState.paused) {
+      const now = performance.now();
+      if (now >= internalState.nextBlinkTime) {
+        internalState.nextBlinkTime = now + CURSOR_BLINK_MS;
+        writeState({ needsRender: true });
+      }
+      const resizeActive = now - resizeState.lastAt <= RESIZE_ACTIVE_MS;
+      if (resizeActive) {
+        writeState({ needsRender: true });
+      } else if (internalState.resizeWasActive) {
+        flushPendingTerminalResize();
+      }
+      internalState.resizeWasActive = resizeActive;
+      const hidden = typeof document !== "undefined" && typeof document.visibilityState === "string" && document.visibilityState !== "visible";
+      const targetRenderFps = hidden ? BACKGROUND_RENDER_FPS : TARGET_RENDER_FPS;
+      const nextShared = readState();
+      const renderBudget = resizeActive ? true : now - nextShared.lastRenderTime >= 1000 / targetRenderFps;
+      if (nextShared.needsRender && renderBudget) {
+        if (internalState.backend === "webgpu" && "device" in state2)
+          tickWebGPU2(state2);
+        if (internalState.backend === "webgl2" && "gl" in state2)
+          tickWebGL2(state2);
+        writeState({ lastRenderTime: now, needsRender: false });
+        updateFps();
+      }
+    }
+    internalState.rafId = requestAnimationFrame(() => loop(state2));
+  }
+  const onWasmLog = (text2) => {
+    if (shouldSuppressWasmLog(text2))
+      return;
+    console.log(`[wasm] ${text2}`);
+    appendLog(`[wasm] ${text2}`);
+  };
+  if (session.addWasmLogListener) {
+    session.addWasmLogListener(onWasmLog);
+    cleanupFns.push(() => session.removeWasmLogListener?.(onWasmLog));
+  }
+  async function initWasm() {
+    const shared = readState();
+    if (shared.wasmReady && shared.wasm)
+      return shared.wasm;
+    const instance = await session.getWasm();
+    writeState({
+      wasm: instance,
+      wasmExports: instance.exports,
+      wasmReady: true
+    });
+    return instance;
+  }
+  function writeToWasm(handle, text2) {
+    const shared = readState();
+    if (!shared.wasm)
+      return;
+    shared.wasm.write(handle, text2);
+  }
+  function flushWasmOutputToPty() {
+    const shared = readState();
+    if (!shared.wasm || !shared.wasmHandle)
+      return;
+    if (!ptyTransport.isConnected())
+      return;
+    let iterations = 0;
+    while (iterations < 32) {
+      const out = shared.wasm.drainOutput(shared.wasmHandle);
+      if (!out)
+        break;
+      ptyTransport.sendInput(out);
+      iterations += 1;
+    }
+  }
+  function sendInput(text2, source = "program", config = {}) {
+    const shared = readState();
+    if (!shared.wasmReady || !shared.wasm || !shared.wasmHandle)
+      return;
+    if (!text2)
+      return;
+    let intercepted = text2;
+    if (!config.skipHooks) {
+      intercepted = source === "pty" ? runBeforeRenderOutputHook(text2, source) : runBeforeInputHook(text2, source);
+    }
+    if (!intercepted)
+      return;
+    const normalized = source === "pty" ? intercepted : normalizeNewlines(intercepted);
+    if (source === "key") {
+      const bytes = textEncoder3.encode(normalized);
+      const hex = Array.from(bytes, (b3) => b3.toString(16).padStart(2, "0")).join(" ");
+      const debugText = `${hex} (${bytes.length})`;
+      if (inputDebugEl)
+        inputDebugEl.textContent = debugText;
+      callbacks?.onInputDebug?.(debugText);
+    }
+    if (source === "key") {
+      let before = "";
+      if (shared.wasmExports?.restty_debug_cursor_x && shared.wasmExports?.restty_debug_cursor_y) {
+        const bx = shared.wasmExports.restty_debug_cursor_x(shared.wasmHandle);
+        const by = shared.wasmExports.restty_debug_cursor_y(shared.wasmHandle);
+        before = ` cursor=${bx},${by}`;
+      }
+      appendLog(`[key] ${JSON.stringify(normalized)}${before}`);
+    }
+    if (source === "key" && (interaction.selectionState.active || interaction.selectionState.dragging)) {
+      interaction.clearSelection();
+    }
+    if (source === "pty" && interaction.linkState.hoverId)
+      interaction.updateLinkHover(null);
+    writeToWasm(shared.wasmHandle, normalized);
+    flushWasmOutputToPty();
+    if (source === "pty" && inputHandler.isSynchronizedOutput?.()) {
+      ptyInputRuntime.scheduleSyncOutputReset();
+      return;
+    }
+    ptyInputRuntime.cancelSyncOutputReset();
+    shared.wasm.renderUpdate(shared.wasmHandle);
+    if (source === "key" && shared.wasmExports?.restty_debug_cursor_x && shared.wasmExports?.restty_debug_cursor_y) {
+      const ax = shared.wasmExports.restty_debug_cursor_x(shared.wasmHandle);
+      const ay = shared.wasmExports.restty_debug_cursor_y(shared.wasmHandle);
+      appendLog(`[key] after cursor=${ax},${ay}`);
+    }
+    writeState({ needsRender: true });
+  }
+  async function copySelectionToClipboard() {
+    const text2 = options.getSelectionText();
+    if (!text2)
+      return false;
+    const copied = await copyToClipboard(text2);
+    if (copied) {
+      appendLog("[ui] selection copied");
+      return true;
+    }
+    appendLog("[ui] copy failed");
+    return false;
+  }
+  async function pasteFromClipboard2() {
+    const text2 = await pasteFromClipboard();
+    if (text2 === null) {
+      appendLog("[ui] paste failed");
+      return false;
+    }
+    if (text2) {
+      ptyInputRuntime.sendPasteText(text2);
+      return true;
+    }
+    return false;
+  }
+  async function handlePasteShortcut(event) {
+    const pasted = await pasteFromClipboard2();
+    if (pasted)
+      return;
+    const seq = inputHandler.encodeKeyEvent(event);
+    if (!seq)
+      return;
+    ptyInputRuntime.sendKeyInput(seq);
+  }
+  function clearScreen() {
+    sendInput("\x1B[2J\x1B[H");
+  }
+  if (attachWindowEvents) {
+    const hasInputFocus = () => {
+      if (typeof document === "undefined")
+        return true;
+      const active = document.activeElement;
+      const canvas = getCanvas();
+      return active === canvas || (imeInput ? active === imeInput : false);
+    };
+    const isMacInputSourceShortcut = (event) => isMacPlatform && event.ctrlKey && !event.metaKey && (event.code === "Space" || event.key === " " || event.key === "Spacebar");
+    const shouldSkipKeyEvent = (event) => {
+      const imeActive = typeof document !== "undefined" && imeInput ? document.activeElement === imeInput : false;
+      const target = event.target;
+      if (target && target !== imeInput && ["BUTTON", "SELECT", "INPUT", "TEXTAREA"].includes(target.tagName)) {
+        return true;
+      }
+      if (target === imeInput) {
+        if (interaction.imeState.composing || event.isComposing)
+          return true;
+        if (!event.ctrlKey && !event.metaKey && event.key.length === 1 && !event.repeat)
+          return true;
+      }
+      if (imeInput && imeActive && !event.ctrlKey && !event.metaKey && !event.altKey && event.key.length === 1 && !event.repeat && !event.isComposing && !interaction.imeState.composing) {
+        return true;
+      }
+      return false;
+    };
+    const onKeyDown = (event) => {
+      if (isMacInputSourceShortcut(event))
+        return;
+      if (shouldSkipKeyEvent(event))
+        return;
+      if (!hasInputFocus())
+        return;
+      writeState({ isFocused: true });
+      const shared = readState();
+      if (!shared.wasmReady || !shared.wasmHandle)
+        return;
+      const key = event.key?.toLowerCase?.() ?? "";
+      const wantsCopy = (event.metaKey || event.ctrlKey) && !event.altKey && (key === "c" || event.shiftKey && key === "c");
+      const wantsPaste = (event.metaKey || event.ctrlKey) && !event.altKey && (key === "v" || event.shiftKey && key === "v");
+      if (wantsCopy && interaction.selectionState.active) {
+        event.preventDefault();
+        copySelectionToClipboard();
+        return;
+      }
+      if (wantsPaste) {
+        event.preventDefault();
+        if (imeInput)
+          imeInput.focus({ preventScroll: true });
+        handlePasteShortcut(event);
+        return;
+      }
+      const seq = inputHandler.encodeKeyEvent(event);
+      if (seq) {
+        if (event.type === "keydown" && ["Backspace", "Delete", "Del", "Enter"].includes(event.key)) {
+          writeState({
+            lastKeydownSeq: seq,
+            lastKeydownSeqAt: performance.now()
+          });
+        }
+        event.preventDefault();
+        ptyInputRuntime.sendKeyInput(seq);
+      }
+    };
+    const onKeyUp = (event) => {
+      if (isMacInputSourceShortcut(event))
+        return;
+      const shared = readState();
+      if (!shared.wasm || !shared.wasmHandle)
+        return;
+      if ((shared.wasm.getKittyKeyboardFlags(shared.wasmHandle) & KITTY_FLAG_REPORT_EVENTS2) === 0) {
+        return;
+      }
+      if (shouldSkipKeyEvent(event))
+        return;
+      if (!hasInputFocus())
+        return;
+      writeState({ isFocused: true });
+      const nextShared = readState();
+      if (!nextShared.wasmReady || !nextShared.wasmHandle)
+        return;
+      const seq = inputHandler.encodeKeyEvent(event);
+      if (seq) {
+        event.preventDefault();
+        ptyInputRuntime.sendKeyInput(seq);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+    cleanupFns.push(() => window.removeEventListener("keydown", onKeyDown));
+    cleanupFns.push(() => window.removeEventListener("keyup", onKeyUp));
+  }
+  async function initWasmHarness() {
+    try {
+      const instance = await initWasm();
+      const shared = readState();
+      if (shared.wasmHandle) {
+        instance.destroy(shared.wasmHandle);
+        writeState({ wasmHandle: 0 });
+      }
+      updateGrid();
+      const cols = gridState.cols || 80;
+      const rows = gridState.rows || 24;
+      const maxScrollback = 2000;
+      const wasmHandle = instance.create(cols, rows, maxScrollback);
+      if (!wasmHandle) {
+        throw new Error("restty create failed (restty_create returned 0)");
+      }
+      const canvas = getCanvas();
+      instance.setPixelSize(wasmHandle, canvas.width, canvas.height);
+      const activeTheme = lifecycleThemeSizeRuntime.getActiveTheme();
+      if (activeTheme) {
+        applyTheme(activeTheme, activeTheme.name ?? "cached theme");
+      }
+      instance.renderUpdate(wasmHandle);
+      writeState({ wasmHandle, needsRender: true });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`restty error: ${message}`);
+    }
+  }
+  async function init() {
+    cancelAnimationFrame(internalState.rafId);
+    updateSize();
+    log("initializing...");
+    await ensureFont();
+    updateGrid();
+    const wasmPromise = initWasmHarness();
+    const shared = readState();
+    if (internalState.preferredRenderer !== "webgl2") {
+      if (shared.currentContextType === "webgl2") {
+        replaceCanvas();
+      }
+      const canvas = getCanvas();
+      const gpuCore = await session.getWebGPUCore(canvas);
+      const gpuState = gpuCore ? await initWebGPU(canvas, { core: gpuCore }) : null;
+      if (gpuState) {
+        internalState.backend = "webgpu";
+        writeState({
+          activeState: gpuState,
+          currentContextType: "webgpu",
+          needsRender: true
+        });
+        if (backendEl)
+          backendEl.textContent = "webgpu";
+        callbacks?.onBackend?.("webgpu");
+        log("webgpu ready");
+        clearWebGLShaderStages();
+        destroyWebGLStageTargets();
+        gpuState.context.configure({
+          device: gpuState.device,
+          format: gpuState.format,
+          alphaMode: "opaque"
+        });
+        rebuildWebGPUShaderStages(gpuState);
+        setShaderStagesDirty(false);
+        updateGrid();
+        console.log(`[init webgpu] canvas=${canvas.width}x${canvas.height} grid=${gridState.cols}x${gridState.rows}`);
+        await wasmPromise;
+        internalState.rafId = requestAnimationFrame(() => loop(gpuState));
+        return;
+      }
+    }
+    if (internalState.preferredRenderer !== "webgpu") {
+      const nextShared = readState();
+      if (nextShared.currentContextType === "webgpu") {
+        replaceCanvas();
+      }
+      const canvas = getCanvas();
+      const glState = initWebGL(canvas);
+      if (glState) {
+        internalState.backend = "webgl2";
+        writeState({
+          activeState: glState,
+          currentContextType: "webgl2",
+          needsRender: true
+        });
+        if (backendEl)
+          backendEl.textContent = "webgl2";
+        callbacks?.onBackend?.("webgl2");
+        log("webgl2 ready");
+        clearWebGPUShaderStages();
+        destroyWebGPUStageTargets();
+        rebuildWebGLShaderStages(glState);
+        setShaderStagesDirty(false);
+        updateGrid();
+        console.log(`[init webgl2] canvas=${canvas.width}x${canvas.height} grid=${gridState.cols}x${gridState.rows}`);
+        await wasmPromise;
+        internalState.rafId = requestAnimationFrame(() => loop(glState));
+        return;
+      }
+    }
+    internalState.backend = "none";
+    if (backendEl)
+      backendEl.textContent = "none";
+    callbacks?.onBackend?.("none");
+    log("no GPU backend available");
+    writeState({ activeState: null });
+    await wasmPromise;
+  }
+  function destroy() {
+    cancelAnimationFrame(internalState.rafId);
+    lifecycleThemeSizeRuntime.cancelScheduledSizeUpdate();
+    resetTerminalResizeScheduler();
+    ptyInputRuntime.cancelSyncOutputReset();
+    ptyInputRuntime.disconnectPty();
+    ptyTransport.destroy?.();
+    const shared = readState();
+    if (shared.wasm && shared.wasmHandle) {
+      try {
+        shared.wasm.destroy(shared.wasmHandle);
+      } catch {}
+      writeState({ wasmHandle: 0 });
+    }
+    clearWebGPUShaderStages();
+    destroyWebGPUStageTargets();
+    const activeState = readState().activeState;
+    if (activeState && "gl" in activeState) {
+      clearWebGLShaderStages(activeState);
+      destroyWebGLStageTargets(activeState);
+    } else {
+      clearWebGLShaderStages();
+      destroyWebGLStageTargets();
+    }
     for (const cleanup of cleanupCanvasFns)
       cleanup();
     cleanupCanvasFns.length = 0;
-    if (kittyOverlayCanvas?.parentElement) {
-      kittyOverlayCanvas.parentElement.removeChild(kittyOverlayCanvas);
-    }
-    kittyOverlayCanvas = null;
-    kittyOverlayCtx = null;
-    const newCanvas = document.createElement("canvas");
-    newCanvas.id = canvas.id;
-    newCanvas.className = canvas.className;
-    parent.replaceChild(newCanvas, canvas);
-    canvas = newCanvas;
-    isFocused = typeof document !== "undefined" ? document.activeElement === canvas : true;
-    restoreCanvasState();
-    bindCanvasEvents();
-    bindFocusEvents();
-    currentContextType = null;
-    for (const entry of fontState.fonts) {
-      if (entry) {
-        entry.atlas = null;
-        entry.glyphIds = new Set;
-        entry.fontSizePx = 0;
-      }
-    }
-    if (activeState && activeState.glyphAtlases) {
-      activeState.glyphAtlases.clear();
-    }
+    for (const cleanup of cleanupFns)
+      cleanup();
+    cleanupFns.length = 0;
+    interaction.clearKittyImageCache();
+    interaction.detachKittyOverlayCanvas();
   }
-  function updateSize(force = false) {
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    const nextWidth = Math.max(1, Math.floor(rect.width * dpr));
-    const nextHeight = Math.max(1, Math.floor(rect.height * dpr));
-    const sizeChanged = nextWidth !== canvas.width || nextHeight !== canvas.height || dpr !== currentDpr;
-    if (!sizeChanged && !force)
+  function setRenderer(value) {
+    if (value !== "auto" && value !== "webgpu" && value !== "webgl2")
       return;
-    canvas.width = nextWidth;
-    canvas.height = nextHeight;
-    if (dprEl)
-      dprEl.textContent = dpr.toFixed(2);
-    callbacks?.onDpr?.(dpr);
-    if (sizeEl)
-      sizeEl.textContent = `${canvas.width}x${canvas.height}`;
-    callbacks?.onCanvasSize?.(canvas.width, canvas.height);
-    currentDpr = dpr;
-    resizeState.dpr = dpr;
-    resizeState.active = true;
-    resizeState.lastAt = performance.now();
-    const metrics = computeCellMetrics();
-    if (metrics?.cellW && metrics?.cellH) {
-      resizeState.cols = Math.max(1, Math.floor(canvas.width / metrics.cellW));
-      resizeState.rows = Math.max(1, Math.floor(canvas.height / metrics.cellH));
+    internalState.preferredRenderer = value;
+    init();
+  }
+  function setPaused(value) {
+    internalState.paused = Boolean(value);
+  }
+  function togglePause() {
+    internalState.paused = !internalState.paused;
+  }
+  function setMouseMode(value) {
+    inputHandler.setMouseMode(value);
+    ptyInputRuntime.updateMouseStatus();
+  }
+  function getMouseStatus() {
+    return inputHandler.getMouseStatus();
+  }
+  function createPublicApi(publicApiOptions) {
+    ptyInputRuntime.setPtyStatus("disconnected");
+    ptyInputRuntime.updateMouseStatus();
+    return {
+      init,
+      destroy,
+      setRenderer,
+      setPaused,
+      togglePause,
+      setFontSize: publicApiOptions.setFontSize,
+      setFontSources: publicApiOptions.setFontSources,
+      applyTheme,
+      resetTheme: publicApiOptions.resetTheme,
+      sendInput,
+      sendKeyInput: ptyInputRuntime.sendKeyInput,
+      clearScreen,
+      connectPty: ptyInputRuntime.connectPty,
+      disconnectPty: ptyInputRuntime.disconnectPty,
+      isPtyConnected: () => ptyTransport.isConnected(),
+      setMouseMode,
+      getMouseStatus,
+      copySelectionToClipboard,
+      pasteFromClipboard: pasteFromClipboard2,
+      dumpAtlasForCodepoint: publicApiOptions.dumpAtlasForCodepoint,
+      resize: publicApiOptions.resize,
+      focus: publicApiOptions.focus,
+      blur: publicApiOptions.blur,
+      updateSize: publicApiOptions.updateSize,
+      getBackend: () => internalState.backend,
+      setShaderStages: publicApiOptions.setShaderStages,
+      getShaderStages: publicApiOptions.getShaderStages
+    };
+  }
+  return {
+    sendInput,
+    createPublicApi
+  };
+}
+
+// src/runtime/create-runtime.ts
+function createResttyApp(options) {
+  const { canvas: canvasInput, imeInput: imeInputInput, elements, callbacks } = options;
+  const beforeInputHook = options.beforeInput;
+  const beforeRenderOutputHook = options.beforeRenderOutput;
+  const { runBeforeInputHook, runBeforeRenderOutputHook } = createRuntimeInputHooks({
+    beforeInputHook,
+    beforeRenderOutputHook
+  });
+  const session = options.session ?? getDefaultResttyAppSession();
+  const textShaper = exports_dist;
+  if (!canvasInput) {
+    throw new Error("createResttyApp requires a canvas element");
+  }
+  const {
+    Font,
+    UnicodeBuffer,
+    shape,
+    glyphBufferToShapedGlyphs,
+    buildAtlas,
+    atlasToRGBA,
+    rasterizeGlyph,
+    rasterizeGlyphWithTransform,
+    PixelMode
+  } = textShaper;
+  const attachWindowEvents = options.attachWindowEvents ?? true;
+  const attachCanvasEvents = options.attachCanvasEvents ?? true;
+  const autoResize = options.autoResize ?? true;
+  const debugExpose = options.debugExpose ?? false;
+  const touchSelectionMode = normalizeTouchSelectionMode(options.touchSelectionMode);
+  const touchSelectionLongPressMs = clampFiniteNumber(options.touchSelectionLongPressMs, 450, 120, 2000, true);
+  const touchSelectionMoveThresholdPx = clampFiniteNumber(options.touchSelectionMoveThresholdPx, 10, 1, 64);
+  const hasCoarsePointer = typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(any-pointer: coarse)").matches;
+  const hasTouchPoints = typeof navigator !== "undefined" && navigator.maxTouchPoints > 0;
+  const showOverlayScrollbar = !(hasCoarsePointer || hasTouchPoints);
+  const nerdIconScale = Number.isFinite(options.nerdIconScale) ? Number(options.nerdIconScale) : 1;
+  const alphaBlending = options.alphaBlending ?? "linear-corrected";
+  const cleanupFns = [];
+  const cleanupCanvasFns = [];
+  let canvas = canvasInput;
+  let currentContextType = null;
+  const backendEl = elements?.backendEl ?? null;
+  const fpsEl = elements?.fpsEl ?? null;
+  const dprEl = elements?.dprEl ?? null;
+  const sizeEl = elements?.sizeEl ?? null;
+  const gridEl = elements?.gridEl ?? null;
+  const cellEl = elements?.cellEl ?? null;
+  const termSizeEl = elements?.termSizeEl ?? null;
+  const cursorPosEl = elements?.cursorPosEl ?? null;
+  const inputDebugEl = elements?.inputDebugEl ?? null;
+  const dbgEl = elements?.dbgEl ?? null;
+  const ptyStatusEl = elements?.ptyStatusEl ?? null;
+  const mouseStatusEl = elements?.mouseStatusEl ?? null;
+  const termDebug = elements?.termDebugEl ?? null;
+  const atlasInfoEl = elements?.atlasInfoEl ?? null;
+  const atlasCanvas = elements?.atlasCanvas ?? null;
+  const logEl = elements?.logEl ?? null;
+  const DEFAULT_BG_BASE = [0.08, 0.09, 0.1, 1];
+  const DEFAULT_FG_BASE = [0.92, 0.93, 0.95, 1];
+  const SELECTION_BASE = [0.35, 0.55, 0.9, 0.45];
+  const CURSOR_BASE = [0.95, 0.95, 0.95, 1];
+  let defaultBg = [...DEFAULT_BG_BASE];
+  let defaultFg = [...DEFAULT_FG_BASE];
+  let selectionColor = [...SELECTION_BASE];
+  let cursorFallback = [...CURSOR_BASE];
+  const CURSOR_BLINK_MS = 600;
+  const FORCE_CURSOR_BLINK = false;
+  const STYLE_BOLD = 1 << 0;
+  const STYLE_ITALIC = 1 << 1;
+  const STYLE_FAINT = 1 << 2;
+  const STYLE_BLINK = 1 << 3;
+  const STYLE_INVERSE = 1 << 4;
+  const STYLE_INVISIBLE = 1 << 5;
+  const STYLE_STRIKE = 1 << 6;
+  const STYLE_OVERLINE = 1 << 7;
+  const STYLE_UNDERLINE_MASK = 1792;
+  const ITALIC_SLANT = 0.2;
+  const BOLD_BRIGHTEN = 0.18;
+  const BOLD_OFFSET = 0.06;
+  const FAINT_ALPHA = 0.6;
+  const TARGET_RENDER_FPS = 60;
+  const BACKGROUND_RENDER_FPS = 15;
+  const GLYPH_SHAPE_CACHE_LIMIT = 12000;
+  const FONT_PICK_CACHE_LIMIT = 16000;
+  let currentDpr = window.devicePixelRatio || 1;
+  let wasm = null;
+  let wasmExports = null;
+  let wasmHandle = 0;
+  let wasmReady = false;
+  let activeState = null;
+  const RESIZE_OVERLAY_HOLD_MS = 500;
+  const RESIZE_OVERLAY_FADE_MS = 400;
+  const RESIZE_ACTIVE_MS = 180;
+  const RESIZE_COMMIT_DEBOUNCE_MS = 36;
+  const resizeState = {
+    active: false,
+    lastAt: 0,
+    cols: 0,
+    rows: 0,
+    dpr: 1
+  };
+  let needsRender = true;
+  let lastRenderTime = 0;
+  const KEYDOWN_BEFOREINPUT_DEDUPE_MS = 80;
+  let lastKeydownSeq = "";
+  let lastKeydownSeqAt = 0;
+  let runtimeAppApi = null;
+  function sendInput(text2, source = "program", config = {}) {
+    runtimeAppApi?.sendInput(text2, source, config);
+  }
+  const ptyTransport = options.ptyTransport ?? createWebSocketPtyTransport();
+  const PTY_OUTPUT_IDLE_MS = 10;
+  const PTY_OUTPUT_MAX_MS = 40;
+  const SYNC_OUTPUT_RESET_MS = 1000;
+  const SYNC_OUTPUT_RESET_SEQ = "\x1B[?2026l";
+  const ptyOutputBuffer = createPtyOutputBufferController({
+    idleMs: PTY_OUTPUT_IDLE_MS,
+    maxMs: PTY_OUTPUT_MAX_MS,
+    onFlush: (output) => sendInput(output, "pty")
+  });
+  let lastCursorForCpr = { row: 1, col: 1 };
+  let inputHandler = null;
+  let activeTheme = null;
+  const webgpuUniforms = new Float32Array(8);
+  const runtimeLogger = createRuntimeLogger({
+    logEl,
+    onLog: callbacks?.onLog
+  });
+  const { appendLog, log, shouldSuppressWasmLog } = runtimeLogger;
+  const shaderStageRuntime = createShaderStageRuntime({
+    appendLog,
+    getCanvasSize: () => ({ width: canvas.width, height: canvas.height }),
+    getActiveWebGLState: () => activeState && ("gl" in activeState) ? activeState : null,
+    onShaderStagesChanged: () => {
+      needsRender = true;
     }
-    syncKittyOverlaySize();
-    updateGrid();
-    needsRender = true;
-    lastRenderTime = 0;
-  }
-  function scheduleSizeUpdate() {
-    updateSize();
-    if (sizeRaf)
+  });
+  const {
+    setShaderStages,
+    getShaderStages,
+    isShaderStagesDirty,
+    setShaderStagesDirty,
+    getCompiledWebGPUShaderStages,
+    getCompiledWebGLShaderStages,
+    clearWebGPUShaderStages,
+    clearWebGLShaderStages,
+    destroyWebGPUStageTargets,
+    destroyWebGLStageTargets,
+    ensureWebGPUStageTargets,
+    ensureWebGLStageTargets,
+    rebuildWebGPUShaderStages,
+    rebuildWebGLShaderStages
+  } = shaderStageRuntime;
+  const ATLAS_PADDING = 4;
+  const SYMBOL_ATLAS_PADDING = 10;
+  const SYMBOL_ATLAS_MAX_SIZE = 4096;
+  const GLYPH_INSTANCE_FLOATS = 18;
+  const GLYPH_RENDER_MODE_MONO = 0;
+  const GLYPH_RENDER_MODE_COLOR = 1;
+  const KITTY_PLACEHOLDER_CP = 1109742;
+  const KITTY_OVERLAY_DEBUG = typeof window !== "undefined" && (() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("kittyDebug") === "1")
+        return true;
+      const value = window.localStorage?.getItem("restty.kittyDebug");
+      if (value != null)
+        return value === "1";
+      return window.localStorage?.getItem("restty.kittyDebug") === "1";
+    } catch {
+      return false;
+    }
+  })();
+  const KITTY_FLAG_REPORT_EVENTS2 = 1 << 1;
+  const textEncoder3 = new TextEncoder;
+  const textDecoder4 = new TextDecoder;
+  let isFocused = typeof document !== "undefined" ? document.activeElement === canvas : true;
+  const imeInput = imeInputInput ?? null;
+  const isMacPlatform = typeof navigator !== "undefined" && /mac/i.test(navigator.platform);
+  const fontConfig = {
+    sizePx: Number.isFinite(options.fontSize) ? Math.max(1, Math.round(options.fontSize)) : 18
+  };
+  function configureImeInputElement() {
+    if (!imeInput)
       return;
-    sizeRaf = requestAnimationFrame(() => {
-      sizeRaf = 0;
-      updateSize();
-    });
+    const style = imeInput.style;
+    style.position = "fixed";
+    style.left = "0";
+    style.top = "0";
+    style.width = "1em";
+    style.height = "1em";
+    style.padding = "0";
+    style.margin = "0";
+    style.border = "0";
+    style.outline = "none";
+    style.background = "transparent";
+    style.color = "transparent";
+    style.caretColor = "transparent";
+    style.overflow = "hidden";
+    style.resize = "none";
+    style.opacity = "0";
+    style.pointerEvents = "none";
+    syncImeInputTypography(imeInput, fontConfig.sizePx);
   }
-  function bindFocusEvents() {
-    if (!attachCanvasEvents)
-      return;
-    canvas.tabIndex = 0;
-    const focusTypingInput = () => {
-      canvas.focus({ preventScroll: true });
-      if (!imeInput)
+  configureImeInputElement();
+  let lastRenderState = null;
+  const runtimeInteraction = createRuntimeInteraction({
+    attachCanvasEvents,
+    touchSelectionMode,
+    touchSelectionLongPressMs,
+    touchSelectionMoveThresholdPx,
+    showOverlayScrollbar,
+    kittyOverlayDebugEnabled: KITTY_OVERLAY_DEBUG,
+    imeInput,
+    cleanupCanvasFns,
+    getCanvas: () => canvas,
+    getCurrentDpr: () => currentDpr,
+    getGridState: () => gridState,
+    getLastRenderState: () => lastRenderState,
+    getWasmReady: () => wasmReady,
+    getWasm: () => wasm,
+    getWasmHandle: () => wasmHandle,
+    getWasmExports: () => wasmExports,
+    updateLinkHover,
+    markNeedsRender: () => {
+      needsRender = true;
+    }
+  });
+  const {
+    selectionState,
+    linkState,
+    scrollbarState,
+    imeState,
+    updateCanvasCursor,
+    syncKittyOverlaySize,
+    clearKittyOverlay,
+    drawKittyOverlay,
+    positionToCell: positionToCell2,
+    positionToPixel,
+    clearSelection,
+    updateImePosition,
+    appendOverlayScrollbar,
+    bindCanvasEvents: bindCanvasInteractionEvents,
+    detachKittyOverlayCanvas
+  } = runtimeInteraction;
+  const {
+    selectionForRow: selectionForRow2,
+    getSelectionText: getSelectionText2,
+    getRenderState,
+    resolveCursorPosition,
+    resolveCursorStyle,
+    reportTermSize,
+    reportCursor,
+    reportDebugText
+  } = createRuntimeReporting({
+    selectionState,
+    getLastRenderState: () => lastRenderState,
+    getWasmReady: () => wasmReady,
+    getWasm: () => wasm,
+    getWasmHandle: () => wasmHandle,
+    getWasmExports: () => wasmExports,
+    callbacks,
+    termSizeEl,
+    cursorPosEl,
+    dbgEl,
+    setCursorForCpr: (value) => {
+      lastCursorForCpr = value;
+    }
+  });
+  inputHandler = createInputHandler({
+    getCursorPosition: () => lastCursorForCpr,
+    sendReply: (data) => {
+      ptyTransport.sendInput(data);
+    },
+    positionToCell: positionToCell2,
+    positionToPixel,
+    getDefaultColors: () => ({
+      fg: floatsToRgb(defaultFg),
+      bg: floatsToRgb(defaultBg),
+      cursor: floatsToRgb(cursorFallback)
+    }),
+    getWindowMetrics: () => {
+      const cols = Math.max(1, gridState.cols || 1);
+      const rows = Math.max(1, gridState.rows || 1);
+      const widthPx = Math.max(1, Math.round(canvas.width));
+      const heightPx = Math.max(1, Math.round(canvas.height));
+      const cellWidthPx = Math.max(1, Math.round(gridState.cellW || widthPx / Math.max(1, cols)));
+      const cellHeightPx = Math.max(1, Math.round(gridState.cellH || heightPx / Math.max(1, rows)));
+      return { rows, cols, widthPx, heightPx, cellWidthPx, cellHeightPx };
+    },
+    onClipboardWrite: async (text2) => {
+      if (!text2)
         return;
-      imeInput.focus({ preventScroll: true });
-      if (typeof document !== "undefined" && document.activeElement !== imeInput) {
-        requestAnimationFrame(() => {
-          if (document.activeElement === canvas)
-            imeInput.focus({ preventScroll: true });
-        });
-      }
-    };
-    const handleFocus = () => {
-      isFocused = true;
-      focusTypingInput();
-      if (inputHandler?.isFocusReporting?.()) {
-        sendKeyInput("\x1B[I", "program");
-      }
-    };
-    const handleBlur = () => {
-      const stillFocused = typeof document !== "undefined" && imeInput ? document.activeElement === imeInput : false;
-      isFocused = stillFocused;
-      if (!stillFocused && inputHandler?.isFocusReporting?.()) {
-        sendKeyInput("\x1B[O", "program");
-      }
-    };
-    const handlePointerFocus = () => {
-      focusTypingInput();
-    };
-    canvas.addEventListener("pointerdown", handlePointerFocus);
-    canvas.addEventListener("focus", handleFocus);
-    canvas.addEventListener("blur", handleBlur);
-    cleanupCanvasFns.push(() => {
-      canvas.removeEventListener("pointerdown", handlePointerFocus);
-      canvas.removeEventListener("focus", handleFocus);
-      canvas.removeEventListener("blur", handleBlur);
+      await copyToClipboard(text2);
+    },
+    onClipboardRead: async () => {
+      return await pasteFromClipboard() ?? "";
+    },
+    getKittyKeyboardFlags: () => {
+      if (!wasm || !wasmHandle)
+        return 0;
+      return wasm.getKittyKeyboardFlags(wasmHandle);
+    },
+    onWindowOp: (op) => {
+      appendLog(`[term] window op ${op.type} ${op.params.join(";")}`);
+    },
+    onDesktopNotification: callbacks?.onDesktopNotification
+  });
+  inputHandler.setMouseMode("auto");
+  const ptyInputRuntime = createPtyInputRuntime({
+    ptyTransport,
+    ptyOutputBuffer,
+    inputHandler,
+    ptyStatusEl,
+    mouseStatusEl,
+    onPtyStatus: callbacks?.onPtyStatus,
+    onMouseStatus: callbacks?.onMouseStatus,
+    appendLog,
+    getGridSize: () => ({ cols: gridState.cols || 0, rows: gridState.rows || 0 }),
+    getCursorForCpr: () => lastCursorForCpr,
+    sendInput,
+    runBeforeInputHook,
+    shouldClearSelection: () => selectionState.active || selectionState.dragging,
+    clearSelection,
+    syncOutputResetMs: SYNC_OUTPUT_RESET_MS,
+    syncOutputResetSeq: SYNC_OUTPUT_RESET_SEQ
+  });
+  const { sendKeyInput, sendPasteText } = ptyInputRuntime;
+  const { sendPastePayloadFromDataTransfer, getCprPosition } = ptyInputRuntime;
+  inputHandler.setCursorProvider(getCprPosition);
+  function bindCanvasEvents() {
+    bindCanvasInteractionEvents({
+      inputHandler,
+      sendKeyInput,
+      sendPasteText,
+      sendPastePayloadFromDataTransfer,
+      getLastKeydownSeq: () => lastKeydownSeq,
+      getLastKeydownSeqAt: () => lastKeydownSeqAt,
+      keydownBeforeinputDedupeMs: KEYDOWN_BEFOREINPUT_DEDUPE_MS,
+      openLink
     });
   }
-  const hasResizeObserver = autoResize && "ResizeObserver" in window;
-  if (attachWindowEvents && autoResize && !hasResizeObserver) {
-    window.addEventListener("resize", scheduleSizeUpdate);
-    window.addEventListener("load", scheduleSizeUpdate);
-    cleanupFns.push(() => {
-      window.removeEventListener("resize", scheduleSizeUpdate);
-      window.removeEventListener("load", scheduleSizeUpdate);
-    });
-  }
-  if (hasResizeObserver) {
-    const ro = new ResizeObserver(() => scheduleSizeUpdate());
-    const target = canvas.parentElement ?? document.body;
-    ro.observe(target);
-    cleanupFns.push(() => ro.disconnect());
-  }
-  function decodeRGBAWithCache(bytes, index, cache) {
-    const offset = index * 4;
-    const packed = ((bytes[offset] ?? 0) | (bytes[offset + 1] ?? 0) << 8 | (bytes[offset + 2] ?? 0) << 16 | (bytes[offset + 3] ?? 0) << 24) >>> 0;
-    const cached = cache.get(packed);
-    if (cached)
-      return cached;
-    const decoded = decodePackedRGBA(packed);
-    cache.set(packed, decoded);
-    return decoded;
-  }
-  function decodePackedRGBA(color) {
-    return [
-      (color & 255) / 255,
-      (color >>> 8 & 255) / 255,
-      (color >>> 16 & 255) / 255,
-      (color >>> 24 & 255) / 255
-    ];
-  }
-  function clamp01(value) {
-    return Math.max(0, Math.min(1, value));
-  }
-  function brighten(color, amount) {
-    return [
-      clamp01(color[0] + (1 - color[0]) * amount),
-      clamp01(color[1] + (1 - color[1]) * amount),
-      clamp01(color[2] + (1 - color[2]) * amount),
-      color[3]
-    ];
-  }
-  function fade(color, factor) {
-    return [color[0], color[1], color[2], clamp01(color[3] * factor)];
-  }
-  function drawUnderlineStyle(underlineData, style, x3, rowY, cellW, cellH, baseY, underlineOffsetPx, underlineThicknessPx, color) {
-    if (style <= 0)
+  bindCanvasEvents();
+  const fontState = {
+    font: null,
+    fonts: [],
+    fontSizePx: 0,
+    sizeMode: options.fontSizeMode === "em" ? "em" : "height",
+    fontPickCache: new Map
+  };
+  const FONT_SCALE_OVERRIDES = options.fontScaleOverrides ?? [];
+  function applyFontSize(value) {
+    if (!Number.isFinite(value))
       return;
-    const thickness = underlineThicknessPx;
-    const minY = rowY + 1;
-    const maxY = rowY + cellH - thickness - 1;
-    const underlineY = clamp(baseY + underlineOffsetPx, minY, maxY);
-    if (style === 1) {
-      pushRect(underlineData, x3, underlineY, cellW, thickness, color);
+    const clamped = Math.max(10, Math.min(64, Math.round(value)));
+    if (fontConfig.sizePx === clamped)
       return;
+    fontConfig.sizePx = clamped;
+    syncImeInputTypography(imeInput, clamped);
+    for (const entry of fontState.fonts)
+      resetFontEntry(entry);
+    if (activeState && activeState.glyphAtlases) {
+      activeState.glyphAtlases = new Map;
     }
-    if (style === 2) {
-      pushRect(underlineData, x3, underlineY, cellW, thickness, color);
-      const gap = Math.max(1, Math.round(thickness * 0.6));
-      let secondY = underlineY + thickness + gap;
-      if (secondY > maxY)
-        secondY = Math.max(minY, underlineY - thickness - gap);
-      pushRect(underlineData, x3, secondY, cellW, thickness, color);
-      return;
-    }
-    if (style === 3) {
-      const step = Math.max(2, Math.round(cellW * 0.25));
-      const waveOffset = Math.max(1, Math.round(thickness * 0.8));
-      for (let dx = 0;dx < cellW; dx += step) {
-        const up = Math.floor(dx / step) % 2 === 0;
-        const y = underlineY + (up ? 0 : waveOffset);
-        pushRect(underlineData, x3 + dx, y, Math.min(step, cellW - dx), thickness, color);
-      }
-      return;
-    }
-    if (style === 4) {
-      const dot = Math.max(1, Math.round(thickness));
-      const gap = Math.max(1, Math.round(dot));
-      for (let dx = 0;dx < cellW; dx += dot + gap) {
-        pushRect(underlineData, x3 + dx, underlineY, Math.min(dot, cellW - dx), thickness, color);
-      }
-      return;
-    }
-    if (style === 5) {
-      const dash = Math.max(1, Math.round(cellW * 0.6));
-      const gap = Math.max(1, Math.round(cellW * 0.2));
-      for (let dx = 0;dx < cellW; dx += dash + gap) {
-        pushRect(underlineData, x3 + dx, underlineY, Math.min(dash, cellW - dx), thickness, color);
-      }
-    }
+    updateGrid();
+    wasm?.renderUpdate?.(wasmHandle);
+    needsRender = true;
+    appendLog(`[ui] font size ${clamped}px`);
   }
-  function drawStrikethrough(underlineData, x3, rowY, cellW, cellH, color) {
-    const thickness = Math.max(1, Math.round(cellH * 0.08));
-    const y = Math.round(rowY + cellH * 0.5 - thickness * 0.5);
-    pushRect(underlineData, x3, y, cellW, thickness, color);
-  }
-  function drawOverline(underlineData, x3, rowY, cellW, color) {
-    const thickness = 1;
-    const y = Math.round(rowY + 1);
-    pushRect(underlineData, x3, y, cellW, thickness, color);
-  }
+  const resolveGlyphPixelMode2 = (entry) => resolveGlyphPixelMode(entry, PixelMode.Gray, PixelMode.RGBA ?? 4, isColorEmojiFont);
+  const { atlasBitmapToRGBA: atlasBitmapToRGBA2, buildColorEmojiAtlasWithCanvas } = createColorGlyphAtlasHelpers({
+    pixelModeRgba: PixelMode.RGBA ?? 4,
+    atlasToRGBA
+  });
+  let configuredFontSources = normalizeFontSources(options.fontSources, options.fontPreset);
+  const gridState = {
+    cols: 0,
+    rows: 0,
+    cellW: 0,
+    cellH: 0,
+    fontSizePx: 0,
+    scale: 1,
+    lineHeight: 0,
+    baselineOffset: 0,
+    yPad: 0
+  };
+  const {
+    shapeClusterWithFont,
+    noteColorGlyphText,
+    fontHasGlyph: fontHasGlyph2,
+    pickFontIndexForText,
+    computeCellMetrics,
+    updateGrid,
+    flushPendingTerminalResize,
+    scheduleTerminalResizeCommit,
+    resetTerminalResizeScheduler,
+    ensureAtlasForFont
+  } = createRuntimeFontRuntimeHelpers({
+    fontState,
+    fontConfig,
+    gridState,
+    callbacks,
+    gridEl,
+    cellEl,
+    getCanvas: () => canvas,
+    getCurrentDpr: () => currentDpr,
+    getActiveState: () => activeState,
+    getWasmReady: () => wasmReady,
+    getWasm: () => wasm,
+    getWasmHandle: () => wasmHandle,
+    ptyTransport,
+    setNeedsRender: () => {
+      needsRender = true;
+    },
+    resizeState,
+    resizeActiveMs: RESIZE_ACTIVE_MS,
+    resizeCommitDebounceMs: RESIZE_COMMIT_DEBOUNCE_MS,
+    onSyncKittyOverlaySize: syncKittyOverlaySize,
+    fontScaleOverrides: FONT_SCALE_OVERRIDES,
+    resolveGlyphPixelMode: resolveGlyphPixelMode2,
+    atlasBitmapToRGBA: atlasBitmapToRGBA2,
+    padAtlasRGBA,
+    buildAtlas,
+    buildColorEmojiAtlasWithCanvas,
+    rasterizeGlyph,
+    rasterizeGlyphWithTransform,
+    pixelModeRgbaValue: PixelMode.RGBA ?? 4,
+    atlasPadding: ATLAS_PADDING,
+    symbolAtlasPadding: SYMBOL_ATLAS_PADDING,
+    symbolAtlasMaxSize: SYMBOL_ATLAS_MAX_SIZE,
+    glyphShapeCacheLimit: GLYPH_SHAPE_CACHE_LIMIT,
+    fontPickCacheLimit: FONT_PICK_CACHE_LIMIT,
+    UnicodeBuffer,
+    shape,
+    glyphBufferToShapedGlyphs
+  });
+  const { dumpAtlasForCodepoint, setupDebugExpose } = createRuntimeDebugTools({
+    debugExpose,
+    getWindow: () => typeof window !== "undefined" ? window : undefined,
+    getActiveState: () => activeState,
+    getCanvas: () => canvas,
+    atlasCanvas,
+    atlasInfoEl,
+    fontState,
+    gridState,
+    fontConfig,
+    pickFontIndexForText,
+    ensureAtlasForFont,
+    formatCodepoint,
+    isSymbolFont,
+    isNerdSymbolCodepoint,
+    isSymbolCp,
+    fontHasGlyph: fontHasGlyph2,
+    shapeClusterWithFont,
+    getNerdConstraint,
+    fontHeightUnits,
+    fontScaleOverride,
+    fontScaleOverrides: FONT_SCALE_OVERRIDES,
+    fontAdvanceUnits,
+    fontMaxCellSpan,
+    clamp,
+    buildNerdMetrics,
+    nerdIconScale,
+    isColorEmojiFont,
+    atlasPadding: ATLAS_PADDING,
+    symbolAtlasPadding: SYMBOL_ATLAS_PADDING,
+    pixelModeGray: PixelMode.Gray,
+    pixelModeRgba: PixelMode.RGBA ?? 4
+  });
+  setupDebugExpose();
+  let fontPromise = null;
+  let fontError = null;
+  setShaderStages(options.shaderStages ?? []);
+  const lifecycleThemeSizeRuntime = createRuntimeLifecycleThemeSize({
+    attachCanvasEvents,
+    attachWindowEvents,
+    autoResize,
+    imeInput,
+    dprEl,
+    sizeEl,
+    callbacks,
+    cleanupFns,
+    cleanupCanvasFns,
+    gridState,
+    resizeState,
+    fontState,
+    defaultBgBase: DEFAULT_BG_BASE,
+    defaultFgBase: DEFAULT_FG_BASE,
+    selectionBase: SELECTION_BASE,
+    cursorBase: CURSOR_BASE,
+    getCanvas: () => canvas,
+    setCanvas: (nextCanvas) => canvas = nextCanvas,
+    getCurrentDpr: () => currentDpr,
+    setCurrentDpr: (dpr) => currentDpr = dpr,
+    setCurrentContextType: (value) => currentContextType = value,
+    getActiveState: () => activeState,
+    getInputHandler: () => inputHandler,
+    setIsFocused: (value) => isFocused = value,
+    getActiveTheme: () => activeTheme,
+    setActiveTheme: (theme) => activeTheme = theme,
+    setDefaultBg: (value) => defaultBg = value,
+    setDefaultFg: (value) => defaultFg = value,
+    setSelectionColor: (value) => selectionColor = value,
+    setCursorFallback: (value) => cursorFallback = value,
+    getWasmReady: () => wasmReady,
+    getWasm: () => wasm,
+    getWasmHandle: () => wasmHandle,
+    appendLog,
+    bindCanvasEvents,
+    computeCellMetrics,
+    updateGrid,
+    syncKittyOverlaySize,
+    scheduleTerminalResizeCommit,
+    sendKeyInput,
+    clearWebGLShaderStages,
+    destroyWebGLStageTargets,
+    destroyWebGPUStageTargets,
+    detachKittyOverlayCanvas,
+    setShaderStagesDirty,
+    markNeedsRender: () => needsRender = true,
+    resetLastRenderTime: () => lastRenderTime = 0
+  });
+  const {
+    applyTheme,
+    resetTheme,
+    replaceCanvas,
+    updateSize,
+    resize,
+    focus,
+    blur,
+    bindFocusEvents
+  } = lifecycleThemeSizeRuntime;
+  bindFocusEvents();
+  lifecycleThemeSizeRuntime.bindAutoResizeEvents();
   function resolveLinkUri(render, linkId) {
     if (!render.linkOffsets || !render.linkLengths || !render.linkBuffer)
       return "";
@@ -53064,7 +58905,7 @@ function createResttyApp(options) {
     const len = render.linkLengths[idx] ?? 0;
     if (!len)
       return "";
-    return textDecoder3.decode(render.linkBuffer.subarray(offset, offset + len));
+    return textDecoder4.decode(render.linkBuffer.subarray(offset, offset + len));
   }
   function updateLinkHover(cell) {
     if (!lastRenderState || !cell || !lastRenderState.linkIds) {
@@ -53129,28 +58970,28 @@ function createResttyApp(options) {
     if (!normalizedMatchers.length)
       return null;
     const detectStyleHint = (value) => {
-      const text = value.toLowerCase();
+      const text2 = value.toLowerCase();
       let weight = 400;
-      if (/\b(thin|hairline)\b/.test(text))
+      if (/\b(thin|hairline)\b/.test(text2))
         weight = 100;
-      else if (/\b(extra[- ]?light|ultra[- ]?light)\b/.test(text))
+      else if (/\b(extra[- ]?light|ultra[- ]?light)\b/.test(text2))
         weight = 200;
-      else if (/\blight\b/.test(text))
+      else if (/\blight\b/.test(text2))
         weight = 300;
-      else if (/\bmedium\b/.test(text))
+      else if (/\bmedium\b/.test(text2))
         weight = 500;
-      else if (/\b(semi[- ]?bold|demi[- ]?bold)\b/.test(text))
+      else if (/\b(semi[- ]?bold|demi[- ]?bold)\b/.test(text2))
         weight = 600;
-      else if (/\bbold\b/.test(text))
+      else if (/\bbold\b/.test(text2))
         weight = 700;
-      else if (/\b(extra[- ]?bold|ultra[- ]?bold)\b/.test(text))
+      else if (/\b(extra[- ]?bold|ultra[- ]?bold)\b/.test(text2))
         weight = 800;
-      else if (/\b(black|heavy)\b/.test(text))
+      else if (/\b(black|heavy)\b/.test(text2))
         weight = 900;
       return {
-        bold: /\b(bold|semi[- ]?bold|demi[- ]?bold|extra[- ]?bold|black|heavy)\b/.test(text),
-        italic: /\b(italic|oblique)\b/.test(text),
-        regular: /\b(regular|book|roman|normal)\b/.test(text),
+        bold: /\b(bold|semi[- ]?bold|demi[- ]?bold|extra[- ]?bold|black|heavy)\b/.test(text2),
+        italic: /\b(italic|oblique)\b/.test(text2),
+        regular: /\b(regular|book|roman|normal)\b/.test(text2),
         weight
       };
     };
@@ -53218,23 +59059,6 @@ function createResttyApp(options) {
     }
     return null;
   }
-  function sourceLabelFromUrl(url, index) {
-    try {
-      const parsed = new URL(url, window.location.href);
-      const pathname = parsed.pathname;
-      const slashIndex = pathname.lastIndexOf("/");
-      const rawName = slashIndex >= 0 ? pathname.slice(slashIndex + 1) : pathname;
-      const decoded = decodeURIComponent(rawName);
-      return decoded || `font-${index + 1}`;
-    } catch {
-      return `font-${index + 1}`;
-    }
-  }
-  function sourceBufferFromView(view) {
-    const out = new Uint8Array(view.byteLength);
-    out.set(new Uint8Array(view.buffer, view.byteOffset, view.byteLength));
-    return out.buffer;
-  }
   async function resolveFontSourceBuffer(source) {
     if (source.type === "url") {
       return tryFetchFontBuffer(source.url);
@@ -53295,8 +59119,8 @@ function createResttyApp(options) {
       return [{ label: "local-jetbrains-mono", buffer: local }];
     return [];
   }
-  async function setFontSources(sources) {
-    configuredFontSources = normalizeFontSources(sources, undefined);
+  async function setFontSources(sources2) {
+    configuredFontSources = normalizeFontSources(sources2, undefined);
     fontPromise = null;
     fontError = null;
     for (let i3 = 0;i3 < fontState.fonts.length; i3 += 1) {
@@ -53323,7 +59147,7 @@ function createResttyApp(options) {
         if (!configuredBuffers.length) {
           throw new Error("Unable to load any configured font source.");
         }
-        const entries = [];
+        const entries2 = [];
         for (let sourceIndex = 0;sourceIndex < configuredBuffers.length; sourceIndex += 1) {
           const source = configuredBuffers[sourceIndex];
           try {
@@ -53336,24 +59160,24 @@ function createResttyApp(options) {
                   const face = collection.get(info.index);
                   const metadataLabel = info.fullName || info.family || info.postScriptName || "";
                   const label = metadataLabel ? `${source.label} (${metadataLabel})` : `${source.label} ${info.index}`;
-                  entries.push(createFontEntry(face, label));
+                  entries2.push(createFontEntry(face, label));
                 } catch (err) {
                   console.warn(`font face load failed (${source.label} ${info.index})`, err);
                 }
               }
             } else {
               const loadedFont = await Font.loadAsync(source.buffer);
-              entries.push(createFontEntry(loadedFont, source.label));
+              entries2.push(createFontEntry(loadedFont, source.label));
             }
           } catch (err) {
             console.warn(`font load failed (${source.label})`, err);
           }
         }
-        if (!entries.length) {
+        if (!entries2.length) {
           throw new Error("Unable to parse any loaded font source.");
         }
-        fontState.fonts = entries;
-        fontState.font = entries[0].font;
+        fontState.fonts = entries2;
+        fontState.font = entries2[0].font;
         fontState.fontSizePx = 0;
         fontState.fontPickCache.clear();
         if (activeState && activeState.glyphAtlases) {
@@ -53361,14 +59185,14 @@ function createResttyApp(options) {
         }
         fontError = null;
         console.log("[font] Font entries loaded:");
-        for (let i3 = 0;i3 < entries.length; i3++) {
-          const entry = entries[i3];
+        for (let i3 = 0;i3 < entries2.length; i3++) {
+          const entry = entries2[i3];
           const sym = isSymbolFont(entry);
           const nerd = isNerdSymbolFont(entry);
           console.log(`  [${i3}] ${entry.label} - symbol:${sym} nerd:${nerd}`);
         }
-        if (entries.length > 1) {
-          log(`font loaded (+${entries.length - 1} fallback)`);
+        if (entries2.length > 1) {
+          log(`font loaded (+${entries2.length - 1} fallback)`);
         } else {
           log("font loaded");
         }
@@ -53381,2632 +59205,252 @@ function createResttyApp(options) {
     })();
     return fontPromise;
   }
-  function shapeClusterWithFont(entry, text) {
-    const cached = entry.glyphCache.get(text);
-    if (cached)
-      return cached;
-    const buffer = new UnicodeBuffer;
-    buffer.addStr(text);
-    const glyphBuffer = shape(entry.font, buffer);
-    const glyphs = glyphBufferToShapedGlyphs(glyphBuffer);
-    const advance = glyphs.reduce((sum, g) => sum + g.xAdvance, 0);
-    const shaped = { glyphs, advance };
-    setBoundedMap(entry.glyphCache, text, shaped, GLYPH_SHAPE_CACHE_LIMIT);
-    return shaped;
-  }
-  function noteColorGlyphText(entry, text, shaped) {
-    if (!isColorEmojiFont(entry) || shaped.glyphs.length !== 1)
-      return;
-    const glyphId = shaped.glyphs[0]?.glyphId;
-    if (!glyphId)
-      return;
-    if (!entry.colorGlyphTexts)
-      entry.colorGlyphTexts = new Map;
-    entry.colorGlyphTexts.set(glyphId, text);
-  }
-  function fontHasGlyph(font, ch) {
-    const glyphId = font.glyphIdForChar(ch);
-    return glyphId !== undefined && glyphId !== null && glyphId !== 0;
-  }
-  function isLikelyEmojiCodepoint(cp) {
-    if (cp >= 127462 && cp <= 127487)
-      return true;
-    if (cp >= 127744 && cp <= 129791)
-      return true;
-    return false;
-  }
-  function resolvePresentationPreference(text, chars) {
-    if (text.includes("️"))
-      return "emoji";
-    if (text.includes("︎"))
-      return "text";
-    if (text.includes("‍"))
-      return "emoji";
-    for (const ch of chars) {
-      const cp = ch.codePointAt(0) ?? 0;
-      if (isLikelyEmojiCodepoint(cp))
-        return "emoji";
-    }
-    return "auto";
-  }
-  function pickFontIndexForText(text, expectedSpan = 1, stylePreference = "regular") {
-    if (!fontState.fonts.length)
-      return 0;
-    const cacheKey = `${expectedSpan}:${stylePreference}:${text}`;
-    const cached = fontState.fontPickCache.get(cacheKey);
-    if (cached !== undefined)
-      return cached;
-    const chars = Array.from(text);
-    const firstCp = text.codePointAt(0) ?? 0;
-    const nerdSymbol = isNerdSymbolCodepoint(firstCp);
-    const presentation = resolvePresentationPreference(text, chars);
-    const styleHintsEnabled = stylePreference !== "regular" && presentation !== "emoji" && !nerdSymbol;
-    const hasBoldHint = (entry) => /\bbold\b/i.test(entry.label ?? "");
-    const hasItalicHint = (entry) => /\b(italic|oblique)\b/i.test(entry.label ?? "");
-    const stylePredicates = stylePreference === "bold_italic" ? [
-      (entry) => hasBoldHint(entry) && hasItalicHint(entry),
-      (entry) => hasBoldHint(entry),
-      (entry) => hasItalicHint(entry)
-    ] : stylePreference === "bold" ? [(entry) => hasBoldHint(entry) && !hasItalicHint(entry), (entry) => hasBoldHint(entry)] : stylePreference === "italic" ? [
-      (entry) => hasItalicHint(entry) && !hasBoldHint(entry),
-      (entry) => hasItalicHint(entry)
-    ] : [];
-    const pickFirstMatch = (predicate) => {
-      for (let i3 = 0;i3 < fontState.fonts.length; i3 += 1) {
-        const entry = fontState.fonts[i3];
-        if (!entry?.font)
-          continue;
-        if (predicate && !predicate(entry))
-          continue;
-        let ok = true;
-        for (const ch of chars) {
-          if (!fontHasGlyph(entry.font, ch)) {
-            ok = false;
-            break;
-          }
-        }
-        if (ok)
-          return i3;
-      }
-      return -1;
-    };
-    const pickWithStyle = (predicate) => {
-      if (styleHintsEnabled) {
-        for (let i3 = 0;i3 < stylePredicates.length; i3 += 1) {
-          const stylePredicate = stylePredicates[i3];
-          const styledIndex = pickFirstMatch((entry) => {
-            if (!stylePredicate(entry))
-              return false;
-            return predicate ? !!predicate(entry) : true;
-          });
-          if (styledIndex >= 0)
-            return styledIndex;
-        }
-      }
-      return pickFirstMatch(predicate);
-    };
-    const tryIndex = (index) => {
-      if (index < 0)
-        return null;
-      setBoundedMap(fontState.fontPickCache, cacheKey, index, FONT_PICK_CACHE_LIMIT);
-      return index;
-    };
-    if (nerdSymbol) {
-      const symbolIndex = pickWithStyle((entry) => isNerdSymbolFont(entry) || isSymbolFont(entry));
-      const result = tryIndex(symbolIndex);
-      if (result !== null)
-        return result;
-    }
-    if (presentation === "emoji") {
-      const emojiIndex = pickFirstMatch((entry) => isColorEmojiFont(entry));
-      const result = tryIndex(emojiIndex);
-      if (result !== null)
-        return result;
-    } else if (presentation === "text") {
-      const textIndex = pickFirstMatch((entry) => !isColorEmojiFont(entry));
-      const result = tryIndex(textIndex);
-      if (result !== null)
-        return result;
-    }
-    const firstIndex = pickWithStyle();
-    if (firstIndex >= 0) {
-      setBoundedMap(fontState.fontPickCache, cacheKey, firstIndex, FONT_PICK_CACHE_LIMIT);
-      return firstIndex;
-    }
-    setBoundedMap(fontState.fontPickCache, cacheKey, 0, FONT_PICK_CACHE_LIMIT);
-    return 0;
-  }
-  function stylePreferenceFromFlags(bold, italic) {
-    if (bold && italic)
-      return "bold_italic";
-    if (bold)
-      return "bold";
-    if (italic)
-      return "italic";
-    return "regular";
-  }
-  function isAppleSymbolsFont(entry) {
-    return !!entry && /\bapple symbols\b/i.test(entry.label ?? "");
-  }
-  function fontEntryHasBoldStyle(entry) {
-    return !!entry && /\bbold\b/i.test(entry.label ?? "");
-  }
-  function fontEntryHasItalicStyle(entry) {
-    return !!entry && /\b(italic|oblique)\b/i.test(entry.label ?? "");
-  }
-  function computeCellMetrics() {
-    const primary = fontState.fonts[0];
-    if (!primary)
-      return null;
-    const fontSizePx = Math.max(1, Math.round(fontConfig.sizePx * currentDpr));
-    const scale = primary.font.scaleForSize(fontSizePx, fontState.sizeMode);
-    const glyphId = primary.font.glyphIdForChar("M");
-    const advanceUnits = glyphId !== undefined && glyphId !== null ? primary.font.advanceWidth(glyphId) : shapeClusterWithFont(primary, "M").advance;
-    const cellW = Math.max(1, Math.round(advanceUnits * scale));
-    const lineHeight = fontHeightUnits(primary.font) * scale;
-    const cellH = Math.max(1, Math.round(lineHeight));
-    const baselineOffset = primary.font.ascender * scale;
-    const yPad = Math.max(0, (cellH - lineHeight) * 0.5);
-    return { cellW, cellH, fontSizePx, scale, lineHeight, baselineOffset, yPad };
-  }
-  function updateGrid() {
-    if (!fontState.fonts.length)
-      return;
-    const metrics = computeCellMetrics();
-    if (!metrics)
-      return;
-    const cols = Math.max(1, Math.floor(canvas.width / metrics.cellW));
-    const rows = Math.max(1, Math.floor(canvas.height / metrics.cellH));
-    if (!Number.isFinite(cols) || !Number.isFinite(rows))
-      return;
-    const gridSizeChanged = cols !== gridState.cols || rows !== gridState.rows;
-    const cellSizeChanged = metrics.cellW !== gridState.cellW || metrics.cellH !== gridState.cellH;
-    if (gridSizeChanged) {
-      if (gridEl)
-        gridEl.textContent = `${cols}x${rows}`;
-      callbacks?.onGridSize?.(cols, rows);
-    }
-    if (cellSizeChanged) {
-      if (cellEl)
-        cellEl.textContent = `${Math.round(metrics.cellW)}x${Math.round(metrics.cellH)}`;
-      callbacks?.onCellSize?.(metrics.cellW, metrics.cellH);
-    }
-    const changed = gridSizeChanged || metrics.fontSizePx !== gridState.fontSizePx || cellSizeChanged;
-    if (metrics.fontSizePx !== gridState.fontSizePx) {
-      for (const entry of fontState.fonts)
-        resetFontEntry(entry);
-      if (activeState && activeState.glyphAtlases) {
-        activeState.glyphAtlases = new Map;
-      }
-    }
-    Object.assign(gridState, metrics, { cols, rows });
-    if (wasmReady && wasm && wasmHandle) {
-      wasm.setPixelSize(wasmHandle, canvas.width, canvas.height);
-    }
-    if (changed) {
-      const resizeActive = performance.now() - resizeState.lastAt <= RESIZE_ACTIVE_MS;
-      scheduleTerminalResizeCommit(cols, rows, { immediate: !resizeActive });
-    }
-    syncKittyOverlaySize();
-  }
-  function commitTerminalResize(cols, rows) {
-    if (wasmReady && wasm && wasmHandle) {
-      wasm.resize(wasmHandle, cols, rows);
-      wasm.renderUpdate(wasmHandle);
-    }
-    if (ptyTransport.isConnected()) {
-      ptyTransport.resize(cols, rows);
-    }
-    needsRender = true;
-  }
-  function flushPendingTerminalResize() {
-    if (terminalResizeTimer) {
-      clearTimeout(terminalResizeTimer);
-      terminalResizeTimer = 0;
-    }
-    if (!pendingTerminalResize)
-      return;
-    const { cols, rows } = pendingTerminalResize;
-    pendingTerminalResize = null;
-    commitTerminalResize(cols, rows);
-  }
-  function scheduleTerminalResizeCommit(cols, rows, options2 = {}) {
-    pendingTerminalResize = { cols, rows };
-    if (options2.immediate) {
-      flushPendingTerminalResize();
-      return;
-    }
-    if (terminalResizeTimer) {
-      clearTimeout(terminalResizeTimer);
-      terminalResizeTimer = 0;
-    }
-    terminalResizeTimer = window.setTimeout(() => {
-      terminalResizeTimer = 0;
-      flushPendingTerminalResize();
-    }, RESIZE_COMMIT_DEBOUNCE_MS);
-  }
-  function ensureAtlasForFont(device, state, entry, neededGlyphIds, fontSizePx, fontIndex, atlasScale, glyphMeta, constraintContext) {
-    const built = buildFontAtlasIfNeeded({
-      entry,
-      neededGlyphIds,
-      glyphMeta,
-      fontSizePx,
-      atlasScale,
-      fontIndex,
-      constraintContext,
-      deps: {
-        fontScaleOverrides: FONT_SCALE_OVERRIDES,
-        sizeMode: fontState.sizeMode,
-        isSymbolFont,
-        fontScaleOverride,
-        resolveGlyphPixelMode,
-        atlasBitmapToRGBA,
-        padAtlasRGBA,
-        buildAtlas,
-        buildGlyphAtlasWithConstraints,
-        buildColorEmojiAtlasWithCanvas,
-        rasterizeGlyph,
-        rasterizeGlyphWithTransform,
-        nerdConstraintSignature,
-        constants: {
-          atlasPadding: ATLAS_PADDING,
-          symbolAtlasPadding: SYMBOL_ATLAS_PADDING,
-          symbolAtlasMaxSize: SYMBOL_ATLAS_MAX_SIZE,
-          defaultAtlasMaxSize: 2048,
-          pixelModeRgbaValue: PixelMode.RGBA ?? 4
-        },
-        resolvePreferNearest: ({ fontIndex: idx, isSymbol, atlasScale: scale }) => {
-          const scaleHint = scale ?? 1;
-          return idx === 0 || isSymbol || scaleHint >= 0.99;
-        }
-      }
-    });
-    if (!built.rebuilt || !built.atlas || !built.rgba)
-      return false;
-    const atlas = built.atlas;
-    const colorGlyphs = built.colorGlyphs;
-    const preferNearest = built.preferNearest;
-    const rgba = built.rgba;
-    const texture = device.createTexture({
-      size: [atlas.bitmap.width, atlas.bitmap.rows, 1],
-      format: "rgba8unorm",
-      usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT
-    });
-    const width = atlas.bitmap.width;
-    const height = atlas.bitmap.rows;
-    const bytesPerRow = width * 4;
-    const alignedBytesPerRow = Math.ceil(bytesPerRow / 256) * 256;
-    let upload = rgba;
-    if (alignedBytesPerRow !== bytesPerRow) {
-      const padded = new Uint8Array(alignedBytesPerRow * height);
-      for (let row = 0;row < height; row += 1) {
-        const srcStart = row * bytesPerRow;
-        const srcEnd = srcStart + bytesPerRow;
-        const dstStart = row * alignedBytesPerRow;
-        padded.set(rgba.subarray(srcStart, srcEnd), dstStart);
-      }
-      upload = padded;
-    }
-    device.queue.writeTexture({ texture }, upload, { bytesPerRow: alignedBytesPerRow, rowsPerImage: height }, { width, height, depthOrArrayLayers: 1 });
-    const samplerNearest = device.createSampler({
-      magFilter: "nearest",
-      minFilter: "nearest",
-      addressModeU: "clamp-to-edge",
-      addressModeV: "clamp-to-edge"
-    });
-    const samplerLinear = device.createSampler({
-      magFilter: "linear",
-      minFilter: "linear",
-      addressModeU: "clamp-to-edge",
-      addressModeV: "clamp-to-edge"
-    });
-    const bindGroupNearest = device.createBindGroup({
-      layout: state.glyphPipelineNearest.getBindGroupLayout(0),
-      entries: [
-        { binding: 0, resource: { buffer: state.uniformBuffer } },
-        { binding: 1, resource: samplerNearest },
-        { binding: 2, resource: texture.createView() }
-      ]
-    });
-    const bindGroupLinear = device.createBindGroup({
-      layout: state.glyphPipeline.getBindGroupLayout(0),
-      entries: [
-        { binding: 0, resource: { buffer: state.uniformBuffer } },
-        { binding: 1, resource: samplerLinear },
-        { binding: 2, resource: texture.createView() }
-      ]
-    });
-    if (!state.glyphAtlases)
-      state.glyphAtlases = new Map;
-    const inset = Number.isFinite(atlas.inset) ? atlas.inset : 0;
-    state.glyphAtlases.set(fontIndex, {
-      texture,
-      sampler: preferNearest ? undefined : samplerLinear,
-      samplerNearest,
-      samplerLinear,
-      bindGroup: preferNearest ? bindGroupNearest : bindGroupLinear,
-      bindGroupNearest,
-      bindGroupLinear,
-      width: atlas.bitmap.width,
-      height: atlas.bitmap.rows,
-      inset,
-      colorGlyphs,
-      nearest: preferNearest
-    });
-    return true;
-  }
-  function selectionForRow(row, cols) {
-    if (!selectionState.active || !selectionState.anchor || !selectionState.focus)
-      return null;
-    const a3 = selectionState.anchor;
-    const f = selectionState.focus;
-    const forward = f.row > a3.row || f.row === a3.row && f.col >= a3.col;
-    const start = forward ? a3 : f;
-    const end = forward ? f : a3;
-    if (start.row === end.row && row === start.row) {
-      const left = Math.min(start.col, end.col);
-      const right = Math.max(start.col, end.col) + 1;
-      return { start: clamp(left, 0, cols), end: clamp(right, 0, cols) };
-    }
-    if (row < start.row || row > end.row)
-      return null;
-    if (row === start.row) {
-      return { start: clamp(start.col, 0, cols), end: cols };
-    }
-    if (row === end.row) {
-      return { start: 0, end: clamp(end.col + 1, 0, cols) };
-    }
-    return { start: 0, end: cols };
-  }
-  function getCellText(render, idx) {
-    const cp = render.codepoints[idx];
-    if (!cp)
-      return " ";
-    let text = String.fromCodePoint(cp);
-    if (render.graphemeLen && render.graphemeOffset && render.graphemeBuffer) {
-      const extra = render.graphemeLen[idx] ?? 0;
-      if (extra > 0) {
-        const start = render.graphemeOffset[idx] ?? 0;
-        const cps = [cp];
-        for (let j = 0;j < extra; j += 1) {
-          const extraCp = render.graphemeBuffer[start + j];
-          if (extraCp)
-            cps.push(extraCp);
-        }
-        text = String.fromCodePoint(...cps);
-      }
-    }
-    return text;
-  }
-  function getSelectionText() {
-    if (!selectionState.active || !selectionState.anchor || !selectionState.focus)
-      return "";
-    if (!lastRenderState)
-      return "";
-    const { rows, cols } = lastRenderState;
-    if (!rows || !cols)
-      return "";
-    const a3 = selectionState.anchor;
-    const f = selectionState.focus;
-    const forward = f.row > a3.row || f.row === a3.row && f.col >= a3.col;
-    const startRow = forward ? a3.row : f.row;
-    const endRow = forward ? f.row : a3.row;
-    const lines = [];
-    const clampedStartRow = clamp(startRow, 0, rows - 1);
-    const clampedEndRow = clamp(endRow, 0, rows - 1);
-    for (let row = clampedStartRow;row <= clampedEndRow; row += 1) {
-      const range = selectionForRow(row, cols);
-      if (!range)
-        continue;
-      let line = "";
-      for (let col = range.start;col < range.end; col += 1) {
-        const idx = row * cols + col;
-        line += getCellText(lastRenderState, idx);
-      }
-      line = line.replace(/[ \t]+$/g, "");
-      lines.push(line);
-    }
-    return lines.join(`
-`);
-  }
-  function getRenderState() {
-    if (!wasmReady || !wasm || !wasmHandle)
-      return null;
-    return wasm.getRenderState(wasmHandle);
-  }
-  function resolveCursorPosition(cursor) {
-    if (!cursor)
-      return null;
-    let col = cursor.col;
-    let row = cursor.row;
-    if (wasmExports?.restty_debug_cursor_x && wasmExports?.restty_debug_cursor_y && wasmHandle) {
-      const ax = wasmExports.restty_debug_cursor_x(wasmHandle);
-      const ay = wasmExports.restty_debug_cursor_y(wasmHandle);
-      if (Number.isFinite(ax) && Number.isFinite(ay)) {
-        col = ax;
-        row = ay;
-      }
-    }
-    return { col, row, wideTail: cursor.wideTail === 1 };
-  }
-  function resolveCursorStyle(cursor, opts) {
-    if (!cursor)
-      return null;
-    const visible = cursor.visible !== 0;
-    if (!visible || opts.preedit)
-      return null;
-    if (!opts.focused)
-      return 3;
-    if (cursor.blinking && !opts.blinkVisible)
-      return null;
-    return cursor.style ?? 0;
-  }
-  function reportTermSize(cols, rows) {
-    if (cols === lastReportedTermCols && rows === lastReportedTermRows)
-      return;
-    lastReportedTermCols = cols;
-    lastReportedTermRows = rows;
-    if (termSizeEl)
-      termSizeEl.textContent = `${cols}x${rows}`;
-    callbacks?.onTermSize?.(cols, rows);
-  }
-  function reportCursor(cursorPos) {
-    if (!cursorPos)
-      return;
-    const { col, row } = cursorPos;
-    if (cursorPosEl && (col !== lastReportedCursorCol || row !== lastReportedCursorRow)) {
-      cursorPosEl.textContent = `${col},${row}`;
-    }
-    if (col !== lastReportedCursorCol || row !== lastReportedCursorRow) {
-      callbacks?.onCursor?.(col, row);
-      lastReportedCursorCol = col;
-      lastReportedCursorRow = row;
-    }
-    lastCursorForCpr = { row: row + 1, col: col + 1 };
-  }
-  function reportDebugText(text) {
-    if (text === lastReportedDebugText)
-      return;
-    lastReportedDebugText = text;
-    if (dbgEl)
-      dbgEl.textContent = text;
-    callbacks?.onDebug?.(text);
-  }
-  function tickWebGPU(state) {
-    const { device, context } = state;
-    if (fontError) {
-      const text = `Font error: ${fontError.message}`;
-      if (termDebug)
-        termDebug.textContent = text;
-      reportDebugText(text);
-    }
-    updateGrid();
-    const render = getRenderState();
-    if (!render || !fontState.font) {
-      if (lastRenderState) {
-        clearKittyOverlay();
-        return;
-      }
-      const { useLinearBlending: useLinearBlending2 } = resolveBlendFlags("webgpu", state);
-      const clearColor2 = useLinearBlending2 ? srgbToLinearColor(defaultBg) : defaultBg;
-      const encoder2 = device.createCommandEncoder();
-      const pass2 = encoder2.beginRenderPass({
-        colorAttachments: [
-          {
-            view: context.getCurrentTexture().createView(),
-            clearValue: { r: clearColor2[0], g: clearColor2[1], b: clearColor2[2], a: clearColor2[3] },
-            loadOp: "clear",
-            storeOp: "store"
-          }
-        ]
-      });
-      pass2.end();
-      device.queue.submit([encoder2.finish()]);
-      clearKittyOverlay();
-      return;
-    }
-    lastRenderState = render;
-    const {
-      rows,
-      cols,
-      codepoints,
-      contentTags,
-      wide,
-      styleFlags,
-      linkIds,
-      fgBytes,
-      bgBytes,
-      ulBytes,
-      ulStyle,
-      graphemeOffset,
-      graphemeLen,
-      graphemeBuffer,
-      cursor
-    } = render;
-    if (!codepoints || !fgBytes)
-      return;
-    const mergedEmojiSkip = new Uint8Array(codepoints.length);
-    const isRegionalIndicator = (value) => value >= 127462 && value <= 127487;
-    const readCellCluster = (cellIndex) => {
-      const flag = wide ? wide[cellIndex] ?? 0 : 0;
-      if (flag === 2 || flag === 3)
-        return null;
-      const cp = codepoints[cellIndex] ?? 0;
-      if (!cp)
-        return null;
-      let text = String.fromCodePoint(cp);
-      const extra = graphemeLen && graphemeOffset && graphemeBuffer ? graphemeLen[cellIndex] ?? 0 : 0;
-      if (extra > 0 && graphemeOffset && graphemeBuffer) {
-        const start = graphemeOffset[cellIndex] ?? 0;
-        const cps = [cp];
-        for (let j = 0;j < extra; j += 1) {
-          const extraCp = graphemeBuffer[start + j];
-          if (extraCp)
-            cps.push(extraCp);
-        }
-        text = String.fromCodePoint(...cps);
-      }
-      return { cp, text, span: flag === 1 ? 2 : 1 };
-    };
-    const { useLinearBlending, useLinearCorrection } = resolveBlendFlags("webgpu", state);
-    const clearColor = useLinearBlending ? srgbToLinearColor(defaultBg) : defaultBg;
-    reportTermSize(cols, rows);
-    const cursorPos = cursor ? resolveCursorPosition(cursor) : null;
-    reportCursor(cursorPos);
-    const isBlinking = (cursor?.blinking || 0) !== 0 || FORCE_CURSOR_BLINK;
-    const blinkVisible = !isBlinking || Math.floor(performance.now() / CURSOR_BLINK_MS) % 2 === 0;
-    const imeFocused = typeof document !== "undefined" && imeInput ? document.activeElement === imeInput : false;
-    const windowFocused = typeof document !== "undefined" ? document.hasFocus() : true;
-    const cursorStyle = cursor ? resolveCursorStyle(cursor, {
-      focused: isFocused || imeFocused || windowFocused,
-      preedit: Boolean(imeState.preedit),
-      blinkVisible
-    }) : null;
-    let cursorCell = null;
-    if (cursorStyle !== null && cursorPos) {
-      let col = cursorPos.col;
-      const row = cursorPos.row;
-      let wide2 = false;
-      if (cursorPos.wideTail && col > 0) {
-        col -= 1;
-        wide2 = true;
-      }
-      cursorCell = { row, col, wide: wide2 };
-    }
-    if (dbgEl && wasmExports && wasmHandle) {
-      const cx = wasmExports.restty_debug_cursor_x ? wasmExports.restty_debug_cursor_x(wasmHandle) : 0;
-      const cy = wasmExports.restty_debug_cursor_y ? wasmExports.restty_debug_cursor_y(wasmHandle) : 0;
-      const sl = wasmExports.restty_debug_scroll_left ? wasmExports.restty_debug_scroll_left(wasmHandle) : 0;
-      const sr = wasmExports.restty_debug_scroll_right ? wasmExports.restty_debug_scroll_right(wasmHandle) : 0;
-      const tc = wasmExports.restty_debug_term_cols ? wasmExports.restty_debug_term_cols(wasmHandle) : 0;
-      const tr = wasmExports.restty_debug_term_rows ? wasmExports.restty_debug_term_rows(wasmHandle) : 0;
-      const pc = wasmExports.restty_debug_page_cols ? wasmExports.restty_debug_page_cols(wasmHandle) : 0;
-      const pr = wasmExports.restty_debug_page_rows ? wasmExports.restty_debug_page_rows(wasmHandle) : 0;
-      const text = `${cx},${cy} | ${sl}-${sr} | t:${tc}x${tr} p:${pc}x${pr}`;
-      reportDebugText(text);
-    }
-    const cellW = gridState.cellW || canvas.width / cols;
-    const cellH = gridState.cellH || canvas.height / rows;
-    const fontSizePx = gridState.fontSizePx || Math.max(1, Math.round(cellH));
-    const primaryEntry = fontState.fonts[0];
-    const primaryScale = gridState.scale || fontState.font.scaleForSize(fontSizePx, fontState.sizeMode);
-    const lineHeight = gridState.lineHeight || fontHeightUnits(fontState.font) * primaryScale;
-    const baselineOffset = gridState.baselineOffset || fontState.font.ascender * primaryScale;
-    const yPad = gridState.yPad ?? (cellH - lineHeight) / 2;
-    const post = fontState.font.post;
-    const underlinePosition = post?.underlinePosition ?? Math.round(-fontState.font.upem * 0.08);
-    const underlineThickness = post?.underlineThickness ?? Math.round(fontState.font.upem * 0.05);
-    const underlineOffsetPx = -underlinePosition * primaryScale;
-    const underlineThicknessPx = Math.max(1, Math.ceil(underlineThickness * primaryScale));
-    if (cursorPos && cursorStyle === null) {
-      updateImePosition({ row: cursorPos.row, col: cursorPos.col }, cellW, cellH);
-    }
-    const bgData = [];
-    const selectionData = [];
-    const underlineData = [];
-    const cursorData = [];
-    const fgRectData = [];
-    const overlayData = [];
-    const glyphDataNearestByFont = new Map;
-    const glyphDataLinearByFont = new Map;
-    const glyphQueueByFont = new Map;
-    const overlayGlyphDataNearestByFont = new Map;
-    const overlayGlyphDataLinearByFont = new Map;
-    const overlayGlyphQueueByFont = new Map;
-    const neededGlyphIdsByFont = new Map;
-    const neededGlyphMetaByFont = new Map;
-    const fgColorCache = new Map;
-    const bgColorCache = new Map;
-    const ulColorCache = new Map;
-    const baseScaleByFont = fontState.fonts.map((entry, idx) => {
-      if (!entry?.font)
-        return primaryScale;
-      if (idx === 0)
-        return primaryScale;
-      return entry.font.scaleForSize(fontSizePx, fontState.sizeMode) * fontScaleOverride(entry, FONT_SCALE_OVERRIDES);
-    });
-    const scaleByFont = fontState.fonts.map((entry, idx) => {
-      if (!entry?.font)
-        return primaryScale;
-      if (idx === 0)
-        return primaryScale;
-      const baseScale = baseScaleByFont[idx] ?? primaryScale;
-      if (isSymbolFont(entry) || isColorEmojiFont(entry))
-        return baseScale;
-      const advanceUnits = fontAdvanceUnits(entry, shapeClusterWithFont);
-      const maxSpan = fontMaxCellSpan(entry);
-      const widthPx = advanceUnits * baseScale;
-      const widthAdjustRaw = widthPx > 0 ? cellW * maxSpan / widthPx : 1;
-      const widthAdjust = clamp(widthAdjustRaw, 0.5, 2);
-      let adjustedScale = baseScale * widthAdjust;
-      const adjustedHeightPx = fontHeightUnits(entry.font) * adjustedScale;
-      if (adjustedHeightPx > lineHeight && adjustedHeightPx > 0) {
-        adjustedScale *= lineHeight / adjustedHeightPx;
-      }
-      return adjustedScale;
-    });
-    const bitmapScaleByFont = fontState.fonts.map((entry, idx) => {
-      if (!entry?.font || idx === 0)
-        return 1;
-      if (isSymbolFont(entry))
-        return 1;
-      const baseScale = baseScaleByFont[idx] ?? 0;
-      if (baseScale <= 0)
-        return 1;
-      const targetScale = scaleByFont[idx] ?? baseScale;
-      return clamp(targetScale / baseScale, 0.5, 2);
-    });
-    const baselineAdjustByFont = fontState.fonts.map((entry, idx) => {
-      if (!entry?.font || idx === 0 || !primaryEntry?.font)
-        return 0;
-      const scale = scaleByFont[idx] ?? primaryScale;
-      return primaryEntry.font.ascender * primaryScale - entry.font.ascender * scale;
-    });
-    const nerdMetrics = buildNerdMetrics(cellW, cellH, lineHeight, primaryEntry?.font, primaryScale, nerdIconScale);
-    const getGlyphQueue = (fontIndex) => {
-      if (!glyphQueueByFont.has(fontIndex))
-        glyphQueueByFont.set(fontIndex, []);
-      return glyphQueueByFont.get(fontIndex);
-    };
-    const getOverlayGlyphQueue = (fontIndex) => {
-      if (!overlayGlyphQueueByFont.has(fontIndex))
-        overlayGlyphQueueByFont.set(fontIndex, []);
-      return overlayGlyphQueueByFont.get(fontIndex);
-    };
-    const getGlyphSet = (fontIndex) => {
-      if (!neededGlyphIdsByFont.has(fontIndex))
-        neededGlyphIdsByFont.set(fontIndex, new Set);
-      return neededGlyphIdsByFont.get(fontIndex);
-    };
-    const getGlyphMeta = (fontIndex) => {
-      if (!neededGlyphMetaByFont.has(fontIndex))
-        neededGlyphMetaByFont.set(fontIndex, new Map);
-      return neededGlyphMetaByFont.get(fontIndex);
-    };
-    const noteGlyphMeta = (fontIndex, glyphId, cp, constraintWidth) => {
-      if (!glyphId || !cp)
-        return;
-      const meta = getGlyphMeta(fontIndex);
-      const prev = meta.get(glyphId);
-      if (!prev) {
-        const width = Math.max(1, constraintWidth || 1);
-        meta.set(glyphId, {
-          cp,
-          constraintWidth: width,
-          widths: new Set([width]),
-          variable: false
-        });
-        return;
-      }
-      if (prev.constraintWidth !== constraintWidth) {
-        prev.widths?.add(Math.max(1, constraintWidth || 1));
-        meta.set(glyphId, {
-          ...prev,
-          constraintWidth: Math.min(prev.constraintWidth, Math.max(1, constraintWidth || 1)),
-          variable: true
-        });
-      }
-    };
-    const getGlyphData = (map, fontIndex) => {
-      if (!map.has(fontIndex))
-        map.set(fontIndex, []);
-      return map.get(fontIndex);
-    };
-    const cursorBlock = cursorStyle === 0 && !!cursorCell;
-    for (let row = 0;row < rows; row += 1) {
-      const rowY = row * cellH;
-      const baseY = rowY + yPad + baselineOffset;
-      const localSel = selectionState.active ? selectionForRow(row, cols) : null;
-      const selStart = localSel?.start ?? -1;
-      const selEnd = localSel?.end ?? -1;
-      if (selStart >= 0 && selEnd > selStart) {
-        const start = Math.max(0, selStart);
-        const end = Math.min(cols, selEnd);
-        pushRect(selectionData, start * cellW, rowY, (end - start) * cellW, cellH, selectionColor);
-      }
-      for (let col = 0;col < cols; col += 1) {
-        const idx = row * cols + col;
-        const x3 = col * cellW;
-        const tag = contentTags ? contentTags[idx] : 0;
-        const bgOnly = tag === 2 || tag === 3;
-        const flags = styleFlags ? styleFlags[idx] : 0;
-        const bold = (flags & STYLE_BOLD) !== 0;
-        const italic = (flags & STYLE_ITALIC) !== 0;
-        const faint = (flags & STYLE_FAINT) !== 0;
-        const blink = (flags & STYLE_BLINK) !== 0;
-        const inverse = (flags & STYLE_INVERSE) !== 0;
-        const invisible = (flags & STYLE_INVISIBLE) !== 0;
-        const strike = (flags & STYLE_STRIKE) !== 0;
-        const overline = (flags & STYLE_OVERLINE) !== 0;
-        const underlineStyle = ulStyle ? ulStyle[idx] : (flags & STYLE_UNDERLINE_MASK) >> 8;
-        let fg = decodeRGBAWithCache(fgBytes, idx, fgColorCache);
-        let bg = bgBytes ? decodeRGBAWithCache(bgBytes, idx, bgColorCache) : defaultBg;
-        let ul = ulBytes ? decodeRGBAWithCache(ulBytes, idx, ulColorCache) : fg;
-        const underlineUsesFg = ul[0] === fg[0] && ul[1] === fg[1] && ul[2] === fg[2] && ul[3] === fg[3];
-        if (inverse) {
-          const tmp = fg;
-          fg = bg;
-          bg = tmp;
-          if (underlineUsesFg)
-            ul = fg;
-        }
-        if (bold) {
-          fg = brighten(fg, BOLD_BRIGHTEN);
-          ul = brighten(ul, BOLD_BRIGHTEN);
-        }
-        if (faint) {
-          fg = fade(fg, FAINT_ALPHA);
-          ul = fade(ul, FAINT_ALPHA);
-        }
-        const bgForText = bg[3] < 1 ? [
-          bg[0] + defaultBg[0] * (1 - bg[3]),
-          bg[1] + defaultBg[1] * (1 - bg[3]),
-          bg[2] + defaultBg[2] * (1 - bg[3]),
-          1
-        ] : bg;
-        if ((bgBytes || inverse) && bg[3] > 0)
-          pushRect(bgData, x3, rowY, cellW, cellH, bg);
-        const linkId = linkIds ? linkIds[idx] ?? 0 : 0;
-        const linkHovered = linkId && linkId === linkState.hoverId;
-        const blinkOff = blink && !blinkVisible;
-        const textHidden = invisible || blinkOff;
-        if (!textHidden && !bgOnly) {
-          if (underlineStyle > 0 && ul[3] > 0) {
-            drawUnderlineStyle(underlineData, underlineStyle, x3, rowY, cellW, cellH, baseY, underlineOffsetPx, underlineThicknessPx, ul);
-          }
-          if (linkHovered && !selectionState.active && !selectionState.dragging) {
-            drawUnderlineStyle(underlineData, 1, x3, rowY, cellW, cellH, baseY, underlineOffsetPx, underlineThicknessPx, ul);
-          }
-          if (strike)
-            drawStrikethrough(underlineData, x3, rowY, cellW, cellH, fg);
-          if (overline)
-            drawOverline(underlineData, x3, rowY, cellW, fg);
-        }
-        if (bgOnly || textHidden)
-          continue;
-        if (mergedEmojiSkip[idx])
-          continue;
-        const cluster = readCellCluster(idx);
-        if (!cluster)
-          continue;
-        const cp = cluster.cp;
-        if (cp === KITTY_PLACEHOLDER_CP)
-          continue;
-        let text = cluster.text;
-        let baseSpan = cluster.span;
-        const rowEnd = row * cols + cols;
-        if (isRegionalIndicator(cp)) {
-          const nextIdx = idx + baseSpan;
-          if (nextIdx < rowEnd && !mergedEmojiSkip[nextIdx]) {
-            const next = readCellCluster(nextIdx);
-            if (next && isRegionalIndicator(next.cp)) {
-              text += next.text;
-              baseSpan += next.span;
-              mergedEmojiSkip[nextIdx] = 1;
-            }
-          }
-        }
-        let nextSeqIdx = idx + baseSpan;
-        let guard = 0;
-        while ((text.codePointAt(text.length - 1) ?? 0) === 8205 && nextSeqIdx < rowEnd && guard < 8) {
-          const next = readCellCluster(nextSeqIdx);
-          if (!next || !next.cp || isSpaceCp(next.cp))
-            break;
-          text += next.text;
-          baseSpan += next.span;
-          mergedEmojiSkip[nextSeqIdx] = 1;
-          nextSeqIdx += next.span;
-          guard += 1;
-        }
-        const extra = text.length > String.fromCodePoint(cp).length ? 1 : 0;
-        if (extra === 0 && isSpaceCp(cp))
-          continue;
-        if (cursorBlock && cursorCell && row === cursorCell.row && col >= cursorCell.col && col < cursorCell.col + (cursorCell.wide ? 2 : 1)) {
-          fg = [bgForText[0], bgForText[1], bgForText[2], 1];
-        }
-        if (isBlockElement(cp)) {
-          if (drawBlockElement(cp, x3, rowY, cellW, cellH, fg, fgRectData))
-            continue;
-        }
-        if (isBoxDrawing(cp)) {
-          if (drawBoxDrawing(cp, x3, rowY, cellW, cellH, fg, fgRectData, underlineThicknessPx))
-            continue;
-        }
-        if (isBraille(cp)) {
-          if (drawBraille(cp, x3, rowY, cellW, cellH, fg, fgRectData))
-            continue;
-        }
-        if (isPowerline(cp)) {
-          if (drawPowerline(cp, x3, rowY, cellW, cellH, fg, fgRectData))
-            continue;
-        }
-        if (extra > 0 && text.trim() === "")
-          continue;
-        const fontIndex = pickFontIndexForText(text, baseSpan, stylePreferenceFromFlags(bold, italic));
-        const fontEntry = fontState.fonts[fontIndex] ?? fontState.fonts[0];
-        const shaped = shapeClusterWithFont(fontEntry, text);
-        if (!shaped.glyphs.length)
-          continue;
-        noteColorGlyphText(fontEntry, text, shaped);
-        const glyphSet = getGlyphSet(fontIndex);
-        for (const glyph of shaped.glyphs)
-          glyphSet.add(glyph.glyphId);
-        const fontScale = scaleByFont[fontIndex] ?? primaryScale;
-        let cellSpan = baseSpan;
-        const symbolLike = isRenderSymbolLike(cp);
-        const nerdConstraint = symbolLike ? resolveSymbolConstraint(cp) : null;
-        const symbolConstraint = !!nerdConstraint;
-        let constraintWidth = baseSpan;
-        let forceFit = false;
-        let glyphWidthPx = 0;
-        if (symbolLike) {
-          if (baseSpan === 1) {
-            if (nerdConstraint?.height === "icon") {
-              constraintWidth = 1;
-              if (col < cols - 1) {
-                if (col > 0) {
-                  const prevCp = codepoints[idx - 1];
-                  if (isRenderSymbolLike(prevCp) && !isGraphicsElement(prevCp)) {
-                    constraintWidth = 1;
-                  } else {
-                    const nextCp = codepoints[idx + 1];
-                    if (!nextCp || isSpaceCp(nextCp))
-                      constraintWidth = 2;
-                  }
-                } else {
-                  const nextCp = codepoints[idx + 1];
-                  if (!nextCp || isSpaceCp(nextCp))
-                    constraintWidth = 2;
-                }
-              }
-            } else {
-              constraintWidth = 1;
-            }
-            cellSpan = constraintWidth;
-          }
-          if (shaped.glyphs.length === 1) {
-            const glyphId = shaped.glyphs[0].glyphId;
-            const widthUnits = glyphWidthUnits(fontEntry, glyphId);
-            if (widthUnits > 0) {
-              glyphWidthPx = widthUnits * fontScale;
-            }
-          }
-          if (!glyphWidthPx) {
-            glyphWidthPx = shaped.advance * fontScale;
-          }
-          if (glyphWidthPx > cellW * cellSpan * 1.05) {
-            forceFit = true;
-          }
-        }
-        if (symbolConstraint) {
-          for (const glyph of shaped.glyphs) {
-            noteGlyphMeta(fontIndex, glyph.glyphId, cp, constraintWidth);
-          }
-        }
-        const cellWidthPx = cellW * cellSpan;
-        const xPad = 0;
-        getGlyphQueue(fontIndex).push({
-          x: x3,
-          baseY,
-          xPad,
-          fg,
-          bg: bgForText,
-          shaped,
-          fontIndex,
-          scale: fontScale,
-          cellWidth: cellWidthPx,
-          symbolLike,
-          symbolConstraint,
-          constraintWidth,
-          forceFit,
-          glyphWidthPx,
-          cp,
-          italic,
-          bold
-        });
-      }
-    }
-    if (cursor && imeState.preedit) {
-      const preeditText = imeState.preedit;
-      const preeditFontIndex = pickFontIndexForText(preeditText, 1);
-      const preeditEntry = fontState.fonts[preeditFontIndex] ?? fontState.fonts[0];
-      const shaped = shapeClusterWithFont(preeditEntry, preeditText);
-      noteColorGlyphText(preeditEntry, preeditText, shaped);
-      const glyphSet = getGlyphSet(preeditFontIndex);
-      for (const glyph of shaped.glyphs)
-        glyphSet.add(glyph.glyphId);
-      const preeditRow = cursorCell?.row ?? cursorPos?.row ?? cursor.row;
-      const preeditCol = cursorCell?.col ?? cursorPos?.col ?? cursor.col;
-      const baseY = preeditRow * cellH + yPad + baselineOffset;
-      const x3 = preeditCol * cellW;
-      const preeditScale = scaleByFont[preeditFontIndex] ?? primaryScale;
-      const advancePx = shaped.advance * preeditScale;
-      const widthPx = Math.max(cellW, advancePx);
-      const rowY = preeditRow * cellH;
-      pushRect(bgData, x3, rowY, widthPx, cellH, PREEDIT_BG);
-      const thickness = underlineThicknessPx;
-      const underlineBaseY = clamp(baseY + underlineOffsetPx, rowY + 1, rowY + cellH - thickness - 1);
-      pushRect(underlineData, x3, underlineBaseY, widthPx, thickness, PREEDIT_UL);
-      const selStart = imeState.selectionStart || 0;
-      const selEnd = imeState.selectionEnd || 0;
-      if (selEnd > selStart) {
-        const leftWidth = shapeClusterWithFont(preeditEntry, preeditText.slice(0, selStart)).advance * preeditScale;
-        const selWidth = shapeClusterWithFont(preeditEntry, preeditText.slice(selStart, selEnd)).advance * preeditScale;
-        pushRect(bgData, x3 + leftWidth, rowY, selWidth, cellH, PREEDIT_ACTIVE_BG);
-        pushRect(underlineData, x3 + leftWidth, underlineBaseY, selWidth, thickness, PREEDIT_UL);
-      } else {
-        const caretWidth = Math.max(1, Math.floor(cellW * 0.1));
-        const caretX = x3 + shapeClusterWithFont(preeditEntry, preeditText.slice(0, selStart)).advance * preeditScale;
-        pushRect(cursorData, caretX, rowY + 2, caretWidth, cellH - 4, PREEDIT_CARET);
-      }
-      getGlyphQueue(preeditFontIndex).push({
-        x: x3,
-        baseY,
-        xPad: 0,
-        fg: PREEDIT_FG,
-        bg: PREEDIT_BG,
-        shaped,
-        fontIndex: preeditFontIndex,
-        scale: preeditScale,
-        cellWidth: cellW,
-        symbolLike: false
-      });
-    }
-    const resizeAge = performance.now() - resizeState.lastAt;
-    if (resizeState.cols > 0 && resizeState.rows > 0 && resizeAge >= 0 && resizeAge < RESIZE_OVERLAY_HOLD_MS + RESIZE_OVERLAY_FADE_MS) {
-      const fade2 = resizeAge <= RESIZE_OVERLAY_HOLD_MS ? 1 : 1 - (resizeAge - RESIZE_OVERLAY_HOLD_MS) / RESIZE_OVERLAY_FADE_MS;
-      const alpha = clamp(fade2, 0, 1);
-      if (alpha > 0.01) {
-        const overlayText = `${resizeState.cols}x${resizeState.rows}`;
-        const overlayEntry = fontState.fonts[0];
-        if (overlayEntry?.font) {
-          const shaped = shapeClusterWithFont(overlayEntry, overlayText);
-          const glyphSet = getGlyphSet(0);
-          for (const glyph of shaped.glyphs)
-            glyphSet.add(glyph.glyphId);
-          const textWidth = shaped.advance * primaryScale;
-          const padX = Math.max(8, cellW * 0.6);
-          const padY = Math.max(6, cellH * 0.4);
-          const boxW = textWidth + padX * 2;
-          const boxH = lineHeight + padY * 2;
-          const boxX = (canvas.width - boxW) * 0.5;
-          const boxY = (canvas.height - boxH) * 0.5;
-          const overlayBg = [0, 0, 0, 0.6 * alpha];
-          pushRectBox(overlayData, boxX, boxY, boxW, boxH, overlayBg);
-          pushRectBox(overlayData, boxX, boxY, boxW, 1, [1, 1, 1, 0.12 * alpha]);
-          const textRowY = boxY + (boxH - lineHeight) * 0.5;
-          const baseY = textRowY + yPad + baselineOffset;
-          getOverlayGlyphQueue(0).push({
-            x: boxX + padX,
-            baseY,
-            xPad: 0,
-            fg: [1, 1, 1, alpha],
-            bg: overlayBg,
-            shaped,
-            fontIndex: 0,
-            scale: primaryScale,
-            cellWidth: textWidth,
-            symbolLike: false
-          });
-        }
-      }
-    }
-    for (const [fontIndex, neededSet] of neededGlyphIdsByFont.entries()) {
-      const entry = fontState.fonts[fontIndex];
-      if (!entry)
-        continue;
-      const atlasScale = bitmapScaleByFont[fontIndex] ?? 1;
-      const meta = neededGlyphMetaByFont.get(fontIndex);
-      const constraintContext = meta ? {
-        cellW,
-        cellH,
-        yPad,
-        baselineOffset,
-        baselineAdjust: baselineAdjustByFont[fontIndex] ?? 0,
-        fontScale: scaleByFont[fontIndex] ?? primaryScale,
-        nerdMetrics,
-        fontEntry: entry
-      } : null;
-      ensureAtlasForFont(device, state, entry, neededSet, fontSizePx, fontIndex, atlasScale, meta, constraintContext);
-    }
-    const emitGlyphs = (queueByFont, targetMaps) => {
-      for (const [fontIndex, queue] of queueByFont.entries()) {
-        const entry = fontState.fonts[fontIndex];
-        const atlasState = state.glyphAtlases?.get(fontIndex);
-        if (!entry || !entry.atlas || !atlasState)
-          continue;
-        const atlas = entry.atlas;
-        const atlasW = atlas.bitmap.width;
-        const atlasH = atlas.bitmap.rows;
-        const baseInset = Number.isFinite(atlas.inset) ? atlas.inset : 0;
-        const colorGlyphs = atlasState.colorGlyphs ?? atlas.colorGlyphs;
-        for (const item of queue) {
-          const bg = item.bg ?? defaultBg;
-          let penX = 0;
-          const scale = item.scale ?? primaryScale;
-          const maxWidth = item.cellWidth ?? cellW;
-          const maxHeight = cellH;
-          const symbolLike = item.symbolLike;
-          const symbolConstraint = item.symbolConstraint;
-          const glyphDataNearest = getGlyphData(targetMaps.nearest, fontIndex);
-          const glyphDataLinear = getGlyphData(targetMaps.linear, fontIndex);
-          let itemScale = scale;
-          if (!symbolConstraint) {
-            if (item.forceFit && item.glyphWidthPx && maxWidth > 0) {
-              const fit = maxWidth / item.glyphWidthPx;
-              if (fit > 0 && fit < 1)
-                itemScale = scale * fit;
-            }
-            if (!symbolLike) {
-              const advancePx = item.shaped.advance * scale;
-              if (advancePx > maxWidth && advancePx > 0) {
-                itemScale = scale * (maxWidth / advancePx);
-              }
-            }
-          }
-          const scaleFactor = scale > 0 ? itemScale / scale : 1;
-          const widthKey = item.constraintWidth ?? 0;
-          const widthMap = atlas.glyphsByWidth?.get(widthKey);
-          for (const glyph of item.shaped.glyphs) {
-            const colorGlyph = !!colorGlyphs?.has(glyph.glyphId);
-            const metrics = widthMap?.get(glyph.glyphId) ?? atlas.glyphs.get(glyph.glyphId);
-            if (!metrics)
-              continue;
-            let bitmapScale = scaleFactor;
-            const glyphConstrained = symbolLike && !!widthMap?.has(glyph.glyphId);
-            if (glyphConstrained)
-              bitmapScale = 1;
-            if (fontIndex > 0 && !symbolLike) {
-              const widthScale = maxWidth > 0 ? maxWidth / metrics.width : 1;
-              const heightScale = maxHeight > 0 ? maxHeight / metrics.height : 1;
-              const clampScale = Math.min(1, widthScale, heightScale);
-              bitmapScale *= clampScale;
-            }
-            const baselineAdjust = baselineAdjustByFont[fontIndex] ?? 0;
-            let gw = metrics.width * bitmapScale;
-            let gh = metrics.height * bitmapScale;
-            if (symbolLike && !glyphConstrained) {
-              const scaleToFit = gw > 0 && gh > 0 ? Math.min(maxWidth / gw, maxHeight / gh) : 1;
-              if (scaleToFit < 1) {
-                bitmapScale *= scaleToFit;
-                gw *= scaleToFit;
-                gh *= scaleToFit;
-              }
-              gw = Math.round(gw);
-              gh = Math.round(gh);
-              gw = Math.max(1, gw);
-              gh = Math.max(1, gh);
-            }
-            let x3 = item.x + item.xPad + (penX + glyph.xOffset) * itemScale + metrics.bearingX * bitmapScale;
-            if (fontIndex > 0 && item.shaped.glyphs.length === 1 && !symbolLike && maxWidth <= cellW * 1.05) {
-              const center = item.x + (maxWidth - gw) * 0.5;
-              x3 = center;
-            }
-            const minX = item.x;
-            const maxX = item.x + maxWidth;
-            if (x3 < minX)
-              x3 = minX;
-            if (x3 + gw > maxX)
-              x3 = Math.max(minX, maxX - gw);
-            let y = item.baseY + baselineAdjust - metrics.bearingY * bitmapScale - glyph.yOffset * itemScale;
-            if (!glyphConstrained && symbolLike && item.cp) {
-              const nerdConstraint = resolveSymbolConstraint(item.cp);
-              const defaultConstraint = isAppleSymbolsFont(entry) ? DEFAULT_APPLE_SYMBOLS_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT;
-              const constraint = nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : defaultConstraint);
-              const rowY = item.baseY - yPad - baselineOffset;
-              const constraintWidth = Math.max(1, item.constraintWidth ?? Math.round(maxWidth / cellW));
-              const adjusted = constrainGlyphBox({
-                x: x3 - item.x,
-                y: y - rowY,
-                width: gw,
-                height: gh
-              }, constraint, nerdMetrics, constraintWidth);
-              const tightened = nerdConstraint ? tightenNerdConstraintBox(adjusted, nerdConstraint) : adjusted;
-              x3 = item.x + tightened.x;
-              y = rowY + tightened.y;
-              gw = tightened.width;
-              gh = tightened.height;
-            }
-            if (gw < 1)
-              gw = 1;
-            if (gh < 1)
-              gh = 1;
-            const scaled = Math.abs(gw - metrics.width) > 0.01 || Math.abs(gh - metrics.height) > 0.01;
-            const useNearest = atlasState.nearest && !scaled;
-            if (useNearest) {
-              gw = metrics.width;
-              gh = metrics.height;
-            }
-            const uvInset = baseInset + (useNearest ? 0.5 : 0);
-            const px = Math.round(x3);
-            const py = Math.round(y);
-            const insetX = Math.min(uvInset, (metrics.width - 1) * 0.5);
-            const insetY = Math.min(uvInset, (metrics.height - 1) * 0.5);
-            const u02 = (metrics.atlasX + insetX) / atlasW;
-            const v02 = (metrics.atlasY + insetY) / atlasH;
-            const u12 = (metrics.atlasX + metrics.width - insetX) / atlasW;
-            const v12 = (metrics.atlasY + metrics.height - insetY) / atlasH;
-            const glyphData = useNearest ? glyphDataNearest : glyphDataLinear;
-            const italic = !!item.italic;
-            const bold = !!item.bold;
-            const syntheticItalic = italic && !fontEntryHasItalicStyle(entry);
-            const syntheticBold = bold && !fontEntryHasBoldStyle(entry);
-            const slant = syntheticItalic && !colorGlyph ? gh * ITALIC_SLANT : 0;
-            const boldOffset = syntheticBold && !colorGlyph ? Math.max(1, Math.round(gw * BOLD_OFFSET)) : 0;
-            const renderMode = colorGlyph ? GLYPH_RENDER_MODE_COLOR : GLYPH_RENDER_MODE_MONO;
-            const pushGlyph = (xPos) => {
-              glyphData.push(xPos, py, gw, gh, u02, v02, u12, v12, item.fg[0], item.fg[1], item.fg[2], item.fg[3], bg[0], bg[1], bg[2], bg[3], slant, renderMode);
-            };
-            pushGlyph(px);
-            if (boldOffset > 0) {
-              const minGlyphX = Math.round(item.x);
-              const maxGlyphX = Math.round(item.x + maxWidth - gw);
-              let bx = clamp(px + boldOffset, minGlyphX, maxGlyphX);
-              if (bx === px)
-                bx = clamp(px - boldOffset, minGlyphX, maxGlyphX);
-              if (bx === px)
-                pushGlyph(px);
-              else
-                pushGlyph(bx);
-            }
-            penX += glyph.xAdvance;
-          }
-        }
-      }
-    };
-    emitGlyphs(glyphQueueByFont, {
-      nearest: glyphDataNearestByFont,
-      linear: glyphDataLinearByFont
-    });
-    emitGlyphs(overlayGlyphQueueByFont, {
-      nearest: overlayGlyphDataNearestByFont,
-      linear: overlayGlyphDataLinearByFont
-    });
-    if (cursorStyle !== null && cursorPos) {
-      let cursorCol = cursorPos.col;
-      let cursorRow = cursorPos.row;
-      let cursorWidth = cellW;
-      if (cursorPos.wideTail && cursorCol > 0) {
-        cursorCol -= 1;
-        cursorWidth = cellW * 2;
-      }
-      if (cursorRow < rows && cursorCol < cols) {
-        const x3 = cursorCol * cellW;
-        const y = cursorRow * cellH;
-        const cursorColor = cursor?.color ? decodePackedRGBA(cursor.color) : cursorFallback;
-        const cursorThicknessPx = underlineThicknessPx;
-        updateImePosition({ row: cursorRow, col: cursorCol }, cellW, cellH);
-        if (cursorStyle === 0) {
-          pushRect(fgRectData, x3, y, cursorWidth, cellH, cursorColor);
-        } else if (cursorStyle === 1) {
-          const offset = Math.floor((cursorThicknessPx + 1) / 2);
-          pushRect(cursorData, x3 - offset, y, cursorThicknessPx, cellH, cursorColor);
-        } else if (cursorStyle === 2) {
-          const baseY = cursorRow * cellH + yPad + baselineOffset;
-          const underlineY = clamp(baseY + underlineOffsetPx, y + 1, y + cellH - cursorThicknessPx - 1);
-          pushRect(cursorData, x3, underlineY, cursorWidth, cursorThicknessPx, cursorColor);
-        } else if (cursorStyle === 3) {
-          pushRect(cursorData, x3, y, cursorWidth, cursorThicknessPx, cursorColor);
-          pushRect(cursorData, x3, y + cellH - cursorThicknessPx, cursorWidth, cursorThicknessPx, cursorColor);
-          pushRect(cursorData, x3, y, cursorThicknessPx, cellH, cursorColor);
-          pushRect(cursorData, x3 + cursorWidth - cursorThicknessPx, y, cursorThicknessPx, cellH, cursorColor);
-        } else {
-          pushRect(cursorData, x3, y, cursorWidth, cellH, cursorColor);
-        }
-      }
-    }
-    if (wasmExports && wasmHandle && wasmExports.restty_scrollbar_total) {
-      const total = wasmExports.restty_scrollbar_total(wasmHandle) || 0;
-      const offset = wasmExports.restty_scrollbar_offset ? wasmExports.restty_scrollbar_offset(wasmHandle) : 0;
-      const len = wasmExports.restty_scrollbar_len ? wasmExports.restty_scrollbar_len(wasmHandle) : rows;
-      if (total !== scrollbarState.lastTotal || offset !== scrollbarState.lastOffset || len !== scrollbarState.lastLen) {
-        scrollbarState.lastTotal = total;
-        scrollbarState.lastOffset = offset;
-        scrollbarState.lastLen = len;
-      }
-      appendOverlayScrollbar(overlayData, total, offset, len);
-    }
-    webgpuUniforms[0] = canvas.width;
-    webgpuUniforms[1] = canvas.height;
-    webgpuUniforms[2] = 0;
-    webgpuUniforms[3] = 0;
-    webgpuUniforms[4] = useLinearBlending ? 1 : 0;
-    webgpuUniforms[5] = useLinearCorrection ? 1 : 0;
-    webgpuUniforms[6] = 0;
-    webgpuUniforms[7] = 0;
-    device.queue.writeBuffer(state.uniformBuffer, 0, webgpuUniforms);
-    const encoder = device.createCommandEncoder();
-    const pass = encoder.beginRenderPass({
-      colorAttachments: [
-        {
-          view: context.getCurrentTexture().createView(),
-          clearValue: { r: clearColor[0], g: clearColor[1], b: clearColor[2], a: clearColor[3] },
-          loadOp: "clear",
-          storeOp: "store"
-        }
-      ]
-    });
-    const alignTo4 = (value) => value + 3 & ~3;
-    const uploadInstanceBatches = (kind, batches) => {
-      if (!batches.length)
-        return;
-      let totalBytes = 0;
-      for (const batch of batches) {
-        totalBytes = alignTo4(totalBytes);
-        batch.offset = totalBytes;
-        totalBytes += batch.array.byteLength;
-      }
-      ensureInstanceBuffer(state, kind, totalBytes);
-      const buffer = kind === "rect" ? state.rectInstanceBuffer : state.glyphInstanceBuffer;
-      for (const batch of batches) {
-        device.queue.writeBuffer(buffer, batch.offset, batch.array);
-      }
-    };
-    const rectPreBatches = [];
-    const rectPostBatches = [];
-    const pushRectBatch = (target, data) => {
-      if (!data.length)
-        return;
-      target.push({
-        array: new Float32Array(data),
-        offset: 0,
-        instances: data.length / 8
-      });
-    };
-    pushRectBatch(rectPreBatches, bgData);
-    pushRectBatch(rectPreBatches, selectionData);
-    pushRectBatch(rectPreBatches, underlineData);
-    pushRectBatch(rectPreBatches, fgRectData);
-    pushRectBatch(rectPostBatches, cursorData);
-    pushRectBatch(rectPostBatches, overlayData);
-    const glyphMainBatches = [];
-    const glyphOverlayBatches = [];
-    for (const [fontIndex, glyphData] of glyphDataNearestByFont.entries()) {
-      if (!glyphData.length)
-        continue;
-      const atlasState = state.glyphAtlases?.get(fontIndex);
-      if (!atlasState?.bindGroupNearest)
-        continue;
-      glyphMainBatches.push({
-        array: new Float32Array(glyphData),
-        offset: 0,
-        instances: glyphData.length / GLYPH_INSTANCE_FLOATS,
-        pipeline: state.glyphPipelineNearest,
-        bindGroup: atlasState.bindGroupNearest
-      });
-    }
-    for (const [fontIndex, glyphData] of glyphDataLinearByFont.entries()) {
-      if (!glyphData.length)
-        continue;
-      const atlasState = state.glyphAtlases?.get(fontIndex);
-      if (!atlasState?.bindGroupLinear)
-        continue;
-      glyphMainBatches.push({
-        array: new Float32Array(glyphData),
-        offset: 0,
-        instances: glyphData.length / GLYPH_INSTANCE_FLOATS,
-        pipeline: state.glyphPipeline,
-        bindGroup: atlasState.bindGroupLinear
-      });
-    }
-    for (const [fontIndex, glyphData] of overlayGlyphDataNearestByFont.entries()) {
-      if (!glyphData.length)
-        continue;
-      const atlasState = state.glyphAtlases?.get(fontIndex);
-      if (!atlasState?.bindGroupNearest)
-        continue;
-      glyphOverlayBatches.push({
-        array: new Float32Array(glyphData),
-        offset: 0,
-        instances: glyphData.length / GLYPH_INSTANCE_FLOATS,
-        pipeline: state.glyphPipelineNearest,
-        bindGroup: atlasState.bindGroupNearest
-      });
-    }
-    for (const [fontIndex, glyphData] of overlayGlyphDataLinearByFont.entries()) {
-      if (!glyphData.length)
-        continue;
-      const atlasState = state.glyphAtlases?.get(fontIndex);
-      if (!atlasState?.bindGroupLinear)
-        continue;
-      glyphOverlayBatches.push({
-        array: new Float32Array(glyphData),
-        offset: 0,
-        instances: glyphData.length / GLYPH_INSTANCE_FLOATS,
-        pipeline: state.glyphPipeline,
-        bindGroup: atlasState.bindGroupLinear
-      });
-    }
-    uploadInstanceBatches("rect", [...rectPreBatches, ...rectPostBatches]);
-    uploadInstanceBatches("glyph", [...glyphMainBatches, ...glyphOverlayBatches]);
-    pass.setVertexBuffer(0, state.vertexBuffer);
-    const drawRectBatches = (batches) => {
-      if (!batches.length)
-        return;
-      pass.setPipeline(state.rectPipeline);
-      pass.setBindGroup(0, state.rectBindGroup);
-      for (const batch of batches) {
-        pass.setVertexBuffer(1, state.rectInstanceBuffer, batch.offset, batch.array.byteLength);
-        pass.draw(6, batch.instances, 0, 0);
-      }
-    };
-    const drawGlyphBatches = (batches) => {
-      for (const batch of batches) {
-        pass.setPipeline(batch.pipeline);
-        pass.setBindGroup(0, batch.bindGroup);
-        pass.setVertexBuffer(1, state.glyphInstanceBuffer, batch.offset, batch.array.byteLength);
-        pass.draw(6, batch.instances, 0, 0);
-      }
-    };
-    drawRectBatches(rectPreBatches);
-    drawGlyphBatches(glyphMainBatches);
-    drawRectBatches(rectPostBatches);
-    drawGlyphBatches(glyphOverlayBatches);
-    pass.end();
-    device.queue.submit([encoder.finish()]);
-    const kittyPlacements = wasm && wasmHandle ? wasm.getKittyPlacements(wasmHandle) : [];
-    drawKittyOverlay(kittyPlacements, cellW, cellH);
-  }
-  function tickWebGL(state) {
-    const { gl } = state;
-    gl.viewport(0, 0, canvas.width, canvas.height);
-    gl.clearColor(defaultBg[0], defaultBg[1], defaultBg[2], defaultBg[3]);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    if (fontError) {
-      const text = `Font error: ${fontError.message}`;
-      if (termDebug)
-        termDebug.textContent = text;
-      reportDebugText(text);
-    }
-    updateGrid();
-    const render = getRenderState();
-    if (!render || !fontState.font) {
-      clearKittyOverlay();
-      return;
-    }
-    lastRenderState = render;
-    const {
-      rows,
-      cols,
-      codepoints,
-      contentTags,
-      wide,
-      styleFlags,
-      linkIds,
-      fgBytes,
-      bgBytes,
-      ulBytes,
-      ulStyle,
-      graphemeOffset,
-      graphemeLen,
-      graphemeBuffer,
-      cursor
-    } = render;
-    if (!codepoints || !fgBytes) {
-      clearKittyOverlay();
-      return;
-    }
-    const mergedEmojiSkip = new Uint8Array(codepoints.length);
-    const isRegionalIndicator = (value) => value >= 127462 && value <= 127487;
-    const readCellCluster = (cellIndex) => {
-      const flag = wide ? wide[cellIndex] ?? 0 : 0;
-      if (flag === 2 || flag === 3)
-        return null;
-      const cp = codepoints[cellIndex] ?? 0;
-      if (!cp)
-        return null;
-      let text = String.fromCodePoint(cp);
-      const extra = graphemeLen && graphemeOffset && graphemeBuffer ? graphemeLen[cellIndex] ?? 0 : 0;
-      if (extra > 0 && graphemeOffset && graphemeBuffer) {
-        const start = graphemeOffset[cellIndex] ?? 0;
-        const cps = [cp];
-        for (let j = 0;j < extra; j += 1) {
-          const extraCp = graphemeBuffer[start + j];
-          if (extraCp)
-            cps.push(extraCp);
-        }
-        text = String.fromCodePoint(...cps);
-      }
-      return { cp, text, span: flag === 1 ? 2 : 1 };
-    };
-    const { useLinearBlending, useLinearCorrection } = resolveBlendFlags("webgl2");
-    reportTermSize(cols, rows);
-    const cursorPos = cursor ? resolveCursorPosition(cursor) : null;
-    reportCursor(cursorPos);
-    const isBlinking = (cursor?.blinking || 0) !== 0 || FORCE_CURSOR_BLINK;
-    const blinkVisible = !isBlinking || Math.floor(performance.now() / CURSOR_BLINK_MS) % 2 === 0;
-    const imeFocused = typeof document !== "undefined" && imeInput ? document.activeElement === imeInput : false;
-    const windowFocused = typeof document !== "undefined" ? document.hasFocus() : true;
-    const cursorStyle = cursor ? resolveCursorStyle(cursor, {
-      focused: isFocused || imeFocused || windowFocused,
-      preedit: Boolean(imeState.preedit),
-      blinkVisible
-    }) : null;
-    let cursorCell = null;
-    if (cursorStyle !== null && cursorPos) {
-      let col = cursorPos.col;
-      const row = cursorPos.row;
-      let wide2 = false;
-      if (cursorPos.wideTail && col > 0) {
-        col -= 1;
-        wide2 = true;
-      }
-      cursorCell = { row, col, wide: wide2 };
-    }
-    const cellW = gridState.cellW || canvas.width / cols;
-    const cellH = gridState.cellH || canvas.height / rows;
-    const fontSizePx = gridState.fontSizePx || Math.max(1, Math.round(cellH));
-    const primaryEntry = fontState.fonts[0];
-    const primaryScale = gridState.scale || fontState.font.scaleForSize(fontSizePx, fontState.sizeMode);
-    const lineHeight = gridState.lineHeight || fontHeightUnits(fontState.font) * primaryScale;
-    const baselineOffset = gridState.baselineOffset || fontState.font.ascender * primaryScale;
-    const yPad = gridState.yPad ?? (cellH - lineHeight) / 2;
-    const post = fontState.font.post;
-    const underlinePosition = post?.underlinePosition ?? Math.round(-fontState.font.upem * 0.08);
-    const underlineThickness = post?.underlineThickness ?? Math.round(fontState.font.upem * 0.05);
-    const underlineOffsetPx = -underlinePosition * primaryScale;
-    const underlineThicknessPx = Math.max(1, Math.ceil(underlineThickness * primaryScale));
-    if (cursorPos && cursorStyle === null) {
-      updateImePosition({ row: cursorPos.row, col: cursorPos.col }, cellW, cellH);
-    }
-    const bgData = [];
-    const selectionData = [];
-    const underlineData = [];
-    const cursorData = [];
-    const fgRectData = [];
-    const overlayData = [];
-    const glyphDataByFont = new Map;
-    const glyphQueueByFont = new Map;
-    const overlayGlyphDataByFont = new Map;
-    const overlayGlyphQueueByFont = new Map;
-    const neededGlyphIdsByFont = new Map;
-    const neededGlyphMetaByFont = new Map;
-    const fgColorCache = new Map;
-    const bgColorCache = new Map;
-    const ulColorCache = new Map;
-    const baseScaleByFont = fontState.fonts.map((entry, idx) => {
-      if (!entry?.font)
-        return primaryScale;
-      if (idx === 0)
-        return primaryScale;
-      return entry.font.scaleForSize(fontSizePx, fontState.sizeMode) * fontScaleOverride(entry, FONT_SCALE_OVERRIDES);
-    });
-    const scaleByFont = fontState.fonts.map((entry, idx) => {
-      if (!entry?.font)
-        return primaryScale;
-      if (idx === 0)
-        return primaryScale;
-      const baseScale = baseScaleByFont[idx] ?? primaryScale;
-      if (isSymbolFont(entry) || isColorEmojiFont(entry))
-        return baseScale;
-      const advanceUnits = fontAdvanceUnits(entry, shapeClusterWithFont);
-      const maxSpan = fontMaxCellSpan(entry);
-      const widthPx = advanceUnits * baseScale;
-      const widthAdjustRaw = widthPx > 0 ? cellW * maxSpan / widthPx : 1;
-      const widthAdjust = clamp(widthAdjustRaw, 0.5, 2);
-      let adjustedScale = baseScale * widthAdjust;
-      const adjustedHeightPx = fontHeightUnits(entry.font) * adjustedScale;
-      if (adjustedHeightPx > lineHeight && adjustedHeightPx > 0) {
-        adjustedScale *= lineHeight / adjustedHeightPx;
-      }
-      return adjustedScale;
-    });
-    const bitmapScaleByFont = fontState.fonts.map((entry, idx) => {
-      if (!entry?.font || idx === 0)
-        return 1;
-      if (isSymbolFont(entry))
-        return 1;
-      const baseScale = baseScaleByFont[idx] ?? 0;
-      if (baseScale <= 0)
-        return 1;
-      const targetScale = scaleByFont[idx] ?? baseScale;
-      return clamp(targetScale / baseScale, 0.5, 2);
-    });
-    const baselineAdjustByFont = fontState.fonts.map((entry, idx) => {
-      if (!entry?.font || idx === 0 || !primaryEntry?.font)
-        return 0;
-      const scale = scaleByFont[idx] ?? primaryScale;
-      return primaryEntry.font.ascender * primaryScale - entry.font.ascender * scale;
-    });
-    const nerdMetrics = buildNerdMetrics(cellW, cellH, lineHeight, primaryEntry?.font, primaryScale, nerdIconScale);
-    const getGlyphQueue = (fontIndex) => {
-      if (!glyphQueueByFont.has(fontIndex))
-        glyphQueueByFont.set(fontIndex, []);
-      return glyphQueueByFont.get(fontIndex);
-    };
-    const getOverlayGlyphQueue = (fontIndex) => {
-      if (!overlayGlyphQueueByFont.has(fontIndex))
-        overlayGlyphQueueByFont.set(fontIndex, []);
-      return overlayGlyphQueueByFont.get(fontIndex);
-    };
-    const getGlyphSet = (fontIndex) => {
-      if (!neededGlyphIdsByFont.has(fontIndex))
-        neededGlyphIdsByFont.set(fontIndex, new Set);
-      return neededGlyphIdsByFont.get(fontIndex);
-    };
-    const getGlyphMeta = (fontIndex) => {
-      if (!neededGlyphMetaByFont.has(fontIndex))
-        neededGlyphMetaByFont.set(fontIndex, new Map);
-      return neededGlyphMetaByFont.get(fontIndex);
-    };
-    const noteGlyphMeta = (fontIndex, glyphId, cp, constraintWidth) => {
-      if (!glyphId || !cp)
-        return;
-      const meta = getGlyphMeta(fontIndex);
-      const prev = meta.get(glyphId);
-      if (!prev) {
-        const width = Math.max(1, constraintWidth || 1);
-        meta.set(glyphId, {
-          cp,
-          constraintWidth: width,
-          widths: new Set([width]),
-          variable: false
-        });
-        return;
-      }
-      if (prev.constraintWidth !== constraintWidth) {
-        prev.widths?.add(Math.max(1, constraintWidth || 1));
-        meta.set(glyphId, {
-          ...prev,
-          constraintWidth: Math.min(prev.constraintWidth, Math.max(1, constraintWidth || 1)),
-          variable: true
-        });
-      }
-    };
-    const getGlyphData = (map, fontIndex) => {
-      if (!map.has(fontIndex))
-        map.set(fontIndex, []);
-      return map.get(fontIndex);
-    };
-    const cursorBlock = cursorStyle === 0 && !!cursorCell;
-    for (let row = 0;row < rows; row += 1) {
-      const rowY = row * cellH;
-      const baseY = rowY + yPad + baselineOffset;
-      const localSel = selectionState.active ? selectionForRow(row, cols) : null;
-      const selStart = localSel?.start ?? -1;
-      const selEnd = localSel?.end ?? -1;
-      if (selStart >= 0 && selEnd > selStart) {
-        const start = Math.max(0, selStart);
-        const end = Math.min(cols, selEnd);
-        pushRect(selectionData, start * cellW, rowY, (end - start) * cellW, cellH, selectionColor);
-      }
-      for (let col = 0;col < cols; col += 1) {
-        const idx = row * cols + col;
-        const x3 = col * cellW;
-        const tag = contentTags ? contentTags[idx] : 0;
-        const bgOnly = tag === 2 || tag === 3;
-        const flags = styleFlags ? styleFlags[idx] : 0;
-        const bold = (flags & STYLE_BOLD) !== 0;
-        const italic = (flags & STYLE_ITALIC) !== 0;
-        const faint = (flags & STYLE_FAINT) !== 0;
-        const blink = (flags & STYLE_BLINK) !== 0;
-        const inverse = (flags & STYLE_INVERSE) !== 0;
-        const invisible = (flags & STYLE_INVISIBLE) !== 0;
-        const strike = (flags & STYLE_STRIKE) !== 0;
-        const overline = (flags & STYLE_OVERLINE) !== 0;
-        const underlineStyle = ulStyle ? ulStyle[idx] : (flags & STYLE_UNDERLINE_MASK) >> 8;
-        let fg = decodeRGBAWithCache(fgBytes, idx, fgColorCache);
-        let bg = bgBytes ? decodeRGBAWithCache(bgBytes, idx, bgColorCache) : defaultBg;
-        let ul = ulBytes ? decodeRGBAWithCache(ulBytes, idx, ulColorCache) : fg;
-        const underlineUsesFg = ul[0] === fg[0] && ul[1] === fg[1] && ul[2] === fg[2] && ul[3] === fg[3];
-        if (inverse) {
-          const tmp = fg;
-          fg = bg;
-          bg = tmp;
-          if (underlineUsesFg)
-            ul = fg;
-        }
-        if (bold) {
-          fg = brighten(fg, BOLD_BRIGHTEN);
-          ul = brighten(ul, BOLD_BRIGHTEN);
-        }
-        if (faint) {
-          fg = fade(fg, FAINT_ALPHA);
-          ul = fade(ul, FAINT_ALPHA);
-        }
-        const bgForText = bg[3] < 1 ? [
-          bg[0] + defaultBg[0] * (1 - bg[3]),
-          bg[1] + defaultBg[1] * (1 - bg[3]),
-          bg[2] + defaultBg[2] * (1 - bg[3]),
-          1
-        ] : bg;
-        if ((bgBytes || inverse) && bg[3] > 0)
-          pushRect(bgData, x3, rowY, cellW, cellH, bg);
-        const linkId = linkIds ? linkIds[idx] ?? 0 : 0;
-        const linkHovered = linkId && linkId === linkState.hoverId;
-        const blinkOff = blink && !blinkVisible;
-        const textHidden = invisible || blinkOff;
-        if (!textHidden && !bgOnly) {
-          if (underlineStyle > 0 && ul[3] > 0) {
-            drawUnderlineStyle(underlineData, underlineStyle, x3, rowY, cellW, cellH, baseY, underlineOffsetPx, underlineThicknessPx, ul);
-          }
-          if (linkHovered && !selectionState.active && !selectionState.dragging) {
-            drawUnderlineStyle(underlineData, 1, x3, rowY, cellW, cellH, baseY, underlineOffsetPx, underlineThicknessPx, ul);
-          }
-          if (strike)
-            drawStrikethrough(underlineData, x3, rowY, cellW, cellH, fg);
-          if (overline)
-            drawOverline(underlineData, x3, rowY, cellW, fg);
-        }
-        if (bgOnly || textHidden)
-          continue;
-        if (mergedEmojiSkip[idx])
-          continue;
-        const cluster = readCellCluster(idx);
-        if (!cluster)
-          continue;
-        const cp = cluster.cp;
-        if (cp === KITTY_PLACEHOLDER_CP)
-          continue;
-        let text = cluster.text;
-        let baseSpan = cluster.span;
-        const rowEnd = row * cols + cols;
-        if (isRegionalIndicator(cp)) {
-          const nextIdx = idx + baseSpan;
-          if (nextIdx < rowEnd && !mergedEmojiSkip[nextIdx]) {
-            const next = readCellCluster(nextIdx);
-            if (next && isRegionalIndicator(next.cp)) {
-              text += next.text;
-              baseSpan += next.span;
-              mergedEmojiSkip[nextIdx] = 1;
-            }
-          }
-        }
-        let nextSeqIdx = idx + baseSpan;
-        let guard = 0;
-        while ((text.codePointAt(text.length - 1) ?? 0) === 8205 && nextSeqIdx < rowEnd && guard < 8) {
-          const next = readCellCluster(nextSeqIdx);
-          if (!next || !next.cp || isSpaceCp(next.cp))
-            break;
-          text += next.text;
-          baseSpan += next.span;
-          mergedEmojiSkip[nextSeqIdx] = 1;
-          nextSeqIdx += next.span;
-          guard += 1;
-        }
-        const extra = text.length > String.fromCodePoint(cp).length ? 1 : 0;
-        if (extra === 0 && isSpaceCp(cp))
-          continue;
-        if (cursorBlock && cursorCell && row === cursorCell.row && col >= cursorCell.col && col < cursorCell.col + (cursorCell.wide ? 2 : 1)) {
-          fg = [bgForText[0], bgForText[1], bgForText[2], 1];
-        }
-        if (isBlockElement(cp)) {
-          if (drawBlockElement(cp, x3, rowY, cellW, cellH, fg, fgRectData))
-            continue;
-        }
-        if (isBoxDrawing(cp)) {
-          if (drawBoxDrawing(cp, x3, rowY, cellW, cellH, fg, fgRectData, underlineThicknessPx))
-            continue;
-        }
-        if (isBraille(cp)) {
-          if (drawBraille(cp, x3, rowY, cellW, cellH, fg, fgRectData))
-            continue;
-        }
-        if (isPowerline(cp)) {
-          if (drawPowerline(cp, x3, rowY, cellW, cellH, fg, fgRectData))
-            continue;
-        }
-        if (extra > 0 && text.trim() === "")
-          continue;
-        const fontIndex = pickFontIndexForText(text, baseSpan, stylePreferenceFromFlags(bold, italic));
-        const fontEntry = fontState.fonts[fontIndex] ?? fontState.fonts[0];
-        const shaped = shapeClusterWithFont(fontEntry, text);
-        if (!shaped.glyphs.length)
-          continue;
-        noteColorGlyphText(fontEntry, text, shaped);
-        const glyphSet = getGlyphSet(fontIndex);
-        for (const glyph of shaped.glyphs)
-          glyphSet.add(glyph.glyphId);
-        const fontScale = scaleByFont[fontIndex] ?? primaryScale;
-        let cellSpan = baseSpan;
-        const symbolLike = isRenderSymbolLike(cp);
-        const nerdConstraint = symbolLike ? resolveSymbolConstraint(cp) : null;
-        const symbolConstraint = !!nerdConstraint;
-        let constraintWidth = baseSpan;
-        let forceFit = false;
-        let glyphWidthPx = 0;
-        if (symbolLike) {
-          if (baseSpan === 1) {
-            if (nerdConstraint?.height === "icon") {
-              constraintWidth = 1;
-              if (col < cols - 1) {
-                if (col > 0) {
-                  const prevCp = codepoints[idx - 1];
-                  if (isRenderSymbolLike(prevCp) && !isGraphicsElement(prevCp)) {
-                    constraintWidth = 1;
-                  } else {
-                    const nextCp = codepoints[idx + 1];
-                    if (!nextCp || isSpaceCp(nextCp))
-                      constraintWidth = 2;
-                  }
-                } else {
-                  const nextCp = codepoints[idx + 1];
-                  if (!nextCp || isSpaceCp(nextCp))
-                    constraintWidth = 2;
-                }
-              }
-            } else {
-              constraintWidth = 1;
-            }
-            cellSpan = constraintWidth;
-          }
-          if (shaped.glyphs.length === 1) {
-            const glyphId = shaped.glyphs[0].glyphId;
-            const widthUnits = glyphWidthUnits(fontEntry, glyphId);
-            if (widthUnits > 0) {
-              glyphWidthPx = widthUnits * fontScale;
-            }
-          }
-          if (!glyphWidthPx) {
-            glyphWidthPx = shaped.advance * fontScale;
-          }
-          if (glyphWidthPx > cellW * cellSpan * 1.05) {
-            forceFit = true;
-          }
-        }
-        if (symbolConstraint) {
-          for (const glyph of shaped.glyphs) {
-            noteGlyphMeta(fontIndex, glyph.glyphId, cp, constraintWidth);
-          }
-        }
-        const cellWidthPx = cellW * cellSpan;
-        const xPad = 0;
-        getGlyphQueue(fontIndex).push({
-          x: x3,
-          baseY,
-          xPad,
-          fg,
-          bg: bgForText,
-          shaped,
-          fontIndex,
-          scale: fontScale,
-          cellWidth: cellWidthPx,
-          symbolLike,
-          symbolConstraint,
-          constraintWidth,
-          forceFit,
-          glyphWidthPx,
-          cp,
-          italic,
-          bold
-        });
-      }
-    }
-    if (cursor && imeState.preedit) {
-      const preeditText = imeState.preedit;
-      const preeditFontIndex = pickFontIndexForText(preeditText, 1);
-      const preeditEntry = fontState.fonts[preeditFontIndex] ?? fontState.fonts[0];
-      const shaped = shapeClusterWithFont(preeditEntry, preeditText);
-      noteColorGlyphText(preeditEntry, preeditText, shaped);
-      const glyphSet = getGlyphSet(preeditFontIndex);
-      for (const glyph of shaped.glyphs)
-        glyphSet.add(glyph.glyphId);
-      const preeditRow = cursorCell?.row ?? cursorPos?.row ?? cursor.row;
-      const preeditCol = cursorCell?.col ?? cursorPos?.col ?? cursor.col;
-      const baseY = preeditRow * cellH + yPad + baselineOffset;
-      const x3 = preeditCol * cellW;
-      const preeditScale = scaleByFont[preeditFontIndex] ?? primaryScale;
-      const advancePx = shaped.advance * preeditScale;
-      const widthPx = Math.max(cellW, advancePx);
-      const rowY = preeditRow * cellH;
-      pushRect(bgData, x3, rowY, widthPx, cellH, PREEDIT_BG);
-      const thickness = underlineThicknessPx;
-      const underlineBaseY = clamp(baseY + underlineOffsetPx, rowY + 1, rowY + cellH - thickness - 1);
-      pushRect(underlineData, x3, underlineBaseY, widthPx, thickness, PREEDIT_UL);
-      const selStart = imeState.selectionStart || 0;
-      const selEnd = imeState.selectionEnd || 0;
-      if (selEnd > selStart) {
-        const leftWidth = shapeClusterWithFont(preeditEntry, preeditText.slice(0, selStart)).advance * preeditScale;
-        const selWidth = shapeClusterWithFont(preeditEntry, preeditText.slice(selStart, selEnd)).advance * preeditScale;
-        pushRect(bgData, x3 + leftWidth, rowY, selWidth, cellH, PREEDIT_ACTIVE_BG);
-        pushRect(underlineData, x3 + leftWidth, underlineBaseY, selWidth, thickness, PREEDIT_UL);
-      } else {
-        const caretWidth = Math.max(1, Math.floor(cellW * 0.1));
-        const caretX = x3 + shapeClusterWithFont(preeditEntry, preeditText.slice(0, selStart)).advance * preeditScale;
-        pushRect(cursorData, caretX, rowY + 2, caretWidth, cellH - 4, PREEDIT_CARET);
-      }
-      getGlyphQueue(preeditFontIndex).push({
-        x: x3,
-        baseY,
-        xPad: 0,
-        fg: PREEDIT_FG,
-        bg: PREEDIT_BG,
-        shaped,
-        fontIndex: preeditFontIndex,
-        scale: preeditScale,
-        cellWidth: cellW,
-        symbolLike: false
-      });
-    }
-    const resizeAge = performance.now() - resizeState.lastAt;
-    if (resizeState.cols > 0 && resizeState.rows > 0 && resizeAge >= 0 && resizeAge < RESIZE_OVERLAY_HOLD_MS + RESIZE_OVERLAY_FADE_MS) {
-      const fade2 = resizeAge <= RESIZE_OVERLAY_HOLD_MS ? 1 : 1 - (resizeAge - RESIZE_OVERLAY_HOLD_MS) / RESIZE_OVERLAY_FADE_MS;
-      const alpha = clamp(fade2, 0, 1);
-      if (alpha > 0.01) {
-        const overlayText = `${resizeState.cols}x${resizeState.rows}`;
-        const overlayEntry = fontState.fonts[0];
-        if (overlayEntry?.font) {
-          const shaped = shapeClusterWithFont(overlayEntry, overlayText);
-          const glyphSet = getGlyphSet(0);
-          for (const glyph of shaped.glyphs)
-            glyphSet.add(glyph.glyphId);
-          const textWidth = shaped.advance * primaryScale;
-          const padX = Math.max(8, cellW * 0.6);
-          const padY = Math.max(6, cellH * 0.4);
-          const boxW = textWidth + padX * 2;
-          const boxH = lineHeight + padY * 2;
-          const boxX = (canvas.width - boxW) * 0.5;
-          const boxY = (canvas.height - boxH) * 0.5;
-          const overlayBg = [0, 0, 0, 0.6 * alpha];
-          pushRectBox(overlayData, boxX, boxY, boxW, boxH, overlayBg);
-          pushRectBox(overlayData, boxX, boxY, boxW, 1, [1, 1, 1, 0.12 * alpha]);
-          const textRowY = boxY + (boxH - lineHeight) * 0.5;
-          const baseY = textRowY + yPad + baselineOffset;
-          getOverlayGlyphQueue(0).push({
-            x: boxX + padX,
-            baseY,
-            xPad: 0,
-            fg: [1, 1, 1, alpha],
-            bg: overlayBg,
-            shaped,
-            fontIndex: 0,
-            scale: primaryScale,
-            cellWidth: textWidth,
-            symbolLike: false
-          });
-        }
-      }
-    }
-    if (cursorStyle !== null && cursorPos) {
-      let cursorCol = cursorPos.col;
-      let cursorRow = cursorPos.row;
-      let cursorWidth = cellW;
-      if (cursorPos.wideTail && cursorCol > 0) {
-        cursorCol -= 1;
-        cursorWidth = cellW * 2;
-      }
-      if (cursorRow < rows && cursorCol < cols) {
-        const x3 = cursorCol * cellW;
-        const y = cursorRow * cellH;
-        const cursorColor = cursor?.color ? decodePackedRGBA(cursor.color) : cursorFallback;
-        const cursorThicknessPx = underlineThicknessPx;
-        updateImePosition({ row: cursorRow, col: cursorCol }, cellW, cellH);
-        if (cursorStyle === 0) {
-          pushRect(fgRectData, x3, y, cursorWidth, cellH, cursorColor);
-        } else if (cursorStyle === 1) {
-          const offset = Math.floor((cursorThicknessPx + 1) / 2);
-          pushRect(cursorData, x3 - offset, y, cursorThicknessPx, cellH, cursorColor);
-        } else if (cursorStyle === 2) {
-          const baseY = cursorRow * cellH + yPad + baselineOffset;
-          const underlineY = clamp(baseY + underlineOffsetPx, y + 1, y + cellH - cursorThicknessPx - 1);
-          pushRect(cursorData, x3, underlineY, cursorWidth, cursorThicknessPx, cursorColor);
-        } else if (cursorStyle === 3) {
-          pushRect(cursorData, x3, y, cursorWidth, cursorThicknessPx, cursorColor);
-          pushRect(cursorData, x3, y + cellH - cursorThicknessPx, cursorWidth, cursorThicknessPx, cursorColor);
-          pushRect(cursorData, x3, y, cursorThicknessPx, cellH, cursorColor);
-          pushRect(cursorData, x3 + cursorWidth - cursorThicknessPx, y, cursorThicknessPx, cellH, cursorColor);
-        } else {
-          pushRect(cursorData, x3, y, cursorWidth, cellH, cursorColor);
-        }
-      }
-    }
-    if (wasmExports && wasmHandle && wasmExports.restty_scrollbar_total) {
-      const total = wasmExports.restty_scrollbar_total(wasmHandle) || 0;
-      const offset = wasmExports.restty_scrollbar_offset ? wasmExports.restty_scrollbar_offset(wasmHandle) : 0;
-      const len = wasmExports.restty_scrollbar_len ? wasmExports.restty_scrollbar_len(wasmHandle) : rows;
-      if (total !== scrollbarState.lastTotal || offset !== scrollbarState.lastOffset || len !== scrollbarState.lastLen) {
-        scrollbarState.lastTotal = total;
-        scrollbarState.lastOffset = offset;
-        scrollbarState.lastLen = len;
-      }
-      appendOverlayScrollbar(overlayData, total, offset, len);
-    }
-    for (const [fontIndex, neededIds] of neededGlyphIdsByFont.entries()) {
-      const fontEntry = fontState.fonts[fontIndex];
-      if (!fontEntry?.font)
-        continue;
-      let atlasState = state.glyphAtlases.get(fontIndex);
-      const meta = neededGlyphMetaByFont.get(fontIndex);
-      const bitmapScale = bitmapScaleByFont[fontIndex] ?? 1;
-      const constraintContext = meta ? {
-        cellW,
-        cellH,
-        yPad,
-        baselineOffset,
-        baselineAdjust: baselineAdjustByFont[fontIndex] ?? 0,
-        fontScale: scaleByFont[fontIndex] ?? primaryScale,
-        nerdMetrics,
-        fontEntry
-      } : null;
-      const built = buildFontAtlasIfNeeded({
-        entry: fontEntry,
-        neededGlyphIds: neededIds,
-        glyphMeta: meta,
-        fontSizePx,
-        atlasScale: bitmapScale,
-        fontIndex,
-        constraintContext,
-        deps: {
-          fontScaleOverrides: FONT_SCALE_OVERRIDES,
-          sizeMode: fontState.sizeMode,
-          isSymbolFont,
-          fontScaleOverride,
-          resolveGlyphPixelMode,
-          atlasBitmapToRGBA,
-          padAtlasRGBA,
-          buildAtlas,
-          buildGlyphAtlasWithConstraints,
-          buildColorEmojiAtlasWithCanvas,
-          rasterizeGlyph,
-          rasterizeGlyphWithTransform,
-          nerdConstraintSignature,
-          constants: {
-            atlasPadding: ATLAS_PADDING,
-            symbolAtlasPadding: SYMBOL_ATLAS_PADDING,
-            symbolAtlasMaxSize: SYMBOL_ATLAS_MAX_SIZE,
-            defaultAtlasMaxSize: 2048,
-            pixelModeRgbaValue: PixelMode.RGBA ?? 4
-          },
-          resolvePreferNearest: ({ fontIndex: idx, isSymbol }) => idx === 0 || isSymbol
-        }
-      });
-      if (!built.rebuilt || !built.atlas || !built.rgba)
-        continue;
-      const atlas = built.atlas;
-      const colorGlyphs = built.colorGlyphs;
-      const rgba = built.rgba;
-      const preferNearest = built.preferNearest;
-      if (atlasState) {
-        gl.deleteTexture(atlasState.texture);
-      }
-      const texture = gl.createTexture();
-      if (!texture)
-        continue;
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, atlas.bitmap.width, atlas.bitmap.rows, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(rgba));
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, preferNearest ? gl.NEAREST : gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, preferNearest ? gl.NEAREST : gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      atlasState = {
-        texture,
-        width: atlas.bitmap.width,
-        height: atlas.bitmap.rows,
-        inset: atlas.inset,
-        colorGlyphs,
-        nearest: preferNearest
-      };
-      state.glyphAtlases.set(fontIndex, atlasState);
-    }
-    const emitGlyphs = (queueByFont, targetMap) => {
-      for (const [fontIndex, queue] of queueByFont.entries()) {
-        const entry = fontState.fonts[fontIndex];
-        const atlasState = state.glyphAtlases?.get(fontIndex);
-        if (!entry || !entry.atlas || !atlasState)
-          continue;
-        const atlas = entry.atlas;
-        const atlasW = atlas.bitmap.width;
-        const atlasH = atlas.bitmap.rows;
-        const baseInset = Number.isFinite(atlas.inset) ? atlas.inset : 0;
-        const uvInset = baseInset + (atlasState.nearest ? 0.5 : 0);
-        const colorGlyphs = atlasState.colorGlyphs ?? atlas.colorGlyphs;
-        const glyphData = getGlyphData(targetMap, fontIndex);
-        for (const item of queue) {
-          const bg = item.bg ?? defaultBg;
-          let penX = 0;
-          const scale = item.scale ?? primaryScale;
-          const maxWidth = item.cellWidth ?? cellW;
-          const maxHeight = cellH;
-          const symbolLike = item.symbolLike;
-          const symbolConstraint = item.symbolConstraint;
-          let itemScale = scale;
-          if (!symbolConstraint) {
-            if (item.forceFit && item.glyphWidthPx && maxWidth > 0) {
-              const fit = maxWidth / item.glyphWidthPx;
-              if (fit > 0 && fit < 1)
-                itemScale = scale * fit;
-            }
-            if (!symbolLike) {
-              const advancePx = item.shaped.advance * scale;
-              if (advancePx > maxWidth && advancePx > 0) {
-                itemScale = scale * (maxWidth / advancePx);
-              }
-            }
-          }
-          const scaleFactor = scale > 0 ? itemScale / scale : 1;
-          const widthKey = item.constraintWidth ?? 0;
-          const widthMap = atlas.glyphsByWidth?.get(widthKey);
-          for (const glyph of item.shaped.glyphs) {
-            const colorGlyph = !!colorGlyphs?.has(glyph.glyphId);
-            const metrics = widthMap?.get(glyph.glyphId) ?? atlas.glyphs.get(glyph.glyphId);
-            if (!metrics)
-              continue;
-            let bitmapScale = scaleFactor;
-            const glyphConstrained = symbolLike && !!widthMap?.has(glyph.glyphId);
-            if (glyphConstrained)
-              bitmapScale = 1;
-            if (fontIndex > 0 && !symbolLike) {
-              const widthScale = maxWidth > 0 ? maxWidth / metrics.width : 1;
-              const heightScale = maxHeight > 0 ? maxHeight / metrics.height : 1;
-              const clampScale = Math.min(1, widthScale, heightScale);
-              bitmapScale *= clampScale;
-            }
-            const baselineAdjust = baselineAdjustByFont[fontIndex] ?? 0;
-            let gw = metrics.width * bitmapScale;
-            let gh = metrics.height * bitmapScale;
-            if (symbolLike && !glyphConstrained) {
-              const scaleToFit = gw > 0 && gh > 0 ? Math.min(maxWidth / gw, maxHeight / gh) : 1;
-              if (scaleToFit < 1) {
-                bitmapScale *= scaleToFit;
-                gw *= scaleToFit;
-                gh *= scaleToFit;
-              }
-              gw = Math.round(gw);
-              gh = Math.round(gh);
-            }
-            let x3 = item.x + item.xPad + (penX + glyph.xOffset) * itemScale + metrics.bearingX * bitmapScale;
-            if (fontIndex > 0 && item.shaped.glyphs.length === 1 && !symbolLike && maxWidth <= cellW * 1.05) {
-              const center = item.x + (maxWidth - gw) * 0.5;
-              x3 = center;
-            }
-            const minX = item.x;
-            const maxX = item.x + maxWidth;
-            if (x3 < minX)
-              x3 = minX;
-            if (x3 + gw > maxX)
-              x3 = Math.max(minX, maxX - gw);
-            let y = item.baseY + baselineAdjust - metrics.bearingY * bitmapScale - glyph.yOffset * itemScale;
-            if (!glyphConstrained && symbolLike && item.cp) {
-              const nerdConstraint = resolveSymbolConstraint(item.cp);
-              const defaultConstraint = isAppleSymbolsFont(entry) ? DEFAULT_APPLE_SYMBOLS_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT;
-              const constraint = nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : defaultConstraint);
-              const rowY = item.baseY - yPad - baselineOffset;
-              const constraintWidth = Math.max(1, item.constraintWidth ?? Math.round(maxWidth / cellW));
-              const adjusted = constrainGlyphBox({
-                x: x3 - item.x,
-                y: y - rowY,
-                width: gw,
-                height: gh
-              }, constraint, nerdMetrics, constraintWidth);
-              const tightened = nerdConstraint ? tightenNerdConstraintBox(adjusted, nerdConstraint) : adjusted;
-              x3 = item.x + tightened.x;
-              y = rowY + tightened.y;
-              gw = tightened.width;
-              gh = tightened.height;
-            }
-            if (gw < 1)
-              gw = 1;
-            if (gh < 1)
-              gh = 1;
-            const px = Math.round(x3);
-            const py = Math.round(y);
-            const insetX = Math.min(uvInset, (metrics.width - 1) * 0.5);
-            const insetY = Math.min(uvInset, (metrics.height - 1) * 0.5);
-            const u02 = (metrics.atlasX + insetX) / atlasW;
-            const v02 = (metrics.atlasY + insetY) / atlasH;
-            const u12 = (metrics.atlasX + metrics.width - insetX) / atlasW;
-            const v12 = (metrics.atlasY + metrics.height - insetY) / atlasH;
-            const italic = !!item.italic;
-            const bold = !!item.bold;
-            const syntheticItalic = italic && !fontEntryHasItalicStyle(entry);
-            const syntheticBold = bold && !fontEntryHasBoldStyle(entry);
-            const slant = syntheticItalic && !colorGlyph ? gh * ITALIC_SLANT : 0;
-            const boldOffset = syntheticBold && !colorGlyph ? Math.max(1, Math.round(gw * BOLD_OFFSET)) : 0;
-            const renderMode = colorGlyph ? GLYPH_RENDER_MODE_COLOR : GLYPH_RENDER_MODE_MONO;
-            const pushGlyph = (xPos) => {
-              glyphData.push(xPos, py, gw, gh, u02, v02, u12, v12, item.fg[0], item.fg[1], item.fg[2], item.fg[3], bg[0], bg[1], bg[2], bg[3], slant, renderMode);
-            };
-            pushGlyph(px);
-            if (boldOffset > 0) {
-              const minGlyphX = Math.round(item.x);
-              const maxGlyphX = Math.round(item.x + maxWidth - gw);
-              let bx = clamp(px + boldOffset, minGlyphX, maxGlyphX);
-              if (bx === px)
-                bx = clamp(px - boldOffset, minGlyphX, maxGlyphX);
-              if (bx === px)
-                pushGlyph(px);
-              else
-                pushGlyph(bx);
-            }
-            penX += glyph.xAdvance;
-          }
-        }
-      }
-    };
-    emitGlyphs(glyphQueueByFont, glyphDataByFont);
-    emitGlyphs(overlayGlyphQueueByFont, overlayGlyphDataByFont);
-    const drawRects = (data) => {
-      if (!data.length)
-        return;
-      const rectArray = new Float32Array(data);
-      ensureGLInstanceBuffer(state, "rect", rectArray.byteLength);
-      gl.bindVertexArray(state.rectVao);
-      gl.bindBuffer(gl.ARRAY_BUFFER, state.rectInstanceBuffer);
-      gl.bufferSubData(gl.ARRAY_BUFFER, 0, rectArray);
-      gl.useProgram(state.rectProgram);
-      gl.uniform2f(state.rectResolutionLoc, canvas.width, canvas.height);
-      gl.uniform2f(state.rectBlendLoc, useLinearBlending ? 1 : 0, useLinearCorrection ? 1 : 0);
-      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-      gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, data.length / 8);
-      gl.bindVertexArray(null);
-    };
-    const drawGlyphs = (fontIndex, data) => {
-      if (!data.length)
-        return;
-      const atlasState = state.glyphAtlases.get(fontIndex);
-      if (!atlasState)
-        return;
-      const glyphArray = new Float32Array(data);
-      ensureGLInstanceBuffer(state, "glyph", glyphArray.byteLength);
-      gl.bindVertexArray(state.glyphVao);
-      gl.bindBuffer(gl.ARRAY_BUFFER, state.glyphInstanceBuffer);
-      gl.bufferSubData(gl.ARRAY_BUFFER, 0, glyphArray);
-      gl.useProgram(state.glyphProgram);
-      gl.uniform2f(state.glyphResolutionLoc, canvas.width, canvas.height);
-      gl.uniform2f(state.glyphBlendLoc, useLinearBlending ? 1 : 0, useLinearCorrection ? 1 : 0);
-      gl.activeTexture(gl.TEXTURE0);
-      gl.bindTexture(gl.TEXTURE_2D, atlasState.texture);
-      gl.uniform1i(state.glyphAtlasLoc, 0);
-      gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-      gl.drawArraysInstanced(gl.TRIANGLES, 0, 6, data.length / GLYPH_INSTANCE_FLOATS);
-      gl.bindVertexArray(null);
-    };
-    drawRects(bgData);
-    drawRects(selectionData);
-    drawRects(underlineData);
-    drawRects(fgRectData);
-    for (const [fontIndex, glyphData] of glyphDataByFont.entries()) {
-      drawGlyphs(fontIndex, glyphData);
-    }
-    drawRects(cursorData);
-    drawRects(overlayData);
-    for (const [fontIndex, glyphData] of overlayGlyphDataByFont.entries()) {
-      drawGlyphs(fontIndex, glyphData);
-    }
-    const kittyPlacements = wasm && wasmHandle ? wasm.getKittyPlacements(wasmHandle) : [];
-    drawKittyOverlay(kittyPlacements, cellW, cellH);
-  }
-  function updateFps() {
-    frameCount += 1;
-    const now = performance.now();
-    if (now - lastFpsTime >= 500) {
-      const fps = Math.round(frameCount * 1000 / (now - lastFpsTime));
-      if (fpsEl)
-        fpsEl.textContent = `${fps}`;
-      callbacks?.onFps?.(fps);
-      frameCount = 0;
-      lastFpsTime = now;
-    }
-  }
-  function loop(state) {
-    if (!paused) {
-      const now = performance.now();
-      if (now >= nextBlinkTime) {
-        nextBlinkTime = now + CURSOR_BLINK_MS;
-        needsRender = true;
-      }
-      const resizeActive = now - resizeState.lastAt <= RESIZE_ACTIVE_MS;
-      if (resizeActive) {
-        needsRender = true;
-      } else if (resizeWasActive) {
-        flushPendingTerminalResize();
-      }
-      resizeWasActive = resizeActive;
-      const hidden = typeof document !== "undefined" && typeof document.visibilityState === "string" && document.visibilityState !== "visible";
-      const targetRenderFps = hidden ? BACKGROUND_RENDER_FPS : TARGET_RENDER_FPS;
-      const renderBudget = resizeActive ? true : now - lastRenderTime >= 1000 / targetRenderFps;
-      if (needsRender && renderBudget) {
-        if (backend === "webgpu")
-          tickWebGPU(state);
-        if (backend === "webgl2")
-          tickWebGL(state);
-        lastRenderTime = now;
-        needsRender = false;
-        updateFps();
-      }
-    }
-    rafId = requestAnimationFrame(() => loop(state));
-  }
-  const onWasmLog = (text) => {
-    if (shouldSuppressWasmLog(text))
-      return;
-    console.log(`[wasm] ${text}`);
-    appendLog(`[wasm] ${text}`);
-  };
-  if (session.addWasmLogListener) {
-    session.addWasmLogListener(onWasmLog);
-    cleanupFns.push(() => session.removeWasmLogListener?.(onWasmLog));
-  }
-  async function initWasm() {
-    if (wasmReady && wasm)
+  const { tickWebGPU: tickWebGPU2, tickWebGL: tickWebGL2 } = createRuntimeRenderTicks({
+    isShaderStagesDirty,
+    rebuildWebGPUShaderStages,
+    rebuildWebGLShaderStages,
+    setShaderStagesDirty,
+    getCompiledWebGPUShaderStages,
+    getCompiledWebGLShaderStages,
+    ensureWebGPUStageTargets,
+    ensureWebGLStageTargets,
+    get fontError() {
+      return fontError;
+    },
+    termDebug,
+    reportDebugText,
+    updateGrid,
+    getRenderState,
+    fontState,
+    clearKittyOverlay,
+    resolveBlendFlags,
+    alphaBlending,
+    srgbToLinearColor,
+    get defaultBg() {
+      return defaultBg;
+    },
+    reportTermSize,
+    resolveCursorPosition,
+    reportCursor,
+    FORCE_CURSOR_BLINK,
+    CURSOR_BLINK_MS,
+    imeInput,
+    resolveCursorStyle,
+    get isFocused() {
+      return isFocused;
+    },
+    imeState,
+    resolveImeAnchor,
+    dbgEl,
+    get wasmExports() {
+      return wasmExports;
+    },
+    get wasmHandle() {
+      return wasmHandle;
+    },
+    gridState,
+    get canvas() {
+      return canvas;
+    },
+    fontHeightUnits,
+    updateImePosition,
+    fontScaleOverride,
+    FONT_SCALE_OVERRIDES,
+    isSymbolFont,
+    isColorEmojiFont,
+    fontAdvanceUnits,
+    shapeClusterWithFont,
+    fontMaxCellSpan,
+    clamp,
+    buildNerdMetrics,
+    nerdIconScale,
+    selectionState,
+    selectionForRow: selectionForRow2,
+    pushRect,
+    get selectionColor() {
+      return selectionColor;
+    },
+    STYLE_BOLD,
+    STYLE_ITALIC,
+    STYLE_FAINT,
+    STYLE_BLINK,
+    STYLE_INVERSE,
+    STYLE_INVISIBLE,
+    STYLE_STRIKE,
+    STYLE_OVERLINE,
+    STYLE_UNDERLINE_MASK,
+    decodeRGBAWithCache,
+    brighten,
+    BOLD_BRIGHTEN,
+    fade,
+    FAINT_ALPHA,
+    linkState,
+    drawUnderlineStyle,
+    drawStrikethrough,
+    drawOverline,
+    KITTY_PLACEHOLDER_CP,
+    isSpaceCp,
+    shouldMergeTrailingClusterCodepoint,
+    isBlockElement,
+    drawBlockElement,
+    isBoxDrawing,
+    drawBoxDrawing,
+    isBraille,
+    drawBraille,
+    isPowerline,
+    drawPowerline,
+    pickFontIndexForText,
+    stylePreferenceFromFlags,
+    noteColorGlyphText,
+    isRenderSymbolLike,
+    resolveSymbolConstraint,
+    isGraphicsElement,
+    glyphWidthUnits,
+    fitTextTailToWidth,
+    PREEDIT_BG,
+    PREEDIT_UL,
+    PREEDIT_ACTIVE_BG,
+    PREEDIT_CARET,
+    PREEDIT_FG,
+    resizeState,
+    RESIZE_OVERLAY_HOLD_MS,
+    RESIZE_OVERLAY_FADE_MS,
+    pushRectBox,
+    ensureAtlasForFont,
+    isAppleSymbolsFont,
+    DEFAULT_APPLE_SYMBOLS_CONSTRAINT,
+    DEFAULT_SYMBOL_CONSTRAINT,
+    DEFAULT_EMOJI_CONSTRAINT,
+    constrainGlyphBox,
+    tightenNerdConstraintBox,
+    fontEntryHasItalicStyle,
+    fontEntryHasBoldStyle,
+    ITALIC_SLANT,
+    BOLD_OFFSET,
+    GLYPH_RENDER_MODE_COLOR,
+    GLYPH_RENDER_MODE_MONO,
+    decodePackedRGBA,
+    get cursorFallback() {
+      return cursorFallback;
+    },
+    scrollbarState,
+    appendOverlayScrollbar,
+    webgpuUniforms,
+    ensureInstanceBuffer,
+    GLYPH_INSTANCE_FLOATS,
+    get wasm() {
       return wasm;
-    const instance = await session.getWasm();
-    wasm = instance;
-    wasmExports = instance.exports;
-    wasmReady = true;
-    return instance;
-  }
-  function writeToWasm(handle, text) {
-    if (!wasm)
-      return;
-    wasm.write(handle, text);
-  }
-  function flushWasmOutputToPty() {
-    if (!wasm || !wasmHandle)
-      return;
-    if (!ptyTransport.isConnected())
-      return;
-    let iterations = 0;
-    while (iterations < 32) {
-      const out = wasm.drainOutput(wasmHandle);
-      if (!out)
-        break;
-      ptyTransport.sendInput(out);
-      iterations += 1;
+    },
+    drawKittyOverlay,
+    buildFontAtlasIfNeeded,
+    resolveGlyphPixelMode: resolveGlyphPixelMode2,
+    atlasBitmapToRGBA: atlasBitmapToRGBA2,
+    padAtlasRGBA,
+    buildAtlas,
+    buildGlyphAtlasWithConstraints,
+    buildColorEmojiAtlasWithCanvas,
+    rasterizeGlyph,
+    rasterizeGlyphWithTransform,
+    nerdConstraintSignature,
+    ATLAS_PADDING,
+    SYMBOL_ATLAS_PADDING,
+    SYMBOL_ATLAS_MAX_SIZE,
+    PixelMode,
+    ensureGLInstanceBuffer,
+    get lastRenderState() {
+      return lastRenderState;
+    },
+    set lastRenderState(value) {
+      lastRenderState = value;
     }
-  }
-  function normalizeNewlines(text) {
-    return text.replace(/\r?\n/g, `\r
-`);
-  }
-  function sendInput(text, source = "program") {
-    if (!wasmReady || !wasm || !wasmHandle)
-      return;
-    if (!text)
-      return;
-    const normalized = source === "pty" ? text : normalizeNewlines(text);
-    if (source === "key") {
-      const bytes = textEncoder3.encode(normalized);
-      const hex = Array.from(bytes, (b3) => b3.toString(16).padStart(2, "0")).join(" ");
-      const debugText = `${hex} (${bytes.length})`;
-      if (inputDebugEl)
-        inputDebugEl.textContent = debugText;
-      callbacks?.onInputDebug?.(debugText);
-    }
-    if (source === "key") {
-      let before = "";
-      if (wasmExports?.restty_debug_cursor_x && wasmExports?.restty_debug_cursor_y) {
-        const bx = wasmExports.restty_debug_cursor_x(wasmHandle);
-        const by = wasmExports.restty_debug_cursor_y(wasmHandle);
-        before = ` cursor=${bx},${by}`;
-      }
-      appendLog(`[key] ${JSON.stringify(normalized)}${before}`);
-    }
-    if (source === "key" && (selectionState.active || selectionState.dragging)) {
-      clearSelection();
-    }
-    if (source === "pty" && linkState.hoverId)
-      updateLinkHover(null);
-    writeToWasm(wasmHandle, normalized);
-    flushWasmOutputToPty();
-    if (source === "pty" && inputHandler?.isSynchronizedOutput?.()) {
-      scheduleSyncOutputReset();
-      return;
-    }
-    cancelSyncOutputReset();
-    wasm.renderUpdate(wasmHandle);
-    if (source === "key" && wasmExports?.restty_debug_cursor_x && wasmExports?.restty_debug_cursor_y) {
-      const ax = wasmExports.restty_debug_cursor_x(wasmHandle);
-      const ay = wasmExports.restty_debug_cursor_y(wasmHandle);
-      appendLog(`[key] after cursor=${ax},${ay}`);
-    }
-    needsRender = true;
-  }
-  async function copySelectionToClipboard() {
-    const text = getSelectionText();
-    if (!text)
-      return false;
-    try {
-      await navigator.clipboard.writeText(text);
-      appendLog("[ui] selection copied");
-      return true;
-    } catch {
-      const temp = document.createElement("textarea");
-      temp.value = text;
-      temp.style.position = "fixed";
-      temp.style.opacity = "0";
-      document.body.appendChild(temp);
-      temp.select();
-      try {
-        document.execCommand("copy");
-        appendLog("[ui] selection copied (fallback)");
-        return true;
-      } catch (copyErr) {
-        appendLog(`[ui] copy failed: ${copyErr?.message ?? copyErr}`);
-      } finally {
-        document.body.removeChild(temp);
-      }
-    }
-    return false;
-  }
-  async function pasteFromClipboard() {
-    try {
-      const text = await navigator.clipboard.readText();
-      if (text) {
-        sendPasteText(text);
-        return true;
-      }
-    } catch (err) {
-      appendLog(`[ui] paste failed: ${err?.message ?? err}`);
-    }
-    return false;
-  }
-  function clearScreen() {
-    sendInput("\x1B[2J\x1B[H");
-  }
-  if (attachWindowEvents) {
-    const hasInputFocus = () => {
-      if (typeof document === "undefined")
-        return true;
-      const active = document.activeElement;
-      return active === canvas || (imeInput ? active === imeInput : false);
-    };
-    const isMacInputSourceShortcut = (event) => isMacPlatform && event.ctrlKey && !event.metaKey && (event.code === "Space" || event.key === " " || event.key === "Spacebar");
-    const shouldSkipKeyEvent = (event) => {
-      const imeActive = typeof document !== "undefined" && imeInput ? document.activeElement === imeInput : false;
-      const target = event.target;
-      if (target && target !== imeInput && ["BUTTON", "SELECT", "INPUT", "TEXTAREA"].includes(target.tagName)) {
-        return true;
-      }
-      if (target === imeInput) {
-        if (imeState.composing || event.isComposing)
-          return true;
-        if (!event.ctrlKey && !event.metaKey && event.key.length === 1 && !event.repeat)
-          return true;
-      }
-      if (imeInput && imeActive && !event.ctrlKey && !event.metaKey && !event.altKey && event.key.length === 1 && !event.repeat && !event.isComposing && !imeState.composing) {
-        return true;
-      }
-      return false;
-    };
-    const onKeyDown = (event) => {
-      if (isMacInputSourceShortcut(event))
-        return;
-      if (shouldSkipKeyEvent(event))
-        return;
-      if (!hasInputFocus())
-        return;
-      isFocused = true;
-      if (!wasmReady || !wasmHandle)
-        return;
-      const key = event.key?.toLowerCase?.() ?? "";
-      const wantsCopy = (event.metaKey || event.ctrlKey) && !event.altKey && (key === "c" || event.shiftKey && key === "c");
-      const wantsPaste = (event.metaKey || event.ctrlKey) && !event.altKey && (key === "v" || event.shiftKey && key === "v");
-      if (wantsCopy && selectionState.active) {
-        event.preventDefault();
-        copySelectionToClipboard();
-        return;
-      }
-      if (wantsPaste) {
-        event.preventDefault();
-        pasteFromClipboard();
-        return;
-      }
-      const seq = inputHandler.encodeKeyEvent(event);
-      if (seq) {
-        if (event.type === "keydown" && ["Backspace", "Delete", "Del", "Enter"].includes(event.key)) {
-          lastKeydownSeq = seq;
-          lastKeydownSeqAt = performance.now();
-        }
-        event.preventDefault();
-        sendKeyInput(seq);
-      }
-    };
-    const onKeyUp = (event) => {
-      if (isMacInputSourceShortcut(event))
-        return;
-      if (!wasm || !wasmHandle)
-        return;
-      if ((wasm.getKittyKeyboardFlags(wasmHandle) & KITTY_FLAG_REPORT_EVENTS2) === 0)
-        return;
-      if (shouldSkipKeyEvent(event))
-        return;
-      if (!hasInputFocus())
-        return;
-      isFocused = true;
-      if (!wasmReady || !wasmHandle)
-        return;
-      const seq = inputHandler.encodeKeyEvent(event);
-      if (seq) {
-        event.preventDefault();
-        sendKeyInput(seq);
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    window.addEventListener("keyup", onKeyUp);
-    cleanupFns.push(() => window.removeEventListener("keydown", onKeyDown));
-    cleanupFns.push(() => window.removeEventListener("keyup", onKeyUp));
-  }
-  async function initWasmHarness() {
-    try {
-      const instance = await initWasm();
-      if (wasmHandle) {
-        instance.destroy(wasmHandle);
-        wasmHandle = 0;
-      }
-      updateGrid();
-      const cols = gridState.cols || 80;
-      const rows = gridState.rows || 24;
-      const maxScrollback = 2000;
-      wasmHandle = instance.create(cols, rows, maxScrollback);
-      if (!wasmHandle) {
-        throw new Error("restty create failed (restty_create returned 0)");
-      }
-      instance.setPixelSize(wasmHandle, canvas.width, canvas.height);
-      if (activeTheme) {
-        applyTheme(activeTheme, activeTheme.name ?? "cached theme");
-      }
-      instance.renderUpdate(wasmHandle);
-      needsRender = true;
-    } catch (err) {
-      console.error(`restty error: ${err.message}`);
-    }
-  }
-  async function init() {
-    cancelAnimationFrame(rafId);
-    updateSize();
-    log("initializing...");
-    await ensureFont();
-    updateGrid();
-    const wasmPromise = initWasmHarness();
-    if (preferredRenderer !== "webgl2") {
-      if (currentContextType === "webgl2") {
-        replaceCanvas();
-      }
-      const gpuCore = await session.getWebGPUCore(canvas);
-      const gpuState = gpuCore ? await initWebGPU(canvas, { core: gpuCore }) : null;
-      if (gpuState) {
-        backend = "webgpu";
-        currentContextType = "webgpu";
-        if (backendEl)
-          backendEl.textContent = "webgpu";
-        callbacks?.onBackend?.("webgpu");
-        log("webgpu ready");
-        activeState = gpuState;
-        gpuState.context.configure({
-          device: gpuState.device,
-          format: gpuState.format,
-          alphaMode: "opaque"
-        });
-        updateGrid();
-        needsRender = true;
-        console.log(`[init webgpu] canvas=${canvas.width}x${canvas.height} grid=${gridState.cols}x${gridState.rows}`);
-        await wasmPromise;
-        requestAnimationFrame(() => loop(gpuState));
-        return;
-      }
-    }
-    if (preferredRenderer !== "webgpu") {
-      if (currentContextType === "webgpu") {
-        replaceCanvas();
-      }
-      const glState = initWebGL(canvas);
-      if (glState) {
-        backend = "webgl2";
-        currentContextType = "webgl2";
-        if (backendEl)
-          backendEl.textContent = "webgl2";
-        callbacks?.onBackend?.("webgl2");
-        log("webgl2 ready");
-        activeState = glState;
-        updateGrid();
-        needsRender = true;
-        console.log(`[init webgl2] canvas=${canvas.width}x${canvas.height} grid=${gridState.cols}x${gridState.rows}`);
-        await wasmPromise;
-        requestAnimationFrame(() => loop(glState));
-        return;
-      }
-    }
-    backend = "none";
-    if (backendEl)
-      backendEl.textContent = "none";
-    callbacks?.onBackend?.("none");
-    log("no GPU backend available");
-    activeState = null;
-    await wasmPromise;
-  }
-  function destroy() {
-    cancelAnimationFrame(rafId);
-    if (sizeRaf)
-      cancelAnimationFrame(sizeRaf);
-    if (terminalResizeTimer) {
-      clearTimeout(terminalResizeTimer);
-      terminalResizeTimer = 0;
-    }
-    cancelSyncOutputReset();
-    pendingTerminalResize = null;
-    disconnectPty2();
-    ptyTransport.destroy?.();
-    if (wasm && wasmHandle) {
-      try {
-        wasm.destroy(wasmHandle);
-      } catch {}
-      wasmHandle = 0;
-    }
-    for (const cleanup of cleanupCanvasFns)
-      cleanup();
-    cleanupCanvasFns.length = 0;
-    for (const cleanup of cleanupFns)
-      cleanup();
-    cleanupFns.length = 0;
-    for (const entry of kittyImageCache.values())
-      releaseKittyImage(entry);
-    kittyImageCache.clear();
-    kittyDecodePending.clear();
-    if (kittyOverlayCanvas?.parentElement) {
-      kittyOverlayCanvas.parentElement.removeChild(kittyOverlayCanvas);
-    }
-    kittyOverlayCanvas = null;
-    kittyOverlayCtx = null;
-  }
-  function setRenderer(value) {
-    if (value !== "auto" && value !== "webgpu" && value !== "webgl2")
-      return;
-    preferredRenderer = value;
-    init();
-  }
-  function setPaused(value) {
-    paused = Boolean(value);
-  }
-  function togglePause() {
-    paused = !paused;
-  }
-  function setMouseMode(value) {
-    inputHandler.setMouseMode(value);
-    updateMouseStatus();
-  }
-  function getMouseStatus() {
-    return inputHandler.getMouseStatus();
-  }
-  setPtyStatus("disconnected");
-  updateMouseStatus();
-  return {
-    init,
-    destroy,
-    setRenderer,
-    setPaused,
-    togglePause,
+  });
+  const readRuntimeAppApiState = () => ({ wasm, wasmExports, wasmHandle, wasmReady, activeState, needsRender, lastRenderTime, currentContextType, isFocused, lastKeydownSeq, lastKeydownSeqAt });
+  const writeRuntimeAppApiState = (patch) => {
+    ({
+      wasm = wasm,
+      wasmExports = wasmExports,
+      wasmHandle = wasmHandle,
+      wasmReady = wasmReady,
+      activeState = activeState,
+      needsRender = needsRender,
+      lastRenderTime = lastRenderTime,
+      currentContextType = currentContextType,
+      isFocused = isFocused,
+      lastKeydownSeq = lastKeydownSeq,
+      lastKeydownSeqAt = lastKeydownSeqAt
+    } = patch);
+  };
+  runtimeAppApi = createRuntimeAppApi({
+    session,
+    ptyTransport,
+    inputHandler,
+    ptyInputRuntime,
+    interaction: runtimeInteraction,
+    lifecycleThemeSizeRuntime,
+    cleanupFns,
+    cleanupCanvasFns,
+    callbacks,
+    fpsEl,
+    backendEl,
+    inputDebugEl,
+    imeInput,
+    attachWindowEvents,
+    isMacPlatform,
+    textEncoder: textEncoder3,
+    readState: readRuntimeAppApiState,
+    writeState: writeRuntimeAppApiState,
+    appendLog,
+    shouldSuppressWasmLog,
+    runBeforeInputHook,
+    runBeforeRenderOutputHook,
+    CURSOR_BLINK_MS,
+    RESIZE_ACTIVE_MS,
+    TARGET_RENDER_FPS,
+    BACKGROUND_RENDER_FPS,
+    KITTY_FLAG_REPORT_EVENTS: KITTY_FLAG_REPORT_EVENTS2,
+    resizeState,
+    flushPendingTerminalResize,
+    tickWebGPU: tickWebGPU2,
+    tickWebGL: tickWebGL2,
+    updateGrid,
+    gridState,
+    getCanvas: () => canvas,
+    applyTheme,
+    ensureFont,
+    updateSize,
+    log,
+    replaceCanvas,
+    rebuildWebGPUShaderStages,
+    rebuildWebGLShaderStages,
+    setShaderStagesDirty,
+    clearWebGPUShaderStages,
+    destroyWebGPUStageTargets,
+    clearWebGLShaderStages,
+    destroyWebGLStageTargets,
+    resetTerminalResizeScheduler,
+    getSelectionText: getSelectionText2,
+    initialPreferredRenderer: options.renderer ?? "auto"
+  });
+  return runtimeAppApi.createPublicApi({
     setFontSize: applyFontSize,
     setFontSources,
-    applyTheme,
     resetTheme,
-    sendInput,
-    sendKeyInput,
-    clearScreen,
-    connectPty: connectPty2,
-    disconnectPty: disconnectPty2,
-    isPtyConnected: () => ptyTransport.isConnected(),
-    setMouseMode,
-    getMouseStatus,
-    copySelectionToClipboard,
-    pasteFromClipboard,
     dumpAtlasForCodepoint,
+    resize,
+    focus,
+    blur,
     updateSize,
-    getBackend: () => backend
-  };
+    setShaderStages,
+    getShaderStages
+  });
 }
 
-// src/app/pane-app-manager.ts
+// src/surface/app-factory.ts
+function createResttyApp2(options) {
+  return createResttyApp(options);
+}
+
+// src/surface/pane-app-manager.ts
 function createImeInput(className) {
   const imeInput = document.createElement("textarea");
   imeInput.className = className;
@@ -56018,8 +59462,17 @@ function createImeInput(className) {
   imeInput.style.position = "fixed";
   imeInput.style.left = "0";
   imeInput.style.top = "0";
-  imeInput.style.width = "1px";
-  imeInput.style.height = "1px";
+  imeInput.style.width = "1em";
+  imeInput.style.height = "1em";
+  imeInput.style.padding = "0";
+  imeInput.style.margin = "0";
+  imeInput.style.border = "0";
+  imeInput.style.outline = "none";
+  imeInput.style.background = "transparent";
+  imeInput.style.color = "transparent";
+  imeInput.style.caretColor = "transparent";
+  imeInput.style.overflow = "hidden";
+  imeInput.style.resize = "none";
   imeInput.style.opacity = "0";
   imeInput.style.pointerEvents = "none";
   return imeInput;
@@ -56042,9 +59495,9 @@ function createResttyAppPaneManager(options) {
       const config = typeof defaultMenuConfig === "object" && defaultMenuConfig ? defaultMenuConfig : undefined;
       contextMenu = {
         canOpen: config?.canOpen,
-        getItems: (pane, manager3) => createDefaultResttyPaneContextMenuItems({
+        getItems: (pane, manager2) => createDefaultResttyPaneContextMenuItems({
           pane,
-          manager: manager3,
+          manager: manager2,
           modKeyLabel: config?.modKeyLabel,
           getPtyUrl: config?.getPtyUrl
         })
@@ -56063,7 +59516,7 @@ function createResttyAppPaneManager(options) {
       isAllowedInputTarget: defaultInputTargetPredicate
     };
   }
-  const manager2 = createResttyPaneManager({
+  const manager = createResttyPaneManager({
     root: options.root,
     minPaneSize: options.minPaneSize,
     styles: options.paneStyles,
@@ -56085,7 +59538,7 @@ function createResttyAppPaneManager(options) {
         ...baseOptions.elements,
         termDebugEl: baseOptions.elements?.termDebugEl ?? termDebugEl
       };
-      const app = createResttyApp({
+      const app = createResttyApp2({
         ...baseOptions,
         canvas,
         imeInput,
@@ -56116,10 +59569,712 @@ function createResttyAppPaneManager(options) {
       options.onLayoutChanged?.();
     }
   });
-  return manager2;
+  return manager;
 }
 
-// src/app/restty.ts
+// src/surface/restty/active-pane-api.ts
+class ResttyActivePaneApi {
+  isPtyConnected() {
+    return this.requireActivePaneHandle().isPtyConnected();
+  }
+  setRenderer(value) {
+    this.requireActivePaneHandle().setRenderer(value);
+  }
+  setPaused(value) {
+    this.requireActivePaneHandle().setPaused(value);
+  }
+  togglePause() {
+    this.requireActivePaneHandle().togglePause();
+  }
+  setFontSize(value) {
+    this.requireActivePaneHandle().setFontSize(value);
+  }
+  applyTheme(theme, sourceLabel) {
+    this.requireActivePaneHandle().applyTheme(theme, sourceLabel);
+  }
+  resetTheme() {
+    this.requireActivePaneHandle().resetTheme();
+  }
+  sendInput(text2, source) {
+    this.requireActivePaneHandle().sendInput(text2, source);
+  }
+  sendKeyInput(text2, source) {
+    this.requireActivePaneHandle().sendKeyInput(text2, source);
+  }
+  clearScreen() {
+    this.requireActivePaneHandle().clearScreen();
+  }
+  setMouseMode(value) {
+    this.requireActivePaneHandle().setMouseMode(value);
+  }
+  getMouseStatus() {
+    return this.requireActivePaneHandle().getMouseStatus();
+  }
+  copySelectionToClipboard() {
+    return this.requireActivePaneHandle().copySelectionToClipboard();
+  }
+  pasteFromClipboard() {
+    return this.requireActivePaneHandle().pasteFromClipboard();
+  }
+  dumpAtlasForCodepoint(cp) {
+    this.requireActivePaneHandle().dumpAtlasForCodepoint(cp);
+  }
+  updateSize(force) {
+    this.requireActivePaneHandle().updateSize(force);
+  }
+  getBackend() {
+    return this.requireActivePaneHandle().getBackend();
+  }
+}
+
+// src/surface/restty/manager-options.ts
+function createMergedPaneAppOptions(deps) {
+  return (context) => {
+    const resolved = typeof deps.appOptions === "function" ? deps.appOptions(context) : deps.appOptions ?? {};
+    const resolvedBeforeInput = resolved.beforeInput;
+    const resolvedBeforeRenderOutput = resolved.beforeRenderOutput;
+    const resolvedCallbacks = resolved.callbacks;
+    const paneBaseStages = deps.shaderOps.normalizePaneShaderStages(resolved.shaderStages, context.id);
+    deps.shaderOps.setPaneBaseShaderStages(context.id, paneBaseStages);
+    const fontSources = deps.getFontSources();
+    return {
+      ...resolved,
+      ...fontSources ? { fontSources } : {},
+      shaderStages: deps.shaderOps.buildMergedShaderStages(paneBaseStages),
+      callbacks: deps.onDesktopNotification || resolvedCallbacks?.onDesktopNotification ? {
+        ...resolvedCallbacks,
+        onDesktopNotification: (notification) => {
+          resolvedCallbacks?.onDesktopNotification?.(notification);
+          deps.onDesktopNotification?.({ ...notification, paneId: context.id });
+        }
+      } : resolvedCallbacks,
+      beforeInput: ({ text: text2, source }) => {
+        const maybeUserText = resolvedBeforeInput?.({ text: text2, source });
+        if (maybeUserText === null)
+          return null;
+        const current = maybeUserText === undefined ? text2 : maybeUserText;
+        return deps.pluginOps.applyInputInterceptors(context.id, current, source);
+      },
+      beforeRenderOutput: ({ text: text2, source }) => {
+        deps.runRenderHooks({
+          phase: "before",
+          paneId: context.id,
+          text: text2,
+          source,
+          dropped: false
+        });
+        const maybeUserText = resolvedBeforeRenderOutput?.({ text: text2, source });
+        if (maybeUserText === null) {
+          deps.runRenderHooks({
+            phase: "after",
+            paneId: context.id,
+            text: text2,
+            source,
+            dropped: true
+          });
+          return null;
+        }
+        const current = maybeUserText === undefined ? text2 : maybeUserText;
+        const next = deps.pluginOps.applyOutputInterceptors(context.id, current, source);
+        deps.runRenderHooks({
+          phase: "after",
+          paneId: context.id,
+          text: next === null ? current : next,
+          source,
+          dropped: next === null
+        });
+        return next;
+      }
+    };
+  };
+}
+function createPaneManagerEventHandlers(deps) {
+  return {
+    onPaneCreated: (pane) => {
+      deps.shaderOps.syncPaneShaderStages(pane.id);
+      deps.emitPluginEvent("pane:created", { paneId: pane.id });
+      deps.onPaneCreated?.(pane);
+    },
+    onPaneClosed: (pane) => {
+      deps.shaderOps.removePaneBaseShaderStages(pane.id);
+      deps.emitPluginEvent("pane:closed", { paneId: pane.id });
+      deps.onPaneClosed?.(pane);
+    },
+    onPaneSplit: (sourcePane, createdPane, direction) => {
+      deps.emitPluginEvent("pane:split", {
+        sourcePaneId: sourcePane.id,
+        createdPaneId: createdPane.id,
+        direction
+      });
+      deps.onPaneSplit?.(sourcePane, createdPane, direction);
+    },
+    onActivePaneChange: (pane) => {
+      deps.emitPluginEvent("pane:active-changed", { paneId: pane?.id ?? null });
+      deps.onActivePaneChange?.(pane);
+    },
+    onLayoutChanged: () => {
+      deps.emitPluginEvent("layout:changed", {});
+      deps.onLayoutChanged?.();
+    }
+  };
+}
+
+// src/surface/restty-plugin-types.ts
+var RESTTY_PLUGIN_API_VERSION = 1;
+
+// src/surface/restty-plugin-runtime.ts
+function registerPluginInterceptor(bucket, pluginId, interceptor, options, seq) {
+  const entry = {
+    id: seq.nextId,
+    pluginId,
+    priority: Number.isFinite(options?.priority) ? Number(options?.priority) : 0,
+    order: seq.nextOrder,
+    interceptor
+  };
+  bucket.push(entry);
+  bucket.sort((a3, b3) => {
+    if (a3.priority !== b3.priority)
+      return a3.priority - b3.priority;
+    return a3.order - b3.order;
+  });
+  return {
+    nextId: seq.nextId + 1,
+    nextOrder: seq.nextOrder + 1,
+    dispose: () => {
+      const index = bucket.findIndex((current) => current.id === entry.id);
+      if (index >= 0) {
+        bucket.splice(index, 1);
+      }
+    }
+  };
+}
+function applyPluginInterceptors(bucket, kind, payload) {
+  let currentText = payload.text;
+  for (let i3 = 0;i3 < bucket.length; i3 += 1) {
+    const entry = bucket[i3];
+    try {
+      const result = entry.interceptor({ ...payload, text: currentText });
+      if (result === null)
+        return null;
+      if (typeof result === "string")
+        currentText = result;
+    } catch (error) {
+      console.error(`[restty plugin] ${kind} interceptor error (${entry.pluginId}):`, error);
+    }
+  }
+  return currentText;
+}
+function runPluginHooks(bucket, kind, payload) {
+  for (let i3 = 0;i3 < bucket.length; i3 += 1) {
+    const entry = bucket[i3];
+    try {
+      entry.interceptor(payload);
+    } catch (error) {
+      console.error(`[restty plugin] ${kind} hook error (${entry.pluginId}):`, error);
+    }
+  }
+}
+function attachRuntimeDisposer(runtime, kind, dispose) {
+  const entry = {
+    kind,
+    active: true,
+    dispose: () => {
+      if (!entry.active)
+        return;
+      entry.active = false;
+      dispose();
+    }
+  };
+  runtime.disposers.push(entry);
+  return entry.dispose;
+}
+function teardownPluginRuntime(runtime) {
+  for (let i3 = 0;i3 < runtime.disposers.length; i3 += 1) {
+    try {
+      runtime.disposers[i3].dispose();
+    } catch {}
+  }
+  runtime.disposers.length = 0;
+  const cleanup = runtime.cleanup;
+  runtime.cleanup = null;
+  if (!cleanup)
+    return;
+  try {
+    cleanup();
+  } catch (error) {
+    console.error(`[restty plugin] cleanup error (${runtime.plugin.id}):`, error);
+  }
+}
+function setPluginLoadError(pluginDiagnostics, pluginId, message) {
+  pluginDiagnostics.set(pluginId, {
+    id: pluginId,
+    version: null,
+    apiVersion: null,
+    requires: null,
+    active: false,
+    activatedAt: null,
+    lastError: message
+  });
+}
+function patchPluginDiagnostic(pluginDiagnostics, pluginId, patch) {
+  const current = pluginDiagnostics.get(pluginId);
+  if (!current)
+    return;
+  pluginDiagnostics.set(pluginId, {
+    ...current,
+    ...patch
+  });
+}
+function countActiveDisposers(runtime, kind) {
+  if (!runtime)
+    return 0;
+  let count = 0;
+  for (let i3 = 0;i3 < runtime.disposers.length; i3 += 1) {
+    const entry = runtime.disposers[i3];
+    if (entry.active && entry.kind === kind)
+      count += 1;
+  }
+  return count;
+}
+function buildPluginInfo(pluginId, pluginDiagnostics, pluginRuntimes) {
+  const diagnostic = pluginDiagnostics.get(pluginId) ?? null;
+  const runtime = pluginRuntimes.get(pluginId) ?? null;
+  if (!diagnostic && !runtime)
+    return null;
+  const plugin = runtime?.plugin;
+  return {
+    id: pluginId,
+    version: plugin?.version?.trim?.() || diagnostic?.version || null,
+    apiVersion: plugin?.apiVersion ?? (Number.isFinite(diagnostic?.apiVersion) ? diagnostic?.apiVersion : null),
+    requires: plugin?.requires ?? diagnostic?.requires ?? null,
+    active: runtime ? true : diagnostic?.active ?? false,
+    activatedAt: runtime?.activatedAt ?? diagnostic?.activatedAt ?? null,
+    lastError: diagnostic?.lastError ?? null,
+    listeners: countActiveDisposers(runtime, "event"),
+    inputInterceptors: countActiveDisposers(runtime, "input-interceptor"),
+    outputInterceptors: countActiveDisposers(runtime, "output-interceptor"),
+    lifecycleHooks: countActiveDisposers(runtime, "lifecycle-hook"),
+    renderHooks: countActiveDisposers(runtime, "render-hook"),
+    renderStages: countActiveDisposers(runtime, "render-stage")
+  };
+}
+function onPluginEvent(pluginListeners, event, listener) {
+  let listeners = pluginListeners.get(event);
+  if (!listeners) {
+    listeners = new Set;
+    pluginListeners.set(event, listeners);
+  }
+  const wrapped = listener;
+  listeners.add(wrapped);
+  return () => {
+    const current = pluginListeners.get(event);
+    if (!current)
+      return;
+    current.delete(wrapped);
+    if (current.size === 0) {
+      pluginListeners.delete(event);
+    }
+  };
+}
+function emitPluginEvent(pluginListeners, event, payload) {
+  const listeners = pluginListeners.get(event);
+  if (!listeners || listeners.size === 0)
+    return;
+  const snapshot = Array.from(listeners);
+  for (let i3 = 0;i3 < snapshot.length; i3 += 1) {
+    try {
+      snapshot[i3](payload);
+    } catch (error) {
+      console.error(`[restty plugin] listener error (${String(event)}):`, error);
+    }
+  }
+}
+
+// src/surface/restty-plugin-utils.ts
+function errorToMessage(error) {
+  if (error instanceof Error)
+    return error.message || error.name || "Unknown error";
+  return String(error);
+}
+function normalizePluginMetadata(plugin, pluginId) {
+  return {
+    ...plugin,
+    id: pluginId,
+    version: plugin.version?.trim?.() || undefined,
+    apiVersion: Number.isFinite(plugin.apiVersion) ? Math.trunc(Number(plugin.apiVersion)) : undefined,
+    requires: plugin.requires ?? undefined
+  };
+}
+function assertPluginCompatibility(pluginId, plugin, pluginApiVersion) {
+  const version = plugin.version?.trim?.();
+  if (version !== undefined && !version) {
+    throw new Error(`Restty plugin ${pluginId} has an empty version`);
+  }
+  if (plugin.apiVersion !== undefined) {
+    if (!Number.isInteger(plugin.apiVersion) || plugin.apiVersion < 1) {
+      throw new Error(`Restty plugin ${pluginId} has invalid apiVersion ${String(plugin.apiVersion)}`);
+    }
+    if (plugin.apiVersion !== pluginApiVersion) {
+      throw new Error(`Restty plugin ${pluginId} requires apiVersion ${plugin.apiVersion}, current is ${pluginApiVersion}`);
+    }
+  }
+  const requirement = plugin.requires?.pluginApi;
+  if (requirement === undefined)
+    return;
+  if (typeof requirement === "number") {
+    if (!Number.isInteger(requirement) || requirement < 1) {
+      throw new Error(`Restty plugin ${pluginId} has invalid requires.pluginApi value`);
+    }
+    if (requirement !== pluginApiVersion) {
+      throw new Error(`Restty plugin ${pluginId} requires pluginApi ${requirement}, current is ${pluginApiVersion}`);
+    }
+    return;
+  }
+  const min = requirement.min;
+  const max = requirement.max;
+  if (!Number.isInteger(min) || min < 1) {
+    throw new Error(`Restty plugin ${pluginId} has invalid requires.pluginApi.min`);
+  }
+  if (max !== undefined && (!Number.isInteger(max) || max < min)) {
+    throw new Error(`Restty plugin ${pluginId} has invalid requires.pluginApi.max`);
+  }
+  if (pluginApiVersion < min || max !== undefined && pluginApiVersion > max) {
+    const range = max === undefined ? `>=${min}` : `${min}-${max}`;
+    throw new Error(`Restty plugin ${pluginId} requires pluginApi range ${range}, current is ${pluginApiVersion}`);
+  }
+}
+function lookupPluginRegistryEntry(registry, pluginId) {
+  if (registry instanceof Map) {
+    return registry.get(pluginId) ?? null;
+  }
+  if (Object.prototype.hasOwnProperty.call(registry, pluginId)) {
+    return registry[pluginId];
+  }
+  return null;
+}
+async function resolvePluginRegistryEntry(entry) {
+  if (typeof entry === "function") {
+    return await entry();
+  }
+  return entry;
+}
+function normalizePluginCleanup(cleanup) {
+  if (!cleanup)
+    return null;
+  if (typeof cleanup === "function")
+    return cleanup;
+  if (typeof cleanup === "object" && typeof cleanup.dispose === "function") {
+    return () => cleanup.dispose();
+  }
+  return null;
+}
+
+// src/surface/restty/plugin-dispatcher.ts
+class ResttyPluginDispatcher {
+  deps;
+  pluginListeners = new Map;
+  inputInterceptors = [];
+  outputInterceptors = [];
+  lifecycleHooks = [];
+  renderHooks = [];
+  nextInterceptorId = 1;
+  nextInterceptorOrder = 1;
+  constructor(deps) {
+    this.deps = deps;
+  }
+  createPluginContext(runtime) {
+    return {
+      restty: this.deps.restty,
+      options: runtime.options,
+      panes: this.deps.panes,
+      pane: this.deps.pane,
+      activePane: this.deps.activePane,
+      focusedPane: this.deps.focusedPane,
+      on: (event, listener) => {
+        return {
+          dispose: this.attachRuntimeDisposer(runtime, "event", this.onPluginEvent(event, listener))
+        };
+      },
+      addInputInterceptor: (interceptor, options) => {
+        return {
+          dispose: this.attachRuntimeDisposer(runtime, "input-interceptor", this.addInputInterceptor(runtime.plugin.id, interceptor, options))
+        };
+      },
+      addOutputInterceptor: (interceptor, options) => {
+        return {
+          dispose: this.attachRuntimeDisposer(runtime, "output-interceptor", this.addOutputInterceptor(runtime.plugin.id, interceptor, options))
+        };
+      },
+      addLifecycleHook: (hook, options) => {
+        return {
+          dispose: this.attachRuntimeDisposer(runtime, "lifecycle-hook", this.addLifecycleHook(runtime.plugin.id, hook, options))
+        };
+      },
+      addRenderHook: (hook, options) => {
+        return {
+          dispose: this.attachRuntimeDisposer(runtime, "render-hook", this.addRenderHook(runtime.plugin.id, hook, options))
+        };
+      },
+      addRenderStage: (stage) => {
+        const rawId = stage?.id?.trim?.() ?? "";
+        if (!rawId) {
+          throw new Error(`Restty plugin ${runtime.plugin.id} render stage id is required`);
+        }
+        const stageId = `${runtime.plugin.id}:${rawId}`;
+        const normalized = normalizeShaderStage({ ...stage, id: stageId });
+        const handle = this.deps.addRenderStage(normalized, runtime.plugin.id);
+        return {
+          ...handle,
+          dispose: this.attachRuntimeDisposer(runtime, "render-stage", handle.dispose)
+        };
+      }
+    };
+  }
+  applyInputInterceptors(paneId, text2, source) {
+    return this.applyInterceptors(this.inputInterceptors, "input", { paneId, text: text2, source });
+  }
+  applyOutputInterceptors(paneId, text2, source) {
+    return this.applyInterceptors(this.outputInterceptors, "output", { paneId, text: text2, source });
+  }
+  runLifecycleHooks(payload) {
+    this.runHooks(this.lifecycleHooks, "lifecycle", payload);
+  }
+  runRenderHooks(payload) {
+    this.runHooks(this.renderHooks, "render", payload);
+  }
+  emitPluginEvent(event, payload) {
+    emitPluginEvent(this.pluginListeners, event, payload);
+  }
+  attachRuntimeDisposer(runtime, kind, dispose) {
+    return attachRuntimeDisposer(runtime, kind, dispose);
+  }
+  addInputInterceptor(pluginId, interceptor, options) {
+    return this.registerInterceptor(this.inputInterceptors, pluginId, interceptor, options);
+  }
+  addOutputInterceptor(pluginId, interceptor, options) {
+    return this.registerInterceptor(this.outputInterceptors, pluginId, interceptor, options);
+  }
+  addLifecycleHook(pluginId, hook, options) {
+    return this.registerInterceptor(this.lifecycleHooks, pluginId, hook, options);
+  }
+  addRenderHook(pluginId, hook, options) {
+    return this.registerInterceptor(this.renderHooks, pluginId, hook, options);
+  }
+  registerInterceptor(bucket, pluginId, interceptor, options) {
+    const result = registerPluginInterceptor(bucket, pluginId, interceptor, options, {
+      nextId: this.nextInterceptorId,
+      nextOrder: this.nextInterceptorOrder
+    });
+    this.nextInterceptorId = result.nextId;
+    this.nextInterceptorOrder = result.nextOrder;
+    return result.dispose;
+  }
+  applyInterceptors(bucket, kind, payload) {
+    return applyPluginInterceptors(bucket, kind, payload);
+  }
+  runHooks(bucket, kind, payload) {
+    runPluginHooks(bucket, kind, payload);
+  }
+  onPluginEvent(event, listener) {
+    return onPluginEvent(this.pluginListeners, event, listener);
+  }
+}
+
+// src/surface/restty/plugin-ops.ts
+class ResttyPluginOps {
+  pluginRuntimes = new Map;
+  pluginDiagnostics = new Map;
+  dispatcher;
+  constructor(deps) {
+    this.dispatcher = new ResttyPluginDispatcher(deps);
+  }
+  async use(plugin, options) {
+    if (!plugin || typeof plugin !== "object") {
+      throw new Error("Restty plugin must be an object");
+    }
+    const pluginId = plugin.id?.trim?.() ?? "";
+    if (!pluginId) {
+      throw new Error("Restty plugin id is required");
+    }
+    if (typeof plugin.activate !== "function") {
+      throw new Error(`Restty plugin ${pluginId} must define activate(context)`);
+    }
+    if (this.pluginRuntimes.has(pluginId))
+      return;
+    try {
+      assertPluginCompatibility(pluginId, plugin, RESTTY_PLUGIN_API_VERSION);
+    } catch (error) {
+      this.pluginDiagnostics.set(pluginId, {
+        id: pluginId,
+        version: plugin.version?.trim?.() || null,
+        apiVersion: Number.isFinite(plugin.apiVersion) ? Number(plugin.apiVersion) : null,
+        requires: plugin.requires ?? null,
+        active: false,
+        activatedAt: null,
+        lastError: errorToMessage(error)
+      });
+      throw error;
+    }
+    const runtime = {
+      plugin: normalizePluginMetadata(plugin, pluginId),
+      cleanup: null,
+      activatedAt: Date.now(),
+      options,
+      disposers: []
+    };
+    this.pluginDiagnostics.set(pluginId, {
+      id: pluginId,
+      version: runtime.plugin.version?.trim?.() || null,
+      apiVersion: Number.isFinite(runtime.plugin.apiVersion) ? Number(runtime.plugin.apiVersion) : null,
+      requires: runtime.plugin.requires ?? null,
+      active: false,
+      activatedAt: null,
+      lastError: null
+    });
+    this.pluginRuntimes.set(pluginId, runtime);
+    try {
+      const cleanup = await runtime.plugin.activate(this.dispatcher.createPluginContext(runtime), runtime.options);
+      runtime.cleanup = normalizePluginCleanup(cleanup);
+      runtime.activatedAt = Date.now();
+      this.updatePluginDiagnostic(pluginId, {
+        active: true,
+        activatedAt: runtime.activatedAt,
+        lastError: null
+      });
+      this.emitPluginEvent("plugin:activated", { pluginId });
+    } catch (error) {
+      this.teardownPluginRuntime(runtime);
+      this.pluginRuntimes.delete(pluginId);
+      this.updatePluginDiagnostic(pluginId, {
+        active: false,
+        activatedAt: null,
+        lastError: errorToMessage(error)
+      });
+      throw error;
+    }
+  }
+  async loadPlugins(manifest, registry) {
+    const results = [];
+    for (let i3 = 0;i3 < manifest.length; i3 += 1) {
+      const item = manifest[i3];
+      const pluginId = item.id?.trim?.() ?? "";
+      if (!pluginId) {
+        results.push({
+          id: "",
+          status: "failed",
+          error: "Restty plugin manifest entry is missing id"
+        });
+        continue;
+      }
+      if (item.enabled === false) {
+        results.push({ id: pluginId, status: "skipped", error: null });
+        continue;
+      }
+      const entry = lookupPluginRegistryEntry(registry, pluginId);
+      if (!entry) {
+        const message = `Restty plugin ${pluginId} was not found in registry`;
+        this.setPluginLoadError(pluginId, message);
+        results.push({ id: pluginId, status: "missing", error: message });
+        continue;
+      }
+      let plugin;
+      try {
+        plugin = await resolvePluginRegistryEntry(entry);
+      } catch (error) {
+        const message = errorToMessage(error);
+        this.setPluginLoadError(pluginId, message);
+        results.push({ id: pluginId, status: "failed", error: message });
+        continue;
+      }
+      const resolvedId = plugin.id?.trim?.() ?? "";
+      if (resolvedId !== pluginId) {
+        const message = `Restty plugin registry entry ${pluginId} resolved to id ${resolvedId || "(empty)"}`;
+        this.setPluginLoadError(pluginId, message);
+        results.push({ id: pluginId, status: "failed", error: message });
+        continue;
+      }
+      try {
+        await this.use(plugin, item.options);
+        results.push({ id: pluginId, status: "loaded", error: null });
+      } catch (error) {
+        results.push({
+          id: pluginId,
+          status: "failed",
+          error: errorToMessage(error)
+        });
+      }
+    }
+    return results;
+  }
+  unuse(pluginId) {
+    const key = pluginId?.trim?.() ?? "";
+    if (!key)
+      return false;
+    const runtime = this.pluginRuntimes.get(key);
+    if (!runtime)
+      return false;
+    this.pluginRuntimes.delete(key);
+    this.teardownPluginRuntime(runtime);
+    this.updatePluginDiagnostic(key, {
+      active: false,
+      activatedAt: null
+    });
+    this.emitPluginEvent("plugin:deactivated", { pluginId: key });
+    return true;
+  }
+  plugins() {
+    return Array.from(this.pluginRuntimes.keys());
+  }
+  pluginInfo(pluginId) {
+    if (typeof pluginId === "string") {
+      const key = pluginId.trim();
+      if (!key)
+        return null;
+      return this.buildPluginInfo(key);
+    }
+    const keys = new Set;
+    for (const key of this.pluginDiagnostics.keys())
+      keys.add(key);
+    for (const key of this.pluginRuntimes.keys())
+      keys.add(key);
+    return Array.from(keys).sort((a3, b3) => a3.localeCompare(b3)).map((key) => this.buildPluginInfo(key)).filter((entry) => entry !== null);
+  }
+  destroy() {
+    const pluginIds = this.plugins();
+    for (let i3 = 0;i3 < pluginIds.length; i3 += 1) {
+      this.unuse(pluginIds[i3]);
+    }
+  }
+  applyInputInterceptors(paneId, text2, source) {
+    return this.dispatcher.applyInputInterceptors(paneId, text2, source);
+  }
+  applyOutputInterceptors(paneId, text2, source) {
+    return this.dispatcher.applyOutputInterceptors(paneId, text2, source);
+  }
+  runLifecycleHooks(payload) {
+    this.dispatcher.runLifecycleHooks(payload);
+  }
+  runRenderHooks(payload) {
+    this.dispatcher.runRenderHooks(payload);
+  }
+  emitPluginEvent(event, payload) {
+    this.dispatcher.emitPluginEvent(event, payload);
+  }
+  setPluginLoadError(pluginId, message) {
+    setPluginLoadError(this.pluginDiagnostics, pluginId, message);
+  }
+  updatePluginDiagnostic(pluginId, patch) {
+    patchPluginDiagnostic(this.pluginDiagnostics, pluginId, patch);
+  }
+  buildPluginInfo(pluginId) {
+    return buildPluginInfo(pluginId, this.pluginDiagnostics, this.pluginRuntimes);
+  }
+  teardownPluginRuntime(runtime) {
+    teardownPluginRuntime(runtime);
+  }
+}
+
+// src/surface/restty-pane-handle.ts
 class ResttyPaneHandle {
   resolvePane;
   constructor(resolvePane) {
@@ -56146,11 +60301,11 @@ class ResttyPaneHandle {
   resetTheme() {
     this.resolvePane().app.resetTheme();
   }
-  sendInput(text, source) {
-    this.resolvePane().app.sendInput(text, source);
+  sendInput(text2, source) {
+    this.resolvePane().app.sendInput(text2, source);
   }
-  sendKeyInput(text, source) {
-    this.resolvePane().app.sendKeyInput(text, source);
+  sendKeyInput(text2, source) {
+    this.resolvePane().app.sendKeyInput(text2, source);
   }
   clearScreen() {
     this.resolvePane().app.clearScreen();
@@ -56179,39 +60334,463 @@ class ResttyPaneHandle {
   dumpAtlasForCodepoint(cp) {
     this.resolvePane().app.dumpAtlasForCodepoint(cp);
   }
+  resize(cols, rows) {
+    this.resolvePane().app.resize(cols, rows);
+  }
+  focus() {
+    this.resolvePane().app.focus();
+  }
+  blur() {
+    this.resolvePane().app.blur();
+  }
   updateSize(force) {
     this.resolvePane().app.updateSize(force);
   }
   getBackend() {
     return this.resolvePane().app.getBackend();
   }
+  setShaderStages(stages) {
+    this.resolvePane().app.setShaderStages(stages);
+  }
+  getShaderStages() {
+    return this.resolvePane().app.getShaderStages();
+  }
   getRawPane() {
     return this.resolvePane();
   }
 }
 
-class Restty {
+// src/surface/restty/pane-ops.ts
+function requirePaneById(getPaneById, id) {
+  const pane = getPaneById(id);
+  if (!pane)
+    throw new Error(`Restty pane ${id} does not exist`);
+  return pane;
+}
+function makePaneHandle(getPaneById, id) {
+  return new ResttyPaneHandle(() => requirePaneById(getPaneById, id));
+}
+function requireActivePaneHandle(lookup) {
+  const pane = lookup.getActivePane();
+  if (!pane) {
+    throw new Error("Restty has no active pane. Create or focus a pane first.");
+  }
+  return makePaneHandle(lookup.getPaneById, pane.id);
+}
+function panes(lookup) {
+  return lookup.getPanes().map((pane) => makePaneHandle(lookup.getPaneById, pane.id));
+}
+function pane(lookup, id) {
+  if (!lookup.getPaneById(id))
+    return null;
+  return makePaneHandle(lookup.getPaneById, id);
+}
+function activePane(lookup) {
+  const active = lookup.getActivePane();
+  if (!active)
+    return null;
+  return makePaneHandle(lookup.getPaneById, active.id);
+}
+function focusedPane(lookup) {
+  const focused = lookup.getFocusedPane();
+  if (!focused)
+    return null;
+  return makePaneHandle(lookup.getPaneById, focused.id);
+}
+function forEachPane(lookup, visitor) {
+  const all = lookup.getPanes();
+  for (let i3 = 0;i3 < all.length; i3 += 1) {
+    visitor(makePaneHandle(lookup.getPaneById, all[i3].id));
+  }
+}
+function createInitialPane(paneManager, hooks, options) {
+  hooks.runLifecycleHooks({ phase: "before", action: "create-initial-pane" });
+  const pane2 = paneManager.createInitialPane(options);
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "create-initial-pane",
+    paneId: pane2.id,
+    ok: true
+  });
+  return pane2;
+}
+function splitActivePane(paneManager, lookup, hooks, direction) {
+  const sourcePaneId = lookup.getActivePane()?.id ?? null;
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "split-active-pane",
+    paneId: sourcePaneId,
+    direction
+  });
+  const pane2 = paneManager.splitActivePane(direction);
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "split-active-pane",
+    sourcePaneId: sourcePaneId ?? undefined,
+    createdPaneId: pane2?.id ?? null,
+    direction,
+    ok: !!pane2
+  });
+  return pane2;
+}
+function splitPane(paneManager, hooks, id, direction) {
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "split-pane",
+    paneId: id,
+    direction
+  });
+  const pane2 = paneManager.splitPane(id, direction);
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "split-pane",
+    sourcePaneId: id,
+    createdPaneId: pane2?.id ?? null,
+    direction,
+    ok: !!pane2
+  });
+  return pane2;
+}
+function closePane(paneManager, hooks, id) {
+  hooks.runLifecycleHooks({ phase: "before", action: "close-pane", paneId: id });
+  const ok = paneManager.closePane(id);
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "close-pane",
+    paneId: id,
+    ok
+  });
+  return ok;
+}
+function setActivePane(paneManager, lookup, hooks, id, options) {
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "set-active-pane",
+    paneId: id
+  });
+  paneManager.setActivePane(id, options);
+  const activePaneId = lookup.getActivePane()?.id ?? null;
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "set-active-pane",
+    paneId: activePaneId,
+    ok: activePaneId === id
+  });
+}
+function markPaneFocused(paneManager, lookup, hooks, id, options) {
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "mark-pane-focused",
+    paneId: id
+  });
+  paneManager.markPaneFocused(id, options);
+  const focusedPaneId = lookup.getFocusedPane()?.id ?? null;
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "mark-pane-focused",
+    paneId: focusedPaneId,
+    ok: focusedPaneId === id
+  });
+}
+function connectPty2(lookup, hooks, url = "") {
+  const pane2 = requireActivePaneHandle(lookup);
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "connect-pty",
+    paneId: pane2.id
+  });
+  pane2.connectPty(url);
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "connect-pty",
+    paneId: pane2.id,
+    ok: true
+  });
+}
+function disconnectPty2(lookup, hooks) {
+  const pane2 = requireActivePaneHandle(lookup);
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "disconnect-pty",
+    paneId: pane2.id
+  });
+  pane2.disconnectPty();
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "disconnect-pty",
+    paneId: pane2.id,
+    ok: true
+  });
+}
+function resize(lookup, hooks, cols, rows) {
+  const pane2 = requireActivePaneHandle(lookup);
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "resize",
+    paneId: pane2.id,
+    cols,
+    rows
+  });
+  pane2.resize(cols, rows);
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "resize",
+    paneId: pane2.id,
+    cols,
+    rows,
+    ok: true
+  });
+  hooks.emitPluginEvent("pane:resized", { paneId: pane2.id, cols, rows });
+}
+function focus(lookup, hooks) {
+  const pane2 = requireActivePaneHandle(lookup);
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "focus",
+    paneId: pane2.id
+  });
+  pane2.focus();
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "focus",
+    paneId: pane2.id,
+    ok: true
+  });
+  hooks.emitPluginEvent("pane:focused", { paneId: pane2.id });
+}
+function blur(lookup, hooks) {
+  const pane2 = requireActivePaneHandle(lookup);
+  hooks.runLifecycleHooks({
+    phase: "before",
+    action: "blur",
+    paneId: pane2.id
+  });
+  pane2.blur();
+  hooks.runLifecycleHooks({
+    phase: "after",
+    action: "blur",
+    paneId: pane2.id,
+    ok: true
+  });
+  hooks.emitPluginEvent("pane:blurred", { paneId: pane2.id });
+}
+function getPaneStyleOptions(paneManager) {
+  return paneManager.getStyleOptions();
+}
+function setPaneStyleOptions(paneManager, options) {
+  paneManager.setStyleOptions(options);
+}
+
+// src/surface/restty/shader-ops.ts
+class ResttyShaderOps {
+  paneBaseShaderStages = new Map;
+  globalShaderStages = new Map;
+  nextShaderStageOrder = 1;
+  deps;
+  constructor(deps, shaderStages) {
+    this.deps = deps;
+    if (shaderStages?.length) {
+      const normalized = sortShaderStages(normalizeShaderStages(shaderStages));
+      for (let i3 = 0;i3 < normalized.length; i3 += 1) {
+        const stage = normalized[i3];
+        this.globalShaderStages.set(stage.id, {
+          id: stage.id,
+          stage,
+          order: this.nextShaderStageOrder++,
+          ownerPluginId: null
+        });
+      }
+    }
+  }
+  setShaderStages(stages) {
+    this.globalShaderStages.clear();
+    const normalized = sortShaderStages(normalizeShaderStages(stages ?? []));
+    for (let i3 = 0;i3 < normalized.length; i3 += 1) {
+      const stage = normalized[i3];
+      this.globalShaderStages.set(stage.id, {
+        id: stage.id,
+        stage,
+        order: this.nextShaderStageOrder++,
+        ownerPluginId: null
+      });
+    }
+    this.syncPaneShaderStages();
+  }
+  getShaderStages() {
+    return cloneShaderStages(this.listGlobalShaderStages().map((entry) => entry.stage));
+  }
+  addShaderStage(stage) {
+    const normalized = normalizeShaderStage(stage);
+    return this.addManagedShaderStage(normalized, null);
+  }
+  addManagedShaderStage(stage, ownerPluginId) {
+    const normalized = normalizeShaderStage(stage);
+    this.globalShaderStages.set(normalized.id, {
+      id: normalized.id,
+      stage: normalized,
+      order: this.nextShaderStageOrder++,
+      ownerPluginId
+    });
+    this.syncPaneShaderStages();
+    return {
+      id: normalized.id,
+      setUniforms: (uniforms) => {
+        const current = this.globalShaderStages.get(normalized.id);
+        if (!current)
+          return;
+        const next = normalizeShaderStage({
+          ...current.stage,
+          uniforms
+        });
+        this.globalShaderStages.set(normalized.id, {
+          ...current,
+          stage: next
+        });
+        this.syncPaneShaderStages();
+      },
+      setEnabled: (value) => {
+        const current = this.globalShaderStages.get(normalized.id);
+        if (!current)
+          return;
+        const next = normalizeShaderStage({
+          ...current.stage,
+          enabled: Boolean(value)
+        });
+        this.globalShaderStages.set(normalized.id, {
+          ...current,
+          stage: next
+        });
+        this.syncPaneShaderStages();
+      },
+      dispose: () => {
+        this.removeShaderStage(normalized.id);
+      }
+    };
+  }
+  removeShaderStage(id) {
+    const stageId = id?.trim?.() ?? "";
+    if (!stageId)
+      return false;
+    const removed = this.globalShaderStages.delete(stageId);
+    if (removed) {
+      this.syncPaneShaderStages();
+    }
+    return removed;
+  }
+  normalizePaneShaderStages(stages, paneId) {
+    if (!stages?.length)
+      return [];
+    try {
+      return sortShaderStages(normalizeShaderStages(stages));
+    } catch (error) {
+      console.warn(`[restty shader-stage] invalid pane stage config for pane ${paneId}:`, error);
+      return [];
+    }
+  }
+  setPaneBaseShaderStages(paneId, stages) {
+    this.paneBaseShaderStages.set(paneId, stages);
+  }
+  removePaneBaseShaderStages(paneId) {
+    this.paneBaseShaderStages.delete(paneId);
+  }
+  buildMergedShaderStages(baseStages) {
+    const merged = new Map;
+    for (let i3 = 0;i3 < baseStages.length; i3 += 1) {
+      const stage = baseStages[i3];
+      merged.set(stage.id, stage);
+    }
+    const globals = this.listGlobalShaderStages();
+    for (let i3 = 0;i3 < globals.length; i3 += 1) {
+      const stage = globals[i3].stage;
+      if (merged.has(stage.id))
+        merged.delete(stage.id);
+      merged.set(stage.id, stage);
+    }
+    return sortShaderStages(Array.from(merged.values()));
+  }
+  syncPaneShaderStages(paneId) {
+    const panes2 = [];
+    if (paneId === undefined) {
+      panes2.push(...this.deps.getPanes());
+    } else {
+      const pane2 = this.deps.getPaneById(paneId);
+      if (pane2)
+        panes2.push(pane2);
+    }
+    for (let i3 = 0;i3 < panes2.length; i3 += 1) {
+      const pane2 = panes2[i3];
+      const base = this.paneBaseShaderStages.get(pane2.id) ?? [];
+      pane2.app.setShaderStages(this.buildMergedShaderStages(base));
+    }
+  }
+  clear() {
+    this.globalShaderStages.clear();
+    this.paneBaseShaderStages.clear();
+  }
+  listGlobalShaderStages() {
+    return Array.from(this.globalShaderStages.values()).sort((a3, b3) => a3.order - b3.order);
+  }
+}
+
+// src/surface/restty.ts
+class Restty extends ResttyActivePaneApi {
   paneManager;
   fontSources;
+  shaderOps;
+  pluginOps;
   constructor(options) {
-    const { createInitialPane = true, appOptions, fontSources, ...paneManagerOptions } = options;
+    super();
+    const {
+      createInitialPane: createInitialPane2 = true,
+      appOptions,
+      fontSources,
+      shaderStages,
+      onDesktopNotification,
+      onPaneCreated,
+      onPaneClosed,
+      onPaneSplit,
+      onActivePaneChange,
+      onLayoutChanged,
+      ...paneManagerOptions
+    } = options;
     this.fontSources = fontSources ? [...fontSources] : undefined;
-    const mergedAppOptions = (context) => {
-      const resolved = typeof appOptions === "function" ? appOptions(context) : appOptions ?? {};
-      if (!this.fontSources)
-        return resolved;
-      return {
-        ...resolved,
-        fontSources: this.fontSources
-      };
-    };
+    this.shaderOps = new ResttyShaderOps({
+      getPanes: () => this.paneManager.getPanes(),
+      getPaneById: (id) => this.paneManager.getPaneById(id)
+    }, shaderStages);
+    this.pluginOps = new ResttyPluginOps({
+      restty: this,
+      panes: () => this.panes(),
+      pane: (id) => this.pane(id),
+      activePane: () => this.activePane(),
+      focusedPane: () => this.focusedPane(),
+      addRenderStage: (stage, ownerPluginId) => this.shaderOps.addManagedShaderStage(stage, ownerPluginId)
+    });
+    const mergedAppOptions = createMergedPaneAppOptions({
+      appOptions,
+      getFontSources: () => this.fontSources,
+      onDesktopNotification,
+      shaderOps: this.shaderOps,
+      pluginOps: this.pluginOps,
+      runRenderHooks: (payload) => this.runRenderHooks(payload)
+    });
+    const paneManagerEventHandlers = createPaneManagerEventHandlers({
+      shaderOps: this.shaderOps,
+      emitPluginEvent: (event, payload) => this.emitPluginEvent(event, payload),
+      onPaneCreated,
+      onPaneClosed,
+      onPaneSplit,
+      onActivePaneChange,
+      onLayoutChanged
+    });
     this.paneManager = createResttyAppPaneManager({
       ...paneManagerOptions,
-      appOptions: mergedAppOptions
+      appOptions: mergedAppOptions,
+      ...paneManagerEventHandlers
     });
-    if (createInitialPane) {
-      const focus = typeof createInitialPane === "object" ? createInitialPane.focus ?? true : true;
-      this.paneManager.createInitialPane({ focus });
+    if (createInitialPane2) {
+      const focus2 = typeof createInitialPane2 === "object" ? createInitialPane2.focus ?? true : true;
+      this.createInitialPane({ focus: focus2 });
     }
   }
   getPanes() {
@@ -56227,63 +60806,64 @@ class Restty {
     return this.paneManager.getFocusedPane();
   }
   panes() {
-    return this.getPanes().map((pane) => this.makePaneHandle(pane.id));
+    return panes(this.paneLookup());
   }
   pane(id) {
-    if (!this.getPaneById(id))
-      return null;
-    return this.makePaneHandle(id);
+    return pane(this.paneLookup(), id);
   }
   activePane() {
-    const pane = this.getActivePane();
-    if (!pane)
-      return null;
-    return this.makePaneHandle(pane.id);
+    return activePane(this.paneLookup());
   }
   focusedPane() {
-    const pane = this.getFocusedPane();
-    if (!pane)
-      return null;
-    return this.makePaneHandle(pane.id);
+    return focusedPane(this.paneLookup());
   }
   forEachPane(visitor) {
-    const panes = this.getPanes();
-    for (let i3 = 0;i3 < panes.length; i3 += 1) {
-      visitor(this.makePaneHandle(panes[i3].id));
-    }
+    forEachPane(this.paneLookup(), visitor);
   }
-  async setFontSources(sources) {
-    this.fontSources = sources.length ? [...sources] : undefined;
-    const panes = this.getPanes();
-    const updates = new Array(panes.length);
-    for (let i3 = 0;i3 < panes.length; i3 += 1) {
-      updates[i3] = panes[i3].app.setFontSources(this.fontSources ?? []);
+  async setFontSources(sources2) {
+    this.fontSources = sources2.length ? [...sources2] : undefined;
+    const panes2 = this.getPanes();
+    const updates = new Array(panes2.length);
+    for (let i3 = 0;i3 < panes2.length; i3 += 1) {
+      updates[i3] = panes2[i3].app.setFontSources(this.fontSources ?? []);
     }
     await Promise.all(updates);
   }
+  setShaderStages(stages) {
+    this.shaderOps.setShaderStages(stages);
+  }
+  getShaderStages() {
+    return this.shaderOps.getShaderStages();
+  }
+  addShaderStage(stage) {
+    return this.shaderOps.addShaderStage(stage);
+  }
+  removeShaderStage(id) {
+    return this.shaderOps.removeShaderStage(id);
+  }
   createInitialPane(options) {
-    return this.paneManager.createInitialPane(options);
+    return createInitialPane(this.paneManager, this.lifecycleHooks(), options);
   }
   splitActivePane(direction) {
-    return this.paneManager.splitActivePane(direction);
+    return splitActivePane(this.paneManager, this.paneLookup(), this.lifecycleHooks(), direction);
   }
   splitPane(id, direction) {
-    return this.paneManager.splitPane(id, direction);
+    return splitPane(this.paneManager, this.lifecycleHooks(), id, direction);
   }
   closePane(id) {
-    return this.paneManager.closePane(id);
+    return closePane(this.paneManager, this.lifecycleHooks(), id);
   }
   getPaneStyleOptions() {
-    return this.paneManager.getStyleOptions();
+    return getPaneStyleOptions(this.paneManager);
   }
   setPaneStyleOptions(options) {
-    this.paneManager.setStyleOptions(options);
+    setPaneStyleOptions(this.paneManager, options);
   }
   setActivePane(id, options) {
-    this.paneManager.setActivePane(id, options);
+    setActivePane(this.paneManager, this.paneLookup(), this.lifecycleHooks(), id, options);
   }
   markPaneFocused(id, options) {
-    this.paneManager.markPaneFocused(id, options);
+    markPaneFocused(this.paneManager, this.paneLookup(), this.lifecycleHooks(), id, options);
   }
   requestLayoutSync() {
     this.paneManager.requestLayoutSync();
@@ -56291,81 +60871,73 @@ class Restty {
   hideContextMenu() {
     this.paneManager.hideContextMenu();
   }
+  async use(plugin, options) {
+    await this.pluginOps.use(plugin, options);
+  }
+  async loadPlugins(manifest, registry) {
+    return this.pluginOps.loadPlugins(manifest, registry);
+  }
+  unuse(pluginId) {
+    return this.pluginOps.unuse(pluginId);
+  }
+  plugins() {
+    return this.pluginOps.plugins();
+  }
+  pluginInfo(pluginId) {
+    if (typeof pluginId === "string")
+      return this.pluginOps.pluginInfo(pluginId);
+    return this.pluginOps.pluginInfo();
+  }
   destroy() {
+    this.pluginOps.destroy();
+    this.shaderOps.clear();
     this.paneManager.destroy();
   }
   connectPty(url = "") {
-    this.requireActivePaneHandle().connectPty(url);
+    connectPty2(this.paneLookup(), this.lifecycleHooks(), url);
   }
   disconnectPty() {
-    this.requireActivePaneHandle().disconnectPty();
+    disconnectPty2(this.paneLookup(), this.lifecycleHooks());
   }
-  isPtyConnected() {
-    return this.requireActivePaneHandle().isPtyConnected();
+  resize(cols, rows) {
+    resize(this.paneLookup(), this.lifecycleAndPluginHooks(), cols, rows);
   }
-  setRenderer(value) {
-    this.requireActivePaneHandle().setRenderer(value);
+  focus() {
+    focus(this.paneLookup(), this.lifecycleAndPluginHooks());
   }
-  setPaused(value) {
-    this.requireActivePaneHandle().setPaused(value);
+  blur() {
+    blur(this.paneLookup(), this.lifecycleAndPluginHooks());
   }
-  togglePause() {
-    this.requireActivePaneHandle().togglePause();
+  paneLookup() {
+    return {
+      getPanes: () => this.getPanes(),
+      getPaneById: (id) => this.getPaneById(id),
+      getActivePane: () => this.getActivePane(),
+      getFocusedPane: () => this.getFocusedPane()
+    };
   }
-  setFontSize(value) {
-    this.requireActivePaneHandle().setFontSize(value);
+  lifecycleHooks() {
+    return {
+      runLifecycleHooks: (payload) => this.runLifecycleHooks(payload)
+    };
   }
-  applyTheme(theme, sourceLabel) {
-    this.requireActivePaneHandle().applyTheme(theme, sourceLabel);
-  }
-  resetTheme() {
-    this.requireActivePaneHandle().resetTheme();
-  }
-  sendInput(text, source) {
-    this.requireActivePaneHandle().sendInput(text, source);
-  }
-  sendKeyInput(text, source) {
-    this.requireActivePaneHandle().sendKeyInput(text, source);
-  }
-  clearScreen() {
-    this.requireActivePaneHandle().clearScreen();
-  }
-  setMouseMode(value) {
-    this.requireActivePaneHandle().setMouseMode(value);
-  }
-  getMouseStatus() {
-    return this.requireActivePaneHandle().getMouseStatus();
-  }
-  copySelectionToClipboard() {
-    return this.requireActivePaneHandle().copySelectionToClipboard();
-  }
-  pasteFromClipboard() {
-    return this.requireActivePaneHandle().pasteFromClipboard();
-  }
-  dumpAtlasForCodepoint(cp) {
-    this.requireActivePaneHandle().dumpAtlasForCodepoint(cp);
-  }
-  updateSize(force) {
-    this.requireActivePaneHandle().updateSize(force);
-  }
-  getBackend() {
-    return this.requireActivePaneHandle().getBackend();
-  }
-  makePaneHandle(id) {
-    return new ResttyPaneHandle(() => this.requirePaneById(id));
-  }
-  requirePaneById(id) {
-    const pane = this.getPaneById(id);
-    if (!pane)
-      throw new Error(`Restty pane ${id} does not exist`);
-    return pane;
+  lifecycleAndPluginHooks() {
+    return {
+      runLifecycleHooks: (payload) => this.runLifecycleHooks(payload),
+      emitPluginEvent: (event, payload) => this.emitPluginEvent(event, payload)
+    };
   }
   requireActivePaneHandle() {
-    const pane = this.getActivePane();
-    if (!pane) {
-      throw new Error("Restty has no active pane. Create or focus a pane first.");
-    }
-    return this.makePaneHandle(pane.id);
+    return requireActivePaneHandle(this.paneLookup());
+  }
+  runLifecycleHooks(payload) {
+    this.pluginOps.runLifecycleHooks(payload);
+  }
+  runRenderHooks(payload) {
+    this.pluginOps.runRenderHooks(payload);
+  }
+  emitPluginEvent(event, payload) {
+    this.pluginOps.emitPluginEvent(event, payload);
   }
 }
 // playground/lib/demos.ts
@@ -57402,8 +61974,8 @@ class FileSystemAPIClient {
     if (isTypedArrayCollection(result)) {
       return result;
     }
-    const entries = result.map((entry) => new DirEntImpl(entry.name, entry["Symbol(type)"]));
-    return entries;
+    const entries2 = result.map((entry) => new DirEntImpl(entry.name, entry["Symbol(type)"]));
+    return entries2;
   }
   async mkdir(path, options) {
     return await this._fs.mkdir(path, options);
@@ -57638,8 +62210,8 @@ async function getSharedWebContainer() {
   }
   return sharedWebContainerPromise;
 }
-function normalizeFetchedScript(text) {
-  const noBom = text.replace(/^\uFEFF/, "").replace(/\r\n?/g, `
+function normalizeFetchedScript(text2) {
+  const noBom = text2.replace(/^\uFEFF/, "").replace(/\r\n?/g, `
 `).trim();
   if (!noBom)
     return null;
@@ -57675,9 +62247,9 @@ async function fetchScriptText(url) {
 }
 async function fetchFirstScript(urls) {
   for (const url of urls) {
-    const text = await fetchScriptText(url);
-    if (text)
-      return text;
+    const text2 = await fetchScriptText(url);
+    if (text2)
+      return text2;
   }
   return null;
 }
@@ -57758,8 +62330,8 @@ async function removeLegacyShellScripts(webcontainer) {
 async function ensureSeedScripts(webcontainer) {
   await removeLegacyShellScripts(webcontainer);
   for (const spec of seedScripts) {
-    const text = await fetchFirstScript(spec.urls);
-    await webcontainer.fs.writeFile(spec.target, text ?? spec.fallback);
+    const text2 = await fetchFirstScript(spec.urls);
+    await webcontainer.fs.writeFile(spec.target, text2 ?? spec.fallback);
   }
   await ensureScriptsExecutable(webcontainer);
 }
@@ -57996,6 +62568,7 @@ var fontFamilyLocalSelect = document.getElementById("fontFamilyLocal");
 var btnLoadLocalFonts = document.getElementById("btnLoadLocalFonts");
 var fontFamilyHintEl = document.getElementById("fontFamilyHint");
 var mouseModeEl = document.getElementById("mouseMode");
+var shaderPresetEl = document.getElementById("shaderPreset");
 var settingsFab = document.getElementById("settingsFab");
 var settingsDialog = document.getElementById("settingsDialog");
 var settingsClose = document.getElementById("settingsClose");
@@ -58016,6 +62589,8 @@ var paneStates = new Map;
 var activePaneId = null;
 var resizeRaf = 0;
 var restty;
+var notificationPermissionRequest = null;
+var selectedShaderPreset = shaderPresetEl?.value ?? "none";
 var initialFontSize = fontSizeInput?.value ? Number(fontSizeInput.value) : 18;
 var selectedFontFamily = fontFamilySelect?.value ?? DEFAULT_FONT_FAMILY;
 var selectedLocalFontMatcher = "";
@@ -58033,14 +62608,14 @@ function parseFontSize(value, fallback = 18) {
 function supportsLocalFontPicker() {
   return typeof window !== "undefined" && "queryLocalFonts" in window;
 }
-function setFontFamilyHint(text) {
+function setFontFamilyHint(text2) {
   if (fontFamilyHintEl)
-    fontFamilyHintEl.textContent = text;
+    fontFamilyHintEl.textContent = text2;
 }
 function buildFontSourcesForSelection(value, localMatcher) {
-  const sources = [];
+  const sources2 = [];
   if (localMatcher) {
-    sources.push({
+    sources2.push({
       type: "local",
       label: `local:${localMatcher}`,
       matchers: [localMatcher],
@@ -58048,7 +62623,7 @@ function buildFontSourcesForSelection(value, localMatcher) {
     });
   }
   if (value === "jetbrains") {
-    sources.push({
+    sources2.push({
       type: "local",
       label: "local:jetbrains mono",
       matchers: [
@@ -58058,7 +62633,7 @@ function buildFontSourcesForSelection(value, localMatcher) {
         "jetbrains mono"
       ]
     });
-    sources.push({
+    sources2.push({
       type: "local",
       label: "local:jetbrains mono bold",
       matchers: [
@@ -58068,7 +62643,7 @@ function buildFontSourcesForSelection(value, localMatcher) {
         "jetbrainsmono nerd font mono bold"
       ]
     });
-    sources.push({
+    sources2.push({
       type: "local",
       label: "local:jetbrains mono italic",
       matchers: [
@@ -58078,7 +62653,7 @@ function buildFontSourcesForSelection(value, localMatcher) {
         "jetbrainsmono nerd font mono italic"
       ]
     });
-    sources.push({
+    sources2.push({
       type: "local",
       label: "local:jetbrains mono bold italic",
       matchers: [
@@ -58091,69 +62666,69 @@ function buildFontSourcesForSelection(value, localMatcher) {
       ]
     });
   }
-  sources.push({
+  sources2.push({
     type: "url",
     label: "JetBrains Mono Regular",
     url: FONT_URL_JETBRAINS_MONO
   });
-  sources.push({
+  sources2.push({
     type: "url",
     label: "JetBrains Mono Bold",
     url: FONT_URL_JETBRAINS_MONO_BOLD
   });
-  sources.push({
+  sources2.push({
     type: "url",
     label: "JetBrains Mono Italic",
     url: FONT_URL_JETBRAINS_MONO_ITALIC
   });
-  sources.push({
+  sources2.push({
     type: "url",
     label: "JetBrains Mono Bold Italic",
     url: FONT_URL_JETBRAINS_MONO_BOLD_ITALIC
   });
-  sources.push({
+  sources2.push({
     type: "url",
     label: "Symbols Nerd Font Mono",
     url: FONT_URL_NERD_SYMBOLS
   });
-  sources.push({
+  sources2.push({
     type: "local",
     label: "Apple Symbols",
     matchers: ["apple symbols", "applesymbols", "apple symbols regular"],
     required: true
   });
-  sources.push({
+  sources2.push({
     type: "url",
     label: "Noto Sans Symbols 2",
     url: FONT_URL_NOTO_SYMBOLS
   });
-  sources.push({
+  sources2.push({
     type: "url",
     label: "Symbola",
     url: FONT_URL_SYMBOLA
   });
-  sources.push({
+  sources2.push({
     type: "local",
     label: "Apple Color Emoji",
     matchers: ["apple color emoji", "applecoloremoji"],
     required: true
   });
-  sources.push({
+  sources2.push({
     type: "url",
     label: "Noto Color Emoji",
     url: FONT_URL_NOTO_COLOR_EMOJI
   });
-  sources.push({
+  sources2.push({
     type: "url",
     label: "OpenMoji",
     url: FONT_URL_OPENMOJI
   });
-  sources.push({
+  sources2.push({
     type: "url",
     label: "Noto Sans CJK SC",
     url: FONT_URL_NOTO_CJK_SC
   });
-  return sources;
+  return sources2;
 }
 function getCurrentFontSources() {
   return buildFontSourcesForSelection(selectedFontFamily, selectedLocalFontMatcher);
@@ -58171,6 +62746,166 @@ function syncFontFamilyControls() {
   if (!supportsLocalFontPicker() && fontFamilyLocalSelect) {
     fontFamilyLocalSelect.disabled = true;
   }
+}
+function shaderStagesForPreset(preset) {
+  if (preset === "scanline") {
+    return [
+      {
+        id: "playground/scanline",
+        mode: "after-main",
+        uniforms: [0.38, 1],
+        shader: {
+          wgsl: `
+fn resttyStage(color: vec4f, uv: vec2f, time: f32, params0: vec4f, params1: vec4f) -> vec4f {
+  let strength = clamp(params0.x, 0.0, 0.85);
+  let speed = max(params0.y, 0.1);
+  let stripes = 0.5 + 0.5 * sin(uv.y * 1800.0 + time * 1.8 * speed);
+  let darken = 1.0 - strength * (0.15 + 0.85 * stripes);
+  let beam = 1.0 + 0.04 * strength * sin(uv.y * 90.0 - time * 5.0 * speed);
+  let outColor = color.rgb * darken * beam;
+  return vec4f(min(vec3f(1.0), outColor), color.a);
+}
+`,
+          glsl: `
+vec4 resttyStage(vec4 color, vec2 uv, float time, vec4 params0, vec4 params1) {
+  float strength = clamp(params0.x, 0.0, 0.85);
+  float speed = max(params0.y, 0.1);
+  float stripes = 0.5 + 0.5 * sin(uv.y * 1800.0 + time * 1.8 * speed);
+  float darken = 1.0 - strength * (0.15 + 0.85 * stripes);
+  float beam = 1.0 + 0.04 * strength * sin(uv.y * 90.0 - time * 5.0 * speed);
+  vec3 outColor = color.rgb * darken * beam;
+  return vec4(min(vec3(1.0), outColor), color.a);
+}
+`
+        }
+      }
+    ];
+  }
+  if (preset === "aurora") {
+    return [
+      {
+        id: "playground/aurora",
+        mode: "after-main",
+        uniforms: [0.28, 1],
+        shader: {
+          wgsl: `
+fn resttyStage(color: vec4f, uv: vec2f, time: f32, params0: vec4f, params1: vec4f) -> vec4f {
+  let mixAmount = clamp(params0.x, 0.0, 0.65);
+  let speed = max(params0.y, 0.1);
+  let phase = time * speed + uv.y * 14.0 + uv.x * 3.5;
+  let wave0 = 0.5 + 0.5 * sin(phase);
+  let wave1 = 0.5 + 0.5 * sin(phase * 1.37 + 2.1);
+  let wave2 = 0.5 + 0.5 * sin(phase * 0.73 + 4.2);
+  let tint = vec3f(
+    0.12 + wave0 * 0.28,
+    0.08 + wave1 * 0.32,
+    0.18 + wave2 * 0.24
+  );
+  let sparkle = 1.0 + 0.06 * sin((uv.x * 120.0 + uv.y * 42.0) + time * 4.0 * speed);
+  let boosted = min(vec3f(1.0), color.rgb * sparkle);
+  let outColor = mix(color.rgb, min(vec3f(1.0), boosted + tint * 0.35), mixAmount);
+  return vec4f(outColor, color.a);
+}
+`,
+          glsl: `
+vec4 resttyStage(vec4 color, vec2 uv, float time, vec4 params0, vec4 params1) {
+  float mixAmount = clamp(params0.x, 0.0, 0.65);
+  float speed = max(params0.y, 0.1);
+  float phase = time * speed + uv.y * 14.0 + uv.x * 3.5;
+  float wave0 = 0.5 + 0.5 * sin(phase);
+  float wave1 = 0.5 + 0.5 * sin(phase * 1.37 + 2.1);
+  float wave2 = 0.5 + 0.5 * sin(phase * 0.73 + 4.2);
+  vec3 tint = vec3(
+    0.12 + wave0 * 0.28,
+    0.08 + wave1 * 0.32,
+    0.18 + wave2 * 0.24
+  );
+  float sparkle = 1.0 + 0.06 * sin((uv.x * 120.0 + uv.y * 42.0) + time * 4.0 * speed);
+  vec3 boosted = min(vec3(1.0), color.rgb * sparkle);
+  vec3 outColor = mix(color.rgb, min(vec3(1.0), boosted + tint * 0.35), mixAmount);
+  return vec4(outColor, color.a);
+}
+`
+        }
+      }
+    ];
+  }
+  if (preset === "crt-lite") {
+    return [
+      {
+        id: "playground/crt-lite",
+        mode: "after-main",
+        uniforms: [0.24, 0.12],
+        shader: {
+          wgsl: `
+fn resttyStage(color: vec4f, uv: vec2f, time: f32, params0: vec4f, params1: vec4f) -> vec4f {
+  let vignetteStrength = clamp(params0.x, 0.0, 0.7);
+  let maskStrength = clamp(params0.y, 0.0, 0.35);
+  let centered = (uv - vec2f(0.5, 0.5)) * 2.0;
+  let vignette = max(0.0, 1.0 - vignetteStrength * dot(centered, centered));
+  let scan = 0.92 + 0.08 * (0.5 + 0.5 * sin(uv.y * 1400.0));
+  let phase = uv.x * 1400.0;
+  let mask = vec3f(
+    1.0 + maskStrength * sin(phase),
+    1.0 + maskStrength * sin(phase + 2.094),
+    1.0 + maskStrength * sin(phase + 4.188)
+  );
+  let flicker = 1.0 + 0.012 * sin(time * 64.0);
+  let outColor = min(vec3f(1.0), color.rgb * vignette * scan * flicker * mask);
+  return vec4f(outColor, color.a);
+}
+`,
+          glsl: `
+vec4 resttyStage(vec4 color, vec2 uv, float time, vec4 params0, vec4 params1) {
+  float vignetteStrength = clamp(params0.x, 0.0, 0.7);
+  float maskStrength = clamp(params0.y, 0.0, 0.35);
+  vec2 centered = (uv - vec2(0.5)) * 2.0;
+  float vignette = max(0.0, 1.0 - vignetteStrength * dot(centered, centered));
+  float scan = 0.92 + 0.08 * (0.5 + 0.5 * sin(uv.y * 1400.0));
+  float phase = uv.x * 1400.0;
+  vec3 mask = vec3(
+    1.0 + maskStrength * sin(phase),
+    1.0 + maskStrength * sin(phase + 2.094),
+    1.0 + maskStrength * sin(phase + 4.188)
+  );
+  float flicker = 1.0 + 0.012 * sin(time * 64.0);
+  vec3 outColor = min(vec3(1.0), color.rgb * vignette * scan * flicker * mask);
+  return vec4(outColor, color.a);
+}
+`
+        }
+      }
+    ];
+  }
+  if (preset === "mono-green") {
+    return [
+      {
+        id: "playground/mono-green",
+        mode: "after-main",
+        uniforms: [1],
+        shader: {
+          wgsl: `
+fn resttyStage(color: vec4f, uv: vec2f, time: f32, params0: vec4f, params1: vec4f) -> vec4f {
+  let gain = clamp(params0.x, 0.25, 2.0);
+  let luma = dot(color.rgb, vec3f(0.2126, 0.7152, 0.0722));
+  return vec4f(luma * 0.12 * gain, luma * 0.95 * gain, luma * 0.35 * gain, color.a);
+}
+`,
+          glsl: `
+vec4 resttyStage(vec4 color, vec2 uv, float time, vec4 params0, vec4 params1) {
+  float gain = clamp(params0.x, 0.25, 2.0);
+  float luma = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+  return vec4(luma * 0.12 * gain, luma * 0.95 * gain, luma * 0.35 * gain, color.a);
+}
+`
+        }
+      }
+    ];
+  }
+  return [];
+}
+function applyShaderPreset() {
+  restty.setShaderStages(shaderStagesForPreset(selectedShaderPreset));
 }
 async function applyFontSourcesToAllPanes() {
   try {
@@ -58293,14 +63028,42 @@ function createAdaptivePtyTransport() {
     }
   };
 }
+function handleDesktopNotification(notification) {
+  const title = notification.title.trim() || "Terminal notification";
+  const body = notification.body.trim();
+  const prefix = `[notify][pane ${notification.paneId}][${notification.source}]`;
+  if (body) {
+    console.info(`${prefix} ${title}: ${body}`);
+  } else {
+    console.info(`${prefix} ${title}`);
+  }
+  if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+    try {
+      const browserNotification = new Notification(title, body ? { body } : undefined);
+    } catch {}
+    return;
+  }
+  if (typeof Notification !== "undefined" && Notification.permission === "default") {
+    if (!notificationPermissionRequest) {
+      notificationPermissionRequest = Notification.requestPermission().catch(() => "denied");
+    }
+    notificationPermissionRequest.then((permission) => {
+      if (permission !== "granted")
+        return;
+      try {
+        const browserNotification = new Notification(title, body ? { body } : undefined);
+      } catch {}
+    });
+  }
+}
 function isSettingsDialogOpen() {
   return Boolean(settingsDialog?.open);
 }
 function restoreTerminalFocus() {
-  const pane = restty.getFocusedPane() ?? restty.getActivePane() ?? restty.getPanes()[0] ?? null;
-  if (!pane)
+  const pane2 = restty.getFocusedPane() ?? restty.getActivePane() ?? restty.getPanes()[0] ?? null;
+  if (!pane2)
     return;
-  pane.canvas.focus({ preventScroll: true });
+  pane2.canvas.focus({ preventScroll: true });
 }
 function openSettingsDialog() {
   restty.hideContextMenu();
@@ -58359,82 +63122,99 @@ function getActivePaneState() {
     return null;
   return paneStates.get(activePaneId) ?? null;
 }
-function syncPauseButton(state) {
+function syncPauseButton(state2) {
   if (btnPause)
-    btnPause.textContent = state.paused ? "Resume" : "Pause";
+    btnPause.textContent = state2.paused ? "Resume" : "Pause";
 }
-function syncPtyButton(pane, state) {
+function syncPtyButton(pane2, state2) {
   if (!ptyBtn)
     return;
-  if (pane.app.isPtyConnected()) {
+  if (pane2.app.isPtyConnected()) {
     ptyBtn.textContent = "Disconnect";
     return;
   }
   ptyBtn.textContent = getConnectionBackend() === "webcontainer" ? "Start WebContainer" : "Connect PTY";
-  setText(ptyStatusEl, state.ui.ptyStatus);
+  setText(ptyStatusEl, state2.ui.ptyStatus);
 }
-function renderActivePaneStatus(pane, state) {
-  setText(backendEl, state.ui.backend);
-  setText(fpsEl, state.ui.fps);
-  setText(termSizeEl, state.ui.termSize);
-  setText(ptyStatusEl, state.ui.ptyStatus);
-  syncPtyButton(pane, state);
+function renderActivePaneStatus(pane2, state2) {
+  setText(backendEl, state2.ui.backend);
+  setText(fpsEl, state2.ui.fps);
+  setText(termSizeEl, state2.ui.termSize);
+  setText(ptyStatusEl, state2.ui.ptyStatus);
+  syncPtyButton(pane2, state2);
 }
-function renderActivePaneControls(pane, state) {
-  syncPauseButton(state);
+function renderActivePaneControls(pane2, state2) {
+  syncPauseButton(state2);
   if (rendererSelect)
-    rendererSelect.value = state.renderer;
+    rendererSelect.value = state2.renderer;
   if (fontSizeInput)
-    fontSizeInput.value = `${state.fontSize}`;
+    fontSizeInput.value = `${state2.fontSize}`;
   syncFontFamilyControls();
-  state.mouseMode = pane.app.getMouseStatus().mode;
+  state2.mouseMode = pane2.app.getMouseStatus().mode;
   if (mouseModeEl) {
-    const hasOption = Array.from(mouseModeEl.options).some((option) => option.value === state.mouseMode);
-    mouseModeEl.value = hasOption ? state.mouseMode : "auto";
+    const hasOption = Array.from(mouseModeEl.options).some((option) => option.value === state2.mouseMode);
+    mouseModeEl.value = hasOption ? state2.mouseMode : "auto";
   }
+  if (shaderPresetEl)
+    shaderPresetEl.value = selectedShaderPreset;
   if (themeSelect)
-    themeSelect.value = state.theme.selectValue;
+    themeSelect.value = state2.theme.selectValue;
 }
 function updatePaneUi(id, update) {
-  const state = paneStates.get(id);
-  if (!state)
+  const state2 = paneStates.get(id);
+  if (!state2)
     return;
-  update(state);
+  update(state2);
   if (id !== activePaneId)
     return;
-  const pane = restty.getPaneById(id);
-  if (!pane)
+  const pane2 = restty.getPaneById(id);
+  if (!pane2)
     return;
-  renderActivePaneStatus(pane, state);
+  renderActivePaneStatus(pane2, state2);
 }
 function setPanePaused(id, value) {
-  const pane = restty.getPaneById(id);
-  const state = paneStates.get(id);
-  if (!pane || !state)
+  const pane2 = restty.getPaneById(id);
+  const state2 = paneStates.get(id);
+  if (!pane2 || !state2)
     return;
-  state.paused = Boolean(value);
-  pane.paused = state.paused;
-  pane.app.setPaused(state.paused);
+  state2.paused = Boolean(value);
+  pane2.paused = state2.paused;
+  pane2.app.setPaused(state2.paused);
   if (id === activePaneId) {
-    syncPauseButton(state);
+    syncPauseButton(state2);
   }
 }
-function connectPaneIfNeeded(pane) {
+function connectPaneIfNeeded(pane2) {
   if (getConnectionBackend() !== "webcontainer")
     return;
-  if (pane.app.isPtyConnected())
+  if (pane2.app.isPtyConnected())
     return;
-  pane.app.connectPty(getConnectUrl());
+  pane2.app.connectPty(getConnectUrl());
 }
-function applyThemeToPane(pane, state, theme, sourceLabel, selectValue = "") {
+function applySavedThemeForPane(pane2, state2) {
+  if (state2.theme.selectValue) {
+    applyBuiltinThemeToPane(pane2, state2, state2.theme.selectValue, state2.theme.sourceLabel);
+    return;
+  }
+  if (!state2.theme.theme)
+    return;
+  applyThemeToPane(pane2, state2, state2.theme.theme, state2.theme.sourceLabel || "pane theme", state2.theme.selectValue);
+}
+async function initPaneApp(pane2, state2) {
+  await pane2.app.init();
+  applySavedThemeForPane(pane2, state2);
+  connectPaneIfNeeded(pane2);
+  pane2.canvas.focus({ preventScroll: true });
+}
+function applyThemeToPane(pane2, state2, theme, sourceLabel, selectValue = "") {
   try {
-    pane.app.applyTheme(theme, sourceLabel);
-    state.theme = {
+    pane2.app.applyTheme(theme, sourceLabel);
+    state2.theme = {
       selectValue,
       sourceLabel,
       theme
     };
-    if (pane.id === activePaneId && themeSelect) {
+    if (pane2.id === activePaneId && themeSelect) {
       themeSelect.value = selectValue;
     }
     return true;
@@ -58443,20 +63223,20 @@ function applyThemeToPane(pane, state, theme, sourceLabel, selectValue = "") {
     return false;
   }
 }
-function applyBuiltinThemeToPane(pane, state, name, sourceLabel = name) {
+function applyBuiltinThemeToPane(pane2, state2, name, sourceLabel = name) {
   const theme = getBuiltinTheme(name);
   if (!theme)
     return false;
-  return applyThemeToPane(pane, state, theme, sourceLabel, name);
+  return applyThemeToPane(pane2, state2, theme, sourceLabel, name);
 }
-function resetThemeForPane(pane, state) {
-  pane.app.resetTheme();
-  state.theme = {
+function resetThemeForPane(pane2, state2) {
+  pane2.app.resetTheme();
+  state2.theme = {
     selectValue: "",
     sourceLabel: "",
     theme: null
   };
-  if (pane.id === activePaneId && themeSelect) {
+  if (pane2.id === activePaneId && themeSelect) {
     themeSelect.value = "";
   }
 }
@@ -58465,8 +63245,8 @@ function queueResizeAllPanes() {
     return;
   resizeRaf = requestAnimationFrame(() => {
     resizeRaf = 0;
-    for (const pane of restty.getPanes()) {
-      pane.app.updateSize(true);
+    for (const pane2 of restty.getPanes()) {
+      pane2.app.updateSize(true);
     }
   });
 }
@@ -58494,6 +63274,7 @@ restty = new Restty({
   root: paneRoot,
   createInitialPane: false,
   autoInit: false,
+  onDesktopNotification: handleDesktopNotification,
   paneStyles: {
     inactivePaneOpacity: 0.9
   },
@@ -58509,61 +63290,54 @@ restty = new Restty({
       ptyTransport: createAdaptivePtyTransport(),
       callbacks: {
         onBackend: (backend) => {
-          updatePaneUi(id, (state) => {
-            state.ui.backend = backend;
+          updatePaneUi(id, (state2) => {
+            state2.ui.backend = backend;
           });
         },
         onFps: (fps) => {
-          updatePaneUi(id, (state) => {
-            state.ui.fps = `${Math.round(fps)}`;
+          updatePaneUi(id, (state2) => {
+            state2.ui.fps = `${Math.round(fps)}`;
           });
         },
         onTermSize: (cols, rows) => {
-          updatePaneUi(id, (state) => {
-            state.ui.termSize = `${cols}x${rows}`;
+          updatePaneUi(id, (state2) => {
+            state2.ui.termSize = `${cols}x${rows}`;
           });
         },
         onPtyStatus: (status) => {
-          updatePaneUi(id, (state) => {
-            state.ui.ptyStatus = status;
+          updatePaneUi(id, (state2) => {
+            state2.ui.ptyStatus = status;
           });
         }
       }
     };
   },
-  onPaneCreated: (pane) => {
-    const state = paneStates.get(pane.id);
-    if (!state)
+  onPaneCreated: (pane2) => {
+    const state2 = paneStates.get(pane2.id);
+    if (!state2)
       return;
-    pane.paused = state.paused;
-    pane.setPaused = (value) => {
-      setPanePaused(pane.id, value);
+    pane2.paused = state2.paused;
+    pane2.setPaused = (value) => {
+      setPanePaused(pane2.id, value);
     };
-    state.demos = createDemoController(pane.app);
-    pane.app.setMouseMode(state.mouseMode);
-    if (state.theme.selectValue) {
-      applyBuiltinThemeToPane(pane, state, state.theme.selectValue, state.theme.sourceLabel);
-    } else if (state.theme.theme) {
-      applyThemeToPane(pane, state, state.theme.theme, state.theme.sourceLabel || "pane theme", state.theme.selectValue);
-    }
-    pane.app.init().then(() => {
-      connectPaneIfNeeded(pane);
-    });
+    state2.demos = createDemoController(pane2.app);
+    pane2.app.setMouseMode(state2.mouseMode);
+    initPaneApp(pane2, state2);
   },
-  onPaneClosed: (pane) => {
-    const state = paneStates.get(pane.id);
-    state?.demos?.stop();
-    paneStates.delete(pane.id);
+  onPaneClosed: (pane2) => {
+    const state2 = paneStates.get(pane2.id);
+    state2?.demos?.stop();
+    paneStates.delete(pane2.id);
   },
-  onActivePaneChange: (pane) => {
-    activePaneId = pane?.id ?? null;
-    if (!pane)
+  onActivePaneChange: (pane2) => {
+    activePaneId = pane2?.id ?? null;
+    if (!pane2)
       return;
-    const state = paneStates.get(pane.id);
-    if (!state)
+    const state2 = paneStates.get(pane2.id);
+    if (!state2)
       return;
-    renderActivePaneStatus(pane, state);
-    renderActivePaneControls(pane, state);
+    renderActivePaneStatus(pane2, state2);
+    renderActivePaneControls(pane2, state2);
   },
   onLayoutChanged: () => {
     queueResizeAllPanes();
@@ -58577,6 +63351,7 @@ restty = new Restty({
     canHandleEvent: () => !isSettingsDialogOpen()
   }
 });
+applyShaderPreset();
 settingsFab?.addEventListener("click", () => {
   openSettingsDialog();
 });
@@ -58603,91 +63378,89 @@ window.addEventListener("resize", () => {
 });
 connectionBackendEl?.addEventListener("change", () => {
   syncConnectionUi();
-  for (const pane of restty.getPanes()) {
-    if (pane.app.isPtyConnected()) {
-      pane.app.disconnectPty();
+  for (const pane2 of restty.getPanes()) {
+    if (pane2.app.isPtyConnected()) {
+      pane2.app.disconnectPty();
     }
   }
   if (getConnectionBackend() === "webcontainer") {
-    for (const pane of restty.getPanes()) {
-      connectPaneIfNeeded(pane);
+    for (const pane2 of restty.getPanes()) {
+      connectPaneIfNeeded(pane2);
     }
   }
-  const activePane = getActivePane();
+  const activePane2 = getActivePane();
   const activeState = getActivePaneState();
-  if (activePane && activeState) {
-    syncPtyButton(activePane, activeState);
+  if (activePane2 && activeState) {
+    syncPtyButton(activePane2, activeState);
   }
 });
 btnInit?.addEventListener("click", () => {
-  const pane = getActivePane();
-  if (!pane)
+  const pane2 = getActivePane();
+  if (!pane2)
     return;
-  const state = getActivePaneState();
-  if (!state)
+  const state2 = getActivePaneState();
+  if (!state2)
     return;
-  setPanePaused(pane.id, false);
-  state.demos?.stop();
-  pane.app.init().then(() => {
-    connectPaneIfNeeded(pane);
-  });
+  setPanePaused(pane2.id, false);
+  state2.demos?.stop();
+  initPaneApp(pane2, state2);
 });
 btnPause?.addEventListener("click", () => {
-  const pane = getActivePane();
-  if (!pane)
+  const pane2 = getActivePane();
+  if (!pane2)
     return;
-  const state = getActivePaneState();
-  if (!state)
+  const state2 = getActivePaneState();
+  if (!state2)
     return;
-  setPanePaused(pane.id, !state.paused);
+  setPanePaused(pane2.id, !state2.paused);
 });
 btnClear?.addEventListener("click", () => {
-  const pane = getActivePane();
-  if (!pane)
+  const pane2 = getActivePane();
+  if (!pane2)
     return;
-  const state = getActivePaneState();
-  if (!state)
+  const state2 = getActivePaneState();
+  if (!state2)
     return;
-  state.demos?.stop();
-  pane.app.clearScreen();
+  state2.demos?.stop();
+  pane2.app.clearScreen();
 });
 btnRunDemo?.addEventListener("click", () => {
-  const state = getActivePaneState();
-  if (!state)
+  const state2 = getActivePaneState();
+  if (!state2)
     return;
-  state.demos?.run(demoSelect?.value ?? "basic");
+  state2.demos?.run(demoSelect?.value ?? "basic");
 });
 ptyBtn?.addEventListener("click", () => {
-  const pane = getActivePane();
-  if (!pane)
+  const pane2 = getActivePane();
+  if (!pane2)
     return;
-  if (pane.app.isPtyConnected()) {
-    pane.app.disconnectPty();
+  if (pane2.app.isPtyConnected()) {
+    pane2.app.disconnectPty();
   } else {
-    pane.app.connectPty(getConnectUrl());
+    pane2.app.connectPty(getConnectUrl());
   }
 });
 rendererSelect?.addEventListener("change", () => {
-  const pane = getActivePane();
-  const state = getActivePaneState();
-  if (!pane || !state)
+  const pane2 = getActivePane();
+  const state2 = getActivePaneState();
+  if (!pane2 || !state2)
     return;
   const value = rendererSelect.value;
   if (!isRendererChoice(value))
     return;
-  state.renderer = value;
-  pane.app.setRenderer(value);
+  state2.renderer = value;
+  pane2.app.setRenderer(value);
 });
 if (themeFileInput) {
   themeFileInput.addEventListener("change", () => {
-    const pane = getActivePane();
-    const state = getActivePaneState();
+    const pane2 = getActivePane();
+    const state2 = getActivePaneState();
     const file = themeFileInput.files?.[0];
-    if (!pane || !state || !file)
+    if (!pane2 || !state2 || !file)
       return;
-    file.text().then((text) => {
-      const theme = parseGhosttyTheme(text);
-      if (applyThemeToPane(pane, state, theme, file.name || "theme file", "") && themeSelect) {
+    file.text().then((text2) => {
+      const theme = parseGhosttyTheme(text2);
+      if (applyThemeToPane(pane2, state2, theme, file.name || "theme file", "") && themeSelect) {
         themeSelect.value = "";
       }
     }).catch((err) => {
@@ -58699,43 +63472,55 @@ if (themeFileInput) {
 }
 if (themeSelect) {
   themeSelect.addEventListener("change", () => {
-    const pane = getActivePane();
-    const state = getActivePaneState();
-    if (!pane || !state)
+    const pane2 = getActivePane();
+    const state2 = getActivePaneState();
+    if (!pane2 || !state2)
       return;
     const name = themeSelect.value;
     if (!name) {
-      resetThemeForPane(pane, state);
+      resetThemeForPane(pane2, state2);
       return;
     }
-    applyBuiltinThemeToPane(pane, state, name);
+    applyBuiltinThemeToPane(pane2, state2, name);
   });
 }
 if (mouseModeEl) {
   mouseModeEl.addEventListener("change", () => {
-    const pane = getActivePane();
-    const state = getActivePaneState();
-    if (!pane || !state)
+    const pane2 = getActivePane();
+    const state2 = getActivePaneState();
+    if (!pane2 || !state2)
       return;
     const value = mouseModeEl.value;
-    pane.app.setMouseMode(value);
-    state.mouseMode = pane.app.getMouseStatus().mode;
-    if (pane.id === activePaneId) {
-      mouseModeEl.value = state.mouseMode;
+    pane2.app.setMouseMode(value);
+    state2.mouseMode = pane2.app.getMouseStatus().mode;
+    if (pane2.id === activePaneId) {
+      mouseModeEl.value = state2.mouseMode;
     }
+  });
+}
+if (shaderPresetEl) {
+  shaderPresetEl.addEventListener("change", () => {
+    const value = shaderPresetEl.value;
+    if (value !== "none" && value !== "scanline" && value !== "aurora" && value !== "crt-lite" && value !== "mono-green") {
+      selectedShaderPreset = "none";
+      shaderPresetEl.value = "none";
+    } else {
+      selectedShaderPreset = value;
+    }
+    applyShaderPreset();
   });
 }
 if (fontSizeInput) {
   const applyFontSize = () => {
-    const pane = getActivePane();
-    const state = getActivePaneState();
-    if (!pane || !state)
+    const pane2 = getActivePane();
+    const state2 = getActivePaneState();
+    if (!pane2 || !state2)
       return;
     const value = Number(fontSizeInput.value);
     if (!Number.isFinite(value))
       return;
-    state.fontSize = value;
-    pane.app.setFontSize(value);
+    state2.fontSize = value;
+    pane2.app.setFontSize(value);
   };
   fontSizeInput.addEventListener("change", applyFontSize);
   fontSizeInput.addEventListener("input", applyFontSize);
@@ -58783,5 +63568,5 @@ if (firstState) {
 }
 queueResizeAllPanes();
 
-//# debugId=AC2AE0613D7D28EE64756E2164756E21
+//# debugId=AB612F92C4DC696064756E2164756E21
 //# sourceMappingURL=app.js.map

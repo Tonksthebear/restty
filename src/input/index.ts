@@ -1,6 +1,6 @@
 import { encodeBeforeInput, encodeKeyEvent, mapKeyForPty, sequences } from "./keymap";
 import { MouseController } from "./mouse";
-import { OutputFilter } from "./output";
+import { OutputFilter } from "./output/index";
 import type { InputHandler, InputHandlerConfig, InputHandlerOptions, MouseMode } from "./types";
 
 /**

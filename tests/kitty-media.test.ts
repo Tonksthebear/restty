@@ -3,7 +3,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { rewriteKittyFileMediaToDirect } from "../src/pty/kitty-media";
-import { loadResttyWasm } from "../src/wasm/runtime";
+import { loadResttyWasm } from "../src/wasm/runtime/restty-wasm";
 
 function kittyApc(params: string, payload: string, useBel = false): string {
   return `\x1b_G${params};${payload}${useBel ? "\x07" : "\x1b\\"}`;

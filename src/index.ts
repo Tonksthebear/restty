@@ -53,4 +53,4 @@ export type {
   ResttyShaderStageMode,
   ResttyShaderStageBackend,
   ResttyShaderStageSource,
-} from "./surface/types";
+} from "./runtime/types";

@@ -1,4 +1,4 @@
-import type { ResttyApp } from "./types";
+import type { ResttyApp } from "../runtime/types";
 
 /**
  * Direction for splitting a pane.

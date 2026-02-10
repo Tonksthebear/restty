@@ -1,4 +1,7 @@
 import { createRestty, type Restty, type ResttyOptions } from "./surface/restty";
+import { createCompatAppOptions } from "./xterm/app-options";
+import { normalizeDimension } from "./xterm/dimensions";
+import { addListener, emitWithGuard } from "./xterm/listeners";
 
 export type IDisposable = {
   dispose: () => void;
@@ -61,8 +64,8 @@ export class Terminal {
     delete this.optionValues.cols;
     delete this.optionValues.rows;
 
-    this.cols = this.normalizeDimension(cols, 80);
-    this.rows = this.normalizeDimension(rows, 24);
+    this.cols = normalizeDimension(cols, 80);
+    this.rows = normalizeDimension(rows, 24);
     if (Number.isFinite(cols) && Number.isFinite(rows)) {
       this.pendingSize = { cols: this.cols, rows: this.rows };
     }
@@ -101,7 +104,9 @@ export class Terminal {
     this.elementRef = parent;
     this.resttyInstance = createRestty({
       ...this.resttyOptionsBase,
-      appOptions: this.createCompatAppOptions(),
+      appOptions: createCompatAppOptions(this.userAppOptions, (data) => {
+        emitWithGuard(this.dataListeners, data, "onData");
+      }),
       root: parent,
     });
 
@@ -138,14 +143,14 @@ export class Terminal {
   resize(cols: number, rows: number): void {
     this.ensureUsable();
     const next = {
-      cols: this.normalizeDimension(cols, this.cols),
-      rows: this.normalizeDimension(rows, this.rows),
+      cols: normalizeDimension(cols, this.cols),
+      rows: normalizeDimension(rows, this.rows),
     };
     this.cols = next.cols;
     this.rows = next.rows;
     this.pendingSize = next;
     this.resttyInstance?.resize(next.cols, next.rows);
-    this.emitResize(next);
+    emitWithGuard(this.resizeListeners, next, "onResize");
   }
 
   focus(): void {
@@ -178,12 +183,12 @@ export class Terminal {
 
   onData(listener: (data: string) => void): IDisposable {
     this.ensureUsable();
-    return this.addListener(this.dataListeners, listener);
+    return addListener(this.dataListeners, listener);
   }
 
   onResize(listener: (size: TerminalResizeEvent) => void): IDisposable {
     this.ensureUsable();
-    return this.addListener(this.resizeListeners, listener);
+    return addListener(this.resizeListeners, listener);
   }
 
   setOption(key: string, value: unknown): void {
@@ -244,8 +249,8 @@ export class Terminal {
     const hasCols = Object.prototype.hasOwnProperty.call(next, "cols");
     const hasRows = Object.prototype.hasOwnProperty.call(next, "rows");
     if (hasCols || hasRows) {
-      const cols = hasCols ? this.normalizeDimension(next.cols as number, this.cols) : this.cols;
-      const rows = hasRows ? this.normalizeDimension(next.rows as number, this.rows) : this.rows;
+      const cols = hasCols ? normalizeDimension(next.cols as number, this.cols) : this.cols;
+      const rows = hasRows ? normalizeDimension(next.rows as number, this.rows) : this.rows;
       this.resize(cols, rows);
     }
 
@@ -255,66 +260,5 @@ export class Terminal {
       if (key === "cols" || key === "rows") continue;
       this.optionValues[key] = next[key];
     }
-  }
-
-  private createCompatAppOptions(): ResttyOptions["appOptions"] {
-    return (context) => {
-      const resolved =
-        typeof this.userAppOptions === "function"
-          ? this.userAppOptions(context)
-          : (this.userAppOptions ?? {});
-      const userBeforeInput = resolved.beforeInput;
-      return {
-        ...resolved,
-        beforeInput: ({ text, source }) => {
-          const maybeNext = userBeforeInput?.({ text, source });
-          if (maybeNext === null) return null;
-          const nextText = maybeNext === undefined ? text : maybeNext;
-          if (source !== "pty" && nextText) {
-            this.emitData(nextText);
-          }
-          return nextText;
-        },
-      };
-    };
-  }
-
-  private emitData(data: string): void {
-    const listeners = Array.from(this.dataListeners);
-    for (let i = 0; i < listeners.length; i += 1) {
-      try {
-        listeners[i](data);
-      } catch (error) {
-        console.error("[restty/xterm] onData listener error:", error);
-      }
-    }
-  }
-
-  private emitResize(size: TerminalResizeEvent): void {
-    const listeners = Array.from(this.resizeListeners);
-    for (let i = 0; i < listeners.length; i += 1) {
-      try {
-        listeners[i](size);
-      } catch (error) {
-        console.error("[restty/xterm] onResize listener error:", error);
-      }
-    }
-  }
-
-  private addListener<T>(
-    bucket: Set<(payload: T) => void>,
-    listener: (payload: T) => void,
-  ): IDisposable {
-    bucket.add(listener);
-    return {
-      dispose: () => {
-        bucket.delete(listener);
-      },
-    };
-  }
-
-  private normalizeDimension(value: number | undefined, fallback: number): number {
-    if (!Number.isFinite(value) || (value as number) <= 0) return fallback;
-    return Math.max(1, Math.trunc(value as number));
   }
 }

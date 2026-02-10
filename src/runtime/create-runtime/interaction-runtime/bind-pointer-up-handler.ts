@@ -1,0 +1,149 @@
+import type { InputHandler } from "../../../input";
+import type {
+  RuntimeCell,
+  RuntimeDesktopSelectionState,
+  RuntimeLinkState,
+  RuntimeScrollbarDragState,
+  RuntimeSelectionState,
+  RuntimeTouchSelectionState,
+} from "./types";
+
+type CreatePointerUpHandlerOptions = {
+  inputHandler: InputHandler;
+  sendKeyInput: (text: string) => void;
+  openLink: (url: string) => void;
+  scrollbarDragState: RuntimeScrollbarDragState;
+  isTouchPointer: (event: PointerEvent) => boolean;
+  touchSelectionState: RuntimeTouchSelectionState;
+  selectionState: RuntimeSelectionState;
+  normalizeSelectionCell: (cell: RuntimeCell) => RuntimeCell;
+  positionToCell: (event: { clientX: number; clientY: number }) => RuntimeCell;
+  clearPendingTouchSelection: () => void;
+  clearPendingDesktopSelection: () => void;
+  desktopSelectionState: RuntimeDesktopSelectionState;
+  clearSelection: () => void;
+  updateCanvasCursor: () => void;
+  markNeedsRender: () => void;
+  shouldRoutePointerToAppMouse: (shiftKey: boolean) => boolean;
+  shouldPreferLocalPrimarySelection: (event: PointerEvent) => boolean;
+  linkState: RuntimeLinkState;
+  updateLinkHover: (cell: RuntimeCell | null) => void;
+};
+
+export function createPointerUpHandler(options: CreatePointerUpHandlerOptions) {
+  const {
+    inputHandler,
+    sendKeyInput,
+    openLink,
+    scrollbarDragState,
+    isTouchPointer,
+    touchSelectionState,
+    selectionState,
+    normalizeSelectionCell,
+    positionToCell,
+    clearPendingTouchSelection,
+    clearPendingDesktopSelection,
+    desktopSelectionState,
+    clearSelection,
+    updateCanvasCursor,
+    markNeedsRender,
+    shouldRoutePointerToAppMouse,
+    shouldPreferLocalPrimarySelection,
+    linkState,
+    updateLinkHover,
+  } = options;
+
+  return (event: PointerEvent) => {
+    if (scrollbarDragState.pointerId === event.pointerId) {
+      scrollbarDragState.pointerId = null;
+      event.preventDefault();
+      return;
+    }
+    if (isTouchPointer(event)) {
+      if (touchSelectionState.pendingPointerId === event.pointerId) {
+        clearPendingTouchSelection();
+        touchSelectionState.activePointerId = null;
+        touchSelectionState.panPointerId = null;
+        return;
+      }
+      if (selectionState.dragging && touchSelectionState.activePointerId === event.pointerId) {
+        const cell = normalizeSelectionCell(positionToCell(event));
+        event.preventDefault();
+        selectionState.dragging = false;
+        selectionState.focus = cell;
+        touchSelectionState.activePointerId = null;
+        if (
+          selectionState.anchor &&
+          selectionState.focus &&
+          selectionState.anchor.row === selectionState.focus.row &&
+          selectionState.anchor.col === selectionState.focus.col
+        ) {
+          clearSelection();
+        } else {
+          updateCanvasCursor();
+          markNeedsRender();
+        }
+        return;
+      }
+      if (touchSelectionState.panPointerId === event.pointerId) {
+        touchSelectionState.panPointerId = null;
+      }
+      return;
+    }
+
+    const cell = normalizeSelectionCell(positionToCell(event));
+    const clearSelectionFromClick =
+      desktopSelectionState.pendingPointerId === event.pointerId &&
+      desktopSelectionState.startedWithActiveSelection &&
+      !selectionState.dragging;
+    if (desktopSelectionState.pendingPointerId === event.pointerId) {
+      clearPendingDesktopSelection();
+    }
+    if (clearSelectionFromClick) clearSelection();
+    if (selectionState.dragging) {
+      event.preventDefault();
+      selectionState.dragging = false;
+      selectionState.focus = cell;
+      if (
+        selectionState.anchor &&
+        selectionState.focus &&
+        selectionState.anchor.row === selectionState.focus.row &&
+        selectionState.anchor.col === selectionState.focus.col
+      ) {
+        clearSelection();
+      } else {
+        updateCanvasCursor();
+        markNeedsRender();
+      }
+    } else {
+      if (
+        shouldRoutePointerToAppMouse(event.shiftKey) &&
+        !shouldPreferLocalPrimarySelection(event) &&
+        inputHandler.sendMouseEvent("up", event)
+      ) {
+        event.preventDefault();
+        return;
+      }
+      updateLinkHover(cell);
+    }
+    if (
+      !selectionState.active &&
+      event.button === 0 &&
+      !event.shiftKey &&
+      !event.altKey &&
+      !event.ctrlKey &&
+      !event.metaKey &&
+      inputHandler.isPromptClickEventsEnabled()
+    ) {
+      const seq = inputHandler.encodePromptClickEvent(cell);
+      if (seq) {
+        event.preventDefault();
+        sendKeyInput(seq);
+        return;
+      }
+    }
+    if (!selectionState.active && event.button === 0 && linkState.hoverUri) {
+      openLink(linkState.hoverUri);
+    }
+  };
+}

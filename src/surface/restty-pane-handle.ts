@@ -1,7 +1,7 @@
 import type { InputHandler, MouseMode } from "../input";
 import type { GhosttyTheme } from "../theme";
 import type { ResttyManagedAppPane } from "./pane-app-manager";
-import type { ResttyShaderStage } from "./types";
+import type { ResttyShaderStage } from "../runtime/types";
 
 /**
  * Public API surface exposed by each pane handle.

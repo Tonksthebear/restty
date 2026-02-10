@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { loadResttyWasm } from "../src/wasm/runtime";
+import { loadResttyWasm } from "../src/wasm/runtime/restty-wasm";
 
 const PNG_1X1_BASE64 =
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO6pNwAAAABJRU5ErkJggg==";
