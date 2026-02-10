@@ -1,2 +1,4 @@
 export * from "./types";
-export * from "./selection";
+export * from "./core";
+export * from "./text";
+export * from "./clipboard";

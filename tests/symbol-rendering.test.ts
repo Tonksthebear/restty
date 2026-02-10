@@ -13,7 +13,7 @@ test("symbol-like classification follows Ghostty's precomputed table", () => {
 });
 
 test("both render loops apply default centered symbol constraint", () => {
-  const source = readFileSync(join(process.cwd(), "src/app/index.ts"), "utf8");
+  const source = readFileSync(join(process.cwd(), "src/runtime/create-runtime.ts"), "utf8");
   const defaultConstraintMatches =
     source.match(
       /const defaultConstraint = isAppleSymbolsFont\(entry\)\s+\?\s+DEFAULT_APPLE_SYMBOLS_CONSTRAINT\s+:\s+DEFAULT_SYMBOL_CONSTRAINT;/g,
@@ -28,25 +28,31 @@ test("both render loops apply default centered symbol constraint", () => {
 });
 
 test("nerd constraints are keyed by codepoint, not font label", () => {
-  const source = readFileSync(join(process.cwd(), "src/app/index.ts"), "utf8");
+  const source = readFileSync(join(process.cwd(), "src/runtime/create-runtime.ts"), "utf8");
   const byCodepoint =
-    source.match(/const nerdConstraint = symbolLike \? resolveSymbolConstraint\(cp\) : null;/g) ?? [];
-  const perItem = source.match(/const nerdConstraint = resolveSymbolConstraint\(item\.cp\);/g) ?? [];
+    source.match(/const nerdConstraint = symbolLike \? resolveSymbolConstraint\(cp\) : null;/g) ??
+    [];
+  const perItem =
+    source.match(/const nerdConstraint = resolveSymbolConstraint\(item\.cp\);/g) ?? [];
   expect(byCodepoint.length).toBe(2);
   expect(perItem.length).toBe(2);
 });
 
 test("render path uses generic symbol handling without per-codepoint override table", () => {
-  const source = readFileSync(join(process.cwd(), "src/app/index.ts"), "utf8");
-  expect(source.includes("const PARITY_SYMBOL_OVERRIDES")).toBe(false);
-  expect(source.includes("[0x2300, 0x23ff]")).toBe(true);
-  expect(source.includes("[0x25a0, 0x25ff]")).toBe(true);
-  expect(source.includes("[0x2b00, 0x2bff]")).toBe(true);
-  expect(source.includes("align_vertical: \"center\"")).toBe(true);
-  expect(source.includes("align_horizontal: \"center\"")).toBe(true);
-  expect(source.includes("const DEFAULT_APPLE_SYMBOLS_CONSTRAINT")).toBe(true);
-  expect(source.includes("const DEFAULT_EMOJI_CONSTRAINT")).toBe(true);
-  expect(source.includes("size: \"cover\"")).toBe(true);
-  const renderSymbolChecks = source.match(/const symbolLike = isRenderSymbolLike\(cp\);/g) ?? [];
+  const appSource = readFileSync(join(process.cwd(), "src/runtime/create-runtime.ts"), "utf8");
+  const symbolSource = readFileSync(
+    join(process.cwd(), "src/runtime/create-app-symbols.ts"),
+    "utf8",
+  );
+  expect(appSource.includes("const PARITY_SYMBOL_OVERRIDES")).toBe(false);
+  expect(symbolSource.includes("[0x2300, 0x23ff]")).toBe(true);
+  expect(symbolSource.includes("[0x25a0, 0x25ff]")).toBe(true);
+  expect(symbolSource.includes("[0x2b00, 0x2bff]")).toBe(true);
+  expect(symbolSource.includes('align_vertical: "center"')).toBe(true);
+  expect(symbolSource.includes('align_horizontal: "center"')).toBe(true);
+  expect(symbolSource.includes("const DEFAULT_APPLE_SYMBOLS_CONSTRAINT")).toBe(true);
+  expect(symbolSource.includes("const DEFAULT_EMOJI_CONSTRAINT")).toBe(true);
+  expect(symbolSource.includes('size: "cover"')).toBe(true);
+  const renderSymbolChecks = appSource.match(/const symbolLike = isRenderSymbolLike\(cp\);/g) ?? [];
   expect(renderSymbolChecks.length).toBe(2);
 });

@@ -196,15 +196,15 @@ export {
 export type { GhosttyTheme, ThemeColor, ResttyBuiltinThemeName } from "./theme";
 
 // App / high-level integration
-export { Restty } from "./app/restty";
-export type { ResttyOptions } from "./app/restty";
+export { Restty } from "./surface/restty";
+export type { ResttyOptions } from "./surface/restty";
 export type {
   ResttyManagedAppPane,
   ResttyPaneDomDefaults,
   ResttyManagedPaneStyleOptions,
   ResttyManagedPaneStylesOptions,
   ResttyPaneAppOptionsInput,
-} from "./app/pane-app-manager";
+} from "./surface/pane-app-manager";
 export type {
   ResttyFontSource,
   ResttyUrlFontSource,
@@ -214,4 +214,4 @@ export type {
   ResttyShaderStageMode,
   ResttyShaderStageBackend,
   ResttyShaderStageSource,
-} from "./app/types";
+} from "./surface/types";

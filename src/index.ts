@@ -1,6 +1,6 @@
 // restty public API - high-level integration first.
 
-export { RESTTY_PLUGIN_API_VERSION, Restty, ResttyPaneHandle, createRestty } from "./app/restty";
+export { RESTTY_PLUGIN_API_VERSION, Restty, ResttyPaneHandle, createRestty } from "./surface/restty";
 export type {
   ResttyOptions,
   ResttyPaneApi,
@@ -27,7 +27,7 @@ export type {
   ResttyOutputInterceptor,
   ResttyOutputInterceptorPayload,
   ResttyRenderStageHandle,
-} from "./app/restty";
+} from "./surface/restty";
 
 export {
   getBuiltinTheme,
@@ -48,4 +48,4 @@ export type {
   ResttyShaderStageMode,
   ResttyShaderStageBackend,
   ResttyShaderStageSource,
-} from "./app/types";
+} from "./surface/types";

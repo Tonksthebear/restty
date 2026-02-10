@@ -1,4 +1,5 @@
 import { WASM_BASE64 } from "./embedded";
+import { decodeBase64Bytes } from "../utils/base64";
 
 /**
  * WASM ABI variant identifier.
@@ -261,22 +262,6 @@ function getCachedView<T extends ArrayBufferView>(
   return view;
 }
 
-function decodeBase64(base64: string): Uint8Array {
-  const cleaned = base64.replace(/\s+/g, "");
-  if (typeof atob === "function") {
-    const binary = atob(cleaned);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i += 1) {
-      bytes[i] = binary.charCodeAt(i) & 0xff;
-    }
-    return bytes;
-  }
-  if (typeof Buffer !== "undefined") {
-    return new Uint8Array(Buffer.from(cleaned, "base64"));
-  }
-  throw new Error("No base64 decoder available in this environment.");
-}
-
 function resolveWasmAbi(exports: ResttyWasmExports): WasmAbi | null {
   if (exports.restty_render_info) {
     return { kind: "info" };
@@ -439,7 +424,7 @@ export class ResttyWasm {
 
   /** Load and instantiate the embedded WASM module. */
   static async load(options: ResttyWasmOptions = {}): Promise<ResttyWasm> {
-    const bytes = decodeBase64(WASM_BASE64);
+    const bytes = decodeBase64Bytes(WASM_BASE64);
     let memory: WebAssembly.Memory | null = null;
     const log = options.log;
 

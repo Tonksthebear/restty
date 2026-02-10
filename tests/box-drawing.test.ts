@@ -177,7 +177,7 @@ test("box drawing single-stroke lines avoid per-cell overlap hot spots", () => {
 });
 
 test("both WebGPU and WebGL loops use the same procedural box drawing path", () => {
-  const appPath = join(process.cwd(), "src/app/index.ts");
+  const appPath = join(process.cwd(), "src/runtime/create-runtime.ts");
   const source = readFileSync(appPath, "utf8");
   const matches =
     source.match(
@@ -218,15 +218,9 @@ test("double-dashed box lines match Ghostty dash spacing for U+254C/U+254E", () 
 
   const hRects: number[] = [];
   drawBoxDrawing(0x254c, 0, 0, 20, 34, color, hRects, 2);
-  expect(hRects).toEqual([
-    1, 16, 8, 2, 1, 1, 1, 1,
-    11, 16, 8, 2, 1, 1, 1, 1,
-  ]);
+  expect(hRects).toEqual([1, 16, 8, 2, 1, 1, 1, 1, 11, 16, 8, 2, 1, 1, 1, 1]);
 
   const vRects: number[] = [];
   drawBoxDrawing(0x254e, 0, 0, 20, 34, color, vRects, 2);
-  expect(vRects).toEqual([
-    9, 0, 2, 13, 1, 1, 1, 1,
-    9, 17, 2, 13, 1, 1, 1, 1,
-  ]);
+  expect(vRects).toEqual([9, 0, 2, 13, 1, 1, 1, 1, 9, 17, 2, 13, 1, 1, 1, 1]);
 });

@@ -1,3 +1,5 @@
+import { decodeBase64Text, encodeBase64Bytes } from "../utils/base64";
+
 type KittyTerminator = {
   index: number;
   len: 1 | 2;
@@ -17,34 +19,6 @@ function findKittyTerminator(data: string, from: number): KittyTerminator | null
   if (bel === -1 && st === -1) return null;
   if (bel !== -1 && (st === -1 || bel < st)) return { index: bel, len: 1 };
   return { index: st, len: 2 };
-}
-
-function decodeBase64Bytes(text: string): Uint8Array {
-  const cleaned = text.replace(/\s+/g, "");
-  if (!cleaned) return new Uint8Array(0);
-  const binary = atob(cleaned);
-  const out = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i += 1) {
-    out[i] = binary.charCodeAt(i) & 0xff;
-  }
-  return out;
-}
-
-function encodeBase64Bytes(bytes: Uint8Array): string {
-  let binary = "";
-  for (let i = 0; i < bytes.length; i += 1) {
-    binary += String.fromCharCode(bytes[i] ?? 0);
-  }
-  return btoa(binary);
-}
-
-function decodeBase64Text(text: string): string {
-  try {
-    const bytes = decodeBase64Bytes(text);
-    return new TextDecoder().decode(bytes);
-  } catch {
-    return "";
-  }
 }
 
 function rewriteOneKittyCommand(body: string, readFile: KittyMediaReadFile): string {
@@ -91,7 +65,11 @@ function rewriteOneKittyCommand(body: string, readFile: KittyMediaReadFile): str
     // Already normalized by the map above.
   }
 
-  return `${nextParts.join(",")};${encodeBase64Bytes(bytes)}`;
+  try {
+    return `${nextParts.join(",")};${encodeBase64Bytes(bytes)}`;
+  } catch {
+    return body;
+  }
 }
 
 /** Rewrite Kitty file-based media sequences (f=...) to direct base64 payloads (t=d). */

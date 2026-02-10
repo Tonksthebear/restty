@@ -1,4 +1,4 @@
-import { createRestty, type Restty, type ResttyOptions } from "./app/restty";
+import { createRestty, type Restty, type ResttyOptions } from "./surface/restty";
 
 export type IDisposable = {
   dispose: () => void;

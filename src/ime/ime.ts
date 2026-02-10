@@ -1,5 +1,9 @@
 import type { ImeState, CursorPosition } from "./types";
 
+/** Default CSS font stack used for IME preedit UI when terminal fonts are not directly available to CSS. */
+export const DEFAULT_IME_FONT_FAMILY =
+  '"JetBrains Mono","Fira Code","SFMono-Regular","Menlo","Consolas","Liberation Mono",monospace';
+
 /** Create a fresh IME state with no active composition. */
 export function createImeState(): ImeState {
   return {
@@ -84,6 +88,26 @@ export function updateImePosition(
   const x = canvasRect.left + cursor.col * (cellW / scale);
   const y = canvasRect.top + cursor.row * (cellH / scale);
   imeInput.style.transform = `translate(${Math.round(x)}px, ${Math.round(y)}px)`;
+}
+
+/**
+ * Sync hidden IME input typography with terminal sizing so OS preedit/candidate UI
+ * uses the same visual scale as the terminal text.
+ */
+export function syncImeInputTypography(
+  imeInput: HTMLInputElement | HTMLTextAreaElement | null,
+  fontSizePx: number,
+  fontFamily = DEFAULT_IME_FONT_FAMILY,
+): void {
+  if (!imeInput) return;
+  const size = Number.isFinite(fontSizePx)
+    ? Math.max(10, Math.min(64, Math.round(fontSizePx)))
+    : 18;
+  imeInput.style.fontSize = `${size}px`;
+  imeInput.style.lineHeight = `${size}px`;
+  imeInput.style.fontFamily = fontFamily;
+  imeInput.style.fontWeight = "400";
+  imeInput.style.letterSpacing = "0";
 }
 
 /** Default RGBA background color for the preedit overlay. */
