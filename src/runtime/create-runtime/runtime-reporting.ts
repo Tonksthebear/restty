@@ -25,6 +25,7 @@ export function createRuntimeReporting(options: CreateRuntimeReportingOptions) {
   let lastReportedTermRows = -1;
   let lastReportedCursorCol = -1;
   let lastReportedCursorRow = -1;
+  let lastResolvedCursor: { col: number; row: number; wideTail: boolean } | null = null;
   let lastReportedDebugText = "";
 
   function selectionForRow(row: number, cols: number) {
@@ -68,7 +69,10 @@ export function createRuntimeReporting(options: CreateRuntimeReportingOptions) {
   }
 
   function resolveCursorPosition(cursor: CursorInfo | null) {
-    if (!cursor) return null;
+    if (!cursor) return lastResolvedCursor;
+    if (cursor.visible === 0) {
+      return lastResolvedCursor;
+    }
     let col = Number(cursor.col);
     let row = Number(cursor.row);
     if (!Number.isFinite(col)) col = 0;
@@ -85,15 +89,15 @@ export function createRuntimeReporting(options: CreateRuntimeReportingOptions) {
     const wasmHandle = options.getWasmHandle();
     if (
       !inBounds(col, row) &&
-      wasmExports?.restty_debug_cursor_x &&
-      wasmExports?.restty_debug_cursor_y &&
+      wasmExports?.restty_active_cursor_x &&
+      wasmExports?.restty_active_cursor_y &&
       wasmHandle
     ) {
-      const debugCol = wasmExports.restty_debug_cursor_x(wasmHandle);
-      const debugRow = wasmExports.restty_debug_cursor_y(wasmHandle);
-      if (inBounds(debugCol, debugRow)) {
-        col = debugCol;
-        row = debugRow;
+      const activeCol = wasmExports.restty_active_cursor_x(wasmHandle);
+      const activeRow = wasmExports.restty_active_cursor_y(wasmHandle);
+      if (inBounds(activeCol, activeRow)) {
+        col = activeCol;
+        row = activeRow;
       }
     }
     if (cols > 0 && rows > 0) {
@@ -103,7 +107,8 @@ export function createRuntimeReporting(options: CreateRuntimeReportingOptions) {
       col = Math.max(0, Math.floor(col));
       row = Math.max(0, Math.floor(row));
     }
-    return { col, row, wideTail: cursor.wideTail === 1 };
+    lastResolvedCursor = { col, row, wideTail: cursor.wideTail === 1 };
+    return lastResolvedCursor;
   }
 
   function resolveCursorStyle(

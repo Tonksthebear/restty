@@ -3,7 +3,7 @@ import type { Font } from "../../fonts";
 import type { GlyphConstraintMeta, AtlasConstraintContext } from "../atlas-builder";
 
 const NERD_CELL_FIT_COVER_SCALE = 1.0;
-const NERD_ICON_FIT_COVER_SCALE = 2 / 3;
+const NERD_ICON_FIT_COVER_SCALE = 1.0;
 
 export function resolveFontScaleForAtlas(
   font: Font | null | undefined,

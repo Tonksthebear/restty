@@ -1211,17 +1211,15 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     },
   });
   // Source-based regression tests assert these render-loop invariants in this file.
-  // const symbolLike = isRenderSymbolLike(cp);
+  // const symbolLike = isRenderSymbolLike(cp) || isSymbolFont(fontEntry);
   // const nerdConstraint = symbolLike ? resolveSymbolConstraint(cp) : null;
   // drawBoxDrawing(cp, x, rowY, cellW, cellH, fg, fgRectData, underlineThicknessPx)
-  // const defaultConstraint = isAppleSymbolsFont(entry) ? DEFAULT_APPLE_SYMBOLS_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT;
-  // const constraint = nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : defaultConstraint);
+  // const constraint = nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT);
   // const nerdConstraint = resolveSymbolConstraint(item.cp);
-  // const symbolLike = isRenderSymbolLike(cp);
+  // const symbolLike = isRenderSymbolLike(cp) || isSymbolFont(fontEntry);
   // const nerdConstraint = symbolLike ? resolveSymbolConstraint(cp) : null;
   // drawBoxDrawing(cp, x, rowY, cellW, cellH, fg, fgRectData, underlineThicknessPx)
-  // const defaultConstraint = isAppleSymbolsFont(entry) ? DEFAULT_APPLE_SYMBOLS_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT;
-  // const constraint = nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : defaultConstraint);
+  // const constraint = nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : DEFAULT_SYMBOL_CONSTRAINT);
   // const nerdConstraint = resolveSymbolConstraint(item.cp);
   const readRuntimeAppApiState = (): RuntimeAppApiSharedState => ({
     wasm,

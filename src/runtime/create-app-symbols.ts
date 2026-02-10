@@ -3,8 +3,6 @@ import { isSymbolCp } from "../renderer";
 import type { ResttyTouchSelectionMode } from "./types";
 
 const RENDERER_SYMBOL_FALLBACK_RANGES: ReadonlyArray<readonly [number, number]> = [
-  // Miscellaneous Technical: includes symbols like ⏎/⏵ used by prompts.
-  [0x2300, 0x23ff],
   // Geometric Shapes: includes boxed/dot indicators often used in prompts.
   [0x25a0, 0x25ff],
   // Misc Symbols and Arrows: additional modern prompt icon block.
@@ -12,21 +10,16 @@ const RENDERER_SYMBOL_FALLBACK_RANGES: ReadonlyArray<readonly [number, number]> 
 ];
 
 export const DEFAULT_SYMBOL_CONSTRAINT: NerdConstraint = {
-  // For non-Nerd symbol-like glyphs in fallback fonts, center inside the cell
-  // to reduce baseline drift caused by mismatched font metrics.
+  // Match Ghostty fallback behavior for non-Nerd symbol-like glyphs:
+  // scale down to fit in the available cell width/height.
   size: "fit",
-  align_horizontal: "center",
-  align_vertical: "center",
-  max_constraint_width: 1,
 };
 
 export const DEFAULT_APPLE_SYMBOLS_CONSTRAINT: NerdConstraint = {
-  // Apple Symbols tends to render UI arrows/icons smaller than terminal-native
-  // output. Use cover for closer parity.
-  size: "cover",
-  align_horizontal: "center",
+  // Apple Symbols UI arrows/icons tend to render visually small at native metrics.
+  // Use fit_cover1 to keep at least one-cell occupancy and center vertically.
+  size: "fit_cover1",
   align_vertical: "center",
-  max_constraint_width: 1,
 };
 
 export const DEFAULT_EMOJI_CONSTRAINT: NerdConstraint = {

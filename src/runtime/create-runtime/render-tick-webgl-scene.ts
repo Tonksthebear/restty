@@ -266,34 +266,33 @@ export function populateWebGLSceneData(ctx: WebGLTickContext) {
 
       const fontScale = scaleByFont[fontIndex] ?? primaryScale;
       let cellSpan = baseSpan;
-      const symbolLike = isRenderSymbolLike(cp);
-      const nerdConstraint = symbolLike ? resolveSymbolConstraint(cp) : null;
+      const nerdConstraint = resolveSymbolConstraint(cp);
+      const symbolLike = isRenderSymbolLike(cp) || !!nerdConstraint;
       const symbolConstraint = !!nerdConstraint;
       let constraintWidth = baseSpan;
       let forceFit = false;
       let glyphWidthPx = 0;
       if (symbolLike) {
         if (baseSpan === 1) {
-          // Match Ghostty behavior for icon-like Nerd glyphs: allow 2-cell span only
-          // when followed by whitespace and not in a symbol run.
-          if (nerdConstraint?.height === "icon") {
-            constraintWidth = 1;
-            if (col < cols - 1) {
-              if (col > 0) {
-                const prevCp = codepoints[idx - 1];
-                if (isRenderSymbolLike(prevCp) && !isGraphicsElement(prevCp)) {
-                  constraintWidth = 1;
-                } else {
-                  const nextCp = codepoints[idx + 1];
-                  if (!nextCp || isSpaceCp(nextCp)) constraintWidth = 2;
-                }
-              } else {
+          // Match Ghostty's symbol constraint width rule:
+          // allow 2-cell span only when followed by whitespace and not in a symbol run.
+          constraintWidth = 1;
+          if (col < cols - 1) {
+            if (col > 0) {
+              const prevCp = codepoints[idx - 1];
+              if (
+                !(
+                  (isRenderSymbolLike(prevCp) || !!resolveSymbolConstraint(prevCp)) &&
+                  !isGraphicsElement(prevCp)
+                )
+              ) {
                 const nextCp = codepoints[idx + 1];
                 if (!nextCp || isSpaceCp(nextCp)) constraintWidth = 2;
               }
+            } else {
+              const nextCp = codepoints[idx + 1];
+              if (!nextCp || isSpaceCp(nextCp)) constraintWidth = 2;
             }
-          } else {
-            constraintWidth = 1;
           }
           cellSpan = constraintWidth;
         }

@@ -141,13 +141,37 @@ export function tickWebGPU(deps: RuntimeTickDeps, state: WebGPUState) {
     }
     cursorCell = { row, col, wide: wideCell };
   }
-  const cursorImeAnchor = resolveImeAnchor(cursorPos, cols, rows);
+  let imeCursorPos = cursorPos;
+  if (
+    cursor?.visible === 0 &&
+    wasmExports?.restty_active_cursor_x &&
+    wasmExports?.restty_active_cursor_y &&
+    wasmHandle
+  ) {
+    const activeCol = wasmExports.restty_active_cursor_x(wasmHandle);
+    const activeRow = wasmExports.restty_active_cursor_y(wasmHandle);
+    const inViewport =
+      Number.isFinite(activeCol) &&
+      Number.isFinite(activeRow) &&
+      activeCol >= 0 &&
+      activeRow >= 0 &&
+      activeCol < cols &&
+      activeRow < rows;
+    if (inViewport) {
+      imeCursorPos = {
+        col: activeCol,
+        row: activeRow,
+        wideTail: cursor.wideTail === 1,
+      };
+    }
+  }
+  const cursorImeAnchor = resolveImeAnchor(imeCursorPos, cols, rows);
   if (dbgEl && wasmExports && wasmHandle) {
-    const cx = wasmExports.restty_debug_cursor_x
-      ? wasmExports.restty_debug_cursor_x(wasmHandle)
+    const cx = wasmExports.restty_active_cursor_x
+      ? wasmExports.restty_active_cursor_x(wasmHandle)
       : 0;
-    const cy = wasmExports.restty_debug_cursor_y
-      ? wasmExports.restty_debug_cursor_y(wasmHandle)
+    const cy = wasmExports.restty_active_cursor_y
+      ? wasmExports.restty_active_cursor_y(wasmHandle)
       : 0;
     const sl = wasmExports.restty_debug_scroll_left
       ? wasmExports.restty_debug_scroll_left(wasmHandle)

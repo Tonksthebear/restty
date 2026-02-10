@@ -288,9 +288,12 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     }
     if (source === "key") {
       let before = "";
-      if (shared.wasmExports?.restty_debug_cursor_x && shared.wasmExports?.restty_debug_cursor_y) {
-        const bx = shared.wasmExports.restty_debug_cursor_x(shared.wasmHandle);
-        const by = shared.wasmExports.restty_debug_cursor_y(shared.wasmHandle);
+      if (
+        shared.wasmExports?.restty_active_cursor_x &&
+        shared.wasmExports?.restty_active_cursor_y
+      ) {
+        const bx = shared.wasmExports.restty_active_cursor_x(shared.wasmHandle);
+        const by = shared.wasmExports.restty_active_cursor_y(shared.wasmHandle);
         before = ` cursor=${bx},${by}`;
       }
       appendLog(`[key] ${JSON.stringify(normalized)}${before}`);
@@ -312,11 +315,11 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     shared.wasm.renderUpdate(shared.wasmHandle);
     if (
       source === "key" &&
-      shared.wasmExports?.restty_debug_cursor_x &&
-      shared.wasmExports?.restty_debug_cursor_y
+      shared.wasmExports?.restty_active_cursor_x &&
+      shared.wasmExports?.restty_active_cursor_y
     ) {
-      const ax = shared.wasmExports.restty_debug_cursor_x(shared.wasmHandle);
-      const ay = shared.wasmExports.restty_debug_cursor_y(shared.wasmHandle);
+      const ax = shared.wasmExports.restty_active_cursor_x(shared.wasmHandle);
+      const ay = shared.wasmExports.restty_active_cursor_y(shared.wasmHandle);
       appendLog(`[key] after cursor=${ax},${ay}`);
     }
     writeState({ needsRender: true });

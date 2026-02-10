@@ -1,4 +1,5 @@
 import type { Color } from "../../renderer";
+import type { Font, FontEntry } from "../../fonts";
 import type { GlyphConstraintMeta } from "../atlas-builder";
 import type { CollectWebGPUCellPassParams, GlyphQueueItem } from "./render-tick-webgpu.types";
 
@@ -42,6 +43,7 @@ export function collectWebGPUCellPass(params: CollectWebGPUCellPassParams) {
     fontScaleOverride,
     FONT_SCALE_OVERRIDES,
     isSymbolFont,
+    isAppleSymbolsFont,
     isColorEmojiFont,
     fontAdvanceUnits,
     shapeClusterWithFont,
@@ -110,6 +112,76 @@ export function collectWebGPUCellPass(params: CollectWebGPUCellPassParams) {
   const ulColorCache = new Map<number, Color>();
 
   const primaryEntry = fontState.fonts[0];
+  type FallbackScaleMetric = "ic_width" | "ex_height" | "cap_height" | "line_height";
+  const resolveFallbackMetric = (font: Font | null | undefined, metric: FallbackScaleMetric) => {
+    if (!font) return 0;
+    if (metric === "ic_width") {
+      const glyphId = font.glyphIdForChar("水");
+      if (!glyphId) return 0;
+      const advance = font.advanceWidth(glyphId);
+      if (!Number.isFinite(advance) || advance <= 0) return 0;
+      const bounds = font.getGlyphBounds(glyphId);
+      if (bounds) {
+        const width = bounds.xMax - bounds.xMin;
+        // If outline width exceeds advance, ic-width is likely unreliable for scaling.
+        if (Number.isFinite(width) && width > advance) return 0;
+      }
+      return advance;
+    }
+    if (metric === "ex_height") {
+      const exHeight = font.os2?.sxHeight ?? 0;
+      return Number.isFinite(exHeight) && exHeight > 0 ? exHeight : 0;
+    }
+    if (metric === "cap_height") {
+      const capHeight = font.os2?.sCapHeight ?? 0;
+      return Number.isFinite(capHeight) && capHeight > 0 ? capHeight : 0;
+    }
+    const lineHeightUnits = font.height;
+    return Number.isFinite(lineHeightUnits) && lineHeightUnits > 0 ? lineHeightUnits : 0;
+  };
+  const fallbackScaleAdjustment = (
+    primary: FontEntry | undefined,
+    entry: FontEntry | undefined,
+  ): number => {
+    if (!primary?.font || !entry?.font) return 1;
+    const metricOrder: FallbackScaleMetric[] = [
+      "ic_width",
+      "ex_height",
+      "cap_height",
+      "line_height",
+    ];
+    for (let i = 0; i < metricOrder.length; i += 1) {
+      const metric = metricOrder[i];
+      const primaryMetric = resolveFallbackMetric(primary.font, metric);
+      const fallbackMetric = resolveFallbackMetric(entry.font, metric);
+      if (primaryMetric <= 0 || fallbackMetric <= 0) continue;
+      const factor = primaryMetric / fallbackMetric;
+      if (Number.isFinite(factor) && factor > 0) return factor;
+    }
+    return 1;
+  };
+  const fallbackMetricAnchorUnits = (
+    primary: FontEntry | undefined,
+    entry: FontEntry | undefined,
+  ): { primary: number; fallback: number } | null => {
+    if (!primary?.font || !entry?.font) return null;
+    const metricOrder: FallbackScaleMetric[] = [
+      "ic_width",
+      "ex_height",
+      "cap_height",
+      "line_height",
+    ];
+    for (let i = 0; i < metricOrder.length; i += 1) {
+      const metric = metricOrder[i];
+      const primaryMetric = resolveFallbackMetric(primary.font, metric);
+      const fallbackMetric = resolveFallbackMetric(entry.font, metric);
+      if (primaryMetric > 0 && fallbackMetric > 0) {
+        return { primary: primaryMetric, fallback: fallbackMetric };
+      }
+    }
+    return null;
+  };
+
   const baseScaleByFont = fontState.fonts.map((entry, idx) => {
     if (!entry?.font) return primaryScale;
     if (idx === 0) return primaryScale;
@@ -123,13 +195,18 @@ export function collectWebGPUCellPass(params: CollectWebGPUCellPassParams) {
     if (!entry?.font) return primaryScale;
     if (idx === 0) return primaryScale;
     const baseScale = baseScaleByFont[idx] ?? primaryScale;
-    if (isSymbolFont(entry) || isColorEmojiFont(entry)) return baseScale;
-    const advanceUnits = fontAdvanceUnits(entry, shapeClusterWithFont);
+    const preserveNaturalSymbolScale = isSymbolFont(entry) && !isAppleSymbolsFont(entry);
+    if (preserveNaturalSymbolScale || isColorEmojiFont(entry)) return baseScale;
+    const metricAdjust = clamp(fallbackScaleAdjustment(primaryEntry, entry), 1, 2);
+    let adjustedScale = baseScale * metricAdjust;
     const maxSpan = fontMaxCellSpan(entry);
-    const widthPx = advanceUnits * baseScale;
-    const widthAdjustRaw = widthPx > 0 ? (cellW * maxSpan) / widthPx : 1;
-    const widthAdjust = clamp(widthAdjustRaw, 0.5, 2);
-    let adjustedScale = baseScale * widthAdjust;
+    if (maxSpan > 1) {
+      const advanceUnits = fontAdvanceUnits(entry, shapeClusterWithFont);
+      const widthPx = advanceUnits * adjustedScale;
+      const widthAdjustRaw = widthPx > 0 ? (cellW * maxSpan) / widthPx : 1;
+      const widthAdjust = clamp(widthAdjustRaw, 0.5, 2);
+      adjustedScale *= widthAdjust;
+    }
     const adjustedHeightPx = fontHeightUnits(entry.font) * adjustedScale;
     if (adjustedHeightPx > lineHeight && adjustedHeightPx > 0) {
       adjustedScale *= lineHeight / adjustedHeightPx;
@@ -139,7 +216,7 @@ export function collectWebGPUCellPass(params: CollectWebGPUCellPassParams) {
 
   const bitmapScaleByFont = fontState.fonts.map((entry, idx) => {
     if (!entry?.font || idx === 0) return 1;
-    if (isSymbolFont(entry)) return 1;
+    if (isSymbolFont(entry) && !isAppleSymbolsFont(entry)) return 1;
     const baseScale = baseScaleByFont[idx] ?? 0;
     if (baseScale <= 0) return 1;
     const targetScale = scaleByFont[idx] ?? baseScale;
@@ -149,6 +226,13 @@ export function collectWebGPUCellPass(params: CollectWebGPUCellPassParams) {
   const baselineAdjustByFont = fontState.fonts.map((entry, idx) => {
     if (!entry?.font || idx === 0 || !primaryEntry?.font) return 0;
     const scale = scaleByFont[idx] ?? primaryScale;
+    const preserveNaturalSymbolScale = isSymbolFont(entry) && !isAppleSymbolsFont(entry);
+    if (!preserveNaturalSymbolScale && !isColorEmojiFont(entry)) {
+      const metricAnchor = fallbackMetricAnchorUnits(primaryEntry, entry);
+      if (metricAnchor) {
+        return metricAnchor.primary * primaryScale - metricAnchor.fallback * scale;
+      }
+    }
     return primaryEntry.font.ascender * primaryScale - entry.font.ascender * scale;
   });
 
@@ -413,34 +497,33 @@ export function collectWebGPUCellPass(params: CollectWebGPUCellPassParams) {
 
       const fontScale = scaleByFont[fontIndex] ?? primaryScale;
       let cellSpan = baseSpan;
-      const symbolLike = isRenderSymbolLike(cp);
-      const nerdConstraint = symbolLike ? resolveSymbolConstraint(cp) : null;
+      const nerdConstraint = resolveSymbolConstraint(cp);
+      const symbolLike = isRenderSymbolLike(cp) || !!nerdConstraint;
       const symbolConstraint = !!nerdConstraint;
       let constraintWidth = baseSpan;
       let forceFit = false;
       let glyphWidthPx = 0;
       if (symbolLike) {
         if (baseSpan === 1) {
-          // Match Ghostty behavior for icon-like Nerd glyphs: allow 2-cell span only
-          // when followed by whitespace and not in a symbol run.
-          if (nerdConstraint?.height === "icon") {
-            constraintWidth = 1;
-            if (col < cols - 1) {
-              if (col > 0) {
-                const prevCp = codepoints[idx - 1];
-                if (isRenderSymbolLike(prevCp) && !isGraphicsElement(prevCp)) {
-                  constraintWidth = 1;
-                } else {
-                  const nextCp = codepoints[idx + 1];
-                  if (!nextCp || isSpaceCp(nextCp)) constraintWidth = 2;
-                }
-              } else {
+          // Match Ghostty's symbol constraint width rule:
+          // allow 2-cell span only when followed by whitespace and not in a symbol run.
+          constraintWidth = 1;
+          if (col < cols - 1) {
+            if (col > 0) {
+              const prevCp = codepoints[idx - 1];
+              if (
+                !(
+                  (isRenderSymbolLike(prevCp) || !!resolveSymbolConstraint(prevCp)) &&
+                  !isGraphicsElement(prevCp)
+                )
+              ) {
                 const nextCp = codepoints[idx + 1];
                 if (!nextCp || isSpaceCp(nextCp)) constraintWidth = 2;
               }
+            } else {
+              const nextCp = codepoints[idx + 1];
+              if (!nextCp || isSpaceCp(nextCp)) constraintWidth = 2;
             }
-          } else {
-            constraintWidth = 1;
           }
           cellSpan = constraintWidth;
         }

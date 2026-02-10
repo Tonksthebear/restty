@@ -65,21 +65,86 @@ export function createDumpGlyphRender(options: CreateRuntimeDebugToolsOptions) {
       entry.font.scaleForSize(fontSizePx, fontState.sizeMode) *
       fontScaleOverride(entry, fontScaleOverrides);
     let fontScale = baseScale;
+    let metricBaselineAdjust: number | null = null;
     if (!isSymbolFont(entry) && !isColorEmojiFont(entry)) {
-      const advanceUnits = fontAdvanceUnits(entry, shapeClusterWithFont);
+      type FallbackScaleMetric = "ic_width" | "ex_height" | "cap_height" | "line_height";
+      const resolveFallbackMetric = (
+        font: typeof entry.font | null | undefined,
+        metric: FallbackScaleMetric,
+      ): number => {
+        if (!font) return 0;
+        if (metric === "ic_width") {
+          const ideographGlyph = font.glyphIdForChar("水");
+          if (!ideographGlyph) return 0;
+          const advance = font.advanceWidth(ideographGlyph);
+          if (!Number.isFinite(advance) || advance <= 0) return 0;
+          const bounds = font.getGlyphBounds(ideographGlyph);
+          if (
+            bounds &&
+            Number.isFinite(bounds.xMax - bounds.xMin) &&
+            bounds.xMax - bounds.xMin > advance
+          ) {
+            return 0;
+          }
+          return advance;
+        }
+        if (metric === "ex_height") {
+          const exHeight = font.os2?.sxHeight ?? 0;
+          return Number.isFinite(exHeight) && exHeight > 0 ? exHeight : 0;
+        }
+        if (metric === "cap_height") {
+          const capHeight = font.os2?.sCapHeight ?? 0;
+          return Number.isFinite(capHeight) && capHeight > 0 ? capHeight : 0;
+        }
+        const lineHeightUnits = font.height;
+        return Number.isFinite(lineHeightUnits) && lineHeightUnits > 0 ? lineHeightUnits : 0;
+      };
+      const metricOrder: FallbackScaleMetric[] = [
+        "ic_width",
+        "ex_height",
+        "cap_height",
+        "line_height",
+      ];
+      let metricAdjust = 1;
+      for (let i = 0; i < metricOrder.length; i += 1) {
+        const metric = metricOrder[i];
+        const primaryMetric = resolveFallbackMetric(primaryEntry?.font, metric);
+        const fallbackMetric = resolveFallbackMetric(entry.font, metric);
+        if (primaryMetric <= 0 || fallbackMetric <= 0) continue;
+        const factor = primaryMetric / fallbackMetric;
+        if (Number.isFinite(factor) && factor > 0) {
+          metricAdjust = factor;
+          break;
+        }
+      }
+      metricAdjust = clamp(metricAdjust, 1, 2);
+      fontScale = baseScale * metricAdjust;
       const maxSpan = fontMaxCellSpan(entry);
-      const widthPx = advanceUnits * baseScale;
-      const widthAdjustRaw = widthPx > 0 ? (cellW * maxSpan) / widthPx : 1;
-      const widthAdjust = clamp(widthAdjustRaw, 0.5, 2);
-      fontScale = baseScale * widthAdjust;
+      if (maxSpan > 1) {
+        const advanceUnits = fontAdvanceUnits(entry, shapeClusterWithFont);
+        const widthPx = advanceUnits * fontScale;
+        const widthAdjustRaw = widthPx > 0 ? (cellW * maxSpan) / widthPx : 1;
+        const widthAdjust = clamp(widthAdjustRaw, 0.5, 2);
+        fontScale *= widthAdjust;
+      }
       const adjustedHeightPx = fontHeightUnits(entry.font) * fontScale;
       if (adjustedHeightPx > lineHeight && adjustedHeightPx > 0) {
         fontScale *= lineHeight / adjustedHeightPx;
       }
+      for (let i = 0; i < metricOrder.length; i += 1) {
+        const metric = metricOrder[i];
+        const primaryMetric = resolveFallbackMetric(primaryEntry?.font, metric);
+        const fallbackMetric = resolveFallbackMetric(entry.font, metric);
+        if (primaryMetric <= 0 || fallbackMetric <= 0) continue;
+        metricBaselineAdjust = primaryMetric * primaryScale - fallbackMetric * fontScale;
+        break;
+      }
     }
-    const baselineAdjust = primaryEntry?.font
-      ? primaryEntry.font.ascender * primaryScale - entry.font.ascender * fontScale
-      : 0;
+    const baselineAdjust =
+      metricBaselineAdjust ??
+      (primaryEntry?.font
+        ? primaryEntry.font.ascender * primaryScale - entry.font.ascender * fontScale
+        : 0);
     const atlasScale = clamp(fontScale / (baseScale || 1), 0.5, 2);
 
     const meta = new Map<number, GlyphConstraintMeta>();

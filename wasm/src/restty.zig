@@ -957,12 +957,12 @@ pub export fn restty_cols(handle: ?*Restty) u32 {
     return h.cols;
 }
 
-pub export fn restty_debug_cursor_x(handle: ?*Restty) u32 {
+pub export fn restty_active_cursor_x(handle: ?*Restty) u32 {
     const h = handle orelse return 0;
     return @intCast(h.term.screens.active.cursor.x);
 }
 
-pub export fn restty_debug_cursor_y(handle: ?*Restty) u32 {
+pub export fn restty_active_cursor_y(handle: ?*Restty) u32 {
     const h = handle orelse return 0;
     return @intCast(h.term.screens.active.cursor.y);
 }

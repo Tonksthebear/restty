@@ -1,6 +1,6 @@
 import type { FontEntry } from "../../fonts";
 import type { Color, WebGLState } from "../../renderer";
-import type { CursorInfo, RenderState } from "../../wasm";
+import type { CursorInfo, RenderState, ResttyWasmExports } from "../../wasm";
 import type { CompiledWebGLShaderStage, WebGLStageTargets } from "../create-app-types";
 import type {
   BuildFontAtlasParams,
@@ -62,6 +62,8 @@ export type WebGLTickDeps = SharedTickDeps & {
     yPad: number;
   };
   updateImePosition: (cursor: { row: number; col: number }, cellW: number, cellH: number) => void;
+  wasmExports: ResttyWasmExports | null;
+  wasmHandle: number;
   canvas: HTMLCanvasElement;
   buildFontAtlasIfNeeded: (params: BuildFontAtlasParams) => BuildFontAtlasResult;
   resolveGlyphPixelMode: AtlasBuilderDeps["resolveGlyphPixelMode"];
@@ -79,7 +81,6 @@ export type WebGLTickDeps = SharedTickDeps & {
   PixelMode: { RGBA?: number };
   ensureGLInstanceBuffer: (state: WebGLState, kind: "rect" | "glyph", minBytes: number) => void;
   GLYPH_INSTANCE_FLOATS: number;
-  wasmHandle: number;
   lastRenderState: RenderState | null;
 };
 

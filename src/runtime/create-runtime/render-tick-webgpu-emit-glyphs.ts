@@ -16,8 +16,8 @@ export function emitWebGPUQueuedGlyphs(params: EmitWebGPUQueuedGlyphsParams) {
 
   const {
     defaultBg,
-    resolveSymbolConstraint,
     isAppleSymbolsFont,
+    resolveSymbolConstraint,
     DEFAULT_APPLE_SYMBOLS_CONSTRAINT,
     DEFAULT_SYMBOL_CONSTRAINT,
     DEFAULT_EMOJI_CONSTRAINT,
@@ -62,7 +62,7 @@ export function emitWebGPUQueuedGlyphs(params: EmitWebGPUQueuedGlyphsParams) {
           const fit = maxWidth / item.glyphWidthPx;
           if (fit > 0 && fit < 1) itemScale = scale * fit;
         }
-        if (!symbolLike) {
+        if (!symbolLike && fontIndex === 0) {
           const advancePx = item.shaped.advance * scale;
           if (advancePx > maxWidth && advancePx > 0) {
             itemScale = scale * (maxWidth / advancePx);
@@ -76,19 +76,21 @@ export function emitWebGPUQueuedGlyphs(params: EmitWebGPUQueuedGlyphsParams) {
         const colorGlyph = !!colorGlyphs?.has(glyph.glyphId);
         const metrics = widthMap?.get(glyph.glyphId) ?? atlas.glyphs.get(glyph.glyphId);
         if (!metrics) continue;
+        const applySymbolLayout = symbolLike && (fontIndex > 0 || symbolConstraint || colorGlyph);
         let bitmapScale = scaleFactor;
         const glyphConstrained = symbolLike && !!widthMap?.has(glyph.glyphId);
         if (glyphConstrained) bitmapScale = 1;
         if (fontIndex > 0 && !symbolLike) {
-          const widthScale = maxWidth > 0 ? maxWidth / metrics.width : 1;
           const heightScale = maxHeight > 0 ? maxHeight / metrics.height : 1;
-          const clampScale = Math.min(1, widthScale, heightScale);
+          const clampScale = Math.min(1, heightScale);
           bitmapScale *= clampScale;
         }
         const baselineAdjust = frame.baselineAdjustByFont[fontIndex] ?? 0;
+        const glyphBaselineAdjust = symbolLike && !symbolConstraint ? 0 : baselineAdjust;
+        const rowY = item.baseY - yPad - baselineOffset;
         let gw = metrics.width * bitmapScale;
         let gh = metrics.height * bitmapScale;
-        if (symbolLike && !glyphConstrained) {
+        if (applySymbolLayout && !glyphConstrained) {
           const scaleToFit = gw > 0 && gh > 0 ? Math.min(maxWidth / gw, maxHeight / gh) : 1;
           if (scaleToFit < 1) {
             bitmapScale *= scaleToFit;
@@ -114,15 +116,17 @@ export function emitWebGPUQueuedGlyphs(params: EmitWebGPUQueuedGlyphsParams) {
         if (x + gw > maxX) x = Math.max(minX, maxX - gw);
 
         let y =
-          item.baseY + baselineAdjust - metrics.bearingY * bitmapScale - glyph.yOffset * itemScale;
-        if (!glyphConstrained && symbolLike && item.cp) {
+          item.baseY +
+          glyphBaselineAdjust -
+          metrics.bearingY * bitmapScale -
+          glyph.yOffset * itemScale;
+        if (applySymbolLayout && !glyphConstrained && item.cp) {
           const nerdConstraint = resolveSymbolConstraint(item.cp);
           const defaultConstraint = isAppleSymbolsFont(entry)
             ? DEFAULT_APPLE_SYMBOLS_CONSTRAINT
             : DEFAULT_SYMBOL_CONSTRAINT;
           const constraint =
             nerdConstraint ?? (colorGlyph ? DEFAULT_EMOJI_CONSTRAINT : defaultConstraint);
-          const rowY = item.baseY - yPad - baselineOffset;
           const constraintWidth = Math.max(1, item.constraintWidth ?? Math.round(maxWidth / cellW));
           const adjusted = constrainGlyphBox(
             { x: x - item.x, y: y - rowY, width: gw, height: gh },

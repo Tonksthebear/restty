@@ -16,8 +16,8 @@ function createReporting(options: {
     getWasmExports: () =>
       debugCursor
         ? ({
-            restty_debug_cursor_x: () => debugCursor.col,
-            restty_debug_cursor_y: () => debugCursor.row,
+            restty_active_cursor_x: () => debugCursor.col,
+            restty_active_cursor_y: () => debugCursor.row,
           } as never)
         : null,
     callbacks: undefined,
@@ -58,4 +58,30 @@ test("resolveCursorPosition ignores out-of-bounds debug cursor", () => {
   });
 
   expect(resolved).toEqual({ col: 6, row: 5, wideTail: true });
+});
+
+test("resolveCursorPosition keeps last visible cursor when current cursor is hidden", () => {
+  const reporting = createReporting({ debugCursor: { col: 12, row: 7 } });
+
+  const visible = reporting.resolveCursorPosition({
+    row: 4,
+    col: 9,
+    visible: 1,
+    style: 0,
+    blinking: 0,
+    wideTail: 0,
+    color: 0,
+  });
+  expect(visible).toEqual({ col: 9, row: 4, wideTail: false });
+
+  const hidden = reporting.resolveCursorPosition({
+    row: 0,
+    col: 0,
+    visible: 0,
+    style: 0,
+    blinking: 0,
+    wideTail: 0,
+    color: 0,
+  });
+  expect(hidden).toEqual({ col: 9, row: 4, wideTail: false });
 });
