@@ -350,14 +350,6 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     return false;
   }
 
-  async function handlePasteShortcut(event: KeyboardEvent) {
-    const pasted = await pasteFromClipboard();
-    if (pasted) return;
-    const seq = inputHandler.encodeKeyEvent(event);
-    if (!seq) return;
-    ptyInputRuntime.sendKeyInput(seq);
-  }
-
   function clearScreen() {
     sendInput("\x1b[2J\x1b[H");
   }
@@ -426,12 +418,13 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
       if (!shared.wasmReady || !shared.wasmHandle) return;
 
       const key = event.key?.toLowerCase?.() ?? "";
+      const hasPrimaryShortcutModifier = isMacPlatform ? event.metaKey : event.ctrlKey;
       const wantsCopy =
-        (event.metaKey || event.ctrlKey) &&
+        hasPrimaryShortcutModifier &&
         !event.altKey &&
         (key === "c" || (event.shiftKey && key === "c"));
       const wantsPaste =
-        (event.metaKey || event.ctrlKey) &&
+        hasPrimaryShortcutModifier &&
         !event.altKey &&
         (key === "v" || (event.shiftKey && key === "v"));
 
@@ -441,9 +434,15 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
         return;
       }
       if (wantsPaste) {
+        if (imeInput) {
+          ensureImeInputFocus();
+          return;
+        }
         event.preventDefault();
-        if (imeInput) imeInput.focus({ preventScroll: true });
-        void handlePasteShortcut(event);
+        const seq = inputHandler.encodeKeyEvent(event);
+        if (seq) {
+          ptyInputRuntime.sendKeyInput(seq);
+        }
         return;
       }
 
