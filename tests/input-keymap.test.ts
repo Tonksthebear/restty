@@ -58,12 +58,19 @@ test("mapKeyForPty normalizes legacy delete/backspace payloads", () => {
   expect(mapKeyForPty("\r\n")).toBe("\r");
 });
 
-test("mapKeyForPty normalizes kitty keyboard payloads for erase/enter", () => {
-  expect(mapKeyForPty("\x1b[127u")).toBe("\x7f");
-  expect(mapKeyForPty("\x1b[127;1u")).toBe("\x7f");
-  expect(mapKeyForPty("\x1b[127;1:1u")).toBe("\x7f");
-  expect(mapKeyForPty("\x1b[13u")).toBe("\r");
-  expect(mapKeyForPty("\x1b[3;2~")).toBe("\x1b[3~");
+test("mapKeyForPty passes through kitty keyboard sequences unchanged", () => {
+  // Kitty CSI u sequences — encoder output should reach PTY as-is
+  expect(mapKeyForPty("\x1b[13u")).toBe("\x1b[13u");
+  expect(mapKeyForPty("\x1b[13;1u")).toBe("\x1b[13;1u");
+  expect(mapKeyForPty("\x1b[13;2u")).toBe("\x1b[13;2u");
+  expect(mapKeyForPty("\x1b[13;5u")).toBe("\x1b[13;5u");
+  expect(mapKeyForPty("\x1b[127u")).toBe("\x1b[127u");
+  expect(mapKeyForPty("\x1b[127;1u")).toBe("\x1b[127;1u");
+  expect(mapKeyForPty("\x1b[127;5u")).toBe("\x1b[127;5u");
+  expect(mapKeyForPty("\x1b[127;1:1u")).toBe("\x1b[127;1:1u");
   expect(mapKeyForPty("\x1b[127;1:3u")).toBe("\x1b[127;1:3u");
+  expect(mapKeyForPty("\x1b[9;2u")).toBe("\x1b[9;2u");
+  // Kitty CSI ~ sequences
+  expect(mapKeyForPty("\x1b[3;2~")).toBe("\x1b[3;2~");
   expect(mapKeyForPty("\x1b[3;1:3~")).toBe("\x1b[3;1:3~");
 });
