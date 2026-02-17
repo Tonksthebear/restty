@@ -57,6 +57,7 @@
     "setup:wgpu-polyfill": "bun run scripts/setup-wgpu-polyfill.ts",
     "clean:dist": "rm -rf dist && mkdir -p dist",
     "build:themes": "bun run scripts/generate-builtin-themes.ts",
+    "build:wasm": "bun run scripts/build-wasm.ts",
     "build:lib": "bun run scripts/build-lib.ts",
     "build:types": "tsc -p tsconfig.build.json",
     "build": "bun run build:themes && bun run clean:dist && bun run build:lib && bun run build:types",

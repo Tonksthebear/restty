@@ -28,17 +28,14 @@ Cloudflare Pages static deploy:
 3. Keep `playground/public/_headers` so COOP/COEP headers are applied (required for WebContainer mode).
 
 ## Build the WASM module
-From `wasm/`:
-- `zig build`
-- `cp zig-out/bin/restty.wasm ../playground/public/restty.wasm`
+From repo root:
+- `bun run build:wasm`
 
-This installs `restty.wasm` into `playground/public/` so the playground can load it.
+This builds the wasm module and refreshes `src/wasm/embedded.ts` directly from `wasm/zig-out/bin/restty.wasm`.
 
 Requires Zig 0.15.2+ (matches Ghostty's minimum).
 
-If you need to refresh the embedded library wasm blob (`src/wasm/embedded.ts`):
-
-- `bun run playground/scripts/embed-wasm.ts`
+There is no separate embed step script anymore; rerun `bun run build:wasm` when you want to refresh the embedded blob.
 
 ## Fetch default font
 From repo root:
