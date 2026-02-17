@@ -265,6 +265,8 @@ export type ResttyAppOptions = {
   beforeRenderOutput?: (payload: ResttyAppInputPayload) => string | null | void;
   /** Optional render-stage shader chain. */
   shaderStages?: ResttyShaderStage[];
+  /** Maximum scrollback buffer size in bytes passed to the WASM terminal (default 2000). */
+  maxScrollback?: number;
 };
 
 /**
