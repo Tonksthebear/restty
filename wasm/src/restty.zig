@@ -4,6 +4,7 @@ const ghostty = @import("ghostty-vt");
 pub const std_options: std.Options = ghostty.std_options;
 
 const Allocator = std.mem.Allocator;
+const log = std.log.scoped(.restty);
 
 const ErrorCode = enum(u32) {
     ok = 0,
@@ -12,6 +13,8 @@ const ErrorCode = enum(u32) {
     invalid_arg = 3,
     internal = 4,
 };
+
+const STATE_VERSION: u8 = 1;
 
 const CellFlags = struct {
     const hyperlink: u16 = 1 << 0;
@@ -28,24 +31,6 @@ const CursorInfo = extern struct {
     wide_tail: u8,
     color_rgba: u32,
     reserved: u32 = 0,
-};
-
-const SearchViewportSpan = extern struct {
-    row: u16,
-    start_col: u16,
-    end_col: u16,
-    selected: u8,
-    reserved: u8 = 0,
-};
-
-const SearchStatus = extern struct {
-    active: u8,
-    pending: u8,
-    complete: u8,
-    reserved: u8 = 0,
-    generation: u32,
-    total_matches: u32,
-    selected_index: i32,
 };
 
 const CellBuffers = struct {
@@ -122,10 +107,6 @@ const VtHandlerFn = @TypeOf(ghostty.Terminal.vtHandler);
 const ReadonlyHandler = @typeInfo(VtHandlerFn).@"fn".return_type.?;
 const kitty_graphics_enabled = @hasDecl(ghostty.kitty.graphics, "Command");
 const max_output_bytes: usize = 1024 * 1024;
-const max_apc_debug_bytes: usize = 16 * 1024;
-const max_apc_error_logs: u8 = 24;
-
-const log = std.log.scoped(.restty_apc);
 
 const KittyPlacementAbi = extern struct {
     image_id: u32,
@@ -146,9 +127,6 @@ const KittyPlacementAbi = extern struct {
     source_y: u32,
     source_width: u32,
     source_height: u32,
-    placement_id: u32,
-    placement_external: u8,
-    _pad1: [3]u8 = .{ 0, 0, 0 },
 };
 
 const StreamHandler = struct {
@@ -157,9 +135,6 @@ const StreamHandler = struct {
     readonly: ReadonlyHandler,
     output: *std.ArrayListUnmanaged(u8),
     apc: ghostty.apc.Handler = .{},
-    apc_debug: std.ArrayListUnmanaged(u8) = .{},
-    apc_debug_truncated: bool = false,
-    apc_error_logs_remaining: u8 = max_apc_error_logs,
 
     pub fn init(
         alloc: Allocator,
@@ -172,194 +147,12 @@ const StreamHandler = struct {
             .readonly = .init(term),
             .output = output,
             .apc = .{},
-            .apc_debug = .{},
-            .apc_debug_truncated = false,
-            .apc_error_logs_remaining = max_apc_error_logs,
         };
     }
 
     pub fn deinit(self: *StreamHandler) void {
         self.readonly.deinit();
         self.apc.deinit();
-        self.apc_debug.deinit(self.alloc);
-    }
-
-    fn apcDebugReset(self: *StreamHandler) void {
-        self.apc_debug.clearRetainingCapacity();
-        self.apc_debug_truncated = false;
-    }
-
-    fn apcDebugCapture(self: *StreamHandler, byte: u8) void {
-        if (self.apc_debug_truncated) return;
-        if (self.apc_debug.items.len >= max_apc_debug_bytes) {
-            self.apc_debug_truncated = true;
-            return;
-        }
-        self.apc_debug.append(self.alloc, byte) catch {
-            self.apc_debug_truncated = true;
-        };
-    }
-
-    fn isBase64Byte(byte: u8) bool {
-        return (byte >= 'A' and byte <= 'Z') or
-            (byte >= 'a' and byte <= 'z') or
-            (byte >= '0' and byte <= '9') or
-            byte == '+' or
-            byte == '/' or
-            byte == '=';
-    }
-
-    fn logApcFailure(self: *StreamHandler) void {
-        if (self.apc_error_logs_remaining == 0) return;
-        const raw = self.apc_debug.items;
-        if (raw.len == 0) return;
-
-        // Only inspect Kitty APC packets.
-        if (raw[0] != 'G') return;
-
-        self.apc_error_logs_remaining -|= 1;
-
-        const kitty = raw[1..];
-        const sep_opt = std.mem.indexOfScalar(u8, kitty, ';');
-        if (sep_opt == null) {
-            const preview_len = @min(kitty.len, 64);
-            log.warn(
-                "kitty APC parse failed before payload control={s} bytes={d} truncated={} preview_hex={x}",
-                .{
-                    kitty[0..preview_len],
-                    kitty.len,
-                    self.apc_debug_truncated,
-                    kitty[0..preview_len],
-                },
-            );
-            return;
-        }
-
-        const sep = sep_opt.?;
-        const control = kitty[0..sep];
-        const payload = kitty[sep + 1 ..];
-
-        var invalid_idx: ?usize = null;
-        var invalid_byte: u8 = 0;
-        for (payload, 0..) |byte, idx| {
-            if (!isBase64Byte(byte)) {
-                invalid_idx = idx;
-                invalid_byte = byte;
-                break;
-            }
-        }
-
-        if (invalid_idx) |idx| {
-            const win_start = idx -| 12;
-            const win_end = @min(payload.len, idx + 13);
-            log.warn(
-                "kitty APC invalid payload byte control={s} payload_len={d} invalid=0x{x:0>2} at={d} around_hex={x} truncated={}",
-                .{
-                    control,
-                    payload.len,
-                    invalid_byte,
-                    idx,
-                    payload[win_start..win_end],
-                    self.apc_debug_truncated,
-                },
-            );
-            return;
-        }
-
-        const preview_len = @min(payload.len, 64);
-        log.warn(
-            "kitty APC parse failed control={s} payload_len={d} payload_mod4={d} truncated={} payload_preview_hex={x}",
-            .{
-                control,
-                payload.len,
-                payload.len % 4,
-                self.apc_debug_truncated,
-                payload[0..preview_len],
-            },
-        );
-    }
-
-    fn logKittyResponseError(
-        self: *StreamHandler,
-        cmd: *const ghostty.kitty.graphics.Command,
-        resp: ghostty.kitty.graphics.Response,
-    ) void {
-        const action: []const u8 = switch (cmd.control) {
-            .query => "q",
-            .transmit => "t",
-            .transmit_and_display => "T",
-            .display => "p",
-            .delete => "d",
-            .transmit_animation_frame => "f",
-            .control_animation => "a",
-            .compose_animation => "c",
-        };
-
-        log.warn(
-            "kitty graphics command failed action={s} quiet={} resp={s} resp_i={d} resp_I={d} resp_p={d} data_len={d}",
-            .{
-                action,
-                cmd.quiet,
-                resp.message,
-                resp.id,
-                resp.image_number,
-                resp.placement_id,
-                cmd.data.len,
-            },
-        );
-
-        if (cmd.transmission()) |t| {
-            log.warn(
-                "kitty tx fields i={d} I={d} p={d} format={} medium={} s={d} v={d} S={d} O={d} m={} compression={}",
-                .{
-                    t.image_id,
-                    t.image_number,
-                    t.placement_id,
-                    t.format,
-                    t.medium,
-                    t.width,
-                    t.height,
-                    t.size,
-                    t.offset,
-                    t.more_chunks,
-                    t.compression,
-                },
-            );
-        }
-
-        if (cmd.display()) |d| {
-            log.warn(
-                "kitty display fields i={d} I={d} p={d} x={d} y={d} w={d} h={d} X={d} Y={d} c={d} r={d} C={} U={} z={d}",
-                .{
-                    d.image_id,
-                    d.image_number,
-                    d.placement_id,
-                    d.x,
-                    d.y,
-                    d.width,
-                    d.height,
-                    d.x_offset,
-                    d.y_offset,
-                    d.columns,
-                    d.rows,
-                    d.cursor_movement,
-                    d.virtual_placement,
-                    d.z,
-                },
-            );
-        }
-
-        if (self.apc_debug.items.len > 0) {
-            const preview_len = @min(self.apc_debug.items.len, 96);
-            log.warn(
-                "kitty APC preview_hex={x} bytes={d} truncated={}",
-                .{
-                    self.apc_debug.items[0..preview_len],
-                    self.apc_debug.items.len,
-                    self.apc_debug_truncated,
-                },
-            );
-        }
     }
 
     fn appendOutput(self: *StreamHandler, bytes: []const u8) !void {
@@ -435,12 +228,7 @@ const StreamHandler = struct {
     }
 
     fn apcEnd(self: *StreamHandler) !void {
-        var cmd = self.apc.end() orelse {
-            self.logApcFailure();
-            self.apcDebugReset();
-            return;
-        };
-        defer self.apcDebugReset();
+        var cmd = self.apc.end() orelse return;
         defer cmd.deinit(self.alloc);
 
         if (comptime !kitty_graphics_enabled) return;
@@ -448,9 +236,6 @@ const StreamHandler = struct {
         switch (cmd) {
             .kitty => |*kitty_cmd| {
                 if (self.term.kittyGraphics(self.alloc, kitty_cmd)) |resp| {
-                    if (!resp.ok()) {
-                        self.logKittyResponseError(kitty_cmd, resp);
-                    }
                     var buf: [1024]u8 = undefined;
                     var writer: std.Io.Writer = .fixed(&buf);
                     try resp.encode(&writer);
@@ -479,14 +264,8 @@ const StreamHandler = struct {
             .device_attributes => try self.deviceAttributes(value),
             .device_status => try self.deviceStatusReport(value.request),
             .kitty_keyboard_query => try self.queryKittyKeyboard(),
-            .apc_start => {
-                self.apc.start();
-                self.apcDebugReset();
-            },
-            .apc_put => {
-                self.apcDebugCapture(value);
-                self.apc.feed(self.alloc, value);
-            },
+            .apc_start => self.apc.start(),
+            .apc_put => self.apc.feed(self.alloc, value),
             .apc_end => try self.apcEnd(),
             else => self.readonly.vt(action, value),
         }
@@ -517,65 +296,8 @@ const Restty = struct {
         .color_rgba = 0,
         .reserved = 0,
     },
-    search: SearchState = .{},
     rows: u16,
     cols: u16,
-};
-
-const SearchState = struct {
-    query: std.ArrayListUnmanaged(u8) = .{},
-    screen_search: ?ghostty.search.Screen = null,
-    viewport_search: ?ghostty.search.Viewport = null,
-    viewport_matches: std.ArrayListUnmanaged(SearchViewportSpan) = .{},
-    status: SearchStatus = .{
-        .active = 0,
-        .pending = 0,
-        .complete = 0,
-        .reserved = 0,
-        .generation = 0,
-        .total_matches = 0,
-        .selected_index = -1,
-    },
-    active_screen_key: i32 = -1,
-    viewport_dirty: bool = false,
-    active_dirty: bool = false,
-
-    fn deinit(self: *SearchState, alloc: Allocator) void {
-        self.query.deinit(alloc);
-        if (self.screen_search) |*s| s.deinit();
-        if (self.viewport_search) |*s| s.deinit();
-        self.viewport_matches.deinit(alloc);
-        self.* = .{};
-    }
-
-    fn resetRuntime(self: *SearchState) void {
-        self.viewport_matches.clearRetainingCapacity();
-        self.status.active = if (self.query.items.len > 0) 1 else 0;
-        self.status.total_matches = 0;
-        self.status.selected_index = -1;
-        self.status.pending = 0;
-        self.status.complete = 0;
-        self.viewport_dirty = false;
-        self.active_dirty = false;
-        self.active_screen_key = -1;
-    }
-
-    fn bumpGeneration(self: *SearchState) void {
-        self.status.generation +%= 1;
-    }
-
-    fn setQuery(self: *SearchState, alloc: Allocator, value: []const u8) !void {
-        self.query.clearRetainingCapacity();
-        try self.query.appendSlice(alloc, value);
-    }
-
-    fn isQueryEqual(self: *const SearchState, value: []const u8) bool {
-        return std.mem.eql(u8, self.query.items, value);
-    }
-
-    fn isActive(self: *const SearchState) bool {
-        return self.status.active != 0;
-    }
 };
 
 fn packRGBA(rgb: ghostty.color.RGB, a: u8) u32 {
@@ -588,6 +310,248 @@ fn rgbFromU32(color: u32) ghostty.color.RGB {
         .g = @intCast((color >> 8) & 0xFF),
         .b = @intCast(color & 0xFF),
     };
+}
+
+fn readStyle(r: anytype) !ghostty.Style {
+    return .{
+        .fg_color = try readStyleColor(r),
+        .bg_color = try readStyleColor(r),
+        .underline_color = try readStyleColor(r),
+        .flags = @bitCast(try r.readInt(u16, .little)),
+    };
+}
+
+fn readStyleColor(r: anytype) !ghostty.Style.Color {
+    const tag = try r.readByte();
+    return switch (tag) {
+        0 => .none,
+        1 => .{ .palette = try r.readByte() },
+        2 => .{ .rgb = @bitCast(try r.readInt(u24, .little)) },
+        else => error.InvalidValue,
+    };
+}
+
+fn skipStyle(r: anytype) !void {
+    for (0..3) |_| {
+        const tag = try r.readByte();
+        switch (tag) {
+            0 => {},
+            1 => try r.skipBytes(1, .{}),
+            2 => try r.skipBytes(3, .{}),
+            else => return error.InvalidValue,
+        }
+    }
+    try r.skipBytes(2, .{});
+}
+
+fn readState(r: anytype, t: *ghostty.Terminal) !void {
+    const version = try r.readByte();
+    if (version != STATE_VERSION) return error.UnsupportedVersion;
+
+    const active_key_byte = try r.readByte();
+    t.screens.active_key = switch (active_key_byte) {
+        0 => .primary,
+        1 => .alternate,
+        else => return error.InvalidValue,
+    };
+
+    t.cols = try r.readInt(u16, .little);
+    t.rows = try r.readInt(u16, .little);
+
+    inline for (.{ ghostty.ScreenSet.Key.primary, ghostty.ScreenSet.Key.alternate }) |skey| {
+        const has_screen = try r.readByte();
+        if (has_screen == 1) {
+            if (t.screens.get(skey)) |screen| {
+                try readScreenState(r, screen);
+            } else {
+                try skipScreenState(r);
+            }
+        }
+    }
+
+    if (t.screens.get(t.screens.active_key)) |screen| {
+        t.screens.active = screen;
+    }
+
+    t.scrolling_region.top = try r.readInt(u16, .little);
+    t.scrolling_region.bottom = try r.readInt(u16, .little);
+    t.scrolling_region.left = try r.readInt(u16, .little);
+    t.scrolling_region.right = try r.readInt(u16, .little);
+
+    const ModeInt = @typeInfo(ghostty.ModePacked).@"struct".backing_integer.?;
+    t.modes.values = @bitCast(try r.readInt(ModeInt, .little));
+    t.modes.saved = @bitCast(try r.readInt(ModeInt, .little));
+    t.modes.default = @bitCast(try r.readInt(ModeInt, .little));
+
+    try readColors(r, &t.colors);
+
+    const tab_cols = try r.readInt(u32, .little);
+    t.tabstops.cols = @intCast(tab_cols);
+    _ = try r.readAll(&t.tabstops.prealloc_stops);
+    const dyn_len = try r.readInt(u32, .little);
+    if (dyn_len > 0) {
+        if (t.tabstops.dynamic_stops.len < dyn_len) {
+            try r.skipBytes(dyn_len, .{});
+        } else {
+            _ = try r.readAll(t.tabstops.dynamic_stops[0..dyn_len]);
+        }
+    }
+
+    const pwd_len = try r.readInt(u32, .little);
+    if (pwd_len > 0) {
+        t.pwd.clearRetainingCapacity();
+        const buf = try t.pwd.addManyAsSlice(t.gpa(), @intCast(pwd_len));
+        _ = try r.readAll(buf);
+    }
+
+    const title_len = try r.readInt(u32, .little);
+    if (title_len > 0) {
+        t.title.clearRetainingCapacity();
+        const buf = try t.title.addManyAsSlice(t.gpa(), @intCast(title_len));
+        _ = try r.readAll(buf);
+    }
+
+    const FlagsInt = @typeInfo(@TypeOf(t.flags)).@"struct".backing_integer.?;
+    const flags_wide = try r.readInt(u128, .little);
+    t.flags = @bitCast(@as(FlagsInt, @intCast(flags_wide)));
+}
+
+fn readScreenState(r: anytype, screen: *ghostty.Screen) !void {
+    screen.cursor.x = try r.readInt(u16, .little);
+    screen.cursor.y = try r.readInt(u16, .little);
+    screen.cursor.cursor_style = @enumFromInt(try r.readByte());
+    screen.cursor.pending_wrap = try r.readByte() != 0;
+    screen.cursor.protected = try r.readByte() != 0;
+
+    screen.cursor.style = try readStyle(r);
+
+    const has_saved = try r.readByte();
+    if (has_saved == 1) {
+        var sc: ghostty.Screen.SavedCursor = undefined;
+        sc.x = try r.readInt(u16, .little);
+        sc.y = try r.readInt(u16, .little);
+        sc.style = try readStyle(r);
+        sc.protected = try r.readByte() != 0;
+        sc.pending_wrap = try r.readByte() != 0;
+        sc.origin = try r.readByte() != 0;
+        sc.charset = try readCharsetState(r);
+        screen.saved_cursor = sc;
+    } else {
+        screen.saved_cursor = null;
+    }
+
+    screen.charset = try readCharsetState(r);
+
+    screen.kitty_keyboard.idx = @intCast(try r.readByte());
+    for (&screen.kitty_keyboard.flags) |*f| {
+        f.* = @bitCast(@as(u5, @intCast(try r.readByte())));
+    }
+}
+
+fn skipScreenState(r: anytype) !void {
+    try r.skipBytes(7, .{});
+    try skipStyle(r);
+    const has_saved = try r.readByte();
+    if (has_saved == 1) {
+        try r.skipBytes(4, .{});
+        try skipStyle(r);
+        try r.skipBytes(3, .{});
+        try skipCharsetState(r);
+    }
+    try skipCharsetState(r);
+    try r.skipBytes(9, .{});
+}
+
+fn readCharsetState(r: anytype) !ghostty.Screen.CharsetState {
+    var cs: ghostty.Screen.CharsetState = .{};
+    cs.gl = @enumFromInt(try r.readByte());
+    cs.gr = @enumFromInt(try r.readByte());
+    const has_ss = try r.readByte();
+    cs.single_shift = if (has_ss == 1)
+        @as(ghostty.CharsetSlot, @enumFromInt(try r.readByte()))
+    else
+        null;
+    cs.charsets.g0 = @enumFromInt(try r.readByte());
+    cs.charsets.g1 = @enumFromInt(try r.readByte());
+    cs.charsets.g2 = @enumFromInt(try r.readByte());
+    cs.charsets.g3 = @enumFromInt(try r.readByte());
+    return cs;
+}
+
+fn skipCharsetState(r: anytype) !void {
+    try r.skipBytes(2, .{});
+    const has_ss = try r.readByte();
+    if (has_ss == 1) try r.skipBytes(1, .{});
+    try r.skipBytes(4, .{});
+}
+
+fn readColors(r: anytype, colors: *ghostty.Terminal.Colors) !void {
+    colors.background = try readDynamicRGB(r);
+    colors.foreground = try readDynamicRGB(r);
+    colors.cursor = try readDynamicRGB(r);
+
+    _ = try r.readAll(std.mem.asBytes(&colors.palette.current));
+    _ = try r.readAll(std.mem.asBytes(&colors.palette.original));
+    _ = try r.readAll(std.mem.asBytes(&colors.palette.mask));
+}
+
+fn readDynamicRGB(r: anytype) !ghostty.color.DynamicRGB {
+    var drgb: ghostty.color.DynamicRGB = .{ .override = null, .default = null };
+    if (try r.readByte() == 1) {
+        drgb.override = @bitCast(try r.readInt(u24, .little));
+    }
+    if (try r.readByte() == 1) {
+        drgb.default = @bitCast(try r.readInt(u24, .little));
+    }
+    return drgb;
+}
+
+fn finalizeScreen(screen: *ghostty.Screen) !void {
+    screen.pages.viewport = .active;
+    screen.pages.viewport_pin_row_offset = null;
+
+    const first_node = screen.pages.pages.first orelse return;
+    var node = first_node;
+    var row_offset: usize = 0;
+    while (true) {
+        const page_rows: usize = node.data.size.rows;
+        const total = screen.pages.total_rows;
+        const active_start = if (total > screen.pages.rows) total - screen.pages.rows else 0;
+
+        if (row_offset + page_rows > active_start) {
+            const active_row_in_page = if (active_start > row_offset)
+                active_start - row_offset
+            else
+                0;
+            const target_row = active_row_in_page + screen.cursor.y;
+            if (target_row < page_rows) {
+                screen.cursor.page_pin.node = node;
+                screen.cursor.page_pin.y = @intCast(target_row);
+                screen.cursor.page_pin.x = screen.cursor.x;
+                const rac = screen.cursor.page_pin.rowAndCell();
+                screen.cursor.page_row = rac.row;
+                screen.cursor.page_cell = rac.cell;
+                break;
+            }
+        }
+
+        row_offset += page_rows;
+        node = node.next orelse {
+            const last = screen.pages.pages.last orelse return;
+            screen.cursor.page_pin.node = last;
+            screen.cursor.page_pin.y = 0;
+            screen.cursor.page_pin.x = 0;
+            const rac = screen.cursor.page_pin.rowAndCell();
+            screen.cursor.page_row = rac.row;
+            screen.cursor.page_cell = rac.cell;
+            break;
+        };
+    }
+
+    var dirty_node = screen.pages.pages.first;
+    while (dirty_node) |n| : (dirty_node = n.next) {
+        n.data.dirty = true;
+    }
 }
 
 fn cursorStyleToAbi(style: CursorVisualStyle) u8 {
@@ -628,145 +592,6 @@ fn clampI16Unsigned(value: u16) i16 {
     return @intCast(value);
 }
 
-fn activeScreenKeyInt(h: *Restty) i32 {
-    return @intCast(@intFromEnum(h.term.screens.active_key));
-}
-
-fn clearSearch(h: *Restty) void {
-    h.search.deinit(h.alloc);
-}
-
-fn initSearch(h: *Restty, query: []const u8) !void {
-    clearSearch(h);
-    if (query.len == 0) return;
-
-    try h.search.setQuery(h.alloc, query);
-    h.search.status.active = 1;
-    h.search.status.pending = 1;
-    h.search.status.complete = 0;
-    h.search.status.total_matches = 0;
-    h.search.status.selected_index = -1;
-    h.search.active_screen_key = activeScreenKeyInt(h);
-    h.search.viewport_search = try .init(h.alloc, query);
-    h.search.screen_search = try .init(
-        h.alloc,
-        h.term.screens.active,
-        query,
-    );
-    if (h.search.viewport_search) |*vp| vp.active_dirty = true;
-    h.search.viewport_dirty = true;
-    h.search.active_dirty = true;
-    h.search.bumpGeneration();
-}
-
-fn ensureSearchActiveScreen(h: *Restty) !void {
-    if (!h.search.isActive()) return;
-    if (h.search.active_screen_key == activeScreenKeyInt(h) and
-        h.search.screen_search != null and
-        h.search.viewport_search != null) return;
-    try initSearch(h, h.search.query.items);
-}
-
-fn refreshSearchMetadata(h: *Restty) void {
-    const s = if (h.search.screen_search) |*s| s else {
-        h.search.status.total_matches = 0;
-        h.search.status.selected_index = -1;
-        h.search.status.pending = 0;
-        h.search.status.complete = 1;
-        return;
-    };
-    h.search.status.total_matches = @intCast(s.matchesLen());
-    h.search.status.selected_index = if (s.selected) |sel| @intCast(sel.idx) else -1;
-}
-
-fn refreshViewportMatches(h: *Restty, force_refresh: bool) !void {
-    const vp = if (h.search.viewport_search) |*vp| vp else {
-        h.search.viewport_matches.clearRetainingCapacity();
-        return;
-    };
-    if (force_refresh) vp.reset();
-    vp.active_dirty = true;
-    const changed = try vp.update(&h.term.screens.active.pages);
-    if (!changed and !force_refresh and !h.search.viewport_dirty) return;
-
-    h.search.viewport_matches.clearRetainingCapacity();
-    const selected = if (h.search.screen_search) |*screen_search|
-        screen_search.selectedMatch()
-    else
-        null;
-    while (vp.next()) |hl| {
-        const slice = hl.chunks.slice();
-        const chunk_len = slice.len;
-        for (0..chunk_len) |chunk_idx| {
-            const row_start = slice.items(.start)[chunk_idx];
-            const row_end = slice.items(.end)[chunk_idx];
-            const node = slice.items(.node)[chunk_idx];
-            var row = row_start;
-            while (row < row_end) : (row += 1) {
-                const viewport_pt = h.term.screens.active.pages.pointFromPin(.viewport, .{
-                    .node = node,
-                    .x = 0,
-                    .y = row,
-                }) orelse continue;
-                const start_col: u16 = @intCast(if (chunk_idx == 0 and row == row_start) hl.top_x else 0);
-                const end_col_exclusive: u16 = @intCast(if (chunk_idx + 1 == chunk_len and row + 1 == row_end) hl.bot_x + 1 else h.cols);
-                if (end_col_exclusive <= start_col) continue;
-                try h.search.viewport_matches.append(h.alloc, .{
-                    .row = @intCast(viewport_pt.viewport.y),
-                    .start_col = start_col,
-                    .end_col = end_col_exclusive,
-                    .selected = if (selected) |sel|
-                        @intFromBool(sel.untracked().eql(hl.untracked()))
-                    else
-                        0,
-                });
-            }
-        }
-    }
-    h.search.viewport_dirty = false;
-}
-
-fn stepSearch(h: *Restty, budget: u32) !void {
-    if (!h.search.isActive()) return;
-    try ensureSearchActiveScreen(h);
-    const screen_search = if (h.search.screen_search) |*s| s else return;
-
-    // Keep active-area and viewport state fresh while search is active.
-    try screen_search.reloadActive();
-    h.search.active_dirty = false;
-
-    var remaining: u32 = if (budget == 0) 64 else budget;
-    var force_viewport_refresh = h.search.viewport_dirty;
-    while (remaining > 0) : (remaining -= 1) {
-        screen_search.tick() catch |err| switch (err) {
-            error.OutOfMemory => return error.OutOfMemory,
-            error.FeedRequired => {
-                try screen_search.feed();
-            },
-            error.SearchComplete => {
-                h.search.status.complete = 1;
-                h.search.status.pending = 0;
-                force_viewport_refresh = true;
-                break;
-            },
-        };
-    }
-
-    if (h.search.status.complete == 0) {
-        h.search.status.pending = 1;
-    }
-    refreshSearchMetadata(h);
-    try refreshViewportMatches(h, force_viewport_refresh);
-    h.search.bumpGeneration();
-}
-
-fn scrollToSelectedSearchMatch(h: *Restty) void {
-    const screen_search = if (h.search.screen_search) |*s| s else return;
-    const selected = screen_search.selectedMatch() orelse return;
-    h.term.screens.active.scroll(.{ .pin = selected.startPin() });
-    h.search.viewport_dirty = true;
-}
-
 fn kittyFormatToAbi(format: anytype) u8 {
     return switch (format) {
         .gray => 1,
@@ -780,8 +605,6 @@ fn kittyFormatToAbi(format: anytype) u8 {
 fn appendKittyPlacement(
     h: *Restty,
     image: ghostty.kitty.graphics.Image,
-    placement_id: u32,
-    placement_external: u8,
     x: i32,
     y: i32,
     z: i32,
@@ -815,8 +638,6 @@ fn appendKittyPlacement(
         .source_y = source_y,
         .source_width = source_width,
         .source_height = source_height,
-        .placement_id = placement_id,
-        .placement_external = placement_external,
     });
 }
 
@@ -870,8 +691,6 @@ fn collectKittyPlacements(h: *Restty) !void {
         try appendKittyPlacement(
             h,
             image,
-            entry.key_ptr.placement_id.id,
-            @intFromBool(entry.key_ptr.placement_id.tag == .external),
             @intCast(rect.top_left.x),
             y_pos,
             p.z,
@@ -900,8 +719,6 @@ fn collectKittyPlacements(h: *Restty) !void {
         try appendKittyPlacement(
             h,
             image,
-            virtual_p.placement_id,
-            if (virtual_p.placement_id == 0) 0 else 1,
             @intCast(rp.top_left.x),
             @intCast(viewport.viewport.y),
             -1,
@@ -923,14 +740,7 @@ fn collectKittyPlacements(h: *Restty) !void {
         struct {
             fn lessThan(ctx: void, lhs: KittyPlacementAbi, rhs: KittyPlacementAbi) bool {
                 _ = ctx;
-                if (lhs.z != rhs.z) return lhs.z < rhs.z;
-                if (lhs.image_id != rhs.image_id) return lhs.image_id < rhs.image_id;
-                if (lhs.placement_external != rhs.placement_external) {
-                    return lhs.placement_external < rhs.placement_external;
-                }
-                if (lhs.placement_id != rhs.placement_id) return lhs.placement_id < rhs.placement_id;
-                if (lhs.y != rhs.y) return lhs.y < rhs.y;
-                return lhs.x < rhs.x;
+                return lhs.z < rhs.z or (lhs.z == rhs.z and lhs.image_id < rhs.image_id);
             }
         }.lessThan,
     );
@@ -980,7 +790,6 @@ pub export fn restty_destroy(handle: ?*Restty) void {
     const h = handle orelse return;
     h.stream.deinit();
     h.render_state.deinit(h.alloc);
-    h.search.deinit(h.alloc);
     h.term.deinit(h.alloc);
     h.buffers.deinit(h.alloc);
     h.graphemes.deinit(h.alloc);
@@ -998,92 +807,12 @@ pub export fn restty_write(handle: ?*Restty, ptr: [*]const u8, len: usize) u32 {
     const slice = ptr[0..len];
     ensureScrollingRegion(h);
     h.stream.nextSlice(slice);
-    if (h.search.isActive()) {
-        h.search.viewport_dirty = true;
-        h.search.active_dirty = true;
-    }
     return @intFromEnum(ErrorCode.ok);
 }
 
 pub export fn restty_scroll_viewport(handle: ?*Restty, delta: i32) u32 {
     const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
     h.term.scrollViewport(.{ .delta = delta });
-    if (h.search.isActive()) {
-        h.search.viewport_dirty = true;
-    }
-    return @intFromEnum(ErrorCode.ok);
-}
-
-pub export fn restty_search_set_query(handle: ?*Restty, ptr: [*]const u8, len: usize) u32 {
-    const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
-    const query = ptr[0..len];
-    if (len == 0) {
-        clearSearch(h);
-        return @intFromEnum(ErrorCode.ok);
-    }
-    if (h.search.isActive() and h.search.isQueryEqual(query)) return @intFromEnum(ErrorCode.ok);
-    initSearch(h, query) catch |err| return switch (err) {
-        error.OutOfMemory => @intFromEnum(ErrorCode.out_of_memory),
-    };
-    return @intFromEnum(ErrorCode.ok);
-}
-
-pub export fn restty_search_clear(handle: ?*Restty) u32 {
-    const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
-    clearSearch(h);
-    return @intFromEnum(ErrorCode.ok);
-}
-
-pub export fn restty_search_step(handle: ?*Restty, budget: u32) u32 {
-    const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
-    stepSearch(h, budget) catch |err| return switch (err) {
-        error.OutOfMemory => @intFromEnum(ErrorCode.out_of_memory),
-    };
-    return @intFromEnum(ErrorCode.ok);
-}
-
-pub export fn restty_search_status_ptr(handle: ?*Restty) usize {
-    const h = handle orelse return 0;
-    return @intFromPtr(&h.search.status);
-}
-
-pub export fn restty_search_viewport_match_count(handle: ?*Restty) u32 {
-    const h = handle orelse return 0;
-    return @intCast(h.search.viewport_matches.items.len);
-}
-
-pub export fn restty_search_viewport_matches_ptr(handle: ?*Restty) usize {
-    const h = handle orelse return 0;
-    return if (h.search.viewport_matches.items.len == 0) 0 else @intFromPtr(h.search.viewport_matches.items.ptr);
-}
-
-pub export fn restty_search_select_next(handle: ?*Restty) u32 {
-    const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
-    const screen_search = if (h.search.screen_search) |*s| s else return @intFromEnum(ErrorCode.ok);
-    _ = screen_search.select(.next) catch |err| return switch (err) {
-        error.OutOfMemory => @intFromEnum(ErrorCode.out_of_memory),
-    };
-    refreshSearchMetadata(h);
-    scrollToSelectedSearchMatch(h);
-    refreshViewportMatches(h, true) catch |err| return switch (err) {
-        error.OutOfMemory => @intFromEnum(ErrorCode.out_of_memory),
-    };
-    h.search.bumpGeneration();
-    return @intFromEnum(ErrorCode.ok);
-}
-
-pub export fn restty_search_select_prev(handle: ?*Restty) u32 {
-    const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
-    const screen_search = if (h.search.screen_search) |*s| s else return @intFromEnum(ErrorCode.ok);
-    _ = screen_search.select(.prev) catch |err| return switch (err) {
-        error.OutOfMemory => @intFromEnum(ErrorCode.out_of_memory),
-    };
-    refreshSearchMetadata(h);
-    scrollToSelectedSearchMatch(h);
-    refreshViewportMatches(h, true) catch |err| return switch (err) {
-        error.OutOfMemory => @intFromEnum(ErrorCode.out_of_memory),
-    };
-    h.search.bumpGeneration();
     return @intFromEnum(ErrorCode.ok);
 }
 
@@ -1187,10 +916,6 @@ pub export fn restty_resize(handle: ?*Restty, cols: u16, rows: u16) u32 {
     if (cols == 0 or rows == 0) return @intFromEnum(ErrorCode.invalid_arg);
     h.term.resize(h.alloc, cols, rows) catch return @intFromEnum(ErrorCode.internal);
     ensureScrollingRegion(h);
-    if (h.search.isActive()) {
-        h.search.viewport_dirty = true;
-        h.search.active_dirty = true;
-    }
     return @intFromEnum(ErrorCode.ok);
 }
 
@@ -1199,6 +924,109 @@ pub export fn restty_set_pixel_size(handle: ?*Restty, width_px: u32, height_px: 
     if (width_px == 0 or height_px == 0) return @intFromEnum(ErrorCode.invalid_arg);
     h.term.width_px = width_px;
     h.term.height_px = height_px;
+    return @intFromEnum(ErrorCode.ok);
+}
+
+pub export fn restty_snapshot_page_load(
+    self: ?*Restty,
+    screen_key: u8,
+    data_ptr: [*]const u8,
+    data_len: u32,
+    cap_cols: u16,
+    cap_rows: u16,
+    cap_styles: u16,
+    cap_grapheme_bytes: u32,
+    cap_hyperlink_bytes: u16,
+    cap_string_bytes: u32,
+    used_cols: u16,
+    used_rows: u16,
+) callconv(.c) u32 {
+    const h = self orelse return @intFromEnum(ErrorCode.invalid_handle);
+    const key: ghostty.ScreenSet.Key = switch (screen_key) {
+        0 => .primary,
+        1 => .alternate,
+        else => return @intFromEnum(ErrorCode.invalid_arg),
+    };
+    const screen = h.term.screens.get(key) orelse return @intFromEnum(ErrorCode.invalid_arg);
+
+    const cap: ghostty.page.Capacity = .{
+        .cols = cap_cols,
+        .rows = cap_rows,
+        .styles = cap_styles,
+        .grapheme_bytes = cap_grapheme_bytes,
+        .hyperlink_bytes = cap_hyperlink_bytes,
+        .string_bytes = cap_string_bytes,
+    };
+    const layout = ghostty.Page.layout(cap);
+    const src = data_ptr[0..@as(usize, data_len)];
+    if (src.len < layout.total_size) return @intFromEnum(ErrorCode.invalid_arg);
+
+    const std_page_size = ghostty.Page.layout(ghostty.page.std_capacity).total_size;
+    const pooled = layout.total_size <= std_page_size;
+    const page_alloc = screen.pages.pool.pages.arena.child_allocator;
+    const page_buf = if (pooled)
+        screen.pages.pool.pages.create() catch return @intFromEnum(ErrorCode.out_of_memory)
+    else
+        page_alloc.alignedAlloc(
+            u8,
+            .fromByteUnits(std.heap.page_size_min),
+            layout.total_size,
+        ) catch return @intFromEnum(ErrorCode.out_of_memory);
+    errdefer if (pooled)
+        screen.pages.pool.pages.destroy(page_buf)
+    else
+        page_alloc.free(page_buf);
+
+    if (comptime std.debug.runtime_safety) @memset(page_buf, 0);
+
+    var page = ghostty.Page.initBuf(ghostty.size.OffsetBuf.init(page_buf), layout);
+    @memcpy(page.memory[0..layout.total_size], src[0..layout.total_size]);
+    page.size = .{ .cols = used_cols, .rows = used_rows };
+    page.dirty = true;
+
+    const node = screen.pages.pool.nodes.create() catch {
+        return @intFromEnum(ErrorCode.out_of_memory);
+    };
+    node.* = .{
+        .data = page,
+        .serial = screen.pages.page_serial,
+        .prev = null,
+        .next = null,
+    };
+    screen.pages.page_serial += 1;
+    screen.pages.page_size += layout.total_size;
+    screen.pages.total_rows += used_rows;
+    screen.pages.pages.append(node);
+    return @intFromEnum(ErrorCode.ok);
+}
+
+pub export fn restty_snapshot_state_import(
+    self: ?*Restty,
+    data_ptr: [*]const u8,
+    data_len: u32,
+) callconv(.c) u32 {
+    const h = self orelse return @intFromEnum(ErrorCode.invalid_handle);
+    if (data_len == 0) return @intFromEnum(ErrorCode.invalid_arg);
+    var stream = std.io.fixedBufferStream(data_ptr[0..@as(usize, data_len)]);
+    readState(stream.reader(), &h.term) catch |err| switch (err) {
+        error.OutOfMemory => return @intFromEnum(ErrorCode.out_of_memory),
+        else => return @intFromEnum(ErrorCode.invalid_arg),
+    };
+    return @intFromEnum(ErrorCode.ok);
+}
+
+pub export fn restty_snapshot_state_finalize(
+    self: ?*Restty,
+) callconv(.c) u32 {
+    const h = self orelse return @intFromEnum(ErrorCode.invalid_handle);
+    inline for (.{ ghostty.ScreenSet.Key.primary, ghostty.ScreenSet.Key.alternate }) |skey| {
+        if (h.term.screens.get(skey)) |screen| {
+            finalizeScreen(screen) catch return @intFromEnum(ErrorCode.invalid_arg);
+        }
+    }
+    if (h.term.screens.get(h.term.screens.active_key)) |screen| {
+        h.term.screens.active = screen;
+    }
     return @intFromEnum(ErrorCode.ok);
 }
 
@@ -1265,7 +1093,7 @@ pub export fn restty_render_update(handle: ?*Restty) u32 {
             else
                 false;
 
-            h.buffers.codepoints[idx] = @intCast(raw_codepoint);
+            h.buffers.codepoints[idx] = if (is_kitty_placeholder) 32 else @intCast(raw_codepoint);
             h.buffers.content_tags[idx] = @intFromEnum(raw.content_tag);
             h.buffers.wide[idx] = @intFromEnum(raw.wide);
 
