@@ -36,6 +36,7 @@ export type ResttyPaneApi = {
   sendInput: (text: string, source?: string) => void;
   sendKeyInput: (text: string, source?: string) => void;
   clearScreen: () => void;
+  loadBinarySnapshot: (data: Uint8Array) => boolean;
   connectPty: (url?: string) => void;
   disconnectPty: () => void;
   isPtyConnected: () => boolean;
@@ -117,6 +118,10 @@ export class ResttyPaneHandle implements ResttyPaneApi {
 
   clearScreen(): void {
     this.resolvePane().app.clearScreen();
+  }
+
+  loadBinarySnapshot(data: Uint8Array): boolean {
+    return this.resolvePane().app.loadBinarySnapshot(data);
   }
 
   connectPty(url = ""): void {

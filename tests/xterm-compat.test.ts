@@ -30,6 +30,7 @@ type FakePane = {
     sendInput: (text: string, source?: string) => void;
     sendKeyInput: (text: string, source?: string) => void;
     clearScreen: () => void;
+    loadBinarySnapshot: (data: Uint8Array) => boolean;
     connectPty: () => void;
     disconnectPty: () => void;
     isPtyConnected: () => boolean;
@@ -140,6 +141,7 @@ function createFakeManager(options: any): FakeManager {
       clearScreen: () => {
         state.clearCount += 1;
       },
+      loadBinarySnapshot: (_data: Uint8Array) => false,
       connectPty: () => {
         ptyConnected = true;
       },

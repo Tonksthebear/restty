@@ -50,6 +50,10 @@ export abstract class ResttyActivePaneApi {
     this.requireActivePaneHandle().clearScreen();
   }
 
+  loadBinarySnapshot(data: Uint8Array): boolean {
+    return this.requireActivePaneHandle().loadBinarySnapshot(data);
+  }
+
   setMouseMode(value: MouseMode): void {
     this.requireActivePaneHandle().setMouseMode(value);
   }

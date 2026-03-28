@@ -359,6 +359,8 @@ export type ResttyApp = {
   sendKeyInput: (text: string, source?: string) => void;
   /** Clear the visible screen and scrollback. */
   clearScreen: () => void;
+  /** Load a binary terminal snapshot into the active WASM instance. */
+  loadBinarySnapshot: (data: Uint8Array) => boolean;
   /** Open a PTY connection, optionally to a specific URL. */
   connectPty: (url?: string) => void;
   /** Close the active PTY connection. */

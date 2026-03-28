@@ -363,6 +363,24 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     sendInput("\x1b[2J\x1b[H");
   }
 
+  function loadBinarySnapshot(data: Uint8Array): boolean {
+    const shared = readState();
+    if (!shared.wasmReady || !shared.wasm || !shared.wasmHandle) return false;
+    if (!(data instanceof Uint8Array) || data.byteLength === 0) return false;
+    if (interaction.selectionState.active || interaction.selectionState.dragging) {
+      interaction.clearSelection();
+    }
+    if (interaction.linkState.hoverId) {
+      interaction.updateLinkHover(null);
+    }
+    const loaded = shared.wasm.loadBinarySnapshot(shared.wasmHandle, data);
+    if (!loaded) return false;
+    ptyInputRuntime.cancelSyncOutputReset();
+    handleSearchWasmReset();
+    writeState({ needsRender: true });
+    return true;
+  }
+
   if (attachWindowEvents) {
     const hasInputFocus = () => {
       if (typeof document === "undefined") return true;
@@ -679,6 +697,7 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
       sendInput,
       sendKeyInput: ptyInputRuntime.sendKeyInput,
       clearScreen,
+      loadBinarySnapshot,
       connectPty: ptyInputRuntime.connectPty,
       disconnectPty: ptyInputRuntime.disconnectPty,
       isPtyConnected: () => ptyTransport.isConnected(),
