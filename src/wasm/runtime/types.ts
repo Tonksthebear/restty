@@ -103,22 +103,10 @@ export type ResttyWasmExports = WebAssembly.Exports & {
   restty_set_default_colors?: (handle: number, fg: number, bg: number, cursor: number) => number;
   restty_set_palette?: (handle: number, ptr: number, len: number) => number;
   restty_reset_palette?: (handle: number) => number;
-  restty_snapshot_page_load?: (
-    handle: number,
-    screen_key: number,
-    data_ptr: number,
-    data_len: number,
-    cap_cols: number,
-    cap_rows: number,
-    cap_styles: number,
-    cap_grapheme_bytes: number,
-    cap_hyperlink_bytes: number,
-    cap_string_bytes: number,
-    used_cols: number,
-    used_rows: number,
-  ) => number;
-  restty_snapshot_state_import?: (handle: number, data_ptr: number, data_len: number) => number;
-  restty_snapshot_state_finalize?: (handle: number) => number;
+  restty_snapshot_import?: (handle: number, data_ptr: number, data_len: number) => number;
+  restty_snapshot_export?: (handle: number) => number;
+  restty_snapshot_ptr?: (handle: number) => number;
+  restty_snapshot_len?: (handle: number) => number;
   restty_scroll_viewport?: (handle: number, delta: number) => number;
   restty_scrollbar_total?: (handle: number) => number;
   restty_scrollbar_offset?: (handle: number) => number;

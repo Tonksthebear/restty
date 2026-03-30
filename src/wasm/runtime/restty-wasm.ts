@@ -272,115 +272,18 @@ export class ResttyWasm {
 
   /** Load a binary snapshot bundle into the terminal state. */
   loadBinarySnapshot(handle: number, data: Uint8Array): boolean {
-    const pageLoad = this.exports.restty_snapshot_page_load;
-    const stateImport = this.exports.restty_snapshot_state_import;
-    const stateFinalize = this.exports.restty_snapshot_state_finalize;
-    if (!pageLoad || !stateImport || !stateFinalize) return false;
-    if (data.byteLength < 3) return false;
+    const snapshotImport = this.exports.restty_snapshot_import;
+    if (!snapshotImport) return false;
+    if (data.byteLength === 0) return false;
 
-    const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-    let pos = 0;
+    const ptr = this.exports.restty_alloc(data.byteLength);
+    if (!ptr) return false;
+    new Uint8Array(this.memory.buffer, ptr, data.byteLength).set(data);
 
-    const hasBytes = (len: number) => pos + len <= data.byteLength;
-    const readUint8 = (): number | null => {
-      if (!hasBytes(1)) return null;
-      const value = data[pos];
-      pos += 1;
-      return value;
-    };
-    const readUint16 = (): number | null => {
-      if (!hasBytes(2)) return null;
-      const value = view.getUint16(pos, true);
-      pos += 2;
-      return value;
-    };
-    const readUint32 = (): number | null => {
-      if (!hasBytes(4)) return null;
-      const value = view.getUint32(pos, true);
-      pos += 4;
-      return value;
-    };
+    const result = snapshotImport(handle, ptr, data.byteLength);
+    this.exports.restty_free(ptr, data.byteLength);
+    if (result !== 0) return false;
 
-    const version = readUint8();
-    if (version !== 1) return false;
-
-    const screenCount = readUint8();
-    if (screenCount !== 1 && screenCount !== 2) return false;
-
-    const activeScreenKey = readUint8();
-    if (activeScreenKey !== 0 && activeScreenKey !== 1) return false;
-
-    for (let s = 0; s < screenCount; s += 1) {
-      const pageCount = readUint32();
-      if (pageCount === null) return false;
-      const screenKey = screenCount === 1 ? activeScreenKey : s;
-
-      for (let p = 0; p < pageCount; p += 1) {
-        const memoryLen = readUint32();
-        const usedCols = readUint16();
-        const usedRows = readUint16();
-        const capCols = readUint16();
-        const capRows = readUint16();
-        const capStyles = readUint16();
-        const capGraphemeBytes = readUint32();
-        const capHyperlinkBytes = readUint16();
-        const capStringBytes = readUint32();
-        if (
-          memoryLen === null ||
-          usedCols === null ||
-          usedRows === null ||
-          capCols === null ||
-          capRows === null ||
-          capStyles === null ||
-          capGraphemeBytes === null ||
-          capHyperlinkBytes === null ||
-          capStringBytes === null
-        ) {
-          return false;
-        }
-        if (!hasBytes(memoryLen)) return false;
-
-        const pageData = data.subarray(pos, pos + memoryLen);
-        pos += memoryLen;
-
-        const ptr = this.exports.restty_alloc(memoryLen);
-        if (!ptr) return false;
-        new Uint8Array(this.memory.buffer, ptr, memoryLen).set(pageData);
-
-        const result = pageLoad(
-          handle,
-          screenKey,
-          ptr,
-          memoryLen,
-          capCols,
-          capRows,
-          capStyles,
-          capGraphemeBytes,
-          capHyperlinkBytes,
-          capStringBytes,
-          usedCols,
-          usedRows,
-        );
-        this.exports.restty_free(ptr, memoryLen);
-        if (result !== 0) return false;
-      }
-    }
-
-    const stateBlobLen = readUint32();
-    if (stateBlobLen === null) return false;
-    if (!hasBytes(stateBlobLen) || pos + stateBlobLen !== data.byteLength) return false;
-
-    if (stateBlobLen > 0) {
-      const stateData = data.subarray(pos, pos + stateBlobLen);
-      const statePtr = this.exports.restty_alloc(stateBlobLen);
-      if (!statePtr) return false;
-      new Uint8Array(this.memory.buffer, statePtr, stateBlobLen).set(stateData);
-      const result = stateImport(handle, statePtr, stateBlobLen);
-      this.exports.restty_free(statePtr, stateBlobLen);
-      if (result !== 0) return false;
-    }
-
-    if (stateFinalize(handle) !== 0) return false;
     return this.exports.restty_render_update(handle) === 0;
   }
 

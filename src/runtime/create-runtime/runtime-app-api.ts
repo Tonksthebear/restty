@@ -272,6 +272,19 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     }
   }
 
+  function createWasmHandle(instance: ResttyWasm): number {
+    updateGrid();
+    const cols = gridState.cols || 80;
+    const rows = gridState.rows || 24;
+    const wasmHandle = instance.create(cols, rows, maxScrollbackBytes);
+    if (!wasmHandle) {
+      throw new Error("restty create failed (restty_create returned 0)");
+    }
+    const canvas = getCanvas();
+    instance.setPixelSize(wasmHandle, canvas.width, canvas.height);
+    return wasmHandle;
+  }
+
   function sendInput(text: string, source = "program", config: { skipHooks?: boolean } = {}) {
     const shared = readState();
     if (!shared.wasmReady || !shared.wasm || !shared.wasmHandle) return;
@@ -373,7 +386,23 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     if (interaction.linkState.hoverId) {
       interaction.updateLinkHover(null);
     }
-    const loaded = shared.wasm.loadBinarySnapshot(shared.wasmHandle, data);
+    let nextHandle = 0;
+    try {
+      nextHandle = createWasmHandle(shared.wasm);
+    } catch {
+      return false;
+    }
+    const loaded = shared.wasm.loadBinarySnapshot(nextHandle, data);
+    if (!loaded) {
+      shared.wasm.destroy(nextHandle);
+      return false;
+    }
+    try {
+      shared.wasm.destroy(shared.wasmHandle);
+    } catch {
+      // ignore wasm destroy errors during snapshot handle swap
+    }
+    writeState({ wasmHandle: nextHandle });
     if (!loaded) return false;
     ptyInputRuntime.cancelSyncOutputReset();
     handleSearchWasmReset();
@@ -523,15 +552,7 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
         instance.destroy(shared.wasmHandle);
         writeState({ wasmHandle: 0 });
       }
-      updateGrid();
-      const cols = gridState.cols || 80;
-      const rows = gridState.rows || 24;
-      const wasmHandle = instance.create(cols, rows, maxScrollbackBytes);
-      if (!wasmHandle) {
-        throw new Error("restty create failed (restty_create returned 0)");
-      }
-      const canvas = getCanvas();
-      instance.setPixelSize(wasmHandle, canvas.width, canvas.height);
+      const wasmHandle = createWasmHandle(instance);
       const activeTheme = lifecycleThemeSizeRuntime.getActiveTheme();
       if (activeTheme) {
         applyTheme(activeTheme, activeTheme.name ?? "cached theme");
