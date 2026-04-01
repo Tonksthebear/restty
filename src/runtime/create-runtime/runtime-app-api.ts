@@ -99,6 +99,7 @@ type CreateRuntimeAppApiOptions = {
   initialPreferredRenderer: PreferredRenderer;
   maxScrollbackBytes?: number;
   maxScrollback?: number;
+  readOnly?: boolean;
   CURSOR_BLINK_MS: number;
   RESIZE_ACTIVE_MS: number;
   TARGET_RENDER_FPS: number;
@@ -262,6 +263,15 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     const shared = readState();
     if (!shared.wasm || !shared.wasmHandle) return;
     if (!ptyTransport.isConnected()) return;
+
+    if (options.readOnly) {
+      // In read-only mode restty is a pure renderer — discard terminal query
+      // responses (DA, DSR, kitty keyboard, kitty graphics) so they don't
+      // get forwarded as duplicate replies to a PTY that another terminal
+      // already owns.
+      while (shared.wasm.drainOutput(shared.wasmHandle)) {}
+      return;
+    }
 
     let iterations = 0;
     while (iterations < 32) {

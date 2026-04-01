@@ -1268,6 +1268,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     initialPreferredRenderer: options.renderer ?? "auto",
     maxScrollbackBytes: options.maxScrollbackBytes,
     maxScrollback: options.maxScrollback,
+    readOnly: options.readOnly,
   });
   return runtimeAppApi.createPublicApi({
     setFontSize: applyFontSize,

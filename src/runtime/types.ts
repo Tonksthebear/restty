@@ -325,6 +325,13 @@ export type ResttyAppOptions = {
    * If both are set, maxScrollbackBytes takes precedence.
    */
   maxScrollback?: number;
+  /**
+   * When true, suppress terminal query responses (DA, DSR, kitty keyboard,
+   * kitty graphics) from being forwarded back to the PTY. Enable this when
+   * restty is used as a pure renderer alongside a session that already owns
+   * the PTY and handles terminal queries itself.
+   */
+  readOnly?: boolean;
 };
 
 /**
