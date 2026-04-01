@@ -420,6 +420,36 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     return true;
   }
 
+  function getColorForeground(): number | null {
+    const shared = readState();
+    if (!shared.wasm || !shared.wasmHandle) return null;
+    return shared.wasm.getColorForeground(shared.wasmHandle);
+  }
+
+  function getColorBackground(): number | null {
+    const shared = readState();
+    if (!shared.wasm || !shared.wasmHandle) return null;
+    return shared.wasm.getColorBackground(shared.wasmHandle);
+  }
+
+  function getColorCursor(): number | null {
+    const shared = readState();
+    if (!shared.wasm || !shared.wasmHandle) return null;
+    return shared.wasm.getColorCursor(shared.wasmHandle);
+  }
+
+  function getPaletteColor(index: number): number | null {
+    const shared = readState();
+    if (!shared.wasm || !shared.wasmHandle) return null;
+    return shared.wasm.getPaletteColor(shared.wasmHandle, index);
+  }
+
+  function getPalette(): Uint8Array | null {
+    const shared = readState();
+    if (!shared.wasm || !shared.wasmHandle) return null;
+    return shared.wasm.getPalette(shared.wasmHandle);
+  }
+
   if (attachWindowEvents) {
     const hasInputFocus = () => {
       if (typeof document === "undefined") return true;
@@ -729,6 +759,11 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
       sendKeyInput: ptyInputRuntime.sendKeyInput,
       clearScreen,
       loadBinarySnapshot,
+      getColorForeground,
+      getColorBackground,
+      getColorCursor,
+      getPaletteColor,
+      getPalette,
       connectPty: ptyInputRuntime.connectPty,
       disconnectPty: ptyInputRuntime.disconnectPty,
       isPtyConnected: () => ptyTransport.isConnected(),

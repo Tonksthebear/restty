@@ -368,6 +368,16 @@ export type ResttyApp = {
   clearScreen: () => void;
   /** Load a binary terminal snapshot into the active WASM instance. */
   loadBinarySnapshot: (data: Uint8Array) => boolean;
+  /** Get the active foreground color as 0x00RRGGBB, or null if unset. */
+  getColorForeground: () => number | null;
+  /** Get the active background color as 0x00RRGGBB, or null if unset. */
+  getColorBackground: () => number | null;
+  /** Get the active cursor color as 0x00RRGGBB, or null if unset. */
+  getColorCursor: () => number | null;
+  /** Get a single palette color as 0x00RRGGBB, or null for invalid index. */
+  getPaletteColor: (index: number) => number | null;
+  /** Get the full 256-color palette as RGB byte triplets (768 bytes). */
+  getPalette: () => Uint8Array | null;
   /** Open a PTY connection, optionally to a specific URL. */
   connectPty: (url?: string) => void;
   /** Close the active PTY connection. */
