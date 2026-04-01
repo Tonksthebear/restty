@@ -399,11 +399,13 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     let nextHandle = 0;
     try {
       nextHandle = createWasmHandle(shared.wasm);
-    } catch {
+    } catch (e) {
+      appendLog(`[snapshot] createWasmHandle failed: ${e}`);
       return false;
     }
-    const loaded = shared.wasm.loadBinarySnapshot(nextHandle, data);
-    if (!loaded) {
+    const error = shared.wasm.loadBinarySnapshot(nextHandle, data);
+    if (error) {
+      appendLog(`[snapshot] loadBinarySnapshot failed: ${error}`);
       shared.wasm.destroy(nextHandle);
       return false;
     }
@@ -413,7 +415,6 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
       // ignore wasm destroy errors during snapshot handle swap
     }
     writeState({ wasmHandle: nextHandle });
-    if (!loaded) return false;
     ptyInputRuntime.cancelSyncOutputReset();
     handleSearchWasmReset();
     writeState({ needsRender: true });

@@ -17,6 +17,18 @@ import { makeRenderViewCache } from "./view-cache";
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
+
+const WASM_ERROR_NAMES: Record<number, string> = {
+  0: "ok",
+  1: "invalid_handle",
+  2: "out_of_memory",
+  3: "invalid_arg",
+  4: "internal",
+};
+
+function wasmErrorName(code: number): string {
+  return WASM_ERROR_NAMES[code] ?? `unknown(${code})`;
+}
 const SEARCH_STATUS_BYTES = 16;
 const SEARCH_VIEWPORT_MATCH_BYTES = 8;
 
@@ -315,21 +327,25 @@ export class ResttyWasm {
     return out;
   }
 
-  /** Load a binary snapshot bundle into the terminal state. */
-  loadBinarySnapshot(handle: number, data: Uint8Array): boolean {
+  /** Load a binary snapshot bundle into the terminal state.
+   *  Returns null on success, or a string describing the failure. */
+  loadBinarySnapshot(handle: number, data: Uint8Array): string | null {
     const snapshotImport = this.exports.restty_snapshot_import;
-    if (!snapshotImport) return false;
-    if (data.byteLength === 0) return false;
+    if (!snapshotImport) return "snapshot_import export not available";
+    if (data.byteLength === 0) return "empty snapshot data";
 
     const ptr = this.exports.restty_alloc(data.byteLength);
-    if (!ptr) return false;
+    if (!ptr) return `alloc failed for ${data.byteLength} bytes`;
     new Uint8Array(this.memory.buffer, ptr, data.byteLength).set(data);
 
     const result = snapshotImport(handle, ptr, data.byteLength);
     this.exports.restty_free(ptr, data.byteLength);
-    if (result !== 0) return false;
+    if (result !== 0) return `snapshot_import error=${result} (${wasmErrorName(result)})`;
 
-    return this.exports.restty_render_update(handle) === 0;
+    const renderResult = this.exports.restty_render_update(handle);
+    if (renderResult !== 0) return `render_update error=${renderResult} (${wasmErrorName(renderResult)})`;
+
+    return null;
   }
 
   /** Get current render state with cached typed array views. */
