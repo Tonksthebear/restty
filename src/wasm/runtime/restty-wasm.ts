@@ -270,6 +270,51 @@ export class ResttyWasm {
     this.exports.restty_reset_palette(handle);
   }
 
+  /** Get the active foreground color as 0x00RRGGBB, or null if unset. */
+  getColorForeground(handle: number): number | null {
+    if (!this.exports.restty_get_color_foreground) return null;
+    const v = this.exports.restty_get_color_foreground(handle);
+    return v === 0xffffffff ? null : v;
+  }
+
+  /** Get the active background color as 0x00RRGGBB, or null if unset. */
+  getColorBackground(handle: number): number | null {
+    if (!this.exports.restty_get_color_background) return null;
+    const v = this.exports.restty_get_color_background(handle);
+    return v === 0xffffffff ? null : v;
+  }
+
+  /** Get the active cursor color as 0x00RRGGBB, or null if unset. */
+  getColorCursor(handle: number): number | null {
+    if (!this.exports.restty_get_color_cursor) return null;
+    const v = this.exports.restty_get_color_cursor(handle);
+    return v === 0xffffffff ? null : v;
+  }
+
+  /** Get a single palette color as 0x00RRGGBB, or null for invalid index. */
+  getPaletteColor(handle: number, index: number): number | null {
+    if (!this.exports.restty_get_palette_color) return null;
+    const v = this.exports.restty_get_palette_color(handle, index);
+    return v === 0xffffffff ? null : v;
+  }
+
+  /** Get the full 256-color palette as a Uint8Array (768 bytes: R,G,B × 256). */
+  getPalette(handle: number): Uint8Array | null {
+    if (!this.exports.restty_get_palette) return null;
+    const byteLen = 256 * 3;
+    const ptr = this.exports.restty_alloc(byteLen);
+    if (!ptr) return null;
+    const result = this.exports.restty_get_palette(handle, ptr);
+    if (result !== 0) {
+      this.exports.restty_free(ptr, byteLen);
+      return null;
+    }
+    const out = new Uint8Array(byteLen);
+    out.set(new Uint8Array(this.memory.buffer, ptr, byteLen));
+    this.exports.restty_free(ptr, byteLen);
+    return out;
+  }
+
   /** Load a binary snapshot bundle into the terminal state. */
   loadBinarySnapshot(handle: number, data: Uint8Array): boolean {
     const snapshotImport = this.exports.restty_snapshot_import;

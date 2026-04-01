@@ -324,6 +324,10 @@ fn rgbFromU32(color: u32) ghostty.color.RGB {
     };
 }
 
+fn rgbToU32(rgb: ghostty.color.RGB) u32 {
+    return (@as(u32, rgb.r) << 16) | (@as(u32, rgb.g) << 8) | @as(u32, rgb.b);
+}
+
 fn cursorStyleToAbi(style: CursorVisualStyle) u8 {
     return switch (style) {
         .block => 0,
@@ -679,6 +683,48 @@ pub export fn restty_reset_palette(handle: ?*Restty) u32 {
     const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
     h.term.colors.palette.resetAll();
     h.term.flags.dirty.palette = true;
+    return @intFromEnum(ErrorCode.ok);
+}
+
+/// Returns the active foreground color as 0x00RRGGBB, or 0xFFFFFFFF if unset.
+pub export fn restty_get_color_foreground(handle: ?*Restty) u32 {
+    const h = handle orelse return 0xFFFF_FFFF;
+    const rgb = h.term.colors.foreground.get() orelse return 0xFFFF_FFFF;
+    return rgbToU32(rgb);
+}
+
+/// Returns the active background color as 0x00RRGGBB, or 0xFFFFFFFF if unset.
+pub export fn restty_get_color_background(handle: ?*Restty) u32 {
+    const h = handle orelse return 0xFFFF_FFFF;
+    const rgb = h.term.colors.background.get() orelse return 0xFFFF_FFFF;
+    return rgbToU32(rgb);
+}
+
+/// Returns the active cursor color as 0x00RRGGBB, or 0xFFFFFFFF if unset.
+pub export fn restty_get_color_cursor(handle: ?*Restty) u32 {
+    const h = handle orelse return 0xFFFF_FFFF;
+    const rgb = h.term.colors.cursor.get() orelse return 0xFFFF_FFFF;
+    return rgbToU32(rgb);
+}
+
+/// Returns a single palette color as 0x00RRGGBB, or 0xFFFFFFFF for invalid index.
+pub export fn restty_get_palette_color(handle: ?*Restty, index: u32) u32 {
+    const h = handle orelse return 0xFFFF_FFFF;
+    if (index > 255) return 0xFFFF_FFFF;
+    const rgb = h.term.colors.palette.current[@intCast(index)];
+    return rgbToU32(rgb);
+}
+
+/// Writes the full 256-color palette (768 bytes: R,G,B × 256) to the given pointer.
+/// Caller must allocate at least 768 bytes. Returns error code.
+pub export fn restty_get_palette(handle: ?*Restty, out_ptr: [*]u8) u32 {
+    const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
+    for (h.term.colors.palette.current, 0..) |rgb, i| {
+        const base = i * 3;
+        out_ptr[base] = rgb.r;
+        out_ptr[base + 1] = rgb.g;
+        out_ptr[base + 2] = rgb.b;
+    }
     return @intFromEnum(ErrorCode.ok);
 }
 
