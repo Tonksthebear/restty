@@ -59,6 +59,7 @@ test("sendKeyInput always routes payloads through PTY key mapper", () => {
     ptyTransport: createTransportStub(sent),
     ptyOutputBuffer: {
       queue: () => {},
+      queueBytes: () => {},
       flush: () => {},
       cancel: () => {},
       clear: () => {},
@@ -87,6 +88,7 @@ test("sendKeyInput keeps legacy mapper behavior for non-kitty payloads", () => {
     ptyTransport: createTransportStub(sent),
     ptyOutputBuffer: {
       queue: () => {},
+      queueBytes: () => {},
       flush: () => {},
       cancel: () => {},
       clear: () => {},

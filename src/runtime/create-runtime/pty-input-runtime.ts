@@ -124,6 +124,12 @@ export function createPtyInputRuntime(options: CreatePtyInputRuntimeOptions): Pt
     ptyOutputBuffer.queue(text);
   }
 
+  function queuePtyOutputBytes(data: Uint8Array): void {
+    ptyOutputBuffer.queueBytes(data);
+  }
+
+  const lossyDecoder = new TextDecoder("utf-8", { fatal: false });
+
   function disconnectPty(): void {
     flushPtyOutputBuffer();
     cancelPtyOutputFlush();
@@ -176,10 +182,18 @@ export function createPtyInputRuntime(options: CreatePtyInputRuntimeOptions): Pt
             appendLog(`[pty] exit ${code ?? ""}`);
             disconnectPty();
           },
-          onData: (text) => {
-            const sanitized = inputHandler.filterOutput(text);
-            updateMouseStatus();
-            if (sanitized) queuePtyOutput(sanitized);
+          onData: (data) => {
+            if (data instanceof Uint8Array) {
+              // Lossy decode for JS-side mode tracking (control sequences are ASCII, so this is fine)
+              const text = lossyDecoder.decode(data);
+              inputHandler.filterOutput(text);
+              updateMouseStatus();
+              queuePtyOutputBytes(data);
+            } else {
+              const sanitized = inputHandler.filterOutput(data);
+              updateMouseStatus();
+              if (sanitized) queuePtyOutput(sanitized);
+            }
           },
         },
       });

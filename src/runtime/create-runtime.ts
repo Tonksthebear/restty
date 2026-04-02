@@ -334,6 +334,9 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   function sendInput(text: string, source = "program", config: { skipHooks?: boolean } = {}) {
     runtimeAppApi?.sendInput(text, source, config);
   }
+  function sendInputBytes(data: Uint8Array) {
+    runtimeAppApi?.sendInputBytes(data);
+  }
   const ptyTransport: PtyTransport = options.ptyTransport ?? createWebSocketPtyTransport();
   const PTY_OUTPUT_IDLE_MS = 10;
   const PTY_OUTPUT_MAX_MS = 40;
@@ -343,6 +346,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     idleMs: PTY_OUTPUT_IDLE_MS,
     maxMs: PTY_OUTPUT_MAX_MS,
     onFlush: (output) => sendInput(output, "pty"),
+    onFlushBytes: (output) => sendInputBytes(output),
   });
   let lastCursorForCpr = { row: 1, col: 1 };
   function resolveCursorForCpr() {

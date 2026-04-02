@@ -64,6 +64,7 @@ type RuntimePublicApiOptions = {
 
 export type RuntimeAppApiRuntime = {
   sendInput: RuntimeSendInput;
+  sendInputBytes: (data: Uint8Array) => void;
   createPublicApi: (options: RuntimePublicApiOptions) => ResttyApp;
 };
 
@@ -354,6 +355,32 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
       const ay = shared.wasmExports.restty_active_cursor_y(shared.wasmHandle);
       appendLog(`[key] after cursor=${ax},${ay}`);
     }
+    writeState({ needsRender: true });
+  }
+
+  const bytesDecoder = new TextDecoder("utf-8", { fatal: false });
+
+  function sendInputBytes(data: Uint8Array) {
+    const shared = readState();
+    if (!shared.wasmReady || !shared.wasm || !shared.wasmHandle) return;
+    if (!data.length) return;
+    // Run the render output hook on a lossy decode so it can suppress output.
+    const hookText = runBeforeRenderOutputHook(bytesDecoder.decode(data), "pty");
+    if (!hookText) return;
+    if (interaction.linkState.hoverId) interaction.updateLinkHover(null);
+    const canvas = getCanvas();
+    shared.wasm.setPixelSize(shared.wasmHandle, canvas.width, canvas.height);
+    shared.wasm.writeBytes(shared.wasmHandle, data);
+    // Drain and discard WASM output — the JS OutputFilter already handles
+    // terminal query replies (CPR, DA, etc.) so WASM's replies are duplicates.
+    while (shared.wasm.drainOutput(shared.wasmHandle)) {}
+    markSearchDirty();
+    if (inputHandler.isSynchronizedOutput?.()) {
+      ptyInputRuntime.scheduleSyncOutputReset();
+      return;
+    }
+    ptyInputRuntime.cancelSyncOutputReset();
+    shared.wasm.renderUpdate(shared.wasmHandle);
     writeState({ needsRender: true });
   }
 
@@ -790,6 +817,7 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
 
   return {
     sendInput,
+    sendInputBytes,
     createPublicApi,
   };
 }

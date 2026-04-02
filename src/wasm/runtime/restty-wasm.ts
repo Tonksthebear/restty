@@ -257,6 +257,17 @@ export class ResttyWasm {
     this.exports.restty_free(ptr, bytes.length);
   }
 
+  /** Write raw bytes to terminal for processing (no encoding step). */
+  writeBytes(handle: number, data: Uint8Array): void {
+    if (!data.length) return;
+    const ptr = this.exports.restty_alloc(data.length);
+    if (!ptr) return;
+    const view = new Uint8Array(this.memory.buffer, ptr, data.length);
+    view.set(data);
+    this.exports.restty_write(handle, ptr, data.length);
+    this.exports.restty_free(ptr, data.length);
+  }
+
   /** Set default colors for terminal (RGB packed as 0xRRGGBB). */
   setDefaultColors(handle: number, fg: number, bg: number, cursor: number): void {
     if (!this.exports.restty_set_default_colors) return;
