@@ -9,6 +9,16 @@ import {
 import { handleOscSequence } from "./osc";
 import { createPromptState, isPromptClickEventsEnabled, observeOscPromptState } from "./prompt";
 
+const BYTE_TEXT_CHUNK = 0x8000;
+
+function mapBytesToControlText(bytes: Uint8Array): string {
+  let out = "";
+  for (let i = 0; i < bytes.length; i += BYTE_TEXT_CHUNK) {
+    out += String.fromCharCode(...bytes.subarray(i, i + BYTE_TEXT_CHUNK));
+  }
+  return out;
+}
+
 function normalizeCursorPosition(value: CursorPosition | null | undefined): CursorPosition | null {
   if (!value) return null;
   const row = Number(value.row);
@@ -34,7 +44,12 @@ function resolveCursorSetParam(raw: string | undefined): number {
   return Math.max(1, Math.floor(parsed));
 }
 
-function applyTextToCursorHint(cursor: CursorPosition, text: string, cols: number): void {
+function applyTextToCursorHint(
+  cursor: CursorPosition,
+  text: string,
+  cols: number,
+  trackHighBytesAsPrintable: boolean,
+): void {
   for (const ch of text) {
     const code = ch.charCodeAt(0);
     if (code === 0x0d) {
@@ -55,6 +70,7 @@ function applyTextToCursorHint(cursor: CursorPosition, text: string, cols: numbe
       continue;
     }
     if (code < 0x20 || code === 0x7f) continue;
+    if (!trackHighBytesAsPrintable && code >= 0x80) continue;
     cursor.col += 1;
     if (cols > 0 && cursor.col > cols) {
       cursor.col = 1;
@@ -271,7 +287,7 @@ export class OutputFilter {
     });
   }
 
-  filter(output: string) {
+  private filterInternal(output: string, trackHighBytesAsPrintable: boolean) {
     if (!output) return output;
     let data = this.remainder + output;
     this.remainder = "";
@@ -287,7 +303,7 @@ export class OutputFilter {
       const ch = data[i];
       if (ch !== "\x1b") {
         result += ch;
-        applyTextToCursorHint(trackedCursor, ch, colsHint);
+        applyTextToCursorHint(trackedCursor, ch, colsHint, trackHighBytesAsPrintable);
         i += 1;
         continue;
       }
@@ -365,5 +381,16 @@ export class OutputFilter {
     }
     this.cursorHint = { ...trackedCursor };
     return result;
+  }
+
+  filter(output: string) {
+    return this.filterInternal(output, true);
+  }
+
+  filterBytes(output: Uint8Array): void {
+    if (!output.length) return;
+    // Preserve a 1:1 byte mapping so ASCII control-sequence tracking stays
+    // aligned with the raw parser even when PTY output is not valid UTF-8.
+    this.filterInternal(mapBytesToControlText(output), false);
   }
 }

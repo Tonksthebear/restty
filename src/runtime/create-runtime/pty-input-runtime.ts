@@ -128,8 +128,6 @@ export function createPtyInputRuntime(options: CreatePtyInputRuntimeOptions): Pt
     ptyOutputBuffer.queueBytes(data);
   }
 
-  const lossyDecoder = new TextDecoder("utf-8", { fatal: false });
-
   function disconnectPty(): void {
     flushPtyOutputBuffer();
     cancelPtyOutputFlush();
@@ -184,9 +182,7 @@ export function createPtyInputRuntime(options: CreatePtyInputRuntimeOptions): Pt
           },
           onData: (data) => {
             if (data instanceof Uint8Array) {
-              // Lossy decode for JS-side mode tracking (control sequences are ASCII, so this is fine)
-              const text = lossyDecoder.decode(data);
-              inputHandler.filterOutput(text);
+              inputHandler.filterOutputBytes?.(data);
               updateMouseStatus();
               queuePtyOutputBytes(data);
             } else {

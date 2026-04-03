@@ -193,6 +193,11 @@ export type ResttyFontHintTarget = "auto" | "light" | "normal";
 export type ResttyAppInputPayload = {
   text: string;
   source: string;
+  /**
+   * Raw PTY bytes when the payload originated from a binary transport path.
+   * Present for live output hooks; absent for legacy string-only paths.
+   */
+  bytes?: Uint8Array;
 };
 
 /** Render-stage phase ordering. */

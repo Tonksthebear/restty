@@ -109,3 +109,57 @@ test("sendKeyInput keeps legacy mapper behavior for non-kitty payloads", () => {
 
   expect(sent).toEqual(["mapped:\x08"]);
 });
+
+test("connectPty uses byte-safe filtering for live Uint8Array output", () => {
+  const filteredBytes: number[][] = [];
+  const queuedBytes: number[][] = [];
+  let capturedOnData: ((data: string | Uint8Array) => void) | undefined;
+
+  const runtime = createPtyInputRuntime({
+    ptyTransport: {
+      connect: ({ callbacks }) => {
+        capturedOnData = callbacks.onData;
+      },
+      disconnect: () => {},
+      sendInput: () => true,
+      resize: () => true,
+      isConnected: () => false,
+    },
+    ptyOutputBuffer: {
+      queue: () => {
+        throw new Error("string queue should not be used for Uint8Array PTY output");
+      },
+      queueBytes: (data) => {
+        queuedBytes.push(Array.from(data));
+      },
+      flush: () => {},
+      cancel: () => {},
+      clear: () => {},
+    },
+    inputHandler: {
+      ...createInputHandlerStub((seq) => seq),
+      filterOutput: () => {
+        throw new Error("lossy string filter should not be used for Uint8Array PTY output");
+      },
+      filterOutputBytes: (output) => {
+        filteredBytes.push(Array.from(output));
+      },
+    },
+    appendLog: () => {},
+    getGridSize: () => ({ cols: 80, rows: 24 }),
+    getCursorForCpr: () => ({ row: 1, col: 1 }),
+    sendInput: () => {},
+    runBeforeInputHook: (text) => text,
+    shouldClearSelection: () => false,
+    clearSelection: () => {},
+    syncOutputResetMs: 1000,
+    syncOutputResetSeq: "\x1b[?2026l",
+  });
+
+  runtime.connectPty("ws://example.test");
+  const payload = Uint8Array.from([0xff, 0x1b, 0x5b, 0x36, 0x6e]);
+  capturedOnData?.(payload);
+
+  expect(filteredBytes).toEqual([Array.from(payload)]);
+  expect(queuedBytes).toEqual([Array.from(payload)]);
+});

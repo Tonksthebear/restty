@@ -325,6 +325,7 @@ function createRuntimeHarness(
     shouldSuppressWasmLog: () => false,
     runBeforeInputHook: (text) => text,
     runBeforeRenderOutputHook: (text) => text,
+    runBeforeRenderOutputBytesHook: () => true,
     getSelectionText: () => "",
     initialPreferredRenderer: "auto",
     maxScrollbackBytes: 10_000_000,

@@ -185,10 +185,11 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   const { canvas: canvasInput, imeInput: imeInputInput, elements, callbacks } = options;
   const beforeInputHook = options.beforeInput;
   const beforeRenderOutputHook = options.beforeRenderOutput;
-  const { runBeforeInputHook, runBeforeRenderOutputHook } = createRuntimeInputHooks({
-    beforeInputHook,
-    beforeRenderOutputHook,
-  });
+  const { runBeforeInputHook, runBeforeRenderOutputHook, runBeforeRenderOutputBytesHook } =
+    createRuntimeInputHooks({
+      beforeInputHook,
+      beforeRenderOutputHook,
+    });
   const session = options.session ?? getDefaultResttyAppSession();
   const fontResourceStore = session.getFontResourceStore?.() ?? createResttyFontResourceStore();
   const textShaper = bundledTextShaper;
@@ -1239,6 +1240,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     shouldSuppressWasmLog,
     runBeforeInputHook,
     runBeforeRenderOutputHook,
+    runBeforeRenderOutputBytesHook,
     CURSOR_BLINK_MS,
     RESIZE_ACTIVE_MS,
     TARGET_RENDER_FPS,

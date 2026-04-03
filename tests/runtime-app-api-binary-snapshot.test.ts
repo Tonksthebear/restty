@@ -27,7 +27,7 @@ test("runtime app api exposes binary snapshot loading on the public Restty app",
       },
       loadBinarySnapshot: (handle: number, data: Uint8Array) => {
         snapshotCalls.push({ handle, data: Array.from(data) });
-        return true;
+        return null;
       },
     } as never,
     wasmExports: null,
@@ -100,6 +100,7 @@ test("runtime app api exposes binary snapshot loading on the public Restty app",
     shouldSuppressWasmLog: () => false,
     runBeforeInputHook: (text) => text,
     runBeforeRenderOutputHook: (text) => text,
+    runBeforeRenderOutputBytesHook: () => true,
     getSelectionText: () => "",
     initialPreferredRenderer: "auto",
     CURSOR_BLINK_MS: 600,
@@ -191,7 +192,7 @@ test("runtime app api recreates the wasm handle before loading a binary snapshot
       },
       loadBinarySnapshot: (handle: number, data: Uint8Array) => {
         snapshotCalls.push({ handle, data: Array.from(data) });
-        return true;
+        return null;
       },
     } as never,
     wasmExports: null,
@@ -260,6 +261,7 @@ test("runtime app api recreates the wasm handle before loading a binary snapshot
     shouldSuppressWasmLog: () => false,
     runBeforeInputHook: (text) => text,
     runBeforeRenderOutputHook: (text) => text,
+    runBeforeRenderOutputBytesHook: () => true,
     getSelectionText: () => "",
     initialPreferredRenderer: "auto",
     CURSOR_BLINK_MS: 600,
@@ -325,4 +327,135 @@ test("runtime app api recreates the wasm handle before loading a binary snapshot
   expect(destroyCalls).toEqual([9]);
   expect(sharedState.wasmHandle).toBe(27);
   expect(searchResetCalls).toBe(1);
+});
+
+test("runtime app api binary live path can suppress output using raw bytes", () => {
+  const writeBytesCalls: Array<{ handle: number; data: number[] }> = [];
+  const renderCalls: number[] = [];
+  const hookPayloads: Array<{ source: string; text: string; bytes: number[] }> = [];
+
+  const sharedState: RuntimeAppApiSharedState = {
+    wasm: {
+      setPixelSize: () => undefined,
+      writeBytes: (handle: number, data: Uint8Array) => {
+        writeBytesCalls.push({ handle, data: Array.from(data) });
+      },
+      drainOutput: () => "",
+      renderUpdate: (handle: number) => {
+        renderCalls.push(handle);
+      },
+    } as never,
+    wasmExports: null,
+    wasmHandle: 41,
+    wasmReady: true,
+    activeState: null,
+    needsRender: false,
+    lastRenderTime: 0,
+    currentContextType: null,
+    isFocused: false,
+    lastKeydownSeq: "",
+    lastKeydownSeqAt: 0,
+  };
+
+  const runtime = createRuntimeAppApi({
+    session: {} as never,
+    ptyTransport: {
+      isConnected: () => false,
+      connect: () => undefined,
+      disconnect: () => undefined,
+      sendInput: () => undefined,
+      resize: () => undefined,
+    } as never,
+    inputHandler: {
+      encodeKeyEvent: () => "",
+      isSynchronizedOutput: () => false,
+      setMouseMode: () => undefined,
+      getMouseStatus: () => "auto",
+    } as never,
+    ptyInputRuntime: {
+      setPtyStatus: () => undefined,
+      updateMouseStatus: () => undefined,
+      scheduleSyncOutputReset: () => undefined,
+      cancelSyncOutputReset: () => undefined,
+      connectPty: () => undefined,
+      disconnectPty: () => undefined,
+      sendKeyInput: () => undefined,
+      sendPasteText: () => undefined,
+      sendPastePayloadFromDataTransfer: () => false,
+      getCprPosition: () => ({ row: 1, col: 1 }),
+    } as never,
+    interaction: {
+      selectionState: { active: false, dragging: false },
+      linkState: { hoverId: null, hoverUri: null },
+      imeState: { composing: false, preedit: "", selectionStart: 0, selectionEnd: 0 },
+      clearSelection: () => undefined,
+      updateLinkHover: () => undefined,
+    } as never,
+    lifecycleThemeSizeRuntime: {
+      cancelScheduledSizeUpdate: () => undefined,
+      getActiveTheme: () => null,
+    },
+    cleanupFns: [],
+    cleanupCanvasFns: [],
+    callbacks: undefined,
+    fpsEl: null,
+    backendEl: null,
+    inputDebugEl: null,
+    imeInput: null,
+    attachWindowEvents: false,
+    isMacPlatform: false,
+    textEncoder: new TextEncoder(),
+    readState: () => sharedState,
+    writeState: (patch) => Object.assign(sharedState, patch),
+    appendLog: () => undefined,
+    shouldSuppressWasmLog: () => false,
+    runBeforeInputHook: (text) => text,
+    runBeforeRenderOutputHook: (text) => text,
+    runBeforeRenderOutputBytesHook: (bytes, source) => {
+      const copy = Array.from(bytes);
+      hookPayloads.push({
+        source,
+        text: String.fromCharCode(...copy),
+        bytes: copy,
+      });
+      return bytes[0] !== 0xff;
+    },
+    getSelectionText: () => "",
+    initialPreferredRenderer: "auto",
+    CURSOR_BLINK_MS: 600,
+    RESIZE_ACTIVE_MS: 180,
+    TARGET_RENDER_FPS: 60,
+    BACKGROUND_RENDER_FPS: 15,
+    KITTY_FLAG_REPORT_EVENTS: 1 << 1,
+    resizeState: { lastAt: 0 },
+    tickWebGPU: () => undefined,
+    tickWebGL: () => undefined,
+    updateGrid: () => undefined,
+    gridState: { cols: 80, rows: 24 },
+    getCanvas: () => ({ width: 800, height: 480 }) as HTMLCanvasElement,
+    applyTheme: () => undefined,
+    ensureFont: async () => undefined,
+    updateSize: () => undefined,
+    log: () => undefined,
+    replaceCanvas: () => undefined,
+    rebuildWebGPUShaderStages: () => undefined,
+    rebuildWebGLShaderStages: () => undefined,
+    setShaderStagesDirty: () => undefined,
+    clearWebGPUShaderStages: () => undefined,
+    destroyWebGPUStageTargets: () => undefined,
+    clearWebGLShaderStages: () => undefined,
+    destroyWebGLStageTargets: () => undefined,
+    markSearchDirty: () => undefined,
+    handleSearchWasmReset: () => undefined,
+  });
+
+  runtime.sendInputBytes(Uint8Array.from([0xff, 0x41]));
+  runtime.sendInputBytes(Uint8Array.from([0x42]));
+
+  expect(hookPayloads).toEqual([
+    { source: "pty", text: "\xffA", bytes: [0xff, 0x41] },
+    { source: "pty", text: "B", bytes: [0x42] },
+  ]);
+  expect(writeBytesCalls).toEqual([{ handle: 41, data: [0x42] }]);
+  expect(renderCalls).toEqual([41]);
 });

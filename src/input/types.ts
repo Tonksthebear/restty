@@ -167,6 +167,11 @@ export type InputHandler = {
    * Filter PTY output and handle control queries (CPR/DA/mouse mode).
    */
   filterOutput: (output: string) => string;
+  /**
+   * Track PTY output side effects from raw bytes without relying on UTF-8
+   * decoding. Used by live binary transports.
+   */
+  filterOutputBytes?: (output: Uint8Array) => void;
   setReplySink: (fn: (data: string) => void) => void;
   setCursorProvider: (fn: () => CursorPosition) => void;
   setPositionToCell: (fn: (event: MouseEvent | PointerEvent | WheelEvent) => CellPosition) => void;

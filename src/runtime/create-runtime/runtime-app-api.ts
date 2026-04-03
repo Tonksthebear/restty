@@ -96,6 +96,7 @@ type CreateRuntimeAppApiOptions = {
   shouldSuppressWasmLog: (text: string) => boolean;
   runBeforeInputHook: (text: string, source: string) => string | null;
   runBeforeRenderOutputHook: (text: string, source: string) => string | null;
+  runBeforeRenderOutputBytesHook: (bytes: Uint8Array, source: string) => boolean;
   getSelectionText: () => string;
   initialPreferredRenderer: PreferredRenderer;
   maxScrollbackBytes?: number;
@@ -152,6 +153,7 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     shouldSuppressWasmLog,
     runBeforeInputHook,
     runBeforeRenderOutputHook,
+    runBeforeRenderOutputBytesHook,
     CURSOR_BLINK_MS,
     RESIZE_ACTIVE_MS,
     TARGET_RENDER_FPS,
@@ -358,15 +360,11 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     writeState({ needsRender: true });
   }
 
-  const bytesDecoder = new TextDecoder("utf-8", { fatal: false });
-
   function sendInputBytes(data: Uint8Array) {
     const shared = readState();
     if (!shared.wasmReady || !shared.wasm || !shared.wasmHandle) return;
     if (!data.length) return;
-    // Run the render output hook on a lossy decode so it can suppress output.
-    const hookText = runBeforeRenderOutputHook(bytesDecoder.decode(data), "pty");
-    if (!hookText) return;
+    if (!runBeforeRenderOutputBytesHook(data, "pty")) return;
     if (interaction.linkState.hoverId) interaction.updateLinkHover(null);
     const canvas = getCanvas();
     shared.wasm.setPixelSize(shared.wasmHandle, canvas.width, canvas.height);

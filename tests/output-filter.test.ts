@@ -126,6 +126,36 @@ test("output filter tracks synchronized output mode without swallowing sequence"
   expect(filter.isSynchronizedOutput()).toBe(false);
 });
 
+test("output filter tracks synchronized output mode from raw bytes", () => {
+  const filter = new OutputFilter({
+    getCursorPosition: () => ({ row: 1, col: 1 }),
+    sendReply: () => {},
+    mouse: {
+      handleModeSeq: () => false,
+    } as any,
+  });
+
+  expect(filter.isSynchronizedOutput()).toBe(false);
+  filter.filterBytes(Uint8Array.from([0x1b, 0x5b, 0x3f, 0x32, 0x30, 0x32, 0x36, 0x68]));
+  expect(filter.isSynchronizedOutput()).toBe(true);
+  filter.filterBytes(Uint8Array.from([0x1b, 0x5b, 0x3f, 0x32, 0x30, 0x32, 0x36, 0x6c]));
+  expect(filter.isSynchronizedOutput()).toBe(false);
+});
+
+test("output filter byte path does not advance CPR cursor hint across opaque high bytes", () => {
+  const replies: string[] = [];
+  const filter = new OutputFilter({
+    getCursorPosition: () => ({ row: 1, col: 1 }),
+    sendReply: (data) => replies.push(data),
+    mouse: {
+      handleModeSeq: () => false,
+    } as any,
+  });
+
+  filter.filterBytes(Uint8Array.from([0xff, 0x1b, 0x5b, 0x36, 0x6e]));
+  expect(replies).toEqual(["\x1b[1;1R"]);
+});
+
 test("output filter does not treat CSI ? 1048 as alt-screen", () => {
   const filter = new OutputFilter({
     getCursorPosition: () => ({ row: 1, col: 1 }),
