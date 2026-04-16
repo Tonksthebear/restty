@@ -188,8 +188,18 @@ export function createColorGlyphAtlasHelpers(options: CreateColorGlyphAtlasHelpe
     };
   };
 
+  const destroy = () => {
+    if (colorGlyphCanvas) {
+      colorGlyphCanvas.width = 0;
+      colorGlyphCanvas.height = 0;
+    }
+    colorGlyphCtx = null;
+    colorGlyphCanvas = null;
+  };
+
   return {
     atlasBitmapToRGBA,
     buildColorEmojiAtlasWithCanvas,
+    destroy,
   };
 }

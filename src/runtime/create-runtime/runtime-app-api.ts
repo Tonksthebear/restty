@@ -125,6 +125,7 @@ type CreateRuntimeAppApiOptions = {
   destroyWebGPUStageTargets: () => void;
   clearWebGLShaderStages: (state?: WebGLState) => void;
   destroyWebGLStageTargets: (state?: WebGLState) => void;
+  destroyActiveRenderer?: (state: WebGPUState | WebGLState | null) => void;
   markSearchDirty: () => void;
   handleSearchWasmReset: () => void;
 };
@@ -713,10 +714,14 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
 
   function destroy() {
     cancelAnimationFrame(internalState.rafId);
+    internalState.rafId = 0;
+    internalState.backend = "none";
+    internalState.frameCount = 0;
     lifecycleThemeSizeRuntime.cancelScheduledSizeUpdate();
     ptyInputRuntime.cancelSyncOutputReset();
     ptyInputRuntime.disconnectPty();
     ptyTransport.destroy?.();
+    const activeState = readState().activeState;
     const shared = readState();
     if (shared.wasm && shared.wasmHandle) {
       try {
@@ -728,7 +733,6 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     }
     clearWebGPUShaderStages();
     destroyWebGPUStageTargets();
-    const activeState = readState().activeState;
     if (activeState && "gl" in activeState) {
       clearWebGLShaderStages(activeState);
       destroyWebGLStageTargets(activeState);
@@ -740,6 +744,23 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     cleanupCanvasFns.length = 0;
     for (const cleanup of cleanupFns) cleanup();
     cleanupFns.length = 0;
+    options.destroyActiveRenderer?.(activeState);
+    const canvas = getCanvas();
+    canvas.width = 0;
+    canvas.height = 0;
+    writeState({
+      wasm: null,
+      wasmExports: null,
+      wasmHandle: 0,
+      wasmReady: false,
+      activeState: null,
+      needsRender: false,
+      lastRenderTime: 0,
+      currentContextType: null,
+      isFocused: false,
+      lastKeydownSeq: "",
+      lastKeydownSeqAt: 0,
+    });
   }
 
   function setRenderer(value: "auto" | "webgpu" | "webgl2") {

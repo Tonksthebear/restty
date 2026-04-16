@@ -316,6 +316,29 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   let wasmHandle = 0;
   let wasmReady = false;
   let activeState: WebGPUState | WebGLState | null = null;
+
+  function destroyGlyphAtlases(state: WebGPUState | WebGLState | null): void {
+    if (!state?.glyphAtlases) return;
+    if ("gl" in state) {
+      for (const atlas of state.glyphAtlases.values()) {
+        try {
+          state.gl.deleteTexture(atlas.texture);
+        } catch {
+          // Ignore atlas cleanup failures during teardown.
+        }
+      }
+      state.glyphAtlases.clear();
+      return;
+    }
+    for (const atlas of state.glyphAtlases.values()) {
+      try {
+        atlas.texture.destroy();
+      } catch {
+        // Ignore atlas cleanup failures during teardown.
+      }
+    }
+    state.glyphAtlases.clear();
+  }
   const RESIZE_OVERLAY_HOLD_MS = 500;
   const RESIZE_OVERLAY_FADE_MS = 400;
   const RESIZE_ACTIVE_MS = 180;
@@ -633,9 +656,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     fontConfig.sizePx = clamped;
     syncImeInputTypography(imeInput, clamped);
     for (const entry of fontState.fonts) resetFontEntry(entry);
-    if (activeState && activeState.glyphAtlases) {
-      activeState.glyphAtlases = new Map();
-    }
+    destroyGlyphAtlases(activeState);
     updateGrid();
     wasm?.renderUpdate?.(wasmHandle);
     needsRender = true;
@@ -645,7 +666,11 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   const resolveGlyphPixelMode = (entry: FontEntry): number =>
     resolveGlyphPixelModeFromEntry(entry, PixelMode.Gray, PixelMode.RGBA ?? 4, isColorEmojiFont);
 
-  const { atlasBitmapToRGBA, buildColorEmojiAtlasWithCanvas } = createColorGlyphAtlasHelpers({
+  const {
+    atlasBitmapToRGBA,
+    buildColorEmojiAtlasWithCanvas,
+    destroy: destroyColorGlyphCanvas,
+  } = createColorGlyphAtlasHelpers({
     pixelModeRgba: PixelMode.RGBA ?? 4,
     atlasToRGBA,
   });
@@ -823,6 +848,99 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
   bindFocusEvents();
   lifecycleThemeSizeRuntime.bindAutoResizeEvents();
 
+  function destroyWebGPUAtlasState(state: WebGPUState): void {
+    destroyGlyphAtlases(state);
+  }
+
+  function destroyWebGLAtlasState(state: WebGLState): void {
+    destroyGlyphAtlases(state);
+  }
+
+  function destroyWebGPUState(state: WebGPUState): void {
+    destroyWebGPUAtlasState(state);
+    try {
+      state.uniformBuffer.destroy();
+    } catch {
+      // Ignore GPU cleanup failures during teardown.
+    }
+    try {
+      state.rectInstanceBuffer.destroy();
+    } catch {
+      // Ignore GPU cleanup failures during teardown.
+    }
+    try {
+      state.glyphInstanceBuffer.destroy();
+    } catch {
+      // Ignore GPU cleanup failures during teardown.
+    }
+    try {
+      state.context.unconfigure?.();
+    } catch {
+      // Ignore GPU cleanup failures during teardown.
+    }
+  }
+
+  function destroyWebGLState(state: WebGLState): void {
+    destroyWebGLAtlasState(state);
+    try {
+      state.gl.bindVertexArray(null);
+      state.gl.bindBuffer(state.gl.ARRAY_BUFFER, null);
+      state.gl.bindFramebuffer(state.gl.FRAMEBUFFER, null);
+      state.gl.useProgram(null);
+    } catch {
+      // Ignore GL reset failures during teardown.
+    }
+    try {
+      state.gl.deleteVertexArray(state.rectVao);
+    } catch {
+      // Ignore GL cleanup failures during teardown.
+    }
+    try {
+      state.gl.deleteVertexArray(state.glyphVao);
+    } catch {
+      // Ignore GL cleanup failures during teardown.
+    }
+    try {
+      state.gl.deleteBuffer(state.quadBuffer);
+    } catch {
+      // Ignore GL cleanup failures during teardown.
+    }
+    try {
+      state.gl.deleteBuffer(state.rectInstanceBuffer);
+    } catch {
+      // Ignore GL cleanup failures during teardown.
+    }
+    try {
+      state.gl.deleteBuffer(state.glyphInstanceBuffer);
+    } catch {
+      // Ignore GL cleanup failures during teardown.
+    }
+    try {
+      state.gl.deleteProgram(state.rectProgram);
+    } catch {
+      // Ignore GL cleanup failures during teardown.
+    }
+    try {
+      state.gl.deleteProgram(state.glyphProgram);
+    } catch {
+      // Ignore GL cleanup failures during teardown.
+    }
+    try {
+      state.gl.getExtension("WEBGL_lose_context")?.loseContext();
+    } catch {
+      // Ignore GL cleanup failures during teardown.
+    }
+  }
+
+  function destroyActiveRendererState(state: WebGPUState | WebGLState | null): void {
+    if (!state) return;
+    if ("gl" in state) {
+      destroyWebGLState(state);
+      return;
+    }
+    destroyWebGPUState(state);
+  }
+
   function resolveLinkUri(render: RenderState, linkId: number) {
     if (!render.linkOffsets || !render.linkLengths || !render.linkBuffer) return "";
     if (!linkId) return "";
@@ -883,9 +1001,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     fontState.fonts = [];
     fontState.fontSizePx = 0;
     fontState.fontPickCache.clear();
-    if (activeState?.glyphAtlases) {
-      activeState.glyphAtlases.clear();
-    }
+    destroyGlyphAtlases(activeState);
   }
 
   async function setFontSources(sources: ResttyFontSource[]) {
@@ -910,9 +1026,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
       entry.atlasScale = 1;
       entry.constraintSignature = "";
     }
-    if (activeState?.glyphAtlases) {
-      activeState.glyphAtlases = new Map();
-    }
+    destroyGlyphAtlases(activeState);
     needsRender = true;
   }
 
@@ -963,9 +1077,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
         fontState.font = entries[0].font;
         fontState.fontSizePx = 0;
         fontState.fontPickCache.clear();
-        if (activeState && activeState.glyphAtlases) {
-          activeState.glyphAtlases = new Map();
-        }
+        destroyGlyphAtlases(activeState);
         fontError = null;
         if (entries.length > 1) {
           log(`font loaded (+${entries.length - 1} fallback)`);
@@ -1215,6 +1327,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     } = patch);
   };
   cleanupFns.push(() => {
+    destroyColorGlyphCanvas();
     kittyRenderRuntime.clearKittyRenderCaches();
   });
   runtimeAppApi = createRuntimeAppApi({
@@ -1264,6 +1377,7 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     destroyWebGPUStageTargets,
     clearWebGLShaderStages,
     destroyWebGLStageTargets,
+    destroyActiveRenderer: destroyActiveRendererState,
     markSearchDirty: () => {
       searchRuntime.markDirty();
     },

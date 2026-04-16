@@ -214,6 +214,13 @@ export function createRuntimeInteraction(
     markNeedsRender();
   };
 
+  cleanupCanvasFns.push(() => {
+    clearPendingTouchSelection();
+    clearPendingDesktopSelection();
+    touchSelectionState.activePointerId = null;
+    touchSelectionState.panPointerId = null;
+  });
+
   const setPreedit = (text: string, updateInput = false) => {
     imeState.preedit = text || "";
     if (imeInput && updateInput) {

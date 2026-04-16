@@ -4,6 +4,30 @@ export function createLifecycleCanvasHandlers(deps: LifecycleThemeSizeDeps) {
   let sizeRaf = 0;
   let savedCanvasState: CanvasStateSnapshot | null = null;
 
+  function destroyGlyphAtlases(): void {
+    const activeState = deps.getActiveState();
+    if (!activeState?.glyphAtlases) return;
+    if ("gl" in activeState) {
+      for (const atlas of activeState.glyphAtlases.values()) {
+        try {
+          activeState.gl.deleteTexture(atlas.texture);
+        } catch {
+          // Ignore atlas cleanup failures during canvas replacement.
+        }
+      }
+      activeState.glyphAtlases.clear();
+      return;
+    }
+    for (const atlas of activeState.glyphAtlases.values()) {
+      try {
+        atlas.texture.destroy();
+      } catch {
+        // Ignore atlas cleanup failures during canvas replacement.
+      }
+    }
+    activeState.glyphAtlases.clear();
+  }
+
   function saveCanvasState(): void {
     const canvas = deps.getCanvas();
     savedCanvasState = {
@@ -54,6 +78,8 @@ export function createLifecycleCanvasHandlers(deps: LifecycleThemeSizeDeps) {
     const newCanvas = document.createElement("canvas");
     newCanvas.id = canvas.id;
     newCanvas.className = canvas.className;
+    canvas.width = 0;
+    canvas.height = 0;
     parent.replaceChild(newCanvas, canvas);
     deps.setCanvas(newCanvas);
     deps.setIsFocused(
@@ -72,10 +98,7 @@ export function createLifecycleCanvasHandlers(deps: LifecycleThemeSizeDeps) {
         entry.fontSizePx = 0;
       }
     }
-    const nextActiveState = deps.getActiveState();
-    if (nextActiveState && nextActiveState.glyphAtlases) {
-      nextActiveState.glyphAtlases.clear();
-    }
+    destroyGlyphAtlases();
     deps.setShaderStagesDirty(true);
   }
 
