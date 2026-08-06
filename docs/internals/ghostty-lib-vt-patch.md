@@ -40,12 +40,24 @@ Upstream lib-vt at this pin does not need them.
 - Import-only in restty (no encode path)
 - Fail closed on `InvalidMagic` / `UnsupportedVersion` / other decode errors
 
-## Pin consequences (not patched without orchestrator approval)
+## Pre-existing residual test failures (not regressions from this pin)
 
-Upstream `terminal/build_options.zig` **disables `kitty_graphics` on
-`wasm32-freestanding`** (timestamp requirement). Restty therefore loses
-Kitty graphics placements/responses under this pin until a second approved
-local patch or upstream change. Primary Phase 2a proof is GHOSTSNP import.
+Base branch before the bump was already red on Kitty graphics and search
+(`c7932be` measured ~154 pass / 13 fail). This bump is **160 pass / 9 fail** —
+a strict subset of base failures; zero new failures introduced.
+
+Upstream `terminal/build_options.zig` disables `kitty_graphics` on
+`wasm32-freestanding` (timestamp requirement). That matches pre-existing
+Kitty graphics test red on base — not a regression from Phase 2a. Re-enabling
+would need a second approved local patch or an upstream change (sole-patch
+rule holds for Phase 2a). Search ABI re-port is a follow-up, not a snapshot gate.
 
 `std.Io` freestanding: usable via `std.Io.failing` (same as upstream C
 libghostty-vt wrappers). No improvised shim.
+
+## Submodule packaging (BLOCKED until orchestrator rules)
+
+Local submodule tip `dff420f3` = pin + sole patch exists only as a local
+object (not on ghostty-org). Fresh `git submodule update --init` cannot
+fetch it. Recommended fix (awaiting orchestrator): pin gitlink to pristine
+`22d13172…` and apply a restty-owned `.patch` at build time.
