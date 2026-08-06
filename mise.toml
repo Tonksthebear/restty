@@ -1,0 +1,4 @@
+[tools]
+bun = "latest"
+node = "22"
+zig = "0.16.0"

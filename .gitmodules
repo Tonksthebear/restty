@@ -1,7 +1,6 @@
 [submodule "reference/ghostty"]
 	path = reference/ghostty
-	url = https://github.com/Tonksthebear/ghostty.git
-	branch = binary-terminal-snapshot
+	url = https://github.com/ghostty-org/ghostty.git
 [submodule "reference/text-shaper"]
 	path = reference/text-shaper
 	url = https://github.com/wiedymi/text-shaper.git

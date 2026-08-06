@@ -108,10 +108,8 @@ export type ResttyWasmExports = WebAssembly.Exports & {
   restty_get_color_cursor?: (handle: number) => number;
   restty_get_palette_color?: (handle: number, index: number) => number;
   restty_get_palette?: (handle: number, out_ptr: number) => number;
+  /** Import GHOSTSNP (`ghostty-terminal-snapshot-v1`) bytes. Fail closed. */
   restty_snapshot_import?: (handle: number, data_ptr: number, data_len: number) => number;
-  restty_snapshot_export?: (handle: number) => number;
-  restty_snapshot_ptr?: (handle: number) => number;
-  restty_snapshot_len?: (handle: number) => number;
   restty_scroll_viewport?: (handle: number, delta: number) => number;
   restty_scrollbar_total?: (handle: number) => number;
   restty_scrollbar_offset?: (handle: number) => number;

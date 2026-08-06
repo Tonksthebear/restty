@@ -354,7 +354,8 @@ export class ResttyWasm {
     if (result !== 0) return `snapshot_import error=${result} (${wasmErrorName(result)})`;
 
     const renderResult = this.exports.restty_render_update(handle);
-    if (renderResult !== 0) return `render_update error=${renderResult} (${wasmErrorName(renderResult)})`;
+    if (renderResult !== 0)
+      return `render_update error=${renderResult} (${wasmErrorName(renderResult)})`;
 
     return null;
   }

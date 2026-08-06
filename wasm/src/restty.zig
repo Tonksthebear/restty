@@ -1,10 +1,25 @@
 const std = @import("std");
+const builtin = @import("builtin");
 const ghostty = @import("ghostty-vt");
 
 pub const std_options: std.Options = ghostty.std_options;
 
 const Allocator = std.mem.Allocator;
 const log = std.log.scoped(.restty);
+
+/// Platform I/O for ghostty-vt Terminal/snapshot. Freestanding WASM uses
+/// failing I/O (same strategy as upstream libghostty-vt C wrappers).
+fn resttyIo() std.Io {
+    if (comptime builtin.os.tag == .freestanding) {
+        return std.Io.failing;
+    }
+    // Host-side unit builds (if any) get single-threaded threaded I/O.
+    return std.Io.Threaded.global_single_threaded.io();
+}
+
+/// Default continuation tracker capacity (ghostty reference: 1024).
+/// Re-applied on create and after every snapshot import.
+const CONTINUATION_MAX_BYTES: usize = 1024;
 
 const ErrorCode = enum(u32) {
     ok = 0,
@@ -233,13 +248,14 @@ const StreamHandler = struct {
 
         switch (cmd) {
             .kitty => |*kitty_cmd| {
-                if (self.term.kittyGraphics(self.alloc, kitty_cmd)) |resp| {
+                if (self.term.kittyGraphics(resttyIo(), self.alloc, kitty_cmd)) |resp| {
                     var buf: [1024]u8 = undefined;
                     var writer: std.Io.Writer = .fixed(&buf);
                     try resp.encode(&writer);
                     try self.appendOutput(writer.buffered());
                 }
             },
+            .glyph => {},
         }
     }
 
@@ -264,6 +280,7 @@ const StreamHandler = struct {
             .kitty_keyboard_query => try self.queryKittyKeyboard(),
             .apc_start => self.apc.start(),
             .apc_put => self.apc.feed(self.alloc, value),
+            .apc_put_slice => self.apc.feedSlice(self.alloc, value.bytes),
             .apc_end => try self.apcEnd(),
             else => self.readonly.vt(action, value),
         }
@@ -278,13 +295,12 @@ const Restty = struct {
     stream: TerminalStream,
     render_state: ghostty.RenderState,
     buffers: CellBuffers,
-    graphemes: std.ArrayListUnmanaged(u32) = .{},
-    link_offsets: std.ArrayListUnmanaged(u32) = .{},
-    link_lengths: std.ArrayListUnmanaged(u32) = .{},
-    link_buffer: std.ArrayListUnmanaged(u8) = .{},
-    kitty_placements: std.ArrayListUnmanaged(KittyPlacementAbi) = .{},
-    output: std.ArrayListUnmanaged(u8) = .{},
-    snapshot: std.ArrayListUnmanaged(u8) = .{},
+    graphemes: std.ArrayListUnmanaged(u32) = .empty,
+    link_offsets: std.ArrayListUnmanaged(u32) = .empty,
+    link_lengths: std.ArrayListUnmanaged(u32) = .empty,
+    link_buffer: std.ArrayListUnmanaged(u8) = .empty,
+    kitty_placements: std.ArrayListUnmanaged(KittyPlacementAbi) = .empty,
+    output: std.ArrayListUnmanaged(u8) = .empty,
     cursor: CursorInfo = .{
         .row = 0,
         .col = 0,
@@ -303,12 +319,17 @@ fn packRGBA(rgb: ghostty.color.RGB, a: u8) u32 {
     return @as(u32, rgb.r) | (@as(u32, rgb.g) << 8) | (@as(u32, rgb.b) << 16) | (@as(u32, a) << 24);
 }
 
+fn makeStream(h: *Restty) TerminalStream {
+    return TerminalStream.init(.{
+        .handler = StreamHandler.init(h.alloc, &h.term, &h.output),
+        .allocator = h.alloc,
+        .continuation_max_bytes = CONTINUATION_MAX_BYTES,
+    });
+}
+
 fn resetStream(h: *Restty) void {
     h.stream.deinit();
-    h.stream = TerminalStream.initAlloc(
-        h.alloc,
-        StreamHandler.init(h.alloc, &h.term, &h.output),
-    );
+    h.stream = makeStream(h);
 }
 
 fn resetRenderState(h: *Restty) void {
@@ -529,10 +550,12 @@ pub export fn restty_create(cols: u16, rows: u16, max_scrollback: u32) ?*Restty 
     colors.foreground = ghostty.color.DynamicRGB.init(.{ .r = 0xFF, .g = 0xFF, .b = 0xFF });
     colors.cursor = ghostty.color.DynamicRGB.init(.{ .r = 0xFF, .g = 0xFF, .b = 0xFF });
 
-    var term = ghostty.Terminal.init(alloc, .{
+    var term = ghostty.Terminal.init(resttyIo(), alloc, .{
         .cols = cols,
         .rows = rows,
-        .max_scrollback = max_scrollback,
+        // Historical restty ABI: max_scrollback is a line budget.
+        .max_scrollback_lines = if (max_scrollback == 0) 0 else max_scrollback,
+        .max_scrollback_bytes = null,
         .colors = colors,
     }) catch return null;
     errdefer term.deinit(alloc);
@@ -553,10 +576,7 @@ pub export fn restty_create(cols: u16, rows: u16, max_scrollback: u32) ?*Restty 
         .rows = rows,
         .cols = cols,
     };
-    handle.stream = TerminalStream.initAlloc(
-        alloc,
-        StreamHandler.init(alloc, &handle.term, &handle.output),
-    );
+    handle.stream = makeStream(handle);
     return handle;
 }
 
@@ -572,7 +592,6 @@ pub export fn restty_destroy(handle: ?*Restty) void {
     h.link_buffer.deinit(h.alloc);
     h.kitty_placements.deinit(h.alloc);
     h.output.deinit(h.alloc);
-    h.snapshot.deinit(h.alloc);
     h.alloc.destroy(h);
 }
 
@@ -731,7 +750,10 @@ pub export fn restty_get_palette(handle: ?*Restty, out_ptr: [*]u8) u32 {
 pub export fn restty_resize(handle: ?*Restty, cols: u16, rows: u16) u32 {
     const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
     if (cols == 0 or rows == 0) return @intFromEnum(ErrorCode.invalid_arg);
-    h.term.resize(h.alloc, cols, rows) catch return @intFromEnum(ErrorCode.internal);
+    h.term.resize(h.alloc, .{ .cols = cols, .rows = rows }) catch |err| return switch (err) {
+        error.OutOfMemory => @intFromEnum(ErrorCode.out_of_memory),
+        error.InvalidValue => @intFromEnum(ErrorCode.invalid_arg),
+    };
     ensureScrollingRegion(h);
     return @intFromEnum(ErrorCode.ok);
 }
@@ -744,6 +766,13 @@ pub export fn restty_set_pixel_size(handle: ?*Restty, width_px: u32, height_px: 
     return @intFromEnum(ErrorCode.ok);
 }
 
+/// Import a GHOSTSNP (`ghostty-terminal-snapshot-v1`) blob into this handle.
+///
+/// Cold cutover: decode produces a caller-owned Terminal (not in-place page
+/// restore). Ownership sequence matches upstream snapshot docs:
+/// decodeExact → toOwned into final address → new Stream + continuation
+/// replay → deinit decoded continuation. Fail closed on InvalidMagic /
+/// UnsupportedVersion / TrailingData / other decode errors.
 pub export fn restty_snapshot_import(
     self: ?*Restty,
     data_ptr: [*]const u8,
@@ -752,39 +781,45 @@ pub export fn restty_snapshot_import(
     const h = self orelse return @intFromEnum(ErrorCode.invalid_handle);
     if (data_len == 0) return @intFromEnum(ErrorCode.invalid_arg);
 
-    h.term.snapshotImport(data_ptr[0..@as(usize, data_len)]) catch |err| return switch (err) {
+    const data = data_ptr[0..@as(usize, data_len)];
+    var source: std.Io.Reader = .fixed(data);
+
+    var decoded = ghostty.snapshot.decodeExact(
+        h.alloc,
+        resttyIo(),
+        &source,
+        .{ .max_continuation_bytes = CONTINUATION_MAX_BYTES },
+    ) catch |err| return switch (err) {
         error.OutOfMemory => @intFromEnum(ErrorCode.out_of_memory),
+        error.InvalidMagic,
+        error.UnsupportedVersion,
+        error.TrailingData,
+        => @intFromEnum(ErrorCode.invalid_arg),
         else => @intFromEnum(ErrorCode.invalid_arg),
     };
-    resetStream(h);
-    resetRenderState(h);
+    // Always release continuation (and any untransferred terminal) on exit.
+    defer decoded.deinit(h.alloc);
+
+    // Tear down the previous live terminal/stream/render state before moving
+    // the decoded terminal into `h.term`'s final address.
+    h.stream.deinit();
+    h.render_state.deinit(h.alloc);
+    h.term.deinit(h.alloc);
+    h.render_state = .empty;
+
+    // Transfer Terminal to its permanent address, then rebuild the Stream
+    // against that address and replay continuation exactly once.
+    h.term = decoded.toOwned();
+    h.stream = makeStream(h);
+    switch (decoded.continuation) {
+        .ground => {},
+        .bytes => |bytes| {
+            if (bytes.len > 0) h.stream.nextSlice(bytes);
+        },
+    }
+
     ensureScrollingRegion(h);
-
     return @intFromEnum(ErrorCode.ok);
-}
-
-pub export fn restty_snapshot_export(handle: ?*Restty) u32 {
-    const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
-
-    const snapshot = h.term.snapshotExportAlloc(h.alloc) catch |err| return switch (err) {
-        error.OutOfMemory => @intFromEnum(ErrorCode.out_of_memory),
-        else => @intFromEnum(ErrorCode.internal),
-    };
-    defer h.alloc.free(snapshot);
-
-    h.snapshot.clearRetainingCapacity();
-    h.snapshot.appendSlice(h.alloc, snapshot) catch return @intFromEnum(ErrorCode.out_of_memory);
-    return @intFromEnum(ErrorCode.ok);
-}
-
-pub export fn restty_snapshot_ptr(handle: ?*Restty) usize {
-    const h = handle orelse return 0;
-    return if (h.snapshot.items.len == 0) 0 else @intFromPtr(h.snapshot.items.ptr);
-}
-
-pub export fn restty_snapshot_len(handle: ?*Restty) u32 {
-    const h = handle orelse return 0;
-    return @intCast(h.snapshot.items.len);
 }
 
 pub export fn restty_render_update(handle: ?*Restty) u32 {
@@ -839,7 +874,7 @@ pub export fn restty_render_update(handle: ?*Restty) u32 {
         const cell_graphemes = cell_slice.items(.grapheme);
         const cell_styles = cell_slice.items(.style);
         const pin = row_pins[r];
-        const page_ptr = &pin.node.data;
+        const page_ptr = pin.node.page();
 
         var c: usize = 0;
         while (c < h.cols) : (c += 1) {

@@ -13,9 +13,7 @@ type SnapshotHarness = {
   renderUpdateCalls: number;
 };
 
-function createHarness(
-  overrides: Partial<ResttyWasmExports> = {},
-): SnapshotHarness {
+function createHarness(overrides: Partial<ResttyWasmExports> = {}): SnapshotHarness {
   const memory = new WebAssembly.Memory({ initial: 1 });
   const imports: SnapshotImportCall[] = [];
   let renderUpdateCalls = 0;
@@ -68,7 +66,8 @@ test("loadBinarySnapshot forwards the opaque blob unchanged", () => {
   const harness = createHarness();
   const snapshot = new Uint8Array([1, 2, 3, 4, 5, 6]);
 
-  expect(harness.wasm.loadBinarySnapshot(7, snapshot)).toBe(true);
+  // ResttyWasm.loadBinarySnapshot: null = success, string = failure.
+  expect(harness.wasm.loadBinarySnapshot(7, snapshot)).toBeNull();
   expect(harness.imports).toEqual([
     {
       handle: 7,
@@ -78,13 +77,15 @@ test("loadBinarySnapshot forwards the opaque blob unchanged", () => {
   expect(harness.renderUpdateCalls).toBe(1);
 });
 
-test("loadBinarySnapshot returns false when snapshot import is unavailable", () => {
+test("loadBinarySnapshot returns an error string when snapshot import is unavailable", () => {
   const harness = createHarness({
     restty_snapshot_import: undefined,
   });
   const snapshot = new Uint8Array([1]);
 
-  expect(harness.wasm.loadBinarySnapshot(1, snapshot)).toBe(false);
+  const err = harness.wasm.loadBinarySnapshot(1, snapshot);
+  expect(err).not.toBeNull();
+  expect(String(err)).toMatch(/not available/);
   expect(harness.imports).toEqual([]);
   expect(harness.renderUpdateCalls).toBe(0);
 });
