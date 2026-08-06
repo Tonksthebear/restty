@@ -1,21 +1,50 @@
 # Ghostty `lib_vt.zig` local patch
 
-Restty pins **ghostty-org/ghostty** at:
+Restty pins **ghostty-org/ghostty** at the pristine SHA:
 
 `22d13172cde98a0a4dda05d3d6a3fcb0dd8ed018`
 
-## Sole intentional patch
+The submodule **gitlink** records that SHA only. No private Ghostty commits
+are required for clone/CI.
 
-File: `reference/ghostty/src/lib_vt.zig`
+## Sole intentional patch (restty-owned)
 
-Re-export the binary snapshot package on the public `ghostty-vt` Zig module:
+File applied to the submodule worktree (never committed into ghostty-org):
+
+- Patch: `patches/ghostty-lib-vt-snapshot-reexport.patch`
+- Target: `reference/ghostty/src/lib_vt.zig`
 
 ```zig
 pub const snapshot = terminal.snapshot;
 ```
 
+(plus a short comment block above the re-export)
+
 This is the only source change relative to pristine upstream at the pin SHA.
-No Ghostty PR is filed unless a human requests one.
+No Ghostty PR is filed unless a human requests one. The same one-liner is
+what would be proposed upstream if a human later asks for a PR.
+
+## Apply steps
+
+1. Init/update submodule to the pin:
+   ```bash
+   git submodule update --init reference/ghostty
+   # gitlink must be 22d13172cde98a0a4dda05d3d6a3fcb0dd8ed018
+   ```
+
+2. Apply the restty-owned patch (idempotent):
+   ```bash
+   bun run scripts/apply-ghostty-patch.ts
+   ```
+
+3. Build wasm (applies the patch automatically first):
+   ```bash
+   bun run build:wasm
+   ```
+
+`scripts/build-wasm.ts` calls `scripts/apply-ghostty-patch.ts` before
+`zig build`. After apply, the submodule worktree is dirty by design; do not
+commit that dirt into the submodule gitlink.
 
 ## Why
 
@@ -55,9 +84,8 @@ rule holds for Phase 2a). Search ABI re-port is a follow-up, not a snapshot gate
 `std.Io` freestanding: usable via `std.Io.failing` (same as upstream C
 libghostty-vt wrappers). No improvised shim.
 
-## Submodule packaging (BLOCKED until orchestrator rules)
+## Submodule packaging
 
-Local submodule tip `dff420f3` = pin + sole patch exists only as a local
-object (not on ghostty-org). Fresh `git submodule update --init` cannot
-fetch it. Recommended fix (awaiting orchestrator): pin gitlink to pristine
-`22d13172…` and apply a restty-owned `.patch` at build time.
+- **Gitlink:** pristine `22d13172…` (fetchable from ghostty-org)
+- **Patch:** restty-owned, applied at build time
+- Fresh clone path: `submodule update --init` → `bun run build:wasm` (auto-apply)
