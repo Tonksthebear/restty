@@ -60,6 +60,9 @@ export function createInputHandler(options: InputHandlerOptions = {}): InputHand
     },
     getMouseStatus: () => mouse.getStatus(),
     isMouseActive: () => mouse.isActive(),
+    rehydrateMouseFromTrackingBits: (bits: number) => {
+      mouse.rehydrateFromTrackingBits(bits);
+    },
     isBracketedPaste: () => filter.isBracketedPaste(),
     isFocusReporting: () => filter.isFocusReporting(),
     isAltScreen: () => filter.isAltScreen(),

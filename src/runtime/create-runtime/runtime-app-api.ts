@@ -441,10 +441,37 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
       // ignore wasm destroy errors during snapshot handle swap
     }
     writeState({ wasmHandle: nextHandle });
+    // GHOSTSNP restores Ghostty modes in WASM, but MouseController only learns
+    // tracking from live CSI. Rehydrate shadows from the new handle before input.
+    rehydrateInputModesAfterSnapshotImport(nextHandle);
     ptyInputRuntime.cancelSyncOutputReset();
     handleSearchWasmReset();
     writeState({ needsRender: true });
     return true;
+  }
+
+  function rehydrateInputModesAfterSnapshotImport(handle: number) {
+    const shared = readState();
+    if (!shared.wasm) return;
+    const bits =
+      typeof shared.wasm.getMouseTrackingBits === "function"
+        ? shared.wasm.getMouseTrackingBits(handle)
+        : 0;
+    inputHandler.rehydrateMouseFromTrackingBits?.(bits);
+    // Kitty keyboard flags are read live from WASM on each key event; force a
+    // status refresh so UI mirrors post-import state without waiting for CSI.
+    const kittyFlags =
+      typeof shared.wasm.getKittyKeyboardFlags === "function"
+        ? shared.wasm.getKittyKeyboardFlags(handle)
+        : 0;
+    ptyInputRuntime.updateMouseStatus();
+    if (kittyFlags !== 0) {
+      appendLog(
+        `[snapshot] rehydrated mouse bits=0x${bits.toString(16)} kitty=0x${kittyFlags.toString(16)}`,
+      );
+    } else if (bits !== 0) {
+      appendLog(`[snapshot] rehydrated mouse bits=0x${bits.toString(16)}`);
+    }
   }
 
   function getColorForeground(): number | null {

@@ -81,37 +81,83 @@ export class MouseController {
     const { enabled, codes } = mode;
     let handled = false;
     for (const code of codes) {
-      if (code === 9) {
-        this.x10Event = enabled;
-        handled = true;
-        continue;
-      }
-      if (code === 1006) {
-        this.format = enabled ? "sgr" : "x10";
-        handled = true;
-        continue;
-      }
-      if (code === 1016) {
-        this.format = enabled ? "sgr_pixels" : "x10";
-        handled = true;
-        continue;
-      }
-      if (code === 1005) {
-        this.format = enabled ? "utf8" : "x10";
-        handled = true;
-        continue;
-      }
-      if (code === 1015) {
-        this.format = enabled ? "urxvt" : "x10";
-        handled = true;
-        continue;
-      }
-      if (code === 1000 || code === 1002 || code === 1003) {
-        this.updateFlags(code, enabled);
-        handled = true;
-      }
+      if (this.applyPrivateMode(code, enabled)) handled = true;
     }
     return handled;
+  }
+
+  /**
+   * Apply a single DEC private mode code (same semantics as CSI ? … h/l).
+   * Used by live CSI handling and post-GHOSTSNP rehydrate from Ghostty state.
+   */
+  applyPrivateMode(code: number, enabled: boolean): boolean {
+    if (code === 9) {
+      this.x10Event = enabled;
+      this.recomputeEnabledFromFlags();
+      return true;
+    }
+    if (code === 1006) {
+      this.format = enabled ? "sgr" : "x10";
+      return true;
+    }
+    if (code === 1016) {
+      this.format = enabled ? "sgr_pixels" : "x10";
+      return true;
+    }
+    if (code === 1005) {
+      this.format = enabled ? "utf8" : "x10";
+      return true;
+    }
+    if (code === 1015) {
+      this.format = enabled ? "urxvt" : "x10";
+      return true;
+    }
+    if (code === 1000 || code === 1002 || code === 1003) {
+      this.updateFlags(code, enabled);
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Rehydrate mouse tracking/format from Ghostty mode bits after snapshot import.
+   * Bit layout matches `restty_mouse_tracking_bits` in wasm.
+   */
+  rehydrateFromTrackingBits(bits: number) {
+    // Reset tracking flags so a snapshot without mouse does not leave stale CSI shadow.
+    this.x10Event = false;
+    this.flags = { 1000: false, 1002: false, 1003: false };
+    this.format = "x10";
+    this.motion = "none";
+    this.enabled = false;
+    this.pressed = false;
+    this.button = 0;
+
+    const bit = (n: number) => (bits & (1 << n)) !== 0;
+    this.x10Event = bit(0);
+    this.flags[1000] = bit(1);
+    this.flags[1002] = bit(2);
+    this.flags[1003] = bit(3);
+    // Format: most specific wins (sgr_pixels > sgr > urxvt > utf8 > x10).
+    if (bit(7)) this.format = "sgr_pixels";
+    else if (bit(5)) this.format = "sgr";
+    else if (bit(6)) this.format = "urxvt";
+    else if (bit(4)) this.format = "utf8";
+    else this.format = "x10";
+
+    // Respect auto/on/off mode after flag rehydrate.
+    if (this.mode === "auto") {
+      this.recomputeEnabledFromFlags();
+    } else {
+      this.setMode(this.mode);
+    }
+  }
+
+  private recomputeEnabledFromFlags() {
+    this.enabled = this.x10Event || this.flags[1000] || this.flags[1002] || this.flags[1003];
+    if (this.flags[1003]) this.motion = "any";
+    else if (this.flags[1002]) this.motion = "drag";
+    else this.motion = "none";
   }
 
   isActive() {
@@ -170,10 +216,7 @@ export class MouseController {
   private updateFlags(code: number, enabled: boolean) {
     if (!(code in this.flags)) return;
     this.flags[code as 1000 | 1002 | 1003] = enabled;
-    this.enabled = this.x10Event || this.flags[1000] || this.flags[1002] || this.flags[1003];
-    if (this.flags[1003]) this.motion = "any";
-    else if (this.flags[1002]) this.motion = "drag";
-    else this.motion = "none";
+    this.recomputeEnabledFromFlags();
   }
 
   private isX10EventMode() {
