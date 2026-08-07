@@ -659,6 +659,31 @@ pub export fn restty_kitty_keyboard_flags(handle: ?*Restty) u32 {
     return h.term.screens.active.kitty_keyboard.current().int();
 }
 
+/// Pack Ghostty mouse tracking / format modes for JS input rehydrate after
+/// GHOSTSNP import. Bits (set when mode is on):
+/// 0: mouse_event_x10 (9)
+/// 1: mouse_event_normal (1000)
+/// 2: mouse_event_button (1002)
+/// 3: mouse_event_any (1003)
+/// 4: mouse_format_utf8 (1005)
+/// 5: mouse_format_sgr (1006)
+/// 6: mouse_format_urxvt (1015)
+/// 7: mouse_format_sgr_pixels (1016)
+pub export fn restty_mouse_tracking_bits(handle: ?*Restty) u32 {
+    const h = handle orelse return 0;
+    const modes = &h.term.modes;
+    var bits: u32 = 0;
+    if (modes.get(.mouse_event_x10)) bits |= 1 << 0;
+    if (modes.get(.mouse_event_normal)) bits |= 1 << 1;
+    if (modes.get(.mouse_event_button)) bits |= 1 << 2;
+    if (modes.get(.mouse_event_any)) bits |= 1 << 3;
+    if (modes.get(.mouse_format_utf8)) bits |= 1 << 4;
+    if (modes.get(.mouse_format_sgr)) bits |= 1 << 5;
+    if (modes.get(.mouse_format_urxvt)) bits |= 1 << 6;
+    if (modes.get(.mouse_format_sgr_pixels)) bits |= 1 << 7;
+    return bits;
+}
+
 pub export fn restty_set_default_colors(handle: ?*Restty, fg: u32, bg: u32, cursor: u32) u32 {
     const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
     if (fg != 0xFFFF_FFFF) {

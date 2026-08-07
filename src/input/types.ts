@@ -182,6 +182,11 @@ export type InputHandler = {
   setMouseMode: (mode: MouseMode) => void;
   getMouseStatus: () => MouseStatus;
   isMouseActive: () => boolean;
+  /**
+   * Rehydrate mouse tracking/format shadow state from Ghostty mode bits
+   * after binary snapshot import (no CSI replay required).
+   */
+  rehydrateMouseFromTrackingBits?: (bits: number) => void;
   isBracketedPaste: () => boolean;
   isFocusReporting: () => boolean;
   isAltScreen: () => boolean;

@@ -165,6 +165,8 @@ export type ResttyWasmExports = WebAssembly.Exports & {
   restty_output_len?: (handle: number) => number;
   restty_output_consume?: (handle: number, len: number) => number;
   restty_kitty_keyboard_flags?: (handle: number) => number;
+  /** Bitfield of mouse tracking/format modes (see ResttyWasm.getMouseTrackingBits). */
+  restty_mouse_tracking_bits?: (handle: number) => number;
   restty_kitty_placement_stride?: () => number;
   restty_kitty_placement_count?: (handle: number) => number;
   restty_kitty_placements_ptr?: (handle: number) => number;
