@@ -28,6 +28,9 @@ what would be proposed upstream if a human later asks for a PR.
 
 1. Init/update submodule to the pin:
    ```bash
+   # After .gitmodules URL retarget (e.g. Tonksthebear → ghostty-org), existing
+   # checkouts may still have the old URL in .git/config until you sync:
+   git submodule sync --recursive
    git submodule update --init reference/ghostty
    # gitlink must be 22d13172cde98a0a4dda05d3d6a3fcb0dd8ed018
    ```
