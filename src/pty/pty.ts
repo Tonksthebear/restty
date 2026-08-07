@@ -9,23 +9,12 @@ import type {
   PtyTransport,
 } from "./types";
 
-/** Decode a binary WebSocket frame into a UTF-8 string using a streaming TextDecoder. */
-export function decodePtyBinary(
-  decoder: TextDecoder,
-  payload: ArrayBuffer | Uint8Array,
-  stream = true,
-): string {
-  const bytes = payload instanceof Uint8Array ? payload : new Uint8Array(payload);
-  return decoder.decode(bytes, { stream });
-}
-
 /** Create a fresh idle PTY connection state. */
 export function createPtyConnection(): PtyConnectionState {
   return {
     socket: null,
     status: "idle",
     url: "",
-    decoder: null,
     connectId: 0,
   };
 }
@@ -51,24 +40,12 @@ export function connectPty(
   if (!url) return false;
 
   const ws = new WebSocket(url);
-  const decoder = new TextDecoder();
   const connectId = state.connectId + 1;
   state.connectId = connectId;
   state.url = url;
   state.socket = ws;
-  state.decoder = decoder;
   setConnectionStatus(state, "connecting");
   ws.binaryType = "arraybuffer";
-
-  const flushDecoder = () => {
-    if (state.connectId !== connectId) return;
-    if (!decoder) return;
-    const tail = decoder.decode();
-    if (state.decoder === decoder) {
-      state.decoder = null;
-    }
-    if (tail) callbacks.onData?.(tail);
-  };
 
   let disconnectedNotified = false;
   const notifyDisconnected = () => {
@@ -83,9 +60,6 @@ export function connectPty(
       state.socket = null;
     }
     setConnectionStatus(state, "idle");
-    if (state.decoder === decoder) {
-      state.decoder = null;
-    }
   };
 
   ws.addEventListener("open", () => {
@@ -108,13 +82,11 @@ export function connectPty(
   });
 
   ws.addEventListener("close", () => {
-    flushDecoder();
     clearCurrentSocket();
     notifyDisconnected();
   });
 
   ws.addEventListener("error", () => {
-    flushDecoder();
     clearCurrentSocket();
     notifyDisconnected();
   });
@@ -124,16 +96,16 @@ export function connectPty(
     const payload = event.data;
 
     if (payload instanceof ArrayBuffer) {
-      const text = decodePtyBinary(decoder, payload, true);
-      if (text) callbacks.onData?.(text);
+      const bytes = new Uint8Array(payload);
+      if (bytes.length) callbacks.onData?.(bytes);
       return;
     }
 
     if (payload instanceof Blob) {
       payload.arrayBuffer().then((buf) => {
         if (state.connectId !== connectId || state.socket !== ws) return;
-        const text = decodePtyBinary(decoder, buf, true);
-        if (text) callbacks.onData?.(text);
+        const bytes = new Uint8Array(buf);
+        if (bytes.length) callbacks.onData?.(bytes);
       });
       return;
     }
@@ -150,10 +122,6 @@ export function connectPty(
 /** Gracefully close the PTY WebSocket connection and reset state to idle. */
 export function disconnectPty(state: PtyConnectionState): void {
   const socket = state.socket;
-  if (state.decoder && !socket) {
-    state.decoder.decode();
-    state.decoder = null;
-  }
   if (!socket) {
     setConnectionStatus(state, "idle");
     return;

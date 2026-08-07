@@ -74,6 +74,7 @@ test("runtime app api exposes search controls on the public Restty app", () => {
     shouldSuppressWasmLog: () => false,
     runBeforeInputHook: (text) => text,
     runBeforeRenderOutputHook: (text) => text,
+    runBeforeRenderOutputBytesHook: () => true,
     getSelectionText: () => "",
     initialPreferredRenderer: "auto",
     CURSOR_BLINK_MS: 600,

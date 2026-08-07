@@ -16,6 +16,10 @@ updates, output draining, link metadata, and kitty image placement buffers.
   - imports `ghostty-vt` as a module
   - exports a C ABI for JS
   - uses `export` to expose functions and memory layout
+- Toolchain: Zig `0.16.0` exact; ghostty-org pin documented in
+  `docs/internals/ghostty-lib-vt-patch.md`.
+- Snapshot import: `restty_snapshot_import` decodes GHOSTSNP via
+  `ghostty.snapshot.decodeExact` (import-only; no export helpers).
 
 ## Core Types
 - `Terminal`: maintains state, scrollback, screen, modes, etc.

@@ -54,6 +54,26 @@ export abstract class ResttyActivePaneApi {
     return this.requireActivePaneHandle().loadBinarySnapshot(data);
   }
 
+  getColorForeground(): number | null {
+    return this.requireActivePaneHandle().getColorForeground();
+  }
+
+  getColorBackground(): number | null {
+    return this.requireActivePaneHandle().getColorBackground();
+  }
+
+  getColorCursor(): number | null {
+    return this.requireActivePaneHandle().getColorCursor();
+  }
+
+  getPaletteColor(index: number): number | null {
+    return this.requireActivePaneHandle().getPaletteColor(index);
+  }
+
+  getPalette(): Uint8Array | null {
+    return this.requireActivePaneHandle().getPalette();
+  }
+
   setMouseMode(value: MouseMode): void {
     this.requireActivePaneHandle().setMouseMode(value);
   }

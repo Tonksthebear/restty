@@ -64,6 +64,7 @@ type RuntimePublicApiOptions = {
 
 export type RuntimeAppApiRuntime = {
   sendInput: RuntimeSendInput;
+  sendInputBytes: (data: Uint8Array) => void;
   createPublicApi: (options: RuntimePublicApiOptions) => ResttyApp;
 };
 
@@ -95,10 +96,12 @@ type CreateRuntimeAppApiOptions = {
   shouldSuppressWasmLog: (text: string) => boolean;
   runBeforeInputHook: (text: string, source: string) => string | null;
   runBeforeRenderOutputHook: (text: string, source: string) => string | null;
+  runBeforeRenderOutputBytesHook: (bytes: Uint8Array, source: string) => boolean;
   getSelectionText: () => string;
   initialPreferredRenderer: PreferredRenderer;
   maxScrollbackBytes?: number;
   maxScrollback?: number;
+  readOnly?: boolean;
   CURSOR_BLINK_MS: number;
   RESIZE_ACTIVE_MS: number;
   TARGET_RENDER_FPS: number;
@@ -122,6 +125,7 @@ type CreateRuntimeAppApiOptions = {
   destroyWebGPUStageTargets: () => void;
   clearWebGLShaderStages: (state?: WebGLState) => void;
   destroyWebGLStageTargets: (state?: WebGLState) => void;
+  destroyActiveRenderer?: (state: WebGPUState | WebGLState | null) => void;
   markSearchDirty: () => void;
   handleSearchWasmReset: () => void;
 };
@@ -150,6 +154,7 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     shouldSuppressWasmLog,
     runBeforeInputHook,
     runBeforeRenderOutputHook,
+    runBeforeRenderOutputBytesHook,
     CURSOR_BLINK_MS,
     RESIZE_ACTIVE_MS,
     TARGET_RENDER_FPS,
@@ -263,6 +268,15 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     if (!shared.wasm || !shared.wasmHandle) return;
     if (!ptyTransport.isConnected()) return;
 
+    if (options.readOnly) {
+      // In read-only mode restty is a pure renderer — discard terminal query
+      // responses (DA, DSR, kitty keyboard, kitty graphics) so they don't
+      // get forwarded as duplicate replies to a PTY that another terminal
+      // already owns.
+      while (shared.wasm.drainOutput(shared.wasmHandle)) {}
+      return;
+    }
+
     let iterations = 0;
     while (iterations < 32) {
       const out = shared.wasm.drainOutput(shared.wasmHandle);
@@ -270,6 +284,19 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
       ptyTransport.sendInput(out);
       iterations += 1;
     }
+  }
+
+  function createWasmHandle(instance: ResttyWasm): number {
+    updateGrid();
+    const cols = gridState.cols || 80;
+    const rows = gridState.rows || 24;
+    const wasmHandle = instance.create(cols, rows, maxScrollbackBytes);
+    if (!wasmHandle) {
+      throw new Error("restty create failed (restty_create returned 0)");
+    }
+    const canvas = getCanvas();
+    instance.setPixelSize(wasmHandle, canvas.width, canvas.height);
+    return wasmHandle;
   }
 
   function sendInput(text: string, source = "program", config: { skipHooks?: boolean } = {}) {
@@ -334,6 +361,28 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     writeState({ needsRender: true });
   }
 
+  function sendInputBytes(data: Uint8Array) {
+    const shared = readState();
+    if (!shared.wasmReady || !shared.wasm || !shared.wasmHandle) return;
+    if (!data.length) return;
+    if (!runBeforeRenderOutputBytesHook(data, "pty")) return;
+    if (interaction.linkState.hoverId) interaction.updateLinkHover(null);
+    const canvas = getCanvas();
+    shared.wasm.setPixelSize(shared.wasmHandle, canvas.width, canvas.height);
+    shared.wasm.writeBytes(shared.wasmHandle, data);
+    // Drain and discard WASM output — the JS OutputFilter already handles
+    // terminal query replies (CPR, DA, etc.) so WASM's replies are duplicates.
+    while (shared.wasm.drainOutput(shared.wasmHandle)) {}
+    markSearchDirty();
+    if (inputHandler.isSynchronizedOutput?.()) {
+      ptyInputRuntime.scheduleSyncOutputReset();
+      return;
+    }
+    ptyInputRuntime.cancelSyncOutputReset();
+    shared.wasm.renderUpdate(shared.wasmHandle);
+    writeState({ needsRender: true });
+  }
+
   async function copySelectionToClipboard() {
     const text = options.getSelectionText();
     if (!text) return false;
@@ -373,12 +422,59 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     if (interaction.linkState.hoverId) {
       interaction.updateLinkHover(null);
     }
-    const loaded = shared.wasm.loadBinarySnapshot(shared.wasmHandle, data);
-    if (!loaded) return false;
+    let nextHandle = 0;
+    try {
+      nextHandle = createWasmHandle(shared.wasm);
+    } catch (e) {
+      appendLog(`[snapshot] createWasmHandle failed: ${e}`);
+      return false;
+    }
+    const error = shared.wasm.loadBinarySnapshot(nextHandle, data);
+    if (error) {
+      appendLog(`[snapshot] loadBinarySnapshot failed: ${error}`);
+      shared.wasm.destroy(nextHandle);
+      return false;
+    }
+    try {
+      shared.wasm.destroy(shared.wasmHandle);
+    } catch {
+      // ignore wasm destroy errors during snapshot handle swap
+    }
+    writeState({ wasmHandle: nextHandle });
     ptyInputRuntime.cancelSyncOutputReset();
     handleSearchWasmReset();
     writeState({ needsRender: true });
     return true;
+  }
+
+  function getColorForeground(): number | null {
+    const shared = readState();
+    if (!shared.wasm || !shared.wasmHandle) return null;
+    return shared.wasm.getColorForeground(shared.wasmHandle);
+  }
+
+  function getColorBackground(): number | null {
+    const shared = readState();
+    if (!shared.wasm || !shared.wasmHandle) return null;
+    return shared.wasm.getColorBackground(shared.wasmHandle);
+  }
+
+  function getColorCursor(): number | null {
+    const shared = readState();
+    if (!shared.wasm || !shared.wasmHandle) return null;
+    return shared.wasm.getColorCursor(shared.wasmHandle);
+  }
+
+  function getPaletteColor(index: number): number | null {
+    const shared = readState();
+    if (!shared.wasm || !shared.wasmHandle) return null;
+    return shared.wasm.getPaletteColor(shared.wasmHandle, index);
+  }
+
+  function getPalette(): Uint8Array | null {
+    const shared = readState();
+    if (!shared.wasm || !shared.wasmHandle) return null;
+    return shared.wasm.getPalette(shared.wasmHandle);
   }
 
   if (attachWindowEvents) {
@@ -523,15 +619,7 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
         instance.destroy(shared.wasmHandle);
         writeState({ wasmHandle: 0 });
       }
-      updateGrid();
-      const cols = gridState.cols || 80;
-      const rows = gridState.rows || 24;
-      const wasmHandle = instance.create(cols, rows, maxScrollbackBytes);
-      if (!wasmHandle) {
-        throw new Error("restty create failed (restty_create returned 0)");
-      }
-      const canvas = getCanvas();
-      instance.setPixelSize(wasmHandle, canvas.width, canvas.height);
+      const wasmHandle = createWasmHandle(instance);
       const activeTheme = lifecycleThemeSizeRuntime.getActiveTheme();
       if (activeTheme) {
         applyTheme(activeTheme, activeTheme.name ?? "cached theme");
@@ -626,10 +714,14 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
 
   function destroy() {
     cancelAnimationFrame(internalState.rafId);
+    internalState.rafId = 0;
+    internalState.backend = "none";
+    internalState.frameCount = 0;
     lifecycleThemeSizeRuntime.cancelScheduledSizeUpdate();
     ptyInputRuntime.cancelSyncOutputReset();
     ptyInputRuntime.disconnectPty();
     ptyTransport.destroy?.();
+    const activeState = readState().activeState;
     const shared = readState();
     if (shared.wasm && shared.wasmHandle) {
       try {
@@ -641,7 +733,6 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     }
     clearWebGPUShaderStages();
     destroyWebGPUStageTargets();
-    const activeState = readState().activeState;
     if (activeState && "gl" in activeState) {
       clearWebGLShaderStages(activeState);
       destroyWebGLStageTargets(activeState);
@@ -653,6 +744,23 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     cleanupCanvasFns.length = 0;
     for (const cleanup of cleanupFns) cleanup();
     cleanupFns.length = 0;
+    options.destroyActiveRenderer?.(activeState);
+    const canvas = getCanvas();
+    canvas.width = 0;
+    canvas.height = 0;
+    writeState({
+      wasm: null,
+      wasmExports: null,
+      wasmHandle: 0,
+      wasmReady: false,
+      activeState: null,
+      needsRender: false,
+      lastRenderTime: 0,
+      currentContextType: null,
+      isFocused: false,
+      lastKeydownSeq: "",
+      lastKeydownSeqAt: 0,
+    });
   }
 
   function setRenderer(value: "auto" | "webgpu" | "webgl2") {
@@ -698,6 +806,11 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
       sendKeyInput: ptyInputRuntime.sendKeyInput,
       clearScreen,
       loadBinarySnapshot,
+      getColorForeground,
+      getColorBackground,
+      getColorCursor,
+      getPaletteColor,
+      getPalette,
       connectPty: ptyInputRuntime.connectPty,
       disconnectPty: ptyInputRuntime.disconnectPty,
       isPtyConnected: () => ptyTransport.isConnected(),
@@ -723,6 +836,7 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
 
   return {
     sendInput,
+    sendInputBytes,
     createPublicApi,
   };
 }

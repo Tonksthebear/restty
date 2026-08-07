@@ -154,6 +154,7 @@ function createHarness(
     shouldSuppressWasmLog: () => false,
     runBeforeInputHook: (text) => text,
     runBeforeRenderOutputHook: (text) => text,
+    runBeforeRenderOutputBytesHook: () => true,
     getSelectionText: () => "",
     initialPreferredRenderer: "auto",
     CURSOR_BLINK_MS: 600,

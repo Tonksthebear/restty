@@ -1,10 +1,25 @@
 const std = @import("std");
+const builtin = @import("builtin");
 const ghostty = @import("ghostty-vt");
 
 pub const std_options: std.Options = ghostty.std_options;
 
 const Allocator = std.mem.Allocator;
 const log = std.log.scoped(.restty);
+
+/// Platform I/O for ghostty-vt Terminal/snapshot. Freestanding WASM uses
+/// failing I/O (same strategy as upstream libghostty-vt C wrappers).
+fn resttyIo() std.Io {
+    if (comptime builtin.os.tag == .freestanding) {
+        return std.Io.failing;
+    }
+    // Host-side unit builds (if any) get single-threaded threaded I/O.
+    return std.Io.Threaded.global_single_threaded.io();
+}
+
+/// Default continuation tracker capacity (ghostty reference: 1024).
+/// Re-applied on create and after every snapshot import.
+const CONTINUATION_MAX_BYTES: usize = 1024;
 
 const ErrorCode = enum(u32) {
     ok = 0,
@@ -13,8 +28,6 @@ const ErrorCode = enum(u32) {
     invalid_arg = 3,
     internal = 4,
 };
-
-const STATE_VERSION: u8 = 1;
 
 const CellFlags = struct {
     const hyperlink: u16 = 1 << 0;
@@ -235,13 +248,14 @@ const StreamHandler = struct {
 
         switch (cmd) {
             .kitty => |*kitty_cmd| {
-                if (self.term.kittyGraphics(self.alloc, kitty_cmd)) |resp| {
+                if (self.term.kittyGraphics(resttyIo(), self.alloc, kitty_cmd)) |resp| {
                     var buf: [1024]u8 = undefined;
                     var writer: std.Io.Writer = .fixed(&buf);
                     try resp.encode(&writer);
                     try self.appendOutput(writer.buffered());
                 }
             },
+            .glyph => {},
         }
     }
 
@@ -266,6 +280,7 @@ const StreamHandler = struct {
             .kitty_keyboard_query => try self.queryKittyKeyboard(),
             .apc_start => self.apc.start(),
             .apc_put => self.apc.feed(self.alloc, value),
+            .apc_put_slice => self.apc.feedSlice(self.alloc, value.bytes),
             .apc_end => try self.apcEnd(),
             else => self.readonly.vt(action, value),
         }
@@ -280,12 +295,12 @@ const Restty = struct {
     stream: TerminalStream,
     render_state: ghostty.RenderState,
     buffers: CellBuffers,
-    graphemes: std.ArrayListUnmanaged(u32) = .{},
-    link_offsets: std.ArrayListUnmanaged(u32) = .{},
-    link_lengths: std.ArrayListUnmanaged(u32) = .{},
-    link_buffer: std.ArrayListUnmanaged(u8) = .{},
-    kitty_placements: std.ArrayListUnmanaged(KittyPlacementAbi) = .{},
-    output: std.ArrayListUnmanaged(u8) = .{},
+    graphemes: std.ArrayListUnmanaged(u32) = .empty,
+    link_offsets: std.ArrayListUnmanaged(u32) = .empty,
+    link_lengths: std.ArrayListUnmanaged(u32) = .empty,
+    link_buffer: std.ArrayListUnmanaged(u8) = .empty,
+    kitty_placements: std.ArrayListUnmanaged(KittyPlacementAbi) = .empty,
+    output: std.ArrayListUnmanaged(u8) = .empty,
     cursor: CursorInfo = .{
         .row = 0,
         .col = 0,
@@ -304,6 +319,24 @@ fn packRGBA(rgb: ghostty.color.RGB, a: u8) u32 {
     return @as(u32, rgb.r) | (@as(u32, rgb.g) << 8) | (@as(u32, rgb.b) << 16) | (@as(u32, a) << 24);
 }
 
+fn makeStream(h: *Restty) TerminalStream {
+    return TerminalStream.init(.{
+        .handler = StreamHandler.init(h.alloc, &h.term, &h.output),
+        .allocator = h.alloc,
+        .continuation_max_bytes = CONTINUATION_MAX_BYTES,
+    });
+}
+
+fn resetStream(h: *Restty) void {
+    h.stream.deinit();
+    h.stream = makeStream(h);
+}
+
+fn resetRenderState(h: *Restty) void {
+    h.render_state.deinit(h.alloc);
+    h.render_state = .empty;
+}
+
 fn rgbFromU32(color: u32) ghostty.color.RGB {
     return .{
         .r = @intCast((color >> 16) & 0xFF),
@@ -312,246 +345,8 @@ fn rgbFromU32(color: u32) ghostty.color.RGB {
     };
 }
 
-fn readStyle(r: anytype) !ghostty.Style {
-    return .{
-        .fg_color = try readStyleColor(r),
-        .bg_color = try readStyleColor(r),
-        .underline_color = try readStyleColor(r),
-        .flags = @bitCast(try r.readInt(u16, .little)),
-    };
-}
-
-fn readStyleColor(r: anytype) !ghostty.Style.Color {
-    const tag = try r.readByte();
-    return switch (tag) {
-        0 => .none,
-        1 => .{ .palette = try r.readByte() },
-        2 => .{ .rgb = @bitCast(try r.readInt(u24, .little)) },
-        else => error.InvalidValue,
-    };
-}
-
-fn skipStyle(r: anytype) !void {
-    for (0..3) |_| {
-        const tag = try r.readByte();
-        switch (tag) {
-            0 => {},
-            1 => try r.skipBytes(1, .{}),
-            2 => try r.skipBytes(3, .{}),
-            else => return error.InvalidValue,
-        }
-    }
-    try r.skipBytes(2, .{});
-}
-
-fn readState(r: anytype, t: *ghostty.Terminal) !void {
-    const version = try r.readByte();
-    if (version != STATE_VERSION) return error.UnsupportedVersion;
-
-    const active_key_byte = try r.readByte();
-    t.screens.active_key = switch (active_key_byte) {
-        0 => .primary,
-        1 => .alternate,
-        else => return error.InvalidValue,
-    };
-
-    t.cols = try r.readInt(u16, .little);
-    t.rows = try r.readInt(u16, .little);
-
-    inline for (.{ ghostty.ScreenSet.Key.primary, ghostty.ScreenSet.Key.alternate }) |skey| {
-        const has_screen = try r.readByte();
-        if (has_screen == 1) {
-            if (t.screens.get(skey)) |screen| {
-                try readScreenState(r, screen);
-            } else {
-                try skipScreenState(r);
-            }
-        }
-    }
-
-    if (t.screens.get(t.screens.active_key)) |screen| {
-        t.screens.active = screen;
-    }
-
-    t.scrolling_region.top = try r.readInt(u16, .little);
-    t.scrolling_region.bottom = try r.readInt(u16, .little);
-    t.scrolling_region.left = try r.readInt(u16, .little);
-    t.scrolling_region.right = try r.readInt(u16, .little);
-
-    const ModeInt = @typeInfo(ghostty.ModePacked).@"struct".backing_integer.?;
-    t.modes.values = @bitCast(try r.readInt(ModeInt, .little));
-    t.modes.saved = @bitCast(try r.readInt(ModeInt, .little));
-    t.modes.default = @bitCast(try r.readInt(ModeInt, .little));
-
-    try readColors(r, &t.colors);
-
-    const tab_cols = try r.readInt(u32, .little);
-    t.tabstops.cols = @intCast(tab_cols);
-    _ = try r.readAll(&t.tabstops.prealloc_stops);
-    const dyn_len = try r.readInt(u32, .little);
-    if (dyn_len > 0) {
-        if (t.tabstops.dynamic_stops.len < dyn_len) {
-            try r.skipBytes(dyn_len, .{});
-        } else {
-            _ = try r.readAll(t.tabstops.dynamic_stops[0..dyn_len]);
-        }
-    }
-
-    const pwd_len = try r.readInt(u32, .little);
-    if (pwd_len > 0) {
-        t.pwd.clearRetainingCapacity();
-        const buf = try t.pwd.addManyAsSlice(t.gpa(), @intCast(pwd_len));
-        _ = try r.readAll(buf);
-    }
-
-    const title_len = try r.readInt(u32, .little);
-    if (title_len > 0) {
-        t.title.clearRetainingCapacity();
-        const buf = try t.title.addManyAsSlice(t.gpa(), @intCast(title_len));
-        _ = try r.readAll(buf);
-    }
-
-    const FlagsInt = @typeInfo(@TypeOf(t.flags)).@"struct".backing_integer.?;
-    const flags_wide = try r.readInt(u128, .little);
-    t.flags = @bitCast(@as(FlagsInt, @intCast(flags_wide)));
-}
-
-fn readScreenState(r: anytype, screen: *ghostty.Screen) !void {
-    screen.cursor.x = try r.readInt(u16, .little);
-    screen.cursor.y = try r.readInt(u16, .little);
-    screen.cursor.cursor_style = @enumFromInt(try r.readByte());
-    screen.cursor.pending_wrap = try r.readByte() != 0;
-    screen.cursor.protected = try r.readByte() != 0;
-
-    screen.cursor.style = try readStyle(r);
-
-    const has_saved = try r.readByte();
-    if (has_saved == 1) {
-        var sc: ghostty.Screen.SavedCursor = undefined;
-        sc.x = try r.readInt(u16, .little);
-        sc.y = try r.readInt(u16, .little);
-        sc.style = try readStyle(r);
-        sc.protected = try r.readByte() != 0;
-        sc.pending_wrap = try r.readByte() != 0;
-        sc.origin = try r.readByte() != 0;
-        sc.charset = try readCharsetState(r);
-        screen.saved_cursor = sc;
-    } else {
-        screen.saved_cursor = null;
-    }
-
-    screen.charset = try readCharsetState(r);
-
-    screen.kitty_keyboard.idx = @intCast(try r.readByte());
-    for (&screen.kitty_keyboard.flags) |*f| {
-        f.* = @bitCast(@as(u5, @intCast(try r.readByte())));
-    }
-}
-
-fn skipScreenState(r: anytype) !void {
-    try r.skipBytes(7, .{});
-    try skipStyle(r);
-    const has_saved = try r.readByte();
-    if (has_saved == 1) {
-        try r.skipBytes(4, .{});
-        try skipStyle(r);
-        try r.skipBytes(3, .{});
-        try skipCharsetState(r);
-    }
-    try skipCharsetState(r);
-    try r.skipBytes(9, .{});
-}
-
-fn readCharsetState(r: anytype) !ghostty.Screen.CharsetState {
-    var cs: ghostty.Screen.CharsetState = .{};
-    cs.gl = @enumFromInt(try r.readByte());
-    cs.gr = @enumFromInt(try r.readByte());
-    const has_ss = try r.readByte();
-    cs.single_shift = if (has_ss == 1)
-        @as(ghostty.CharsetSlot, @enumFromInt(try r.readByte()))
-    else
-        null;
-    cs.charsets.g0 = @enumFromInt(try r.readByte());
-    cs.charsets.g1 = @enumFromInt(try r.readByte());
-    cs.charsets.g2 = @enumFromInt(try r.readByte());
-    cs.charsets.g3 = @enumFromInt(try r.readByte());
-    return cs;
-}
-
-fn skipCharsetState(r: anytype) !void {
-    try r.skipBytes(2, .{});
-    const has_ss = try r.readByte();
-    if (has_ss == 1) try r.skipBytes(1, .{});
-    try r.skipBytes(4, .{});
-}
-
-fn readColors(r: anytype, colors: *ghostty.Terminal.Colors) !void {
-    colors.background = try readDynamicRGB(r);
-    colors.foreground = try readDynamicRGB(r);
-    colors.cursor = try readDynamicRGB(r);
-
-    _ = try r.readAll(std.mem.asBytes(&colors.palette.current));
-    _ = try r.readAll(std.mem.asBytes(&colors.palette.original));
-    _ = try r.readAll(std.mem.asBytes(&colors.palette.mask));
-}
-
-fn readDynamicRGB(r: anytype) !ghostty.color.DynamicRGB {
-    var drgb: ghostty.color.DynamicRGB = .{ .override = null, .default = null };
-    if (try r.readByte() == 1) {
-        drgb.override = @bitCast(try r.readInt(u24, .little));
-    }
-    if (try r.readByte() == 1) {
-        drgb.default = @bitCast(try r.readInt(u24, .little));
-    }
-    return drgb;
-}
-
-fn finalizeScreen(screen: *ghostty.Screen) !void {
-    screen.pages.viewport = .active;
-    screen.pages.viewport_pin_row_offset = null;
-
-    const first_node = screen.pages.pages.first orelse return;
-    var node = first_node;
-    var row_offset: usize = 0;
-    while (true) {
-        const page_rows: usize = node.data.size.rows;
-        const total = screen.pages.total_rows;
-        const active_start = if (total > screen.pages.rows) total - screen.pages.rows else 0;
-
-        if (row_offset + page_rows > active_start) {
-            const active_row_in_page = if (active_start > row_offset)
-                active_start - row_offset
-            else
-                0;
-            const target_row = active_row_in_page + screen.cursor.y;
-            if (target_row < page_rows) {
-                screen.cursor.page_pin.node = node;
-                screen.cursor.page_pin.y = @intCast(target_row);
-                screen.cursor.page_pin.x = screen.cursor.x;
-                const rac = screen.cursor.page_pin.rowAndCell();
-                screen.cursor.page_row = rac.row;
-                screen.cursor.page_cell = rac.cell;
-                break;
-            }
-        }
-
-        row_offset += page_rows;
-        node = node.next orelse {
-            const last = screen.pages.pages.last orelse return;
-            screen.cursor.page_pin.node = last;
-            screen.cursor.page_pin.y = 0;
-            screen.cursor.page_pin.x = 0;
-            const rac = screen.cursor.page_pin.rowAndCell();
-            screen.cursor.page_row = rac.row;
-            screen.cursor.page_cell = rac.cell;
-            break;
-        };
-    }
-
-    var dirty_node = screen.pages.pages.first;
-    while (dirty_node) |n| : (dirty_node = n.next) {
-        n.data.dirty = true;
-    }
+fn rgbToU32(rgb: ghostty.color.RGB) u32 {
+    return (@as(u32, rgb.r) << 16) | (@as(u32, rgb.g) << 8) | @as(u32, rgb.b);
 }
 
 fn cursorStyleToAbi(style: CursorVisualStyle) u8 {
@@ -755,10 +550,12 @@ pub export fn restty_create(cols: u16, rows: u16, max_scrollback: u32) ?*Restty 
     colors.foreground = ghostty.color.DynamicRGB.init(.{ .r = 0xFF, .g = 0xFF, .b = 0xFF });
     colors.cursor = ghostty.color.DynamicRGB.init(.{ .r = 0xFF, .g = 0xFF, .b = 0xFF });
 
-    var term = ghostty.Terminal.init(alloc, .{
+    var term = ghostty.Terminal.init(resttyIo(), alloc, .{
         .cols = cols,
         .rows = rows,
-        .max_scrollback = max_scrollback,
+        // Historical restty ABI: max_scrollback is a line budget.
+        .max_scrollback_lines = if (max_scrollback == 0) 0 else max_scrollback,
+        .max_scrollback_bytes = null,
         .colors = colors,
     }) catch return null;
     errdefer term.deinit(alloc);
@@ -779,10 +576,7 @@ pub export fn restty_create(cols: u16, rows: u16, max_scrollback: u32) ?*Restty 
         .rows = rows,
         .cols = cols,
     };
-    handle.stream = TerminalStream.initAlloc(
-        alloc,
-        StreamHandler.init(alloc, &handle.term, &handle.output),
-    );
+    handle.stream = makeStream(handle);
     return handle;
 }
 
@@ -911,10 +705,55 @@ pub export fn restty_reset_palette(handle: ?*Restty) u32 {
     return @intFromEnum(ErrorCode.ok);
 }
 
+/// Returns the active foreground color as 0x00RRGGBB, or 0xFFFFFFFF if unset.
+pub export fn restty_get_color_foreground(handle: ?*Restty) u32 {
+    const h = handle orelse return 0xFFFF_FFFF;
+    const rgb = h.term.colors.foreground.get() orelse return 0xFFFF_FFFF;
+    return rgbToU32(rgb);
+}
+
+/// Returns the active background color as 0x00RRGGBB, or 0xFFFFFFFF if unset.
+pub export fn restty_get_color_background(handle: ?*Restty) u32 {
+    const h = handle orelse return 0xFFFF_FFFF;
+    const rgb = h.term.colors.background.get() orelse return 0xFFFF_FFFF;
+    return rgbToU32(rgb);
+}
+
+/// Returns the active cursor color as 0x00RRGGBB, or 0xFFFFFFFF if unset.
+pub export fn restty_get_color_cursor(handle: ?*Restty) u32 {
+    const h = handle orelse return 0xFFFF_FFFF;
+    const rgb = h.term.colors.cursor.get() orelse return 0xFFFF_FFFF;
+    return rgbToU32(rgb);
+}
+
+/// Returns a single palette color as 0x00RRGGBB, or 0xFFFFFFFF for invalid index.
+pub export fn restty_get_palette_color(handle: ?*Restty, index: u32) u32 {
+    const h = handle orelse return 0xFFFF_FFFF;
+    if (index > 255) return 0xFFFF_FFFF;
+    const rgb = h.term.colors.palette.current[@intCast(index)];
+    return rgbToU32(rgb);
+}
+
+/// Writes the full 256-color palette (768 bytes: R,G,B × 256) to the given pointer.
+/// Caller must allocate at least 768 bytes. Returns error code.
+pub export fn restty_get_palette(handle: ?*Restty, out_ptr: [*]u8) u32 {
+    const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
+    for (h.term.colors.palette.current, 0..) |rgb, i| {
+        const base = i * 3;
+        out_ptr[base] = rgb.r;
+        out_ptr[base + 1] = rgb.g;
+        out_ptr[base + 2] = rgb.b;
+    }
+    return @intFromEnum(ErrorCode.ok);
+}
+
 pub export fn restty_resize(handle: ?*Restty, cols: u16, rows: u16) u32 {
     const h = handle orelse return @intFromEnum(ErrorCode.invalid_handle);
     if (cols == 0 or rows == 0) return @intFromEnum(ErrorCode.invalid_arg);
-    h.term.resize(h.alloc, cols, rows) catch return @intFromEnum(ErrorCode.internal);
+    h.term.resize(h.alloc, .{ .cols = cols, .rows = rows }) catch |err| return switch (err) {
+        error.OutOfMemory => @intFromEnum(ErrorCode.out_of_memory),
+        error.InvalidValue => @intFromEnum(ErrorCode.invalid_arg),
+    };
     ensureScrollingRegion(h);
     return @intFromEnum(ErrorCode.ok);
 }
@@ -927,106 +766,59 @@ pub export fn restty_set_pixel_size(handle: ?*Restty, width_px: u32, height_px: 
     return @intFromEnum(ErrorCode.ok);
 }
 
-pub export fn restty_snapshot_page_load(
-    self: ?*Restty,
-    screen_key: u8,
-    data_ptr: [*]const u8,
-    data_len: u32,
-    cap_cols: u16,
-    cap_rows: u16,
-    cap_styles: u16,
-    cap_grapheme_bytes: u32,
-    cap_hyperlink_bytes: u16,
-    cap_string_bytes: u32,
-    used_cols: u16,
-    used_rows: u16,
-) callconv(.c) u32 {
-    const h = self orelse return @intFromEnum(ErrorCode.invalid_handle);
-    const key: ghostty.ScreenSet.Key = switch (screen_key) {
-        0 => .primary,
-        1 => .alternate,
-        else => return @intFromEnum(ErrorCode.invalid_arg),
-    };
-    const screen = h.term.screens.get(key) orelse return @intFromEnum(ErrorCode.invalid_arg);
-
-    const cap: ghostty.page.Capacity = .{
-        .cols = cap_cols,
-        .rows = cap_rows,
-        .styles = cap_styles,
-        .grapheme_bytes = cap_grapheme_bytes,
-        .hyperlink_bytes = cap_hyperlink_bytes,
-        .string_bytes = cap_string_bytes,
-    };
-    const layout = ghostty.Page.layout(cap);
-    const src = data_ptr[0..@as(usize, data_len)];
-    if (src.len < layout.total_size) return @intFromEnum(ErrorCode.invalid_arg);
-
-    const std_page_size = ghostty.Page.layout(ghostty.page.std_capacity).total_size;
-    const pooled = layout.total_size <= std_page_size;
-    const page_alloc = screen.pages.pool.pages.arena.child_allocator;
-    const page_buf = if (pooled)
-        screen.pages.pool.pages.create() catch return @intFromEnum(ErrorCode.out_of_memory)
-    else
-        page_alloc.alignedAlloc(
-            u8,
-            .fromByteUnits(std.heap.page_size_min),
-            layout.total_size,
-        ) catch return @intFromEnum(ErrorCode.out_of_memory);
-    errdefer if (pooled)
-        screen.pages.pool.pages.destroy(page_buf)
-    else
-        page_alloc.free(page_buf);
-
-    if (comptime std.debug.runtime_safety) @memset(page_buf, 0);
-
-    var page = ghostty.Page.initBuf(ghostty.size.OffsetBuf.init(page_buf), layout);
-    @memcpy(page.memory[0..layout.total_size], src[0..layout.total_size]);
-    page.size = .{ .cols = used_cols, .rows = used_rows };
-    page.dirty = true;
-
-    const node = screen.pages.pool.nodes.create() catch {
-        return @intFromEnum(ErrorCode.out_of_memory);
-    };
-    node.* = .{
-        .data = page,
-        .serial = screen.pages.page_serial,
-        .prev = null,
-        .next = null,
-    };
-    screen.pages.page_serial += 1;
-    screen.pages.page_size += layout.total_size;
-    screen.pages.total_rows += used_rows;
-    screen.pages.pages.append(node);
-    return @intFromEnum(ErrorCode.ok);
-}
-
-pub export fn restty_snapshot_state_import(
+/// Import a GHOSTSNP (`ghostty-terminal-snapshot-v1`) blob into this handle.
+///
+/// Cold cutover: decode produces a caller-owned Terminal (not in-place page
+/// restore). Ownership sequence matches upstream snapshot docs:
+/// decodeExact → toOwned into final address → new Stream + continuation
+/// replay → deinit decoded continuation. Fail closed on InvalidMagic /
+/// UnsupportedVersion / TrailingData / other decode errors.
+pub export fn restty_snapshot_import(
     self: ?*Restty,
     data_ptr: [*]const u8,
     data_len: u32,
 ) callconv(.c) u32 {
     const h = self orelse return @intFromEnum(ErrorCode.invalid_handle);
     if (data_len == 0) return @intFromEnum(ErrorCode.invalid_arg);
-    var stream = std.io.fixedBufferStream(data_ptr[0..@as(usize, data_len)]);
-    readState(stream.reader(), &h.term) catch |err| switch (err) {
-        error.OutOfMemory => return @intFromEnum(ErrorCode.out_of_memory),
-        else => return @intFromEnum(ErrorCode.invalid_arg),
-    };
-    return @intFromEnum(ErrorCode.ok);
-}
 
-pub export fn restty_snapshot_state_finalize(
-    self: ?*Restty,
-) callconv(.c) u32 {
-    const h = self orelse return @intFromEnum(ErrorCode.invalid_handle);
-    inline for (.{ ghostty.ScreenSet.Key.primary, ghostty.ScreenSet.Key.alternate }) |skey| {
-        if (h.term.screens.get(skey)) |screen| {
-            finalizeScreen(screen) catch return @intFromEnum(ErrorCode.invalid_arg);
-        }
+    const data = data_ptr[0..@as(usize, data_len)];
+    var source: std.Io.Reader = .fixed(data);
+
+    var decoded = ghostty.snapshot.decodeExact(
+        h.alloc,
+        resttyIo(),
+        &source,
+        .{ .max_continuation_bytes = CONTINUATION_MAX_BYTES },
+    ) catch |err| return switch (err) {
+        error.OutOfMemory => @intFromEnum(ErrorCode.out_of_memory),
+        error.InvalidMagic,
+        error.UnsupportedVersion,
+        error.TrailingData,
+        => @intFromEnum(ErrorCode.invalid_arg),
+        else => @intFromEnum(ErrorCode.invalid_arg),
+    };
+    // Always release continuation (and any untransferred terminal) on exit.
+    defer decoded.deinit(h.alloc);
+
+    // Tear down the previous live terminal/stream/render state before moving
+    // the decoded terminal into `h.term`'s final address.
+    h.stream.deinit();
+    h.render_state.deinit(h.alloc);
+    h.term.deinit(h.alloc);
+    h.render_state = .empty;
+
+    // Transfer Terminal to its permanent address, then rebuild the Stream
+    // against that address and replay continuation exactly once.
+    h.term = decoded.toOwned();
+    h.stream = makeStream(h);
+    switch (decoded.continuation) {
+        .ground => {},
+        .bytes => |bytes| {
+            if (bytes.len > 0) h.stream.nextSlice(bytes);
+        },
     }
-    if (h.term.screens.get(h.term.screens.active_key)) |screen| {
-        h.term.screens.active = screen;
-    }
+
+    ensureScrollingRegion(h);
     return @intFromEnum(ErrorCode.ok);
 }
 
@@ -1082,7 +874,7 @@ pub export fn restty_render_update(handle: ?*Restty) u32 {
         const cell_graphemes = cell_slice.items(.grapheme);
         const cell_styles = cell_slice.items(.style);
         const pin = row_pins[r];
-        const page_ptr = &pin.node.data;
+        const page_ptr = pin.node.page();
 
         var c: usize = 0;
         while (c < h.cols) : (c += 1) {

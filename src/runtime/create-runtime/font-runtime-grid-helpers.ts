@@ -45,6 +45,30 @@ export function createFontRuntimeGridHelpers(options: CreateFontRuntimeGridHelpe
     shapeClusterWithFont,
   } = options;
 
+  function destroyGlyphAtlases(): void {
+    const activeState = getActiveState();
+    if (!activeState?.glyphAtlases) return;
+    if ("gl" in activeState) {
+      for (const atlas of activeState.glyphAtlases.values()) {
+        try {
+          activeState.gl.deleteTexture(atlas.texture);
+        } catch {
+          // Ignore atlas cleanup failures during grid rebuilds.
+        }
+      }
+      activeState.glyphAtlases.clear();
+      return;
+    }
+    for (const atlas of activeState.glyphAtlases.values()) {
+      try {
+        atlas.texture.destroy();
+      } catch {
+        // Ignore atlas cleanup failures during grid rebuilds.
+      }
+    }
+    activeState.glyphAtlases.clear();
+  }
+
   function computeCellMetrics(): CellMetrics | null {
     const primary = fontState.fonts[0];
     if (!primary) return null;
@@ -107,10 +131,7 @@ export function createFontRuntimeGridHelpers(options: CreateFontRuntimeGridHelpe
 
     if (metrics.fontSizePx !== gridState.fontSizePx) {
       for (const entry of fontState.fonts) resetFontEntry(entry);
-      const activeState = getActiveState();
-      if (activeState && activeState.glyphAtlases) {
-        activeState.glyphAtlases = new Map();
-      }
+      destroyGlyphAtlases();
     }
 
     Object.assign(gridState, metrics, { cols, rows });

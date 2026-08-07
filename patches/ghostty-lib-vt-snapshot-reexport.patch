@@ -1,0 +1,13 @@
+--- a/src/lib_vt.zig
++++ b/src/lib_vt.zig
+@@ -80,6 +80,10 @@ pub const Terminal = terminal.Terminal;
+ pub const TerminalStream = terminal.TerminalStream;
+ pub const Stream = terminal.Stream;
+ pub const StreamAction = terminal.StreamAction;
++/// Binary terminal snapshot codecs (GHOSTSNP). Restty-local re-export so
++/// wasm consumers can `ghostty.snapshot.decode*` without depending on the
++/// full Ghostty app package. Sole intentional patch vs pristine ghostty-org.
++pub const snapshot = terminal.snapshot;
+ pub const Cursor = Screen.Cursor;
+ pub const CursorStyle = Screen.CursorStyle;
+ pub const CursorStyleReq = terminal.CursorStyle;

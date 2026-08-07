@@ -7,6 +7,7 @@ const root = resolve(here, "..");
 const wasmDir = resolve(root, "wasm");
 const builtWasmPath = resolve(wasmDir, "zig-out/bin/restty.wasm");
 const embeddedWasmPath = resolve(root, "src/wasm/embedded.ts");
+const applyGhosttyPatchScript = resolve(here, "apply-ghostty-patch.ts");
 const wasmOptimizeMode = process.env.RESTTY_WASM_OPTIMIZE?.trim() || "ReleaseSafe";
 
 function runCommand(command: string[], cwd: string): void {
@@ -19,6 +20,12 @@ function runCommand(command: string[], cwd: string): void {
     process.exit(proc.exitCode ?? 1);
   }
 }
+
+// Pristine ghostty-org pin + restty-owned one-line lib_vt re-export.
+// See docs/internals/ghostty-lib-vt-patch.md and
+// patches/ghostty-lib-vt-snapshot-reexport.patch.
+console.log("Ensuring Ghostty lib_vt snapshot re-export patch...");
+runCommand(["bun", "run", applyGhosttyPatchScript], root);
 
 console.log("Building wasm module...");
 runCommand(

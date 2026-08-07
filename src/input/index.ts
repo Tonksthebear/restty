@@ -38,6 +38,7 @@ export function createInputHandler(options: InputHandlerOptions = {}): InputHand
     encodeBeforeInput,
     mapKeyForPty,
     filterOutput: (output) => filter.filter(output),
+    filterOutputBytes: (output) => filter.filterBytes(output),
     setReplySink: (fn) => {
       mouse.setReplySink(fn);
       filter.setReplySink(fn);
