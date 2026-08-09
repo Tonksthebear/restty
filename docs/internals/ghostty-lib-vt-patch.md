@@ -1,10 +1,10 @@
 # Ghostty `lib_vt.zig` local patch
 
-Restty pins **ghostty-org/ghostty** at the pristine SHA:
+Restty pins **trybotster/ghostty** at the pristine SHA:
 
-`22d13172cde98a0a4dda05d3d6a3fcb0dd8ed018`
+`ea655025686294c151b3a68bcef6a2b6d0e9a992`
 
-The submodule **gitlink** records that SHA only. No private Ghostty commits
+The submodule **gitlink** records that SHA only. Pin includes trybotster SEGV fix commits; sole restty worktree patch remains
 are required for clone/CI.
 
 ## Sole intentional patch (restty-owned)
@@ -20,7 +20,7 @@ pub const snapshot = terminal.snapshot;
 
 (plus a short comment block above the re-export)
 
-This is the only source change relative to pristine upstream at the pin SHA.
+This is the only source change relative to pinned Ghostty at the pin SHA.
 No Ghostty PR is filed unless a human requests one. The same one-liner is
 what would be proposed upstream if a human later asks for a PR.
 
@@ -32,7 +32,7 @@ what would be proposed upstream if a human later asks for a PR.
    # checkouts may still have the old URL in .git/config until you sync:
    git submodule sync --recursive
    git submodule update --init reference/ghostty
-   # gitlink must be 22d13172cde98a0a4dda05d3d6a3fcb0dd8ed018
+   # gitlink must be ea655025686294c151b3a68bcef6a2b6d0e9a992
    ```
 
 2. Apply the restty-owned patch (idempotent):
@@ -89,6 +89,6 @@ libghostty-vt wrappers). No improvised shim.
 
 ## Submodule packaging
 
-- **Gitlink:** pristine `22d13172…` (fetchable from ghostty-org)
+- **Gitlink:** pristine `ea6550256…` (fetchable from ghostty-org)
 - **Patch:** restty-owned, applied at build time
 - Fresh clone path: `submodule update --init` → `bun run build:wasm` (auto-apply)
