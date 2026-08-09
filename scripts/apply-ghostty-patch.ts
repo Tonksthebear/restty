@@ -1,6 +1,6 @@
 /**
  * Apply the sole restty-owned Ghostty patch onto the pristine submodule
- * checkout at `reference/ghostty` (pin: ea6550256…).
+ * checkout at `reference/ghostty` (pin: 2a465b03e…).
  *
  * Idempotent: skips if `pub const snapshot = terminal.snapshot` is already
  * present. Does not commit into the submodule — the working tree becomes

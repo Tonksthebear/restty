@@ -2,7 +2,7 @@
 
 Restty pins **trybotster/ghostty** at the pristine SHA:
 
-`ea655025686294c151b3a68bcef6a2b6d0e9a992`
+`2a465b03e217d32350744944453e835816267da6`
 
 The submodule **gitlink** records that SHA only. Pin includes trybotster SEGV fix commits; sole restty worktree patch remains
 are required for clone/CI.
@@ -32,7 +32,7 @@ what would be proposed upstream if a human later asks for a PR.
    # checkouts may still have the old URL in .git/config until you sync:
    git submodule sync --recursive
    git submodule update --init reference/ghostty
-   # gitlink must be ea655025686294c151b3a68bcef6a2b6d0e9a992
+   # gitlink must be 2a465b03e217d32350744944453e835816267da6
    ```
 
 2. Apply the restty-owned patch (idempotent):
@@ -89,6 +89,6 @@ libghostty-vt wrappers). No improvised shim.
 
 ## Submodule packaging
 
-- **Gitlink:** pristine `ea6550256…` (fetchable from ghostty-org)
+- **Gitlink:** pristine `2a465b03e…` (fetchable from ghostty-org)
 - **Patch:** restty-owned, applied at build time
 - Fresh clone path: `submodule update --init` → `bun run build:wasm` (auto-apply)
