@@ -156,6 +156,15 @@ export class ResttyWasm {
     return this.exports.restty_kitty_keyboard_flags(handle) >>> 0;
   }
 
+  /**
+   * Read Ghostty mouse tracking/format mode bits for JS MouseController rehydrate.
+   * Bits: 9, 1000, 1002, 1003, 1005, 1006, 1015, 1016 (see mouse.ts).
+   */
+  getMouseTrackingBits(handle: number): number {
+    if (!this.exports.restty_mouse_tracking_bits) return 0;
+    return this.exports.restty_mouse_tracking_bits(handle) >>> 0;
+  }
+
   /** Set the active terminal search query. */
   setSearchQuery(handle: number, query: string): void {
     if (!this.exports.restty_search_set_query) return;
