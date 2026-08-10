@@ -482,3 +482,172 @@ test("bindPointerEvents routes wheel through native-host scroll handler", () => 
   expect(wheelCalls).toBe(1);
   expect(wheel.prevented()).toBe(true);
 });
+
+test("bindPointerEvents maps touch pan to mouse wheel when mouse tracking is active", () => {
+  const mouseKinds: string[] = [];
+  let lineScrolls = 0;
+  const canvas = new FakeCanvas();
+  const touchSelectionState = {
+    pendingPointerId: null as number | null,
+    activePointerId: null as number | null,
+    panPointerId: null as number | null,
+    pendingCell: null as { row: number; col: number } | null,
+    pendingStartedAt: 0,
+    pendingStartX: 0,
+    pendingStartY: 0,
+    panLastY: 0,
+    pendingTimer: 0,
+  };
+
+  bindPointerEvents({
+    canvas: canvas as unknown as HTMLCanvasElement,
+    bindOptions: {
+      inputHandler: createInputHandlerStub({
+        mouseActive: true,
+        sendMouseEvent: (kind) => {
+          mouseKinds.push(kind);
+          return true;
+        },
+      }),
+      sendKeyInput: () => {},
+      sendPasteText: () => {},
+      sendPastePayloadFromDataTransfer: () => false,
+      getLastKeydownSeq: () => "",
+      getLastKeydownSeqAt: () => 0,
+      keydownBeforeinputDedupeMs: 80,
+      openLink: () => {},
+    },
+    touchSelectionMode: "long-press",
+    touchSelectionLongPressMs: 450,
+    touchSelectionMoveThresholdPx: 10,
+    selectionState: { active: false, dragging: false, anchor: null, focus: null },
+    touchSelectionState,
+    desktopSelectionState: {
+      pendingPointerId: null,
+      pendingCell: null,
+      startedWithActiveSelection: false,
+    },
+    linkState: { hoverId: 0, hoverUri: "" },
+    cleanupCanvasFns: [],
+    isTouchPointer: (event) => event.pointerType === "touch",
+    clearPendingTouchSelection: () => {
+      touchSelectionState.pendingPointerId = null;
+      touchSelectionState.pendingCell = null;
+    },
+    clearPendingDesktopSelection: () => {},
+    tryActivatePendingTouchSelection: () => false,
+    beginSelectionDrag: () => {},
+    normalizeSelectionCell: (cell) => cell,
+    positionToCell: () => ({ row: 2, col: 3 }),
+    scrollViewportByLines: () => {
+      lineScrolls += 1;
+    },
+    scrollViewportByWheel: () => {
+      throw new Error("local wheel path should not run for app mouse pan");
+    },
+    clearSelection: () => {},
+    updateCanvasCursor: () => {},
+    markNeedsRender: () => {},
+    updateLinkHover: () => {},
+    getGridState: () => ({ cols: 80, rows: 24, cellW: 10, cellH: 20 }),
+    getWasmReady: () => true,
+    getWasmHandle: () => 1,
+  });
+
+  // Must not send mouse "down" on touch press when we will pan-to-wheel.
+  const down = createPointerEvent({
+    pointerType: "touch",
+    pointerId: 7,
+    clientY: 100,
+  });
+  canvas.emit("pointerdown", down.event as unknown as Event);
+  expect(mouseKinds).toEqual([]);
+  expect(touchSelectionState.panPointerId).toBe(7);
+
+  // Finger moves up 40px → synthetic wheel with negative deltaY → app mouse "wheel".
+  const move = createPointerEvent({
+    pointerType: "touch",
+    pointerId: 7,
+    clientY: 60,
+  });
+  canvas.emit("pointermove", move.event as unknown as Event);
+  expect(mouseKinds).toEqual(["wheel"]);
+  expect(lineScrolls).toBe(0);
+  expect(move.prevented()).toBe(true);
+});
+
+test("bindPointerEvents touch pan uses local scroll when mouse tracking is off", () => {
+  let lineScrolls = 0;
+  const canvas = new FakeCanvas();
+  const touchSelectionState = {
+    pendingPointerId: null as number | null,
+    activePointerId: null as number | null,
+    panPointerId: null as number | null,
+    pendingCell: null as { row: number; col: number } | null,
+    pendingStartedAt: 0,
+    pendingStartX: 0,
+    pendingStartY: 0,
+    panLastY: 0,
+    pendingTimer: 0,
+  };
+
+  bindPointerEvents({
+    canvas: canvas as unknown as HTMLCanvasElement,
+    bindOptions: {
+      inputHandler: createInputHandlerStub({
+        mouseActive: false,
+        sendMouseEvent: () => {
+          throw new Error("mouse path should not run");
+        },
+      }),
+      sendKeyInput: () => {},
+      sendPasteText: () => {},
+      sendPastePayloadFromDataTransfer: () => false,
+      getLastKeydownSeq: () => "",
+      getLastKeydownSeqAt: () => 0,
+      keydownBeforeinputDedupeMs: 80,
+      openLink: () => {},
+    },
+    touchSelectionMode: "long-press",
+    touchSelectionLongPressMs: 450,
+    touchSelectionMoveThresholdPx: 10,
+    selectionState: { active: false, dragging: false, anchor: null, focus: null },
+    touchSelectionState,
+    desktopSelectionState: {
+      pendingPointerId: null,
+      pendingCell: null,
+      startedWithActiveSelection: false,
+    },
+    linkState: { hoverId: 0, hoverUri: "" },
+    cleanupCanvasFns: [],
+    isTouchPointer: (event) => event.pointerType === "touch",
+    clearPendingTouchSelection: () => {
+      touchSelectionState.pendingPointerId = null;
+    },
+    clearPendingDesktopSelection: () => {},
+    tryActivatePendingTouchSelection: () => false,
+    beginSelectionDrag: () => {},
+    normalizeSelectionCell: (cell) => cell,
+    positionToCell: () => ({ row: 0, col: 0 }),
+    scrollViewportByLines: () => {
+      lineScrolls += 1;
+    },
+    clearSelection: () => {},
+    updateCanvasCursor: () => {},
+    markNeedsRender: () => {},
+    updateLinkHover: () => {},
+    getGridState: () => ({ cols: 80, rows: 24, cellW: 10, cellH: 20 }),
+    getWasmReady: () => true,
+    getWasmHandle: () => 1,
+  });
+
+  canvas.emit(
+    "pointerdown",
+    createPointerEvent({ pointerType: "touch", pointerId: 3, clientY: 200 }).event as unknown as Event,
+  );
+  canvas.emit(
+    "pointermove",
+    createPointerEvent({ pointerType: "touch", pointerId: 3, clientY: 140 }).event as unknown as Event,
+  );
+  expect(lineScrolls).toBe(1);
+});
