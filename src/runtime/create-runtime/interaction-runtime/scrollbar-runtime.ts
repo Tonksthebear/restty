@@ -121,35 +121,43 @@ export function createScrollbarRuntime(options: CreateScrollbarRuntimeOptions): 
     const { cellH, rows } = getGridState();
     if (!cellH) return;
 
+    // Cap lines moved per wheel event so trackpad acceleration cannot jump
+    // dozens of rows at once (felt as laggy + huge jump, especially scroll-up).
+    const maxLinesPerEvent = Math.max(4, Math.min(12, Math.floor((rows || 24) / 4) || 4));
+
     const isPrecision = event.deltaMode === 0;
     if (isPrecision) {
-      const precisionMultiplier = 2;
-      const adjustedPx = event.deltaY * precisionMultiplier;
-      const pendingPx = pendingPrecisionScrollPx + adjustedPx;
+      // 1:1 pixel→line accumulation (was *2, which amplified jumps).
+      const pendingPx = pendingPrecisionScrollPx + event.deltaY;
       if (Math.abs(pendingPx) < cellH) {
         pendingPrecisionScrollPx = pendingPx;
         noteScrollActivity();
         return;
       }
 
-      const amount = pendingPx / cellH;
-      pendingPrecisionScrollPx = pendingPx - Math.trunc(amount) * cellH;
-      if (amount) {
-        scrollViewportByLines(Math.trunc(amount));
-      }
+      const rawLines = Math.trunc(pendingPx / cellH);
+      pendingPrecisionScrollPx = pendingPx - rawLines * cellH;
+      if (!rawLines) return;
+      const sign = rawLines < 0 ? -1 : 1;
+      const lines = sign * Math.min(Math.abs(rawLines), maxLinesPerEvent);
+      scrollViewportByLines(lines);
       return;
     }
 
     pendingPrecisionScrollPx = 0;
     if (event.deltaMode === 1) {
-      const discreteMultiplier = 3;
-      const yoff = event.deltaY > 0 ? Math.max(event.deltaY, 1) : Math.min(event.deltaY, -1);
-      scrollViewportByLines(yoff * discreteMultiplier);
+      // Line mode: honor multi-line deltas; do not collapse to ±1 * 3 only.
+      const raw = Math.round(event.deltaY) || (event.deltaY < 0 ? -1 : 1);
+      const sign = raw < 0 ? -1 : 1;
+      const lines = sign * Math.min(Math.abs(raw) * 3, maxLinesPerEvent);
+      scrollViewportByLines(lines);
       return;
     }
 
     const pageLines = rows > 0 ? rows : 24;
-    scrollViewportByLines(event.deltaY * pageLines);
+    const raw = event.deltaY * pageLines;
+    const sign = raw < 0 ? -1 : 1;
+    scrollViewportByLines(sign * Math.min(Math.abs(raw), maxLinesPerEvent));
   };
 
   const setViewportScrollOffset = (nextOffset: number) => {

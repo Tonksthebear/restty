@@ -205,10 +205,18 @@ export class MouseController {
       return this.sendMouse(code, col, row, pixel, false);
     }
     if (kind === "wheel") {
-      const delta = Math.sign((event as WheelEvent).deltaY);
-      if (!delta) return false;
-      const code = (delta < 0 ? 64 : 65) + mods;
-      return this.sendMouse(code, col, row, pixel, false);
+      // Do not collapse to Math.sign only: trackpads/mice emit large |deltaY|
+      // per event; one report per event feels laggy. Emit proportional steps
+      // (capped) so app mouse mode keeps pace with local scroll.
+      const steps = wheelReportSteps(event as WheelEvent);
+      if (steps === 0) return false;
+      const codeBase = steps < 0 ? 64 : 65;
+      const n = Math.abs(steps);
+      let sent = false;
+      for (let i = 0; i < n; i += 1) {
+        if (this.sendMouse(codeBase + mods, col, row, pixel, false)) sent = true;
+      }
+      return sent;
     }
     return false;
   }
@@ -267,4 +275,22 @@ export class MouseController {
     this.sendReply(`\x1b[<${code};${col};${row}${suffix}`);
     return true;
   }
+}
+
+/** Signed wheel steps for app mouse reports. 0 means ignore. Cap avoids floods. */
+export function wheelReportSteps(event: WheelEvent, maxSteps = 8): number {
+  const dy = event.deltaY;
+  if (!dy || !Number.isFinite(dy)) return 0;
+  const sign = dy < 0 ? -1 : 1;
+  // DOM_DELTA_PIXEL = 0, LINE = 1, PAGE = 2
+  let abs: number;
+  if (event.deltaMode === 1) {
+    abs = Math.max(1, Math.round(Math.abs(dy)));
+  } else if (event.deltaMode === 2) {
+    abs = Math.max(1, Math.round(Math.abs(dy) * 24));
+  } else {
+    // Pixels: ~40px per line is a common trackpad/mouse line height proxy.
+    abs = Math.max(1, Math.round(Math.abs(dy) / 40));
+  }
+  return sign * Math.min(abs, maxSteps);
 }
