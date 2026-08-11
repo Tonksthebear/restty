@@ -13,16 +13,31 @@ import {
  * Query replies must not hit the PTY sink. Keyboard and mouse encodings must.
  */
 
+const DEFAULT_COLORS = {
+  fg: [0xaa, 0xbb, 0xcc] as [number, number, number],
+  bg: [0x11, 0x22, 0x33] as [number, number, number],
+  cursor: [0xdd, 0xee, 0xff] as [number, number, number],
+};
+
+/** Match OutputFilter OSC color reply encoding (8-bit → 16-bit hex). */
+function oscColorReply(code: string, rgb: [number, number, number]): string {
+  const toHex4 = (value: number) =>
+    Math.round(Math.max(0, Math.min(255, value)) * 257)
+      .toString(16)
+      .padStart(4, "0");
+  return `\u001b]${code};rgb:${toHex4(rgb[0])}/${toHex4(rgb[1])}/${toHex4(rgb[2])}\u0007`;
+}
+
+const OSC10 = oscColorReply("10", DEFAULT_COLORS.fg);
+const OSC11 = oscColorReply("11", DEFAULT_COLORS.bg);
+const OSC12 = oscColorReply("12", DEFAULT_COLORS.cursor);
+
 function createReadOnlyHandler(sink: (data: string) => void) {
   return createInputHandler({
     sendReply: sink,
     suppressQueryReplies: true,
     getCursorPosition: () => ({ row: 3, col: 7 }),
-    getDefaultColors: () => ({
-      fg: { r: 0xaa, g: 0xbb, b: 0xcc },
-      bg: { r: 0x11, g: 0x22, b: 0x33 },
-      cursor: { r: 0xdd, g: 0xee, b: 0xff },
-    }),
+    getDefaultColors: () => DEFAULT_COLORS,
     positionToCell: () => ({ row: 0, col: 0 }),
   });
 }
@@ -33,46 +48,44 @@ test("readOnly mutes OSC 10/11/12, DA, and DSR query replies on the PTY sink", (
     sink.push(data);
   });
 
-  // Positive control: live handler still replies (proves stimuli are valid).
+  // Positive control: live handler emits exact well-formed replies.
   const liveSink: string[] = [];
   const live = createInputHandler({
     sendReply: (data) => {
       liveSink.push(data);
     },
     getCursorPosition: () => ({ row: 3, col: 7 }),
-    getDefaultColors: () => ({
-      fg: { r: 0xaa, g: 0xbb, b: 0xcc },
-      bg: { r: 0x11, g: 0x22, b: 0x33 },
-      cursor: { r: 0xdd, g: 0xee, b: 0xff },
-    }),
+    getDefaultColors: () => DEFAULT_COLORS,
   });
 
-  const stimuli = [
-    "\x1b]10;?\x07", // OSC 10 fg
-    "\x1b]11;?\x07", // OSC 11 bg
-    "\x1b]12;?\x07", // OSC 12 cursor
-    "\x1b[c", // DA primary
-    "\x1b[0c", // DA primary variant
-    "\x1b[6n", // DSR CPR
-  ];
+  live.filterOutput("\u001b]10;?\u0007");
+  live.filterOutput("\u001b]11;?\u0007");
+  live.filterOutput("\u001b]12;?\u0007");
+  live.filterOutput("\u001b[c");
+  live.filterOutput("\u001b[0c");
+  live.filterOutput("\u001b[6n");
 
-  for (const seq of stimuli) {
-    live.filterOutput(seq);
-    input.filterOutput(seq);
-  }
+  expect(liveSink).toEqual([
+    OSC10,
+    OSC11,
+    OSC12,
+    "\u001b[?1;2c",
+    "\u001b[?1;2c",
+    "\u001b[3;7R",
+  ]);
 
-  expect(liveSink.length).toBeGreaterThan(0);
-  expect(liveSink.some((r) => r.includes("rgb:"))).toBe(true);
-  expect(liveSink.some((r) => r.includes("?1;2c") || r.endsWith("c"))).toBe(true);
-  expect(liveSink.some((r) => r.includes("R"))).toBe(true);
-
-  // readOnly / suppressQueryReplies: zero replies on the shared PTY sink.
+  // Same stimuli through readOnly handler → zero PTY sink traffic.
+  input.filterOutput("\u001b]10;?\u0007");
+  input.filterOutput("\u001b]11;?\u0007");
+  input.filterOutput("\u001b]12;?\u0007");
+  input.filterOutput("\u001b[c");
+  input.filterOutput("\u001b[0c");
+  input.filterOutput("\u001b[6n");
   expect(sink).toEqual([]);
 });
 
 test("readOnly keeps Kitty key encode and mouse encode on the same PTY sink", () => {
   const sink: string[] = [];
-  // Production path: getKittyKeyboardFlags reads live WASM flags after GHOSTSNP.
   const KITTY_FLAG_DISAMBIGUATE = 1 << 0;
   const input = createInputHandler({
     sendReply: (data) => {
@@ -80,11 +93,7 @@ test("readOnly keeps Kitty key encode and mouse encode on the same PTY sink", ()
     },
     suppressQueryReplies: true,
     getCursorPosition: () => ({ row: 3, col: 7 }),
-    getDefaultColors: () => ({
-      fg: { r: 0xaa, g: 0xbb, b: 0xcc },
-      bg: { r: 0x11, g: 0x22, b: 0x33 },
-      cursor: { r: 0xdd, g: 0xee, b: 0xff },
-    }),
+    getDefaultColors: () => DEFAULT_COLORS,
     positionToCell: () => ({ row: 0, col: 0 }),
     getKittyKeyboardFlags: () => KITTY_FLAG_DISAMBIGUATE,
   });
@@ -101,7 +110,7 @@ test("readOnly keeps Kitty key encode and mouse encode on the same PTY sink", ()
     repeat: false,
     getModifierState: () => false,
   } as unknown as KeyboardEvent);
-  expect(kittySeq).toBe("\x1b[97;5u");
+  expect(kittySeq).toBe("\u001b[97;5u");
 
   // Mouse encode uses the same sendReply sink as query replies would —
   // after rehydrate it must still emit SGR reports while queries stay muted.
@@ -122,7 +131,7 @@ test("readOnly keeps Kitty key encode and mouse encode on the same PTY sink", ()
 
   // Queries still produce zero additional sink traffic.
   const before = sink.length;
-  input.filterOutput("\x1b]10;?\x07\x1b[c\x1b[6n");
+  input.filterOutput("\u001b]10;?\u0007\u001b[c\u001b[6n");
   expect(sink.length).toBe(before);
 });
 
@@ -137,7 +146,7 @@ test("readOnly createRuntimeAppApi discards WASM drainOutput without PTY sendInp
         drainCalls += 1;
         if (remaining <= 0) return null;
         remaining -= 1;
-        return "\x1b[?1;2c";
+        return "\u001b[?1;2c";
       },
       write: () => undefined,
       writeBytes: () => undefined,
@@ -243,7 +252,6 @@ test("readOnly createRuntimeAppApi discards WASM drainOutput without PTY sendInp
     handleSearchWasmReset: () => undefined,
   });
 
-  // sendInput triggers flushWasmOutputToPty after write.
   runtime.sendInput("x", "program");
   expect(drainCalls).toBeGreaterThan(0);
   expect(sent).toEqual([]);

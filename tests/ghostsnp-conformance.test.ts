@@ -11,7 +11,21 @@ import {
 /**
  * A8: committed GHOSTSNP rich-matrix fixture under tests/fixtures/ghostsnp/.
  * Produced by scripts/ghostsnp-fixture-gen (Ghostty-pin encode, not freestanding WASM).
+ *
+ * Fixture encodes (see scripts/ghostsnp-fixture-gen/main.zig):
+ * - 40 scrollback lines SCROLLBACK-LINE-NNN
+ * - attrs line: BOLD (bold), UNDER (underline), RED (palette1=0xabcdef), GREEN (palette2)
+ * - marker GHOSTSNP-RICH-MATRIX
+ * - kitty keyboard flags = 1 (disambiguate)
+ * - mouse 1000+1006
+ * - final cursor CUP 8;5 → row=7 col=4 (0-based)
  */
+
+const STYLE_BOLD = 0x1;
+const STYLE_UNDERLINE = 0x100;
+const ATTR_ROW = 8;
+const CURSOR_ROW = 7;
+const CURSOR_COL = 4;
 
 let wasm: ResttyWasm;
 
@@ -42,177 +56,29 @@ function viewportRows(handle: number): string[] {
   return rows;
 }
 
+function cellRgb(state: NonNullable<ReturnType<ResttyWasm["getRenderState"]>>, row: number, col: number): number {
+  const i = row * state.cols + col;
+  const bytes = state.fgBytes;
+  return ((bytes[i * 4] ?? 0) << 16) | ((bytes[i * 4 + 1] ?? 0) << 8) | (bytes[i * 4 + 2] ?? 0);
+}
+
+function cellChar(state: NonNullable<ReturnType<ResttyWasm["getRenderState"]>>, row: number, col: number): string {
+  const cp = state.codepoints[row * state.cols + col] ?? 0;
+  return cp === 0 ? " " : String.fromCodePoint(cp);
+}
+
 function scrollbarTotal(handle: number): number {
   const fn = wasm.exports.restty_scrollbar_total;
   if (!fn) throw new Error("restty_scrollbar_total missing");
   return fn(handle) >>> 0;
 }
 
-test("GHOSTSNP rich-matrix imports scrollback beyond the viewport", () => {
-  const snapshot = loadRichMatrix();
-  const handle = wasm.create(40, 12, 2_000_000);
-  expect(handle).toBeGreaterThan(0);
-  try {
-    expect(wasm.loadBinarySnapshot(handle, snapshot)).toBeNull();
-    const total = scrollbarTotal(handle);
-    // 40 history lines + viewport content → total extent exceeds 12 rows.
-    expect(total).toBeGreaterThan(12);
-    expect(total).toBeGreaterThanOrEqual(40);
-
-    // Scroll into older history and prove restored markers.
-    wasm.scrollViewport(handle, -20);
-    wasm.renderUpdate(handle);
-    const rows = viewportRows(handle);
-    expect(rows.some((r) => r.includes("SCROLLBACK-LINE-01"))).toBe(true);
-  } finally {
-    wasm.destroy(handle);
-  }
-});
-
-test("GHOSTSNP rich-matrix preserves cell attributes, palette colors, and cursor", () => {
-  const snapshot = loadRichMatrix();
-  const handle = wasm.create(40, 12, 2_000_000);
-  expect(handle).toBeGreaterThan(0);
-  try {
-    expect(wasm.loadBinarySnapshot(handle, snapshot)).toBeNull();
-    const state = wasm.getRenderState(handle);
-    expect(state).not.toBeNull();
-
-    // Styled cells (bold/underline SGR) present in the active area.
-    let styled = 0;
-    for (const flag of state!.styleFlags ?? []) {
-      if (flag) styled += 1;
-    }
-    expect(styled).toBeGreaterThan(0);
-
-    // Distinctive palette entry written via OSC 4 before encode.
-    expect(wasm.getPaletteColor(handle, 1)).toBe(0xabcdef);
-
-    // Viewport marker and styled text survive import.
-    const rows = viewportRows(handle);
-    expect(rows.some((r) => r.includes("GHOSTSNP-RICH-MATRIX"))).toBe(true);
-    expect(rows.some((r) => r.includes("BOLD") && r.includes("RED"))).toBe(true);
-
-    // Cursor restored (visible, in-bounds).
-    expect(state!.cursor.visible).toBe(1);
-    expect(state!.cursor.row).toBeGreaterThanOrEqual(0);
-    expect(state!.cursor.row).toBeLessThan(state!.rows);
-    expect(state!.cursor.col).toBeGreaterThanOrEqual(0);
-    expect(state!.cursor.col).toBeLessThan(state!.cols);
-  } finally {
-    wasm.destroy(handle);
-  }
-});
-
-test("GHOSTSNP rich-matrix rehydrates Kitty keyboard flags and mouse modes for encode", () => {
-  const snapshot = loadRichMatrix();
-  const handle = wasm.create(40, 12, 2_000_000);
-  expect(handle).toBeGreaterThan(0);
-  try {
-    expect(wasm.loadBinarySnapshot(handle, snapshot)).toBeNull();
-
-    const kittyFlags = wasm.getKittyKeyboardFlags(handle);
-    expect(kittyFlags & 1).not.toBe(0); // disambiguate
-
-    const bits = wasm.getMouseTrackingBits(handle);
-    expect(bits & (1 << 1)).not.toBe(0); // 1000
-    expect(bits & (1 << 5)).not.toBe(0); // 1006
-
-    const replies: string[] = [];
-    const input = createInputHandler({
-      sendReply: (data) => {
-        replies.push(data);
-      },
-      positionToCell: () => ({ row: 0, col: 0 }),
-      getKittyKeyboardFlags: () => kittyFlags,
-    });
-
-    // Kitty key encode uses restored flags.
-    const seq = input.encodeKeyEvent({
-      key: "a",
-      code: "KeyA",
-      type: "keydown",
-      ctrlKey: true,
-      altKey: false,
-      metaKey: false,
-      shiftKey: false,
-      repeat: false,
-      getModifierState: () => false,
-    } as unknown as KeyboardEvent);
-    expect(seq).toBe("\x1b[97;5u");
-
-    // Mouse SGR encode after rehydrate from snapshot bits (no CSI to JS).
-    input.setMouseMode("auto");
-    input.rehydrateMouseFromTrackingBits?.(bits);
-    expect(input.isMouseActive()).toBe(true);
-    const wheel = {
-      deltaY: 40,
-      deltaMode: 0,
-      shiftKey: false,
-      altKey: false,
-      ctrlKey: false,
-    } as WheelEvent;
-    expect(input.sendMouseEvent("wheel", wheel)).toBe(true);
-    expect(replies[0]!.startsWith("\u001b[<")).toBe(true);
-  } finally {
-    wasm.destroy(handle);
-  }
-});
-
-test("GHOSTSNP rich-matrix survives resize post-import", () => {
-  const snapshot = loadRichMatrix();
-  const handle = wasm.create(40, 12, 2_000_000);
-  expect(handle).toBeGreaterThan(0);
-  try {
-    expect(wasm.loadBinarySnapshot(handle, snapshot)).toBeNull();
-    expect(() => wasm.resize(handle, 50, 18)).not.toThrow();
-    expect(() => wasm.renderUpdate(handle)).not.toThrow();
-    expect(() => wasm.write(handle, "POST-RESIZE")).not.toThrow();
-    expect(() => wasm.renderUpdate(handle)).not.toThrow();
-    const rows = viewportRows(handle);
-    expect(rows.length).toBeGreaterThan(0);
-    expect(rows.some((r) => r.includes("POST-RESIZE") || r.includes("GHOSTSNP-RICH-MATRIX"))).toBe(
-      true,
-    );
-  } finally {
-    wasm.destroy(handle);
-  }
-});
-
-test("GHOSTSNP rich-matrix reconnect second import replaces state on a new handle path", () => {
-  const snapshot = loadRichMatrix();
-  const first = wasm.create(40, 12, 2_000_000);
-  expect(first).toBeGreaterThan(0);
-  try {
-    expect(wasm.loadBinarySnapshot(first, snapshot)).toBeNull();
-    wasm.write(first, "LIVE-AFTER-FIRST");
-    wasm.renderUpdate(first);
-
-    // Second import (reconnect): recreate + import again.
-    const second = wasm.create(40, 12, 2_000_000);
-    expect(second).toBeGreaterThan(0);
-    try {
-      expect(wasm.loadBinarySnapshot(second, snapshot)).toBeNull();
-      const rows = viewportRows(second);
-      expect(rows.some((r) => r.includes("GHOSTSNP-RICH-MATRIX"))).toBe(true);
-      // Live write from first handle must not pollute the second import.
-      expect(rows.some((r) => r.includes("LIVE-AFTER-FIRST"))).toBe(false);
-      expect(wasm.getKittyKeyboardFlags(second) & 1).not.toBe(0);
-      expect(scrollbarTotal(second)).toBeGreaterThan(12);
-    } finally {
-      wasm.destroy(second);
-    }
-  } finally {
-    wasm.destroy(first);
-  }
-});
-
-test("public loadBinarySnapshot attach order: snapshot then live write on new handle", () => {
-  const snapshot = loadRichMatrix();
-  const writeHandles: number[] = [];
-  const loadHandles: number[] = [];
-  const initialHandle = wasm.create(40, 12, 2_000_000);
-  expect(initialHandle).toBeGreaterThan(0);
+function createPublicSnapshotApp(options: {
+  initialHandle: number;
+  writeHandles: number[];
+  loadHandles: number[];
+}) {
+  const { initialHandle, writeHandles, loadHandles } = options;
 
   const create = wasm.create.bind(wasm);
   const destroy = wasm.destroy.bind(wasm);
@@ -222,6 +88,7 @@ test("public loadBinarySnapshot attach order: snapshot then live write on new ha
   const setPixelSize = wasm.setPixelSize.bind(wasm);
   const getMouseTrackingBits = wasm.getMouseTrackingBits.bind(wasm);
   const getKittyKeyboardFlags = wasm.getKittyKeyboardFlags.bind(wasm);
+  const getRenderState = wasm.getRenderState.bind(wasm);
 
   wasm.create = (cols, rows, maxScrollback) => create(cols, rows, maxScrollback);
   wasm.destroy = (handle) => destroy(handle);
@@ -237,6 +104,7 @@ test("public loadBinarySnapshot attach order: snapshot then live write on new ha
   wasm.setPixelSize = (handle, w, h) => setPixelSize(handle, w, h);
   wasm.getMouseTrackingBits = (handle) => getMouseTrackingBits(handle);
   wasm.getKittyKeyboardFlags = (handle) => getKittyKeyboardFlags(handle);
+  wasm.getRenderState = (handle) => getRenderState(handle);
 
   const sharedState: RuntimeAppApiSharedState = {
     wasm,
@@ -366,33 +234,252 @@ test("public loadBinarySnapshot attach order: snapshot then live write on new ha
     getShaderStages: () => [],
   });
 
+  return {
+    app,
+    runtime,
+    sharedState,
+    restore: () => {
+      wasm.create = create;
+      wasm.destroy = destroy;
+      wasm.loadBinarySnapshot = loadBinarySnapshot;
+      wasm.write = write;
+      wasm.renderUpdate = renderUpdate;
+      wasm.setPixelSize = setPixelSize;
+      wasm.getMouseTrackingBits = getMouseTrackingBits;
+      wasm.getKittyKeyboardFlags = getKittyKeyboardFlags;
+      wasm.getRenderState = getRenderState;
+    },
+  };
+}
+
+test("GHOSTSNP rich-matrix imports scrollback beyond the viewport", () => {
+  const snapshot = loadRichMatrix();
+  const handle = wasm.create(40, 12, 2_000_000);
+  expect(handle).toBeGreaterThan(0);
   try {
+    expect(wasm.loadBinarySnapshot(handle, snapshot)).toBeNull();
+    const total = scrollbarTotal(handle);
+    expect(total).toBeGreaterThan(12);
+    expect(total).toBeGreaterThanOrEqual(40);
+
+    wasm.scrollViewport(handle, -20);
+    wasm.renderUpdate(handle);
+    const rows = viewportRows(handle);
+    expect(rows.some((r) => r.includes("SCROLLBACK-LINE-01"))).toBe(true);
+  } finally {
+    wasm.destroy(handle);
+  }
+});
+
+test("GHOSTSNP rich-matrix preserves cell attributes, palette colors, and cursor", () => {
+  const snapshot = loadRichMatrix();
+  const handle = wasm.create(40, 12, 2_000_000);
+  expect(handle).toBeGreaterThan(0);
+  try {
+    expect(wasm.loadBinarySnapshot(handle, snapshot)).toBeNull();
+    const state = wasm.getRenderState(handle);
+    expect(state).not.toBeNull();
+
+    // Named BOLD cells carry bold style bit.
+    for (let col = 0; col < 4; col += 1) {
+      expect(cellChar(state!, ATTR_ROW, col)).toBe("BOLD"[col]!);
+      expect(state!.styleFlags[ATTR_ROW * state!.cols + col] & STYLE_BOLD).not.toBe(0);
+    }
+
+    // Named UNDER cells carry underline style bit + ulStyle.
+    const under = "UNDER";
+    for (let i = 0; i < under.length; i += 1) {
+      const col = 5 + i;
+      expect(cellChar(state!, ATTR_ROW, col)).toBe(under[i]!);
+      expect(state!.styleFlags[ATTR_ROW * state!.cols + col] & STYLE_UNDERLINE).not.toBe(0);
+      expect(state!.ulStyle[ATTR_ROW * state!.cols + col]).toBe(1);
+    }
+
+    // RED uses palette index 1 (OSC 4;1;rgb:ab/cd/ef → 0xabcdef).
+    expect(wasm.getPaletteColor(handle, 1)).toBe(0xabcdef);
+    for (let i = 0; i < 3; i += 1) {
+      const col = 11 + i;
+      expect(cellChar(state!, ATTR_ROW, col)).toBe("RED"[i]!);
+      expect(cellRgb(state!, ATTR_ROW, col)).toBe(0xabcdef);
+    }
+
+    // GREEN is non-default palette green (not white).
+    for (let i = 0; i < 5; i += 1) {
+      const col = 15 + i;
+      expect(cellChar(state!, ATTR_ROW, col)).toBe("GREEN"[i]!);
+      expect(cellRgb(state!, ATTR_ROW, col)).toBe(0xb5bd68);
+    }
+
+    const rows = viewportRows(handle);
+    expect(rows.some((r) => r.includes("GHOSTSNP-RICH-MATRIX"))).toBe(true);
+
+    // Exact encoded cursor: CUP 8;5 → (7,4) 0-based, visible.
+    expect(state!.cursor).toMatchObject({
+      row: CURSOR_ROW,
+      col: CURSOR_COL,
+      visible: 1,
+    });
+  } finally {
+    wasm.destroy(handle);
+  }
+});
+
+test("GHOSTSNP rich-matrix rehydrates Kitty keyboard flags and mouse modes for encode", () => {
+  const snapshot = loadRichMatrix();
+  const handle = wasm.create(40, 12, 2_000_000);
+  expect(handle).toBeGreaterThan(0);
+  try {
+    expect(wasm.loadBinarySnapshot(handle, snapshot)).toBeNull();
+
+    const kittyFlags = wasm.getKittyKeyboardFlags(handle);
+    expect(kittyFlags).toBe(1);
+
+    const bits = wasm.getMouseTrackingBits(handle);
+    expect(bits & (1 << 1)).not.toBe(0); // 1000
+    expect(bits & (1 << 5)).not.toBe(0); // 1006
+
+    const replies: string[] = [];
+    const input = createInputHandler({
+      sendReply: (data) => {
+        replies.push(data);
+      },
+      positionToCell: () => ({ row: 0, col: 0 }),
+      getKittyKeyboardFlags: () => kittyFlags,
+    });
+
+    const seq = input.encodeKeyEvent({
+      key: "a",
+      code: "KeyA",
+      type: "keydown",
+      ctrlKey: true,
+      altKey: false,
+      metaKey: false,
+      shiftKey: false,
+      repeat: false,
+      getModifierState: () => false,
+    } as unknown as KeyboardEvent);
+    expect(seq).toBe("\u001b[97;5u");
+
+    input.setMouseMode("auto");
+    input.rehydrateMouseFromTrackingBits?.(bits);
+    expect(input.isMouseActive()).toBe(true);
+    const wheel = {
+      deltaY: 40,
+      deltaMode: 0,
+      shiftKey: false,
+      altKey: false,
+      ctrlKey: false,
+    } as WheelEvent;
+    expect(input.sendMouseEvent("wheel", wheel)).toBe(true);
+    expect(replies[0]!.startsWith("\u001b[<")).toBe(true);
+  } finally {
+    wasm.destroy(handle);
+  }
+});
+
+test("GHOSTSNP rich-matrix survives resize post-import and shows POST-RESIZE", () => {
+  const snapshot = loadRichMatrix();
+  const handle = wasm.create(40, 12, 2_000_000);
+  expect(handle).toBeGreaterThan(0);
+  try {
+    expect(wasm.loadBinarySnapshot(handle, snapshot)).toBeNull();
+    expect(() => wasm.resize(handle, 50, 18)).not.toThrow();
+    expect(() => wasm.renderUpdate(handle)).not.toThrow();
+    // Move to a clear line then write marker so it is required, not optional.
+    wasm.write(handle, "\r\nPOST-RESIZE\r\n");
+    wasm.renderUpdate(handle);
+    const rows = viewportRows(handle);
+    expect(rows.some((r) => r.includes("POST-RESIZE"))).toBe(true);
+  } finally {
+    wasm.destroy(handle);
+  }
+});
+
+test("public loadBinarySnapshot reconnect replaces handle and restores clean modes", () => {
+  const snapshot = loadRichMatrix();
+  const writeHandles: number[] = [];
+  const loadHandles: number[] = [];
+  const initialHandle = wasm.create(40, 12, 2_000_000);
+  expect(initialHandle).toBeGreaterThan(0);
+
+  const harness = createPublicSnapshotApp({ initialHandle, writeHandles, loadHandles });
+  try {
+    const { app, runtime, sharedState } = harness;
+
+    // First public import.
+    expect(app.loadBinarySnapshot(snapshot)).toBe(true);
+    const firstHandle = sharedState.wasmHandle;
+    expect(firstHandle).not.toBe(initialHandle);
+    expect(loadHandles).toEqual([firstHandle]);
+    expect(wasm.getKittyKeyboardFlags(firstHandle) & 1).not.toBe(0);
+    expect(viewportRows(firstHandle).some((r) => r.includes("GHOSTSNP-RICH-MATRIX"))).toBe(true);
+
+    // Pollute live state after first import.
+    writeHandles.length = 0;
+    runtime.sendInput("LIVE-AFTER-FIRST", "pty");
+    expect(writeHandles).toEqual([firstHandle]);
+    expect(viewportRows(firstHandle).some((r) => r.includes("LIVE-AFTER-FIRST"))).toBe(true);
+
+    // Second public import (reconnect): new handle, clean snapshot state, no pollution.
+    loadHandles.length = 0;
+    expect(app.loadBinarySnapshot(snapshot)).toBe(true);
+    const secondHandle = sharedState.wasmHandle;
+    expect(secondHandle).not.toBe(firstHandle);
+    expect(loadHandles).toEqual([secondHandle]);
+
+    const rows = viewportRows(secondHandle);
+    expect(rows.some((r) => r.includes("GHOSTSNP-RICH-MATRIX"))).toBe(true);
+    expect(rows.some((r) => r.includes("LIVE-AFTER-FIRST"))).toBe(false);
+    expect(wasm.getKittyKeyboardFlags(secondHandle)).toBe(1);
+    expect(wasm.getMouseTrackingBits(secondHandle) & (1 << 1)).not.toBe(0);
+    expect(scrollbarTotal(secondHandle)).toBeGreaterThan(12);
+
+    const state = wasm.getRenderState(secondHandle)!;
+    expect(state.cursor).toMatchObject({ row: CURSOR_ROW, col: CURSOR_COL, visible: 1 });
+
+    // Later live output stays on the reconnect handle.
+    writeHandles.length = 0;
+    runtime.sendInput("AFTER-RECONNECT", "pty");
+    expect(writeHandles).toEqual([secondHandle]);
+  } finally {
+    if (harness.sharedState.wasmHandle) {
+      try {
+        wasm.destroy(harness.sharedState.wasmHandle);
+      } catch {
+        // ignore
+      }
+    }
+    harness.restore();
+  }
+});
+
+test("public loadBinarySnapshot attach order: snapshot then live write on new handle", () => {
+  const snapshot = loadRichMatrix();
+  const writeHandles: number[] = [];
+  const loadHandles: number[] = [];
+  const initialHandle = wasm.create(40, 12, 2_000_000);
+  expect(initialHandle).toBeGreaterThan(0);
+
+  const harness = createPublicSnapshotApp({ initialHandle, writeHandles, loadHandles });
+  try {
+    const { app, runtime, sharedState } = harness;
     const beforeHandle = sharedState.wasmHandle;
     expect(app.loadBinarySnapshot(snapshot)).toBe(true);
     const afterHandle = sharedState.wasmHandle;
     expect(afterHandle).not.toBe(beforeHandle);
     expect(loadHandles).toEqual([afterHandle]);
 
-    // Attach order: post-import live PTY write must target the NEW handle.
     writeHandles.length = 0;
     runtime.sendInput("AFTER-SNAPSHOT-LIVE", "pty");
     expect(writeHandles).toEqual([afterHandle]);
   } finally {
-    if (sharedState.wasmHandle) {
+    if (harness.sharedState.wasmHandle) {
       try {
-        destroy(sharedState.wasmHandle);
+        wasm.destroy(harness.sharedState.wasmHandle);
       } catch {
         // ignore
       }
     }
-    // Restore instrumented methods for subsequent tests in this file.
-    wasm.create = create;
-    wasm.destroy = destroy;
-    wasm.loadBinarySnapshot = loadBinarySnapshot;
-    wasm.write = write;
-    wasm.renderUpdate = renderUpdate;
-    wasm.setPixelSize = setPixelSize;
-    wasm.getMouseTrackingBits = getMouseTrackingBits;
-    wasm.getKittyKeyboardFlags = getKittyKeyboardFlags;
+    harness.restore();
   }
 });

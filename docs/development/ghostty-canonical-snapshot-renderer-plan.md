@@ -1,9 +1,9 @@
 # Plan: Make Restty the canonical Ghostty snapshot renderer
 
-**Ticket:** `ticket_1786471489_344578`  
-**Run:** `run_1786471510_664686`  
-**Pipeline:** Botster Stack Delivery  
-**Step:** Plan — revision 3 (after Plan Review `review_1786472992_550927`)  
+**Ticket:** `ticket_1786471489_344578`
+**Run:** `run_1786471510_664686`
+**Pipeline:** Botster Stack Delivery
+**Step:** Plan — revision 3 (after Plan Review `review_1786472992_550927`)
 **Date:** 2026-08-11
 
 ## Plan Review findings status
@@ -94,7 +94,7 @@ Human routing (`question_1786471976_515398`):
 
 ### Boundary A — Restty-local (this repository, this ticket Implement/Verify)
 
-**Mechanism:** Bun unit/integration tests only (existing harness).  
+**Mechanism:** Bun unit/integration tests only (existing harness).
 **Forbidden:** adding Playwright, happy-dom, or a new Restty browser stack for this ticket.
 
 | # | File | Command | Required assertions |
@@ -150,9 +150,9 @@ cd /path/to/botster-web
 npm run smoke:mounted-terminal-keyboard
 ```
 
-**Web production mount path (consumer):**  
-`botster-web/src/botster/resttyRenderer.ts` → `new Restty({ root, appOptions: { … } })` via `TerminalViewHost` / `DefaultTerminalViewBridge`.  
-**Required option after this Restty contract lands:** `appOptions.readOnly: true` (Web ticket applies; Restty A7 proves the option works).  
+**Web production mount path (consumer):**
+`botster-web/src/botster/resttyRenderer.ts` → `new Restty({ root, appOptions: { … } })` via `TerminalViewHost` / `DefaultTerminalViewBridge`.
+**Required option after this Restty contract lands:** `appOptions.readOnly: true` (Web ticket applies; Restty A7 proves the option works).
 **Required snapshot API:** `loadBinarySnapshot(Uint8Array)` with GHOSTSNP bytes from Hub/Core (Web ticket wires; Restty A4/A8 prove API).
 
 **Consumed Restty artifact:** merge commit SHA of this Restty ticket → `bun run build` → copy `dist/restty.js` + all `dist/chunk-*.js` into Web vendor per [[restty is vendored into botster by manual build-and-copy workflow not a submodule]].
@@ -173,7 +173,7 @@ npm run smoke:mounted-terminal-keyboard
 | JS `createInputHandler` `sendReply` | **no-op** (must not `ptyTransport.sendInput`) | may reply (playground sole-PTY) |
 | User input encode | **still** `ptyTransport.sendInput` | same |
 
-**Call path:**  
+**Call path:**
 `new Restty({ appOptions: { readOnly: true } })` → `create-runtime.ts` → `createRuntimeAppApi({ readOnly })` → `createInputHandler({ sendReply: readOnly ? () => {} : d => ptyTransport.sendInput(d) })` + existing WASM drain short-circuit.
 
 **Proof file:** `tests/read-only-query-mute.test.ts` (A7). Not “code exists.”
@@ -310,9 +310,9 @@ This visit: **skip new checklist** (exists).
 
 ## Vault gaps
 
-1. Dedicated `restty-playbook` routing charter  
-2. Convention: Botster mounts set Restty `readOnly: true`  
-3. Shared GHOSTSNP client conformance matrix Restty/Web/TUI  
+1. Dedicated `restty-playbook` routing charter
+2. Convention: Botster mounts set Restty `readOnly: true`
+3. Shared GHOSTSNP client conformance matrix Restty/Web/TUI
 
 ---
 

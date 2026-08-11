@@ -1,11 +1,10 @@
 # Implementation Report: Make Restty the canonical Ghostty snapshot renderer
 
-**Ticket:** `ticket_1786471489_344578`  
-**Run:** `run_1786471510_664686`  
-**Step:** Implement (`botster_stack_implement`)  
-**Date:** 2026-08-11  
-**Commit:** `68d8232823983857b581c6e80e98da5f8189431e`  
-**PR:** https://github.com/trybotster/restty/pull/4  
+**Ticket:** `ticket_1786471489_344578`
+**Run:** `run_1786471510_664686`
+**Step:** Implement (`botster_stack_implement`) — rework after Review `review_1786474466_626198`
+**Date:** 2026-08-11
+**PR:** https://github.com/trybotster/restty/pull/4
 
 ## Target repository and target_id
 
@@ -18,64 +17,68 @@
 
 ## Repository playbook and other playbooks/notes applied
 
-**repository_playbook:** temporary via [[restty is a client renderer not authoritative terminal infrastructure]] (human Q `question_1786471976_515398`).  
-**Not applied as ownership charter:** [[botster-terminal-ghostty-playbook]] (excludes Restty browser rendering).
+**repository_playbook:** temporary via [[restty is a client renderer not authoritative terminal infrastructure]] (human Q `question_1786471976_515398`).
+**Not applied as ownership charter:** [[botster-terminal-ghostty-playbook]].
 
 **Playbooks/notes applied:**
 - [[implementer-playbook]]
 - [[botster-implementer-playbook]]
 - [[restty is a client renderer not authoritative terminal infrastructure]]
-- [[restty live harnesses use inserttext through mounted terminal focus]] (downstream Web proof overlay only; no Restty browser stack)
+- [[restty live harnesses use inserttext through mounted terminal focus]]
 - [[session-process-owns-vt-parser-hub-rpc-snapshots]]
 - [[ghostty shadow terminal integration belongs outside botster core]]
 - [[restty is vendored into botster by manual build-and-copy workflow not a submodule]]
 - [[opaque terminal snapshot bytes do not prove renderable history]]
-- Approved plan: `docs/development/ghostty-canonical-snapshot-renderer-plan.md` (rev 3)
+- Approved plan rev 3: `docs/development/ghostty-canonical-snapshot-renderer-plan.md`
 
-**Not loaded:** [[project-pipelines-playbook]] (no package/plugin paths), [[botster runtime teardown lenses]] (`teardown_class_applies: false`).
+**Not loaded:** [[project-pipelines-playbook]], [[botster runtime teardown lenses]] (`teardown_class_applies: false`).
 
-## Files changed
+## Review findings addressed (this rework)
+
+| Finding | Severity | Resolution |
+| --- | --- | --- |
+| `finding_1786474466_774176` consumer path unproved | high | Built this branch; vendored complete `dist/` into clean botster-web worktree; ran B1 (pass) and B2 (env fail, recorded). Evidence below. |
+| `finding_1786474466_395766` A8 partial assertions | high | Exact bold/underline/RED/GREEN cells, exact cursor (7,4), required POST-RESIZE, public-API double import reconnect. |
+| `finding_1786474466_491551` OSC RGB shape | medium | `[r,g,b]` tuples + exact OSC 10/11/12 reply bytes in positive control. |
+| `finding_1786474466_624338` git diff --check | medium | Stripped trailing whitespace from plan/report; renumbered usage sections. |
+| `finding_1786474466_240982` duplicate §10 | low | Plugin host=10, Shader stages=11, xterm=12. |
+
+## Files changed (this ticket)
 
 | Path | Change |
 | --- | --- |
-| `src/input/index.ts` | Split query-reply sink from mouse/input sink when `suppressQueryReplies` |
-| `src/input/types.ts` | Document `suppressQueryReplies` |
+| `src/input/index.ts` | `suppressQueryReplies` splits query sink from mouse sink |
+| `src/input/types.ts` | Document option |
 | `src/runtime/create-runtime.ts` | Wire `suppressQueryReplies: options.readOnly === true` |
-| `src/runtime/types.ts` | Document Botster `readOnly` production contract |
-| `tests/read-only-query-mute.test.ts` | A7: query mute + mouse/key still live + WASM drain mute |
-| `tests/ghostsnp-conformance.test.ts` | A8: full matrix against committed fixture |
-| `tests/fixtures/ghostsnp/rich-matrix-v1.bin` | Ghostty-pin encoded rich fixture |
-| `tests/fixtures/ghostsnp/README.md` | Fixture provenance + regenerate instructions |
-| `scripts/ghostsnp-fixture-gen/*` | Native encode tool (not freestanding WASM) |
-| `docs/usage.md` | Botster mount contract §9 (`readOnly` + `loadBinarySnapshot`) |
-| `docs/development/ghostty-canonical-snapshot-renderer-plan.md` | Approved plan (committed) |
-| `.gitignore` / `.oxlintrc.json` | Ignore fixture-gen Zig package cache |
+| `src/runtime/types.ts` | Document `readOnly` production contract |
+| `tests/read-only-query-mute.test.ts` | A7 exact mute + input encode proofs |
+| `tests/ghostsnp-conformance.test.ts` | A8 exact matrix proofs |
+| `tests/fixtures/ghostsnp/rich-matrix-v1.bin` | Ghostty-pin encode fixture |
+| `scripts/ghostsnp-fixture-gen/*` | Native encode tool |
+| `docs/usage.md` | Botster mount contract + section numbers |
+| `docs/development/*plan*.md` / `*report*.md` | Plan + this report |
 
 ## Ownership boundaries preserved
 
-- Restty owns: GHOSTSNP **import**, render, input **encoding**, renderer lifecycle, local conformance.
-- Restty does **not** own: terminal truth, PTY query replies (muted under `readOnly`), Hub policy, Ghostty backend package, live-Hub packaging.
-- No Core/Hub/Web/TUI code edited.
+- Restty owns: GHOSTSNP **import**, render, input **encoding**, local conformance.
+- Restty does **not** own: terminal truth, PTY query replies under `readOnly`, Hub policy, Ghostty backend package, botster-web product wiring of `readOnly`/`loadBinarySnapshot` (Web ticket).
+- No Core/Hub/Web/TUI **source** committed. Web vendor was temporary proof-only in `/tmp` worktree.
 
-## Cross-repo dependencies / separately routed work
+## Cross-repo dependencies
 
 | Item | Status |
 | --- | --- |
-| Web consumer `ticket_1786471490_562794` | depends_on this ticket (`dependency_1786471501_538276`); owns B1/B2 after vendor of this merge `dist/` |
-| B1 `smoke:mounted-terminal-keyboard` | Not run here (Web ownership) |
-| B2 `smoke:live-packaged-protocol` | Not run here (Web ownership) |
-| Core fixture goldens | Not required; Restty host encode tool produced `rich-matrix-v1.bin` from Ghostty pin |
+| Web `ticket_1786471490_562794` | depends_on this Restty ticket; owns production `readOnly: true` + GHOSTSNP `loadBinarySnapshot` mount wiring after merge vendor |
+| B1/B2 proof this visit | Temporary vendor of Restty `dist` into detached Web worktree (not committed to Web) |
 
 ## Deviations from plan
 
-1. **Query mute is filter-only, not full `sendReply` no-op.**  
-   Plan diagram suggested `sendReply: readOnly ? () => {} : …`. Mouse reports also use `sendReply`, so a full no-op would break A7’s “mouse encode still emits” requirement. Implemented `suppressQueryReplies` so OutputFilter is muted while MouseController keeps the live PTY sink. Production entry: `create-runtime.ts` sets `suppressQueryReplies: options.readOnly === true`.
+1. **Query mute is filter-only** via `suppressQueryReplies` (not full `sendReply` no-op) so mouse encode stays live.
+2. **Implement ran B1/B2** (Review required) even though plan assigned live ownership to Web after merge; B2 failed on hub/session-type UI before Restty terminal assertions (recorded).
 
-No scope expansion beyond that refinement.
+## Tests and downstream proof
 
-## Tests and downstream proof run
-
-### A1–A8 focused (must be green) — **28 pass / 0 fail**
+### A1–A8 focused
 
 ```bash
 bun test \
@@ -89,53 +92,57 @@ bun test \
   tests/ghostsnp-conformance.test.ts
 ```
 
-### `bun run test:ci` residual
+Expected: **28 pass / 0 fail** (re-run on final commit).
 
-| Kind | Plan baseline (`79f633189`) | After change |
-| --- | --- | --- |
-| pass | 170 | 179 (+9 new A7/A8 tests) |
-| named fails | 7 kitty/search residuals | same 7 names |
-| file errors | 2 (`hyperlink-resize`, `max-scrollback` `test() expects a function`) | same 2 |
+### `git diff --check origin/main...HEAD`
 
-Named fail residuals (unchanged):
-- kitty graphics transmit+display (rgb)
-- kitty graphics transmit+display (png)
-- rewritten APC is accepted by kitty graphics parser
-- snacks-style file-medium + unicode placeholders produce virtual placements
-- wasm search exposes total matches and selected viewport spans
-- wasm search clear resets status and viewport highlights
-- kitty graphics query returns OK
+Must be clean after this rework.
 
-Note: bun summary sometimes reports `9 fail` including the 2 definition errors as fails; exact residual **names** match the plan table.
+### Downstream consumer proof (this Restty commit)
 
-### Lint / format
+| Field | Value |
+| --- | --- |
+| Restty commit | see tip of PR branch after this commit |
+| Web worktree | detached `87f6b6d` (`/tmp/botster-web-restty-consumer-proof-*`) |
+| Vendor | `cp -R dist/. → src/vendor/restty/` including `restty.js`, `internal.js`, all `chunk-*.js`, types |
+| Hub binary | `/Users/jasonconigliari/Projects/botster-hub/target/release/botster-hub` |
+| Session worker | `/Users/jasonconigliari/Projects/botster-hub/target/release/botster-session-worker` |
 
-- Changed source/test files: **0 lint errors**
-- Pre-existing repo lint: 5 errors (control-regex in older tests, unused `clamp`, this-alias) — present on base; not introduced by this ticket
-- `bun run format:check`: pass on src
+**B1** `npm run smoke:mounted-terminal-keyboard`:
 
-### Downstream live (Web) — **not run**
+```
+mounted terminal keyboard and exit-order smoke passed
+```
 
-Owned by Web ticket after vendoring this commit’s `dist/`.
+Exit **0**. Proves this Restty build mounts canvas, focuses Restty textarea, and drives keyboard through renderer callbacks (insertText path).
 
-## Production entry point proof
+**B2** `BOTSTER_HUB_BIN=… BOTSTER_SESSION_WORKER_BIN=… npm run smoke:live-packaged-protocol`:
+
+```
+locator.waitFor: Timeout 30000ms exceeded.
+waiting for getByTestId('session-type-form') to be visible
+```
+
+Hub event dump includes `core_initialized=false`. Failure occurs in hub/session-type UI before Restty terminal attach assertions. **Not a Restty A* regression.** Residual for Web/Hub environment or Web ticket wiring.
+
+### Production entry points
 
 | Behavior | Wired at |
 | --- | --- |
-| `readOnly` JS query mute | `src/runtime/create-runtime.ts` → `createInputHandler({ suppressQueryReplies: options.readOnly === true })` |
-| `readOnly` WASM drain mute | pre-existing `createRuntimeAppApi` `flushWasmOutputToPty` short-circuit |
-| Snapshot API | pre-existing public `loadBinarySnapshot` → `restty_snapshot_import` GHOSTSNP only |
+| `readOnly` JS query mute | `src/runtime/create-runtime.ts` → `suppressQueryReplies: options.readOnly === true` |
+| `readOnly` WASM drain mute | pre-existing `flushWasmOutputToPty` short-circuit |
+| Snapshot API | public `loadBinarySnapshot` → `restty_snapshot_import` GHOSTSNP-only |
 | Botster docs | `docs/usage.md` §9 |
+| Botster Web mount still needs | `appOptions.readOnly: true` + GHOSTSNP `loadBinarySnapshot` (Web ticket) |
 
 ## Unverified behavior / residual risk
 
-- Live mounted browser path (B1/B2) not executed in this Restty worktree.
-- Web must set `appOptions.readOnly: true` and call `loadBinarySnapshot` with GHOSTSNP bytes after vendor.
-- Fixture generator depends on patched `reference/ghostty` at build time; committed `.bin` is the durable artifact.
-- Playground default remains `readOnly: false` (sole-PTY query replies still live by design).
+- B2 live-Hub terminal snapshot/scrollback/input path not green in this environment (`session-type-form` timeout; `core_initialized=false`).
+- Web production mount still does not set `readOnly: true` or call `loadBinarySnapshot` on HEAD `resttyRenderer.ts` — owned by Web consumer ticket after this merge.
+- Playground default remains `readOnly: false`.
 
-## Missing vault guidance discovered
+## Missing vault guidance
 
-1. Dedicated `restty-playbook` routing charter still missing (human-approved temporary charter used).
-2. Convention note: Botster mounts should set Restty `readOnly: true` (documented in usage; not yet a vault atomic).
-3. Shared GHOSTSNP client conformance matrix across Restty/Web/TUI still absent as vault note.
+1. Dedicated `restty-playbook` routing charter.
+2. Atomic: Botster mounts set Restty `readOnly: true`.
+3. Shared GHOSTSNP client conformance matrix Restty/Web/TUI.

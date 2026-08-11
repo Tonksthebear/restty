@@ -61,17 +61,15 @@ fn buildRichMatrix(alloc: Allocator) ![]u8 {
         feed(&stream, line);
     }
 
-    // Visible content with cell attributes and colors.
+    // OSC palette tweak (index 1 → distinctive) before drawing colored text.
+    feed(&stream, "\x1b]4;1;rgb:ab/cd/ef\x07");
+
+    // Visible content with cell attributes and colors on a clean line.
+    // Layout (0-based after scrollback settles): one dedicated attrs line.
     feed(&stream, "\x1b[1mBOLD\x1b[0m \x1b[4mUNDER\x1b[0m ");
     feed(&stream, "\x1b[31mRED\x1b[0m \x1b[32mGREEN\x1b[0m\r\n");
     feed(&stream, "PALETTE-PROBE\r\n");
-
-    // OSC palette tweak (index 1 → distinctive red) — decode must keep palette.
-    feed(&stream, "\x1b]4;1;rgb:ab/cd/ef\x07");
-
-    // Cursor style + position (row 5, col 10 1-based → after some content).
-    feed(&stream, "\x1b[5;10H");
-    feed(&stream, "CURSOR");
+    feed(&stream, "GHOSTSNP-RICH-MATRIX\r\n");
 
     // Kitty keyboard progressive enhancement flags (disambiguate).
     feed(&stream, "\x1b[=1u");
@@ -79,8 +77,9 @@ fn buildRichMatrix(alloc: Allocator) ![]u8 {
     // Mouse tracking: normal + SGR.
     feed(&stream, "\x1b[?1000;1006h");
 
-    // Marker for viewport text search after import.
-    feed(&stream, "\r\nGHOSTSNP-RICH-MATRIX\r\n");
+    // Final encoded cursor: CUP to row 8 col 5 (1-based), then leave idle.
+    // Tests assert this exact restored cursor after import.
+    feed(&stream, "\x1b[8;5H");
 
     return try encodeTerminal(alloc, &term, .ground);
 }

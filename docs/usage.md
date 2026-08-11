@@ -301,7 +301,7 @@ await restty.loadPlugins(
 );
 ```
 
-## 10) Shader stages
+## 11) Shader stages
 
 Use shader stages when you want frame-level visual effects.
 
@@ -344,7 +344,7 @@ stage.setEnabled(true);
 stage.dispose();
 ```
 
-## 11) xterm compatibility shim
+## 12) xterm compatibility shim
 
 ```ts
 import { Terminal } from "restty/xterm";
