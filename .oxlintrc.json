@@ -20,7 +20,10 @@
     "dist/**",
     "playground/public/**",
     "reference/**",
-    "src/theme/builtin-themes.ts"
+    "src/theme/builtin-themes.ts",
+    "scripts/ghostsnp-fixture-gen/zig-pkg/**",
+    "scripts/ghostsnp-fixture-gen/.zig-cache/**",
+    "scripts/ghostsnp-fixture-gen/zig-out/**"
   ],
   "overrides": [
     {

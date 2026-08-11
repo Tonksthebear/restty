@@ -21,6 +21,10 @@ coverage/
 wasm/.zig-cache/
 wasm/zig-cache/
 wasm/zig-out/
+scripts/ghostsnp-fixture-gen/.zig-cache/
+scripts/ghostsnp-fixture-gen/zig-cache/
+scripts/ghostsnp-fixture-gen/zig-out/
+scripts/ghostsnp-fixture-gen/zig-pkg/
 
 # Generated bundles (can be re-built via npm scripts)
 playground/public/app.js

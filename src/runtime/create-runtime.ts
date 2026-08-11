@@ -553,9 +553,12 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
 
   inputHandler = createInputHandler({
     getCursorPosition: resolveCursorForCpr,
+    // User input encodings (mouse reports) always reach the PTY sink.
+    // Query replies are muted when readOnly — Core owns DA/DSR/OSC answers.
     sendReply: (data) => {
       ptyTransport.sendInput(data);
     },
+    suppressQueryReplies: options.readOnly === true,
     positionToCell,
     positionToPixel,
     getDefaultColors: () => ({

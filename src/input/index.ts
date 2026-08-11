@@ -10,18 +10,22 @@ export function createInputHandler(options: InputHandlerOptions = {}): InputHand
   const config: InputHandlerConfig = options.config || {};
 
   const cursorProvider = options.getCursorPosition || (() => ({ row: 1, col: 1 }));
-  const replySink = options.sendReply || (() => {});
+  // Mouse reports and (by default) query replies share sendReply. When Restty
+  // is a pure renderer, mute only query replies so keyboard/mouse input still
+  // reaches the session-owned PTY.
+  const inputSink = options.sendReply || (() => {});
+  const querySink = options.suppressQueryReplies ? () => {} : inputSink;
   const positionToCell = options.positionToCell || (() => ({ row: 0, col: 0 }));
   const positionToPixel = options.positionToPixel || null;
 
   const mouse = new MouseController({
-    sendReply: replySink,
+    sendReply: inputSink,
     positionToCell,
     positionToPixel: positionToPixel ?? undefined,
   });
   const filter = new OutputFilter({
     getCursorPosition: cursorProvider,
-    sendReply: replySink,
+    sendReply: querySink,
     mouse,
     getDefaultColors: options.getDefaultColors,
     onClipboardRead: options.onClipboardRead,
@@ -41,7 +45,10 @@ export function createInputHandler(options: InputHandlerOptions = {}): InputHand
     filterOutputBytes: (output) => filter.filterBytes(output),
     setReplySink: (fn) => {
       mouse.setReplySink(fn);
-      filter.setReplySink(fn);
+      // Keep query replies muted for the lifetime of a read-only handler.
+      if (!options.suppressQueryReplies) {
+        filter.setReplySink(fn);
+      }
     },
     setCursorProvider: (fn) => {
       filter.setCursorProvider(fn);

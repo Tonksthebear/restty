@@ -47,6 +47,8 @@ const restty = new Restty({
     touchSelectionMode: "long-press",
     touchSelectionLongPressMs: 450,
     touchSelectionMoveThresholdPx: 10,
+    // Botster / session-owned PTY mounts: pure renderer (see §9).
+    // readOnly: true,
   },
 });
 ```
@@ -202,7 +204,39 @@ if (state) {
 wasm.destroy(handle);
 ```
 
-## 9) Plugin host (native)
+## 9) Botster mount contract (GHOSTSNP + readOnly)
+
+When Restty is a **client renderer** over a session that already owns the PTY
+(Botster Web/TUI), use this production contract:
+
+```ts
+const restty = new Restty({
+  root: document.getElementById("paneRoot") as HTMLElement,
+  appOptions: {
+    // Core owns DA/DSR/OSC query replies. Restty still encodes keyboard + mouse.
+    readOnly: true,
+  },
+});
+
+// Sole production snapshot install path: GHOSTSNP bytes from Hub/Core.
+// loadBinarySnapshot fails closed on non-GHOSTSNP / invalid blobs.
+const ok = restty.loadBinarySnapshot(ghostsnpBytes);
+if (!ok) {
+  // handle import failure; do not fall back to a second snapshot format
+}
+```
+
+| Concern | Owner |
+| --- | --- |
+| Terminal truth / scrollback / modes | Core + Ghostty backend |
+| GHOSTSNP **import** and render | Restty (`loadBinarySnapshot`) |
+| PTY **query replies** (DA, DSR, OSC colors, …) | Core (muted in Restty when `readOnly: true`) |
+| Keyboard + mouse **input encoding** | Restty → session PTY sink (still live under `readOnly`) |
+
+Default `readOnly` is `false` so the playground sole-PTY path can answer queries.
+Botster production mounts must set `readOnly: true`.
+
+## 10) Plugin host (native)
 
 ```ts
 import type { ResttyPlugin } from "restty";
