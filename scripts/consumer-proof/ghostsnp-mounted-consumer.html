@@ -39,6 +39,49 @@
         },
       ];
 
+      /**
+       * Observable PTY transport — records every outbound input/resize so the
+       * smoke can assert keyboard encode and resize reach the sink under readOnly.
+       */
+      const transportLog = {
+        inputs: [],
+        resizes: [],
+        connected: false,
+      };
+      let ptyCallbacks = null;
+
+      const ptyTransport = {
+        isConnected() {
+          return transportLog.connected;
+        },
+        connect({ callbacks } = {}) {
+          ptyCallbacks = callbacks ?? null;
+          transportLog.connected = true;
+          ptyCallbacks?.onConnect?.();
+          return undefined;
+        },
+        disconnect() {
+          transportLog.connected = false;
+          ptyCallbacks?.onDisconnect?.();
+        },
+        sendInput(data) {
+          transportLog.inputs.push(String(data ?? ""));
+          return true;
+        },
+        resize(cols, rows, meta) {
+          transportLog.resizes.push({
+            cols: Number(cols),
+            rows: Number(rows),
+            meta: meta ?? null,
+          });
+          return true;
+        },
+        destroy() {
+          transportLog.connected = false;
+          ptyCallbacks = null;
+        },
+      };
+
       const restty = new Restty({
         root,
         createInitialPane: { focus: true },
@@ -49,8 +92,12 @@
           autoResize: true,
           fontSize: 14,
           renderer: "webgl2",
+          ptyTransport,
         },
       });
+
+      // Connect so keyboard encode and resize reach the observable transport.
+      restty.connectPty("proof://ghostsnp-mounted-consumer");
 
       /**
        * Mounted consumer control surface for the Playwright smoke.
@@ -69,14 +116,31 @@
         getPaletteColor(index) {
           return restty.getPaletteColor(index);
         },
-        sendInput(text, source = "pty") {
-          restty.sendInput(text, source);
+        /** Live host→terminal bytes (post-snapshot attach path). */
+        sendPtyOutput(text) {
+          restty.sendInput(text, "pty");
+        },
+        /** Deliver raw host stream through the transport onData path (query mute proof). */
+        injectHostStream(text) {
+          if (!ptyCallbacks?.onData) throw new Error("pty onData not wired");
+          ptyCallbacks.onData(text);
         },
         resize(cols, rows) {
           restty.resize(cols, rows);
         },
         focus() {
           restty.focus();
+        },
+        getTransportLog() {
+          return {
+            inputs: transportLog.inputs.slice(),
+            resizes: transportLog.resizes.slice(),
+            connected: transportLog.connected,
+          };
+        },
+        clearTransportLog() {
+          transportLog.inputs.length = 0;
+          transportLog.resizes.length = 0;
         },
         destroy() {
           restty.destroy();

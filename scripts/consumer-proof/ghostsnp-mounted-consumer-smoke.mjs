@@ -1,9 +1,14 @@
 /**
  * Mounted GHOSTSNP consumer proof for Restty.
  *
- * Proves the production Restty library path in a real browser mount:
- *   readOnly mount → loadBinarySnapshot(known GHOSTSNP fixture) → restored state
- *   → live output → resize → reconnect second import → keyboard input still encoded
+ * Proves the production Restty library path in a real browser mount with an
+ * observable PTY transport:
+ *   readOnly mount → loadBinarySnapshot(GHOSTSNP) → restored state
+ *   → live PTY output changes known state
+ *   → resize reaches transport with exact dimensions
+ *   → second import clears live pollution
+ *   → keyboard insertText reaches PTY sink
+ *   → query replies stay muted on the sink
  *
  * Does not add Playwright to Restty package.json. Loads Playwright from an
  * existing checkout that already has it (botster-web), via PLAYWRIGHT_MODULE
@@ -12,11 +17,6 @@
  * Usage (from Restty repo root, after `bun run build`):
  *
  *   PLAYWRIGHT_MODULE=/path/to/botster-web/node_modules/playwright \
- *     node scripts/consumer-proof/ghostsnp-mounted-consumer-smoke.mjs
- *
- * Or:
- *
- *   BOTSTER_WEB_ROOT=/path/to/botster-web \
  *     node scripts/consumer-proof/ghostsnp-mounted-consumer-smoke.mjs
  */
 
@@ -33,6 +33,8 @@ const fixturePath = join(resttyRoot, "tests/fixtures/ghostsnp/rich-matrix-v1.bin
 const htmlPath = join(here, "ghostsnp-mounted-consumer.html");
 
 const PALETTE1 = 0xabcdef;
+const POLLUTED_PALETTE1 = 0xfedcba;
+const LIVE_PALETTE3 = 0x112233;
 const HOST = "127.0.0.1";
 
 function fail(message) {
@@ -46,7 +48,6 @@ function loadPlaywright() {
   if (process.env.BOTSTER_WEB_ROOT) {
     candidates.push(join(process.env.BOTSTER_WEB_ROOT, "node_modules/playwright"));
   }
-  // Common local layout without hardcoding usernames in committed artifacts.
   candidates.push(join(resttyRoot, "../botster-web/node_modules/playwright"));
   candidates.push(join(resttyRoot, "../../Projects/botster-web/node_modules/playwright"));
 
@@ -54,11 +55,9 @@ function loadPlaywright() {
   for (const candidate of candidates) {
     if (!candidate || !existsSync(candidate)) continue;
     try {
-      // eslint-disable-next-line import/no-dynamic-require
       return require(candidate);
     } catch {
       try {
-        // ESM path
         return import(pathToFileURL(join(candidate, "index.mjs")).href);
       } catch {
         // continue
@@ -123,6 +122,28 @@ function startStaticServer() {
   });
 }
 
+async function importFixture(page) {
+  return page.evaluate(async () => {
+    const ctrl = globalThis.__GHOSTSNP_MOUNTED_CONSUMER__;
+    const res = await fetch("/fixtures/rich-matrix-v1.bin");
+    if (!res.ok) throw new Error(`fixture fetch failed: ${res.status}`);
+    const buf = new Uint8Array(await res.arrayBuffer());
+    const magic = String.fromCharCode(...buf.subarray(0, 8));
+    let ok = false;
+    for (let i = 0; i < 40; i += 1) {
+      ok = ctrl.loadBinarySnapshot(buf);
+      if (ok) break;
+      await new Promise((r) => setTimeout(r, 100));
+    }
+    return {
+      ok,
+      magic,
+      byteLength: buf.byteLength,
+      palette1: ctrl.getPaletteColor(1),
+    };
+  });
+}
+
 async function main() {
   const fixture = readFileSync(fixturePath);
   if (fixture.byteLength < 8 || fixture.subarray(0, 8).toString("ascii") !== "GHOSTSNP") {
@@ -134,14 +155,16 @@ async function main() {
 
   const { server, port } = await startStaticServer();
   let browser;
+  const pageErrors = [];
+  const consoleErrors = [];
   try {
     browser = await chromium.launch();
     const page = await browser.newPage();
     page.on("pageerror", (err) => {
-      console.error("[pageerror]", err);
+      pageErrors.push(String(err?.message ?? err));
     });
     page.on("console", (msg) => {
-      if (msg.type() === "error") console.error("[console.error]", msg.text());
+      if (msg.type() === "error") consoleErrors.push(msg.text());
     });
 
     await page.goto(`http://${HOST}:${port}/`, { waitUntil: "domcontentloaded" });
@@ -164,24 +187,16 @@ async function main() {
     // Font/WASM settle for consumer mount.
     await page.waitForTimeout(1_500);
 
-    // 1) Import known GHOSTSNP fixture via public loadBinarySnapshot.
-    const importResult = await page.evaluate(async () => {
-      const ctrl = globalThis.__GHOSTSNP_MOUNTED_CONSUMER__;
-      const res = await fetch("/fixtures/rich-matrix-v1.bin");
-      if (!res.ok) throw new Error(`fixture fetch failed: ${res.status}`);
-      const buf = new Uint8Array(await res.arrayBuffer());
-      const magic = String.fromCharCode(...buf.subarray(0, 8));
-      // Poll until WASM/runtime ready (loadBinarySnapshot returns false while booting).
-      let ok = false;
-      for (let i = 0; i < 40; i += 1) {
-        ok = ctrl.loadBinarySnapshot(buf);
-        if (ok) break;
-        await new Promise((r) => setTimeout(r, 100));
-      }
-      const palette1 = ctrl.getPaletteColor(1);
-      return { ok, magic, byteLength: buf.byteLength, palette1 };
-    });
+    const connected = await page.evaluate(
+      () => globalThis.__GHOSTSNP_MOUNTED_CONSUMER__.getTransportLog().connected,
+    );
+    if (!connected) fail("observable PTY transport is not connected after mount");
 
+    // Clear connect-time autoResize traffic before explicit assertions.
+    await page.evaluate(() => globalThis.__GHOSTSNP_MOUNTED_CONSUMER__.clearTransportLog());
+
+    // 1) Import known GHOSTSNP fixture via public loadBinarySnapshot.
+    const importResult = await importFixture(page);
     if (importResult.magic !== "GHOSTSNP") fail(`fixture magic ${importResult.magic}`);
     if (!importResult.ok) fail("loadBinarySnapshot returned false for known GHOSTSNP fixture");
     if (importResult.palette1 !== PALETTE1) {
@@ -193,24 +208,46 @@ async function main() {
       `ghostsnp-import ok bytes=${importResult.byteLength} palette1=0x${Number(importResult.palette1).toString(16)}`,
     );
 
-    // 2) Live output after import (attach order: snapshot then live).
-    await page.evaluate(() => {
-      globalThis.__GHOSTSNP_MOUNTED_CONSUMER__.sendInput("\r\nPOST-GHOSTSNP-LIVE\r\n", "pty");
+    // 2) Live host→terminal output after import must change known WASM state.
+    //    OSC 4;3 sets palette index 3 to a distinctive RGB.
+    const live = await page.evaluate(async () => {
+      const ctrl = globalThis.__GHOSTSNP_MOUNTED_CONSUMER__;
+      const before = ctrl.getPaletteColor(3);
+      ctrl.sendPtyOutput("\u001b]4;3;rgb:11/22/33\u0007");
+      // Allow WASM write + palette apply.
+      await new Promise((r) => setTimeout(r, 100));
+      const after = ctrl.getPaletteColor(3);
+      return { before, after };
     });
-    await page.waitForTimeout(300);
-    console.log("live-output-after-import ok");
+    if (live.after !== LIVE_PALETTE3) {
+      fail(
+        `live PTY output did not change palette[3]: before=${JSON.stringify(live.before)} after=${JSON.stringify(live.after)} expected=0x${LIVE_PALETTE3.toString(16)}`,
+      );
+    }
+    console.log(`live-output-after-import ok palette3=0x${LIVE_PALETTE3.toString(16)}`);
 
-    // 3) Resize post-import.
+    // 3) Resize post-import must reach the observable PTY transport.
+    await page.evaluate(() => globalThis.__GHOSTSNP_MOUNTED_CONSUMER__.clearTransportLog());
     await page.evaluate(() => {
       globalThis.__GHOSTSNP_MOUNTED_CONSUMER__.resize(100, 30);
     });
-    await page.waitForTimeout(200);
-    console.log("resize-after-import ok");
+    await page.waitForTimeout(100);
+    const resizeLog = await page.evaluate(
+      () => globalThis.__GHOSTSNP_MOUNTED_CONSUMER__.getTransportLog().resizes,
+    );
+    const hit = resizeLog.find((r) => r.cols === 100 && r.rows === 30);
+    if (!hit) {
+      fail(`resize(100,30) not observed on PTY transport: ${JSON.stringify(resizeLog)}`);
+    }
+    console.log("resize-after-import ok transport={cols:100,rows:30}");
 
-    // 4) Reconnect second import replaces state; live pollution must not stick.
+    // 4) Reconnect: pollute palette[1], second import must restore fixture value.
     const reconnect = await page.evaluate(async () => {
       const ctrl = globalThis.__GHOSTSNP_MOUNTED_CONSUMER__;
-      ctrl.sendInput("POLLUTE-BEFORE-RECONNECT\r\n", "pty");
+      // Pollute after first import (distinct from fixture 0xabcdef).
+      ctrl.sendPtyOutput("\u001b]4;1;rgb:fe/dc/ba\u0007");
+      await new Promise((r) => setTimeout(r, 100));
+      const polluted = ctrl.getPaletteColor(1);
       const res = await fetch("/fixtures/rich-matrix-v1.bin");
       const buf = new Uint8Array(await res.arrayBuffer());
       let ok = false;
@@ -219,24 +256,75 @@ async function main() {
         if (ok) break;
         await new Promise((r) => setTimeout(r, 50));
       }
-      const palette1 = ctrl.getPaletteColor(1);
-      ctrl.sendInput("\r\nAFTER-RECONNECT-LIVE\r\n", "pty");
-      return { ok, palette1 };
+      const restored = ctrl.getPaletteColor(1);
+      // Live path still works on the new handle after reconnect.
+      ctrl.sendPtyOutput("\u001b]4;3;rgb:11/22/33\u0007");
+      await new Promise((r) => setTimeout(r, 100));
+      const palette3After = ctrl.getPaletteColor(3);
+      return { ok, polluted, restored, palette3After };
     });
-    if (!reconnect.ok) fail("second loadBinarySnapshot (reconnect) returned false");
-    if (reconnect.palette1 !== PALETTE1) {
-      fail(`palette[1] after reconnect import expected 0x${PALETTE1.toString(16)}`);
+    if (reconnect.polluted !== POLLUTED_PALETTE1) {
+      fail(
+        `pollution setup failed: palette[1]=${JSON.stringify(reconnect.polluted)} expected=0x${POLLUTED_PALETTE1.toString(16)}`,
+      );
     }
-    console.log("reconnect-second-import ok");
+    if (!reconnect.ok) fail("second loadBinarySnapshot (reconnect) returned false");
+    if (reconnect.restored !== PALETTE1) {
+      fail(
+        `second import did not clear pollution: palette[1]=${JSON.stringify(reconnect.restored)} expected=0x${PALETTE1.toString(16)}`,
+      );
+    }
+    if (reconnect.palette3After !== LIVE_PALETTE3) {
+      fail("live output on post-reconnect handle did not apply");
+    }
+    console.log("reconnect-second-import ok pollution-cleared palette1 restored");
 
-    // 5) Keyboard path still works under readOnly (user encode, not query replies).
+    // 5) Keyboard path under readOnly must emit to the PTY sink.
+    await page.evaluate(() => globalThis.__GHOSTSNP_MOUNTED_CONSUMER__.clearTransportLog());
     await page.evaluate(() => {
       globalThis.__GHOSTSNP_MOUNTED_CONSUMER__.focus();
     });
     await page.locator("canvas").first().click({ position: { x: 12, y: 12 } });
-    await page.keyboard.insertText("ghostsnp-consumer-key\n");
-    await page.waitForTimeout(200);
-    console.log("keyboard-insertText-under-readOnly ok");
+    const probe = "ghostsnp-consumer-key";
+    await page.keyboard.insertText(`${probe}\n`);
+    await page.waitForTimeout(300);
+    const inputs = await page.evaluate(
+      () => globalThis.__GHOSTSNP_MOUNTED_CONSUMER__.getTransportLog().inputs,
+    );
+    const joined = inputs.join("");
+    if (!joined.includes(probe)) {
+      fail(`keyboard insertText did not reach PTY sink; inputs=${JSON.stringify(inputs)}`);
+    }
+    console.log("keyboard-insertText-under-readOnly ok pty-sink-observed");
+
+    // 6) Query replies stay muted: host OSC/DA/DSR must not produce sink traffic.
+    await page.evaluate(() => globalThis.__GHOSTSNP_MOUNTED_CONSUMER__.clearTransportLog());
+    await page.evaluate(() => {
+      const ctrl = globalThis.__GHOSTSNP_MOUNTED_CONSUMER__;
+      // Host stream containing queries (OutputFilter would answer when not readOnly).
+      ctrl.injectHostStream("\u001b]10;?\u0007\u001b[c\u001b[6n");
+    });
+    await page.waitForTimeout(100);
+    const afterQueries = await page.evaluate(
+      () => globalThis.__GHOSTSNP_MOUNTED_CONSUMER__.getTransportLog().inputs,
+    );
+    if (afterQueries.length !== 0) {
+      fail(`readOnly query mute failed; sink received ${JSON.stringify(afterQueries)}`);
+    }
+    console.log("readOnly-query-mute ok zero-pty-sink-replies");
+
+    if (pageErrors.length) {
+      fail(`browser page errors: ${JSON.stringify(pageErrors)}`);
+    }
+    // Font CDN noise is not a product failure; only fail on Restty/runtime console errors.
+    const productConsoleErrors = consoleErrors.filter(
+      (line) =>
+        !/cdn\.jsdelivr|Failed to load resource|net::ERR|font/i.test(line) &&
+        !/Download the React DevTools/i.test(line),
+    );
+    if (productConsoleErrors.length) {
+      fail(`browser console errors: ${JSON.stringify(productConsoleErrors)}`);
+    }
 
     console.log(
       "ghostsnp-mounted-consumer-smoke passed " +
@@ -245,10 +333,12 @@ async function main() {
           assertions: [
             "loadBinarySnapshot(GHOSTSNP)",
             "palette[1]=0xabcdef",
-            "live-output-after-import",
-            "resize-after-import",
-            "reconnect-second-import",
-            "keyboard-insertText-under-readOnly",
+            "live-pty-output-changes-palette[3]",
+            "resize(100,30)-observed-on-pty-transport",
+            "reconnect-clears-palette-pollution",
+            "keyboard-insertText-reaches-pty-sink",
+            "readOnly-query-mute-zero-sink-replies",
+            "no-browser-page-errors",
           ],
         }),
     );

@@ -2,7 +2,7 @@
 
 **Ticket:** `ticket_1786471489_344578`
 **Run:** `run_1786471510_664686`
-**Step:** Implement (`botster_stack_implement`) — rework after Review `review_1786475845_818487`
+**Step:** Implement (`botster_stack_implement`) — rework after Review `review_1786476166_715489`
 **Date:** 2026-08-11
 **PR:** https://github.com/trybotster/restty/pull/4
 
@@ -37,7 +37,8 @@
 
 | Finding | Severity | Resolution |
 | --- | --- | --- |
-| `finding_1786475845_713074` B2 does not exercise Restty GHOSTSNP import | high | Added mounted consumer smoke that calls public `loadBinarySnapshot` with committed GHOSTSNP fixture and asserts restored palette, live output, resize, reconnect, keyboard under `readOnly`. Exit 0. |
+| `finding_1786476167_700081` Mounted consumer smoke labels unverified actions as assertions | high | Harness now uses an observable PTY transport. Asserts live PTY output changes `palette[3]`, resize(100,30) hits transport, reconnect clears palette pollution, keyboard insertText reaches sink, query replies stay muted, page errors fail the smoke. Exit 0. |
+| `finding_1786475845_713074` B2 does not exercise Restty GHOSTSNP import | high | Resolved earlier by mounted `loadBinarySnapshot(GHOSTSNP)` smoke; strengthened by finding_1786476167. |
 
 Prior findings remain resolved (A8 exactness, OSC tuples, B1/B2 protocol smokes, hygiene, path-neutral report).
 
@@ -99,23 +100,26 @@ Observed:
 
 ```
 ghostsnp-import ok bytes=2160 palette1=0xabcdef
-live-output-after-import ok
-resize-after-import ok
-reconnect-second-import ok
-keyboard-insertText-under-readOnly ok
-ghostsnp-mounted-consumer-smoke passed {"fixture":"tests/fixtures/ghostsnp/rich-matrix-v1.bin","assertions":["loadBinarySnapshot(GHOSTSNP)","palette[1]=0xabcdef","live-output-after-import","resize-after-import","reconnect-second-import","keyboard-insertText-under-readOnly"]}
+live-output-after-import ok palette3=0x112233
+resize-after-import ok transport={cols:100,rows:30}
+reconnect-second-import ok pollution-cleared palette1 restored
+keyboard-insertText-under-readOnly ok pty-sink-observed
+readOnly-query-mute ok zero-pty-sink-replies
+ghostsnp-mounted-consumer-smoke passed {"fixture":"tests/fixtures/ghostsnp/rich-matrix-v1.bin","assertions":["loadBinarySnapshot(GHOSTSNP)","palette[1]=0xabcdef","live-pty-output-changes-palette[3]","resize(100,30)-observed-on-pty-transport","reconnect-clears-palette-pollution","keyboard-insertText-reaches-pty-sink","readOnly-query-mute-zero-sink-replies","no-browser-page-errors"]}
 ```
 
 Exit **0**.
 
-Assertions:
+Hard assertions (observable transport + WASM state, not sleep-and-print):
 
-1. Public `loadBinarySnapshot` accepts committed `tests/fixtures/ghostsnp/rich-matrix-v1.bin` (magic GHOSTSNP)
-2. Restored `getPaletteColor(1) === 0xabcdef` (fixture-encoded OSC palette)
-3. Live PTY write after import
-4. Resize after import
-5. Second import (reconnect) restores palette again
-6. Keyboard insertText under `readOnly: true`
+1. Public `loadBinarySnapshot` accepts committed GHOSTSNP fixture
+2. Restored `getPaletteColor(1) === 0xabcdef`
+3. Live PTY output after import changes `getPaletteColor(3) === 0x112233`
+4. `resize(100, 30)` observed on PTY transport with exact dimensions
+5. Second import clears live palette[1] pollution back to `0xabcdef`
+6. Keyboard insertText reaches PTY sink (probe string present in transport inputs)
+7. Host OSC/DA/DSR produces zero PTY sink replies under `readOnly`
+8. Browser page errors fail the smoke
 
 ### Prior consumer protocol smokes (still green on this dist)
 
