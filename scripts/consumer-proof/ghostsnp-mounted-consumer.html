@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GHOSTSNP Mounted Consumer Proof</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #111;
+      }
+      #root {
+        width: 100%;
+        height: 100%;
+        min-height: 480px;
+      }
+      .terminal-view-container {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" class="terminal-view-container"></div>
+    <script type="module">
+      import { Restty } from "/vendor/internal.js";
+
+      const root = document.getElementById("root");
+      if (!root) throw new Error("missing #root");
+
+      // Match Botster Web font preset so empty font lists do not crash Restty.
+      const fontSources = [
+        {
+          type: "url",
+          url: "https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@v3.4.0/patched-fonts/JetBrainsMono/NoLigatures/Regular/JetBrainsMonoNLNerdFontMono-Regular.ttf",
+          label: "JetBrains Mono Nerd Font Regular",
+        },
+      ];
+
+      const restty = new Restty({
+        root,
+        createInitialPane: { focus: true },
+        fontSources,
+        appOptions: {
+          // Botster pure-renderer contract under test.
+          readOnly: true,
+          autoResize: true,
+          fontSize: 14,
+          renderer: "webgl2",
+        },
+      });
+
+      /**
+       * Mounted consumer control surface for the Playwright smoke.
+       * Proves Restty loadBinarySnapshot(GHOSTSNP) on a real browser mount.
+       */
+      globalThis.__GHOSTSNP_MOUNTED_CONSUMER__ = {
+        ready: true,
+        readOnly: true,
+        loadBinarySnapshot(bytes) {
+          const data =
+            bytes instanceof Uint8Array
+              ? bytes
+              : new Uint8Array(bytes?.buffer ?? bytes ?? []);
+          return restty.loadBinarySnapshot(data);
+        },
+        getPaletteColor(index) {
+          return restty.getPaletteColor(index);
+        },
+        sendInput(text, source = "pty") {
+          restty.sendInput(text, source);
+        },
+        resize(cols, rows) {
+          restty.resize(cols, rows);
+        },
+        focus() {
+          restty.focus();
+        },
+        destroy() {
+          restty.destroy();
+        },
+      };
+    </script>
+  </body>
+</html>

@@ -73,7 +73,8 @@
     "test:ci": "bun test $(find tests -name '*.test.ts' ! -name 'webgpu-glyph.test.ts' | sort)",
     "pty": "bun run playground/pty-server.ts",
     "playground": "bun run scripts/playground-dev.ts",
-    "playground:static": "bun run playground/server.ts"
+    "playground:static": "bun run playground/server.ts",
+    "smoke:ghostsnp-mounted-consumer": "node scripts/consumer-proof/ghostsnp-mounted-consumer-smoke.mjs"
   },
   "dependencies": {
     "text-shaper": "^0.1.18"
