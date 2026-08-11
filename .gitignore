@@ -31,3 +31,9 @@ playground/public/restty-wasm.js.map
 
 # Local package archives
 *.tgz
+
+# Host-side GHOSTSNP fixture generator (Zig)
+scripts/ghostsnp-fixture-gen/.zig-cache/
+scripts/ghostsnp-fixture-gen/zig-cache/
+scripts/ghostsnp-fixture-gen/zig-out/
+scripts/ghostsnp-fixture-gen/zig-pkg/
