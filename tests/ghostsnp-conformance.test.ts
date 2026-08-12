@@ -77,8 +77,16 @@ function createPublicSnapshotApp(options: {
   initialHandle: number;
   writeHandles: number[];
   loadHandles: number[];
+  grid?: { cols: number; rows: number };
+  disconnectCalls?: number[];
 }) {
-  const { initialHandle, writeHandles, loadHandles } = options;
+  const {
+    initialHandle,
+    writeHandles,
+    loadHandles,
+    grid = { cols: 40, rows: 12 },
+    disconnectCalls,
+  } = options;
 
   const create = wasm.create.bind(wasm);
   const destroy = wasm.destroy.bind(wasm);
@@ -142,7 +150,9 @@ function createPublicSnapshotApp(options: {
       scheduleSyncOutputReset: () => undefined,
       cancelSyncOutputReset: () => undefined,
       connectPty: () => undefined,
-      disconnectPty: () => undefined,
+      disconnectPty: () => {
+        disconnectCalls?.push(1);
+      },
       sendKeyInput: () => undefined,
       sendPasteText: () => undefined,
       sendPastePayloadFromDataTransfer: () => false,
@@ -189,8 +199,8 @@ function createPublicSnapshotApp(options: {
     tickWebGPU: () => undefined,
     tickWebGL: () => undefined,
     updateGrid: () => undefined,
-    gridState: { cols: 40, rows: 12 },
-    getCanvas: () => ({ width: 400, height: 240 }) as HTMLCanvasElement,
+    gridState: grid,
+    getCanvas: () => ({ width: grid.cols * 10, height: grid.rows * 20 }) as HTMLCanvasElement,
     applyTheme: () => undefined,
     ensureFont: async () => undefined,
     updateSize: () => undefined,
@@ -448,6 +458,54 @@ test("public loadBinarySnapshot reconnect replaces handle and restores clean mod
       } catch {
         // ignore
       }
+    }
+    harness.restore();
+  }
+});
+
+test("public loadBinarySnapshot reapplies the browser grid after a GHOSTSNP handle swap", () => {
+  const snapshot = loadRichMatrix();
+  const resttyRenderCols = wasm.exports.restty_render_cols ?? wasm.exports.restty_cols;
+  const resttyRenderRows = wasm.exports.restty_render_rows ?? wasm.exports.restty_rows;
+  expect(resttyRenderCols).toBeFunction();
+  expect(resttyRenderRows).toBeFunction();
+  const snapshotHandle = wasm.create(40, 12, 2_000_000);
+  expect(snapshotHandle).toBeGreaterThan(0);
+  expect(wasm.loadBinarySnapshot(snapshotHandle, snapshot)).toBeNull();
+  expect(resttyRenderCols!(snapshotHandle)).toBe(40);
+  expect(resttyRenderRows!(snapshotHandle)).toBe(12);
+  wasm.destroy(snapshotHandle);
+
+  const browserGrid = { cols: 50, rows: 18 };
+  const initialHandle = wasm.create(browserGrid.cols, browserGrid.rows, 2_000_000);
+  expect(initialHandle).toBeGreaterThan(0);
+  const writeHandles: number[] = [];
+  const disconnectCalls: number[] = [];
+  const harness = createPublicSnapshotApp({
+    initialHandle,
+    writeHandles,
+    loadHandles: [],
+    grid: browserGrid,
+    disconnectCalls,
+  });
+
+  try {
+    harness.app.disconnectPty();
+    expect(disconnectCalls).toEqual([1]);
+    expect(harness.app.loadBinarySnapshot(snapshot)).toBe(true);
+    const activeHandle = harness.sharedState.wasmHandle;
+    expect(activeHandle).not.toBe(initialHandle);
+    expect(writeHandles).toEqual([]);
+    expect(resttyRenderCols!(activeHandle)).toBe(browserGrid.cols);
+    expect(resttyRenderRows!(activeHandle)).toBe(browserGrid.rows);
+    expect(scrollbarTotal(activeHandle)).toBeGreaterThan(browserGrid.rows);
+
+    wasm.scrollViewport(activeHandle, -10_000);
+    wasm.renderUpdate(activeHandle);
+    expect(viewportRows(activeHandle).some((row) => row.includes("SCROLLBACK-LINE-000"))).toBe(true);
+  } finally {
+    if (harness.sharedState.wasmHandle) {
+      wasm.destroy(harness.sharedState.wasmHandle);
     }
     harness.restore();
   }

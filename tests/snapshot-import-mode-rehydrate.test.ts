@@ -92,6 +92,14 @@ test("public loadBinarySnapshot rehydrates mouse from the NEW handle bits", () =
         return id;
       },
       setPixelSize: () => undefined,
+      resize: (handle: number, cols: number, rows: number) => {
+        const real = handles.get(handle);
+        if (real) wasm.resize(real, cols, rows);
+      },
+      renderUpdate: (handle: number) => {
+        const real = handles.get(handle);
+        if (real) wasm.renderUpdate(real);
+      },
       loadBinarySnapshot: (handle: number, _data: Uint8Array) => {
         const real = handles.get(handle);
         if (!real) return "missing handle";

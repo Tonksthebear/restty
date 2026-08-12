@@ -9,6 +9,8 @@ test("runtime app api exposes binary snapshot loading on the public Restty app",
   const createCalls: Array<{ cols: number; rows: number; maxScrollback: number }> = [];
   const destroyCalls: number[] = [];
   const pixelSizeCalls: Array<{ handle: number; width: number; height: number }> = [];
+  const resizeCalls: Array<{ handle: number; cols: number; rows: number }> = [];
+  const renderCalls: number[] = [];
   let clearSelectionCalls = 0;
   let searchResetCalls = 0;
   const hoverUpdates: Array<number | null> = [];
@@ -28,6 +30,12 @@ test("runtime app api exposes binary snapshot loading on the public Restty app",
       loadBinarySnapshot: (handle: number, data: Uint8Array) => {
         snapshotCalls.push({ handle, data: Array.from(data) });
         return null;
+      },
+      resize: (handle: number, cols: number, rows: number) => {
+        resizeCalls.push({ handle, cols, rows });
+      },
+      renderUpdate: (handle: number) => {
+        renderCalls.push(handle);
       },
     } as never,
     wasmExports: null,
@@ -161,8 +169,13 @@ test("runtime app api exposes binary snapshot loading on the public Restty app",
 
   expect(app.loadBinarySnapshot(new Uint8Array([1, 2, 3]))).toBe(true);
   expect(createCalls).toEqual([{ cols: 80, rows: 24, maxScrollback: 10000000 }]);
-  expect(pixelSizeCalls).toEqual([{ handle: 17, width: 800, height: 480 }]);
+  expect(pixelSizeCalls).toEqual([
+    { handle: 17, width: 800, height: 480 },
+    { handle: 17, width: 800, height: 480 },
+  ]);
   expect(snapshotCalls).toEqual([{ handle: 17, data: [1, 2, 3] }]);
+  expect(resizeCalls).toEqual([{ handle: 17, cols: 80, rows: 24 }]);
+  expect(renderCalls).toEqual([17]);
   expect(destroyCalls).toEqual([9]);
   expect(clearSelectionCalls).toBe(1);
   expect(hoverUpdates).toEqual([null]);
@@ -176,6 +189,8 @@ test("runtime app api recreates the wasm handle before loading a binary snapshot
   const destroyCalls: number[] = [];
   const createCalls: Array<{ cols: number; rows: number; maxScrollback: number }> = [];
   const pixelSizeCalls: Array<{ handle: number; width: number; height: number }> = [];
+  const resizeCalls: Array<{ handle: number; cols: number; rows: number }> = [];
+  const renderCalls: number[] = [];
   let searchResetCalls = 0;
 
   const sharedState: RuntimeAppApiSharedState = {
@@ -193,6 +208,12 @@ test("runtime app api recreates the wasm handle before loading a binary snapshot
       loadBinarySnapshot: (handle: number, data: Uint8Array) => {
         snapshotCalls.push({ handle, data: Array.from(data) });
         return null;
+      },
+      resize: (handle: number, cols: number, rows: number) => {
+        resizeCalls.push({ handle, cols, rows });
+      },
+      renderUpdate: (handle: number) => {
+        renderCalls.push(handle);
       },
     } as never,
     wasmExports: null,
@@ -322,8 +343,13 @@ test("runtime app api recreates the wasm handle before loading a binary snapshot
 
   expect(app.loadBinarySnapshot(new Uint8Array([7, 8, 9]))).toBe(true);
   expect(createCalls).toEqual([{ cols: 120, rows: 35, maxScrollback: 10000000 }]);
-  expect(pixelSizeCalls).toEqual([{ handle: 27, width: 960, height: 700 }]);
+  expect(pixelSizeCalls).toEqual([
+    { handle: 27, width: 960, height: 700 },
+    { handle: 27, width: 960, height: 700 },
+  ]);
   expect(snapshotCalls).toEqual([{ handle: 27, data: [7, 8, 9] }]);
+  expect(resizeCalls).toEqual([{ handle: 27, cols: 120, rows: 35 }]);
+  expect(renderCalls).toEqual([27]);
   expect(destroyCalls).toEqual([9]);
   expect(sharedState.wasmHandle).toBe(27);
   expect(searchResetCalls).toBe(1);

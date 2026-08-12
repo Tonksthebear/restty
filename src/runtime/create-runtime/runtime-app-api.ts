@@ -435,6 +435,20 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
       shared.wasm.destroy(nextHandle);
       return false;
     }
+    const canvas = getCanvas();
+    const cols = gridState.cols || 80;
+    const rows = gridState.rows || 24;
+    try {
+      // GHOSTSNP owns the imported terminal size. Restty owns the mounted
+      // browser size, so restore that size before the new handle can render.
+      shared.wasm.resize(nextHandle, cols, rows);
+      shared.wasm.setPixelSize(nextHandle, canvas.width, canvas.height);
+      shared.wasm.renderUpdate(nextHandle);
+    } catch (e) {
+      appendLog(`[snapshot] restore browser size failed: ${e}`);
+      shared.wasm.destroy(nextHandle);
+      return false;
+    }
     try {
       shared.wasm.destroy(shared.wasmHandle);
     } catch {
