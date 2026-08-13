@@ -22,7 +22,13 @@ type WasmCallLog = {
 type RuntimeHarness = {
   app: ReturnType<ReturnType<typeof createRuntimeAppApi>["createPublicApi"]>;
   callLog: WasmCallLog;
+  deferTerminalResize: ReturnType<typeof createRuntimeAppApi>["deferTerminalResize"];
   getPtyCallbacks: () => PtyCallbacks | null;
+  ptyResizeCalls: Array<{
+    cols: number;
+    rows: number;
+    meta: { widthPx: number; heightPx: number; cellW: number; cellH: number };
+  }>;
   ptyOutputBuffer: ReturnType<typeof createPtyOutputBufferController>;
   sharedState: RuntimeAppApiSharedState;
 };
@@ -31,6 +37,16 @@ type GridSize = {
   cols: number;
   rows: number;
 };
+
+function fixture(name: string): Uint8Array {
+  return new Uint8Array(readFileSync(`${process.cwd()}/tests/fixtures/ghostsnp/${name}`));
+}
+
+function historyFrames(): Uint8Array[] {
+  return [0, 1, 2, 3].map((index) =>
+    fixture(`incremental-history-page-${index.toString().padStart(3, "0")}-v1.bin`),
+  );
+}
 
 /** Decode annotated GHOSTSNP golden hex fixtures (ghostty snapshot fixture grammar). */
 function parseGhosttyHexFixture(source: string): Uint8Array {
@@ -80,6 +96,12 @@ function viewportRows(wasm: ResttyWasm, handle: number): string[] {
     rows.push(text.trimEnd());
   }
   return rows;
+}
+
+function scrollbarTotal(wasm: ResttyWasm, handle: number): number {
+  const total = wasm.exports.restty_scrollbar_total;
+  if (!total) throw new Error("restty_scrollbar_total export is unavailable");
+  return total(handle) >>> 0;
 }
 
 function instrumentWasm(wasm: ResttyWasm): WasmCallLog {
@@ -222,6 +244,7 @@ function createRuntimeHarness(
 
   let connected = false;
   let ptyCallbacks: PtyCallbacks | null = null;
+  const ptyResizeCalls: RuntimeHarness["ptyResizeCalls"] = [];
   let runtime: ReturnType<typeof createRuntimeAppApi> | null = null;
 
   const ptyTransport = {
@@ -236,7 +259,14 @@ function createRuntimeHarness(
       ptyCallbacks?.onDisconnect?.();
     },
     sendInput: () => true,
-    resize: () => true,
+    resize: (
+      cols: number,
+      rows: number,
+      meta: RuntimeHarness["ptyResizeCalls"][number]["meta"],
+    ) => {
+      ptyResizeCalls.push({ cols, rows, meta });
+      return true;
+    },
   };
 
   const inputHandler = {
@@ -386,11 +416,178 @@ function createRuntimeHarness(
   return {
     app,
     callLog,
+    deferTerminalResize: runtime.deferTerminalResize,
     getPtyCallbacks: () => ptyCallbacks,
+    ptyResizeCalls,
     ptyOutputBuffer,
     sharedState,
   };
 }
+
+test("public incremental reader paints READY, prepends every PAGE, and finishes authentic history", async () => {
+  const wasm = await loadResttyWasm();
+  const harness = createRuntimeHarness(wasm);
+  const initialHandle = harness.sharedState.wasmHandle;
+  const reader = harness.app.createBinarySnapshotReader();
+  expect(reader).not.toBeNull();
+
+  expect(reader!.ready(fixture("incremental-history-ready-v1.bin"))).toEqual({ status: "ready" });
+  const activeHandle = harness.sharedState.wasmHandle;
+  expect(activeHandle).not.toBe(initialHandle);
+  expect(viewportRows(wasm, activeHandle).join("\n")).toContain("READY-PAINT");
+  expect(harness.callLog.pixelHandles.filter((handle) => handle === activeHandle).length).toBe(2);
+
+  let previousTotal = scrollbarTotal(wasm, activeHandle);
+  for (const page of historyFrames()) {
+    expect(reader!.next(page)).toEqual({ status: "page" });
+    const nextTotal = scrollbarTotal(wasm, activeHandle);
+    expect(nextTotal).toBeGreaterThan(previousTotal);
+    previousTotal = nextTotal;
+  }
+
+  expect(reader!.next(fixture("incremental-history-finish-v1.bin"))).toEqual({
+    status: "finish",
+  });
+  expect(harness.callLog.pixelHandles.filter((handle) => handle === activeHandle).length).toBe(3);
+  wasm.scrollViewport(activeHandle, -10_000);
+  wasm.renderUpdate(activeHandle);
+  expect(viewportRows(wasm, activeHandle).join("\n")).toContain("HISTORY-LINE-0000");
+
+  wasm.destroy(activeHandle);
+});
+
+test("public incremental reader accepts authentic blank READY and FINISH", async () => {
+  const wasm = await loadResttyWasm();
+  const harness = createRuntimeHarness(wasm);
+  const reader = harness.app.createBinarySnapshotReader();
+  expect(reader).not.toBeNull();
+
+  expect(reader!.ready(fixture("incremental-blank-ready-v1.bin"))).toEqual({ status: "ready" });
+  expect(viewportRows(wasm, harness.sharedState.wasmHandle).every((row) => row === "")).toBe(true);
+  expect(reader!.next(fixture("incremental-blank-finish-v1.bin"))).toEqual({
+    status: "finish",
+  });
+
+  wasm.destroy(harness.sharedState.wasmHandle);
+});
+
+test("public incremental reader releases only the latest WASM and PTY resize at FINISH", async () => {
+  const wasm = await loadResttyWasm();
+  const harness = createRuntimeHarness(wasm);
+  harness.app.connectPty();
+  harness.ptyResizeCalls.length = 0;
+  const reader = harness.app.createBinarySnapshotReader();
+  expect(reader).not.toBeNull();
+
+  expect(
+    harness.deferTerminalResize(120, 40, {
+      widthPx: 1200,
+      heightPx: 800,
+      cellW: 10,
+      cellH: 20,
+    }),
+  ).toBe(true);
+  expect(reader!.ready(fixture("incremental-history-ready-v1.bin"))).toEqual({ status: "ready" });
+  const activeHandle = harness.sharedState.wasmHandle;
+  expect(
+    harness.deferTerminalResize(130, 41, {
+      widthPx: 1300,
+      heightPx: 820,
+      cellW: 10,
+      cellH: 20,
+    }),
+  ).toBe(true);
+  expect(harness.ptyResizeCalls).toEqual([]);
+  expect(wasm.getRenderState(activeHandle)).toMatchObject({ cols: 215, rows: 2 });
+
+  for (const page of historyFrames()) {
+    expect(reader!.next(page)).toEqual({ status: "page" });
+    expect(harness.ptyResizeCalls).toEqual([]);
+    expect(wasm.getRenderState(activeHandle)).toMatchObject({ cols: 215, rows: 2 });
+  }
+  expect(reader!.next(fixture("incremental-history-finish-v1.bin"))).toEqual({
+    status: "finish",
+  });
+  expect(wasm.getRenderState(activeHandle)).toMatchObject({ cols: 130, rows: 41 });
+  expect(harness.ptyResizeCalls).toEqual([
+    {
+      cols: 130,
+      rows: 41,
+      meta: { widthPx: 1300, heightPx: 820, cellW: 10, cellH: 20 },
+    },
+  ]);
+
+  wasm.destroy(activeHandle);
+});
+
+test("public incremental reader retains READY and applied history after a PAGE error", async () => {
+  const wasm = await loadResttyWasm();
+  const harness = createRuntimeHarness(wasm, { cols: 120, rows: 40 });
+  const reader = harness.app.createBinarySnapshotReader();
+  expect(reader).not.toBeNull();
+
+  expect(reader!.ready(fixture("incremental-history-ready-v1.bin"))).toEqual({ status: "ready" });
+  expect(reader!.next(historyFrames()[0]!)).toEqual({ status: "page" });
+  const corruptPage = historyFrames()[1]!.slice();
+  corruptPage[corruptPage.length - 1] ^= 0xff;
+  expect(reader!.next(corruptPage).status).toBe("error");
+
+  const activeHandle = harness.sharedState.wasmHandle;
+  const retainedRows = viewportRows(wasm, activeHandle).join("\n");
+  expect(retainedRows).toContain("HISTORY-LINE-0999");
+  expect(retainedRows).toContain("READY-PAINT");
+  expect(wasm.getRenderState(activeHandle)).toMatchObject({ cols: 120, rows: 40 });
+  harness.app.sendInput("LIVE-AFTER-DEGRADED-HISTORY", "pty");
+  wasm.renderUpdate(activeHandle);
+  expect(viewportRows(wasm, activeHandle).join("\n")).toContain("LIVE-AFTER-DEGRADED-HISTORY");
+
+  wasm.destroy(activeHandle);
+});
+
+test("public incremental reader cancel releases the resize barrier", async () => {
+  const wasm = await loadResttyWasm();
+  const harness = createRuntimeHarness(wasm);
+  harness.app.connectPty();
+  harness.ptyResizeCalls.length = 0;
+  const reader = harness.app.createBinarySnapshotReader();
+  expect(reader).not.toBeNull();
+
+  expect(reader!.ready(fixture("incremental-history-ready-v1.bin"))).toEqual({ status: "ready" });
+  expect(
+    harness.deferTerminalResize(132, 42, {
+      widthPx: 1320,
+      heightPx: 840,
+      cellW: 10,
+      cellH: 20,
+    }),
+  ).toBe(true);
+  reader!.cancel();
+
+  expect(wasm.getRenderState(harness.sharedState.wasmHandle)).toMatchObject({
+    cols: 132,
+    rows: 42,
+  });
+  expect(harness.ptyResizeCalls).toEqual([
+    {
+      cols: 132,
+      rows: 42,
+      meta: { widthPx: 1320, heightPx: 840, cellW: 10, cellH: 20 },
+    },
+  ]);
+  expect(
+    harness.deferTerminalResize(140, 44, {
+      widthPx: 1400,
+      heightPx: 880,
+      cellW: 10,
+      cellH: 20,
+    }),
+  ).toBe(false);
+  const nextReader = harness.app.createBinarySnapshotReader();
+  expect(nextReader).not.toBeNull();
+  nextReader!.cancel();
+
+  wasm.destroy(harness.sharedState.wasmHandle);
+});
 
 test("public runtime path keeps post-snapshot writes, renders, and resize on the new wasm handle", async () => {
   const wasm = await loadResttyWasm();

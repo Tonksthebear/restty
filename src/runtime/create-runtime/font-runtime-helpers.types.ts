@@ -107,6 +107,11 @@ export type CreateRuntimeFontRuntimeHelpersOptions = {
   getWasmReady: () => boolean;
   getWasm: () => ResttyWasm | null;
   getWasmHandle: () => number;
+  deferTerminalResize?: (
+    cols: number,
+    rows: number,
+    meta: { widthPx: number; heightPx: number; cellW: number; cellH: number },
+  ) => boolean;
   ptyTransport: PtyTransport;
   setNeedsRender: () => void;
   markSearchDirty?: () => void;

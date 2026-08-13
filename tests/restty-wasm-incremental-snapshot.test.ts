@@ -129,6 +129,9 @@ test("incremental GHOSTSNP keeps READY after a later history error", () => {
 
     expect(scrollbarTotal(handle)).toBeGreaterThanOrEqual(retainedTotal);
     expect(wasm.getRenderState(handle)).toMatchObject({ cols: 120, rows: 40 });
+    const retainedRows = viewportRows(handle).join("\n");
+    expect(retainedRows).toContain("HISTORY-LINE-0999");
+    expect(retainedRows).toContain("READY-PAINT");
     wasm.write(handle, "LIVE-AFTER-DEGRADED-HISTORY");
     wasm.renderUpdate(handle);
     expect(viewportRows(handle).join("\n")).toContain("LIVE-AFTER-DEGRADED-HISTORY");

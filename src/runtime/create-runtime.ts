@@ -712,6 +712,8 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     getWasmReady: () => wasmReady,
     getWasm: () => wasm,
     getWasmHandle: () => wasmHandle,
+    deferTerminalResize: (cols, rows, meta) =>
+      runtimeAppApi?.deferTerminalResize(cols, rows, meta) ?? false,
     ptyTransport,
     setNeedsRender: () => {
       needsRender = true;

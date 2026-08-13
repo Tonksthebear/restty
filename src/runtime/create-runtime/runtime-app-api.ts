@@ -6,7 +6,7 @@ import {
   copyToClipboard as writeClipboardText,
   pasteFromClipboard as readClipboardText,
 } from "../../selection";
-import type { ResttyWasm, ResttyWasmExports } from "../../wasm";
+import type { GhosttySnapshotReader, ResttyWasm, ResttyWasmExports } from "../../wasm";
 import { normalizeNewlines } from "../create-app-io-utils";
 import { resolveMaxScrollbackBytes } from "../max-scrollback";
 import type {
@@ -70,6 +70,11 @@ type RuntimePublicApiOptions = {
 export type RuntimeAppApiRuntime = {
   sendInput: RuntimeSendInput;
   sendInputBytes: (data: Uint8Array) => void;
+  deferTerminalResize: (
+    cols: number,
+    rows: number,
+    meta: { widthPx: number; heightPx: number; cellW: number; cellH: number },
+  ) => boolean;
   createPublicApi: (options: RuntimePublicApiOptions) => ResttyApp;
 };
 
@@ -116,7 +121,7 @@ type CreateRuntimeAppApiOptions = {
   tickWebGPU: (state: WebGPUState) => void;
   tickWebGL: (state: WebGLState) => void;
   updateGrid: () => void;
-  gridState: { cols: number; rows: number };
+  gridState: { cols: number; rows: number; cellW?: number; cellH?: number };
   getCanvas: () => HTMLCanvasElement;
   applyTheme: ResttyApp["applyTheme"];
   ensureFont: () => Promise<void>;
@@ -198,6 +203,57 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
   };
   const maxScrollbackBytes = resolveMaxScrollbackBytes(options);
   let activeSnapshotReader: ResttySnapshotReader | null = null;
+  let activeSnapshotDecoder: GhosttySnapshotReader | null = null;
+  let pendingTerminalResize: {
+    cols: number;
+    rows: number;
+    meta: { widthPx: number; heightPx: number; cellW: number; cellH: number };
+  } | null = null;
+
+  function deferTerminalResize(
+    cols: number,
+    rows: number,
+    meta: { widthPx: number; heightPx: number; cellW: number; cellH: number },
+  ): boolean {
+    if (!activeSnapshotDecoder) return false;
+    activeSnapshotDecoder.queueResize(cols, rows);
+    pendingTerminalResize = { cols, rows, meta };
+    return true;
+  }
+
+  function queueCurrentTerminalResize(): void {
+    const canvas = getCanvas();
+    deferTerminalResize(gridState.cols || 80, gridState.rows || 24, {
+      widthPx: canvas.width,
+      heightPx: canvas.height,
+      cellW: gridState.cellW ?? 0,
+      cellH: gridState.cellH ?? 0,
+    });
+  }
+
+  function releaseTerminalResizeBarrier(applyToCurrentTerminal: boolean): void {
+    activeSnapshotDecoder = null;
+    const resize = pendingTerminalResize;
+    pendingTerminalResize = null;
+    if (!resize) return;
+
+    const shared = readState();
+    if (applyToCurrentTerminal && shared.wasm && shared.wasmHandle) {
+      shared.wasm.resize(shared.wasmHandle, resize.cols, resize.rows);
+      shared.wasm.renderUpdate(shared.wasmHandle);
+    }
+    if (ptyTransport.isConnected()) {
+      ptyTransport.resize(resize.cols, resize.rows, resize.meta);
+    }
+  }
+
+  function restoreSnapshotPixelSize(handle: number): void {
+    const shared = readState();
+    if (!shared.wasm) return;
+    const canvas = getCanvas();
+    shared.wasm.setPixelSize(handle, canvas.width, canvas.height);
+    shared.wasm.renderUpdate(handle);
+  }
 
   function updateFps() {
     internalState.frameCount += 1;
@@ -490,6 +546,8 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
       shared.wasm.destroy(nextHandle);
       return null;
     }
+    activeSnapshotDecoder = decoder;
+    queueCurrentTerminalResize();
 
     let phase: "start" | "history" | "done" = "start";
     const reader: ResttySnapshotReader = {
@@ -502,12 +560,26 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
         }
         if (interaction.linkState.hoverId) interaction.updateLinkHover(null);
 
-        decoder.queueResize(gridState.cols || 80, gridState.rows || 24);
+        queueCurrentTerminalResize();
         const error = decoder.ready(data);
         if (error) {
           appendLog(`[snapshot] incremental READY failed: ${error}`);
           phase = "done";
           activeSnapshotReader = null;
+          releaseTerminalResizeBarrier(true);
+          shared.wasm?.destroy(nextHandle);
+          return { status: "error", error };
+        }
+
+        try {
+          restoreSnapshotPixelSize(nextHandle);
+        } catch (e) {
+          const error = `restore browser pixel size failed: ${e}`;
+          appendLog(`[snapshot] incremental READY failed: ${error}`);
+          decoder.cancel(false);
+          phase = "done";
+          activeSnapshotReader = null;
+          releaseTerminalResizeBarrier(true);
           shared.wasm?.destroy(nextHandle);
           return { status: "error", error };
         }
@@ -541,6 +613,13 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
         if (result.status === "error") {
           appendLog(`[snapshot] incremental history failed: ${result.error}`);
         }
+        try {
+          restoreSnapshotPixelSize(nextHandle);
+        } catch (e) {
+          appendLog(`[snapshot] restore browser pixel size failed: ${e}`);
+        } finally {
+          releaseTerminalResizeBarrier(false);
+        }
         writeState({ needsRender: true });
         return result;
       },
@@ -550,7 +629,18 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
         decoder.cancel(preserveReadyTerminal);
         phase = "done";
         activeSnapshotReader = null;
-        if (!preserveReadyTerminal) shared.wasm?.destroy(nextHandle);
+        if (preserveReadyTerminal) {
+          try {
+            restoreSnapshotPixelSize(nextHandle);
+          } catch (e) {
+            appendLog(`[snapshot] restore browser pixel size failed: ${e}`);
+          } finally {
+            releaseTerminalResizeBarrier(false);
+          }
+        } else {
+          releaseTerminalResizeBarrier(true);
+          shared.wasm?.destroy(nextHandle);
+        }
         writeState({ needsRender: preserveReadyTerminal });
       },
     };
@@ -976,6 +1066,7 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
   return {
     sendInput,
     sendInputBytes,
+    deferTerminalResize,
     createPublicApi,
   };
 }

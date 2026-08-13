@@ -19,6 +19,11 @@ type CreateFontRuntimeGridHelpersOptions = {
   getWasmReady: () => boolean;
   getWasm: () => ResttyWasm | null;
   getWasmHandle: () => number;
+  deferTerminalResize?: (
+    cols: number,
+    rows: number,
+    meta: { widthPx: number; heightPx: number; cellW: number; cellH: number },
+  ) => boolean;
   ptyTransport: PtyTransport;
   setNeedsRender: () => void;
   markSearchDirty?: () => void;
@@ -39,6 +44,7 @@ export function createFontRuntimeGridHelpers(options: CreateFontRuntimeGridHelpe
     getWasmReady,
     getWasm,
     getWasmHandle,
+    deferTerminalResize,
     ptyTransport,
     setNeedsRender,
     markSearchDirty,
@@ -92,18 +98,23 @@ export function createFontRuntimeGridHelpers(options: CreateFontRuntimeGridHelpe
     const wasm = getWasm();
     const wasmHandle = getWasmHandle();
     const canvas = getCanvas();
+    const resizeMeta = {
+      widthPx: canvas.width,
+      heightPx: canvas.height,
+      cellW: gridState.cellW,
+      cellH: gridState.cellH,
+    };
+    if (deferTerminalResize?.(cols, rows, resizeMeta)) {
+      setNeedsRender();
+      return;
+    }
     if (wasmReady && wasm && wasmHandle) {
       wasm.resize(wasmHandle, cols, rows);
       wasm.renderUpdate(wasmHandle);
       markSearchDirty?.();
     }
     if (ptyTransport.isConnected()) {
-      ptyTransport.resize(cols, rows, {
-        widthPx: canvas.width,
-        heightPx: canvas.height,
-        cellW: gridState.cellW,
-        cellH: gridState.cellH,
-      });
+      ptyTransport.resize(cols, rows, resizeMeta);
     }
     setNeedsRender();
   }
