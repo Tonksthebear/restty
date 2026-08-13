@@ -9,4 +9,9 @@ export type {
   WasmAbi,
   WasmAbiKind,
 } from "./runtime/types";
-export { ResttyWasm, loadResttyWasm } from "./runtime/restty-wasm";
+export {
+  GhosttySnapshotReader,
+  ResttyWasm,
+  loadResttyWasm,
+  type GhosttySnapshotNextResult,
+} from "./runtime/restty-wasm";

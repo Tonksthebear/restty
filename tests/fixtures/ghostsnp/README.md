@@ -5,6 +5,10 @@ Committed binary snapshots for Restty A8 (`tests/ghostsnp-conformance.test.ts`).
 | File | Source | Purpose |
 | --- | --- | --- |
 | `rich-matrix-v1.bin` | Ghostty-pin encode via `scripts/ghostsnp-fixture-gen` | Scrollback, SGR attrs, palette, cursor, Kitty keyboard flags, mouse 1000/1006 |
+| `incremental-history-ready-v1.bin` | Ghostty incremental decoder boundary | Renderable state through READY |
+| `incremental-history-page-*.bin` | Ghostty incremental decoder boundary | One history PAGE per file |
+| `incremental-history-finish-v1.bin` | Ghostty incremental decoder boundary | FINISH after four PAGE files |
+| `incremental-blank-*.bin` | Ghostty incremental decoder boundary | READY and FINISH with no history PAGE |
 
 ## Regenerate
 

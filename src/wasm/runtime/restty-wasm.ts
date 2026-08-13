@@ -17,6 +17,8 @@ import { makeRenderViewCache } from "./view-cache";
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
+const GHOSTTY_SUCCESS = 0;
+const GHOSTTY_NO_VALUE = -4;
 
 const WASM_ERROR_NAMES: Record<number, string> = {
   0: "ok",
@@ -28,6 +30,15 @@ const WASM_ERROR_NAMES: Record<number, string> = {
 
 function wasmErrorName(code: number): string {
   return WASM_ERROR_NAMES[code] ?? `unknown(${code})`;
+}
+
+function ghosttyResultName(code: number): string {
+  const names: Record<number, string> = {
+    [-1]: "out_of_memory",
+    [-2]: "invalid_value",
+    [-4]: "no_value",
+  };
+  return names[code] ?? `unknown(${code})`;
 }
 const SEARCH_STATUS_BYTES = 16;
 const SEARCH_VIEWPORT_MATCH_BYTES = 8;
@@ -49,12 +60,14 @@ export class ResttyWasm {
   readonly abi: WasmAbi;
   readonly memory: WebAssembly.Memory;
   private readonly renderViewCaches: Map<number, RenderViewCache>;
+  private readonly snapshotReaders: Map<number, GhosttySnapshotReader>;
 
   private constructor(exports: ResttyWasmExports, abi: WasmAbi) {
     this.exports = exports;
     this.abi = abi;
     this.memory = exports.memory;
     this.renderViewCaches = new Map();
+    this.snapshotReaders = new Map();
   }
 
   /** Load and instantiate the embedded WASM module. */
@@ -99,6 +112,7 @@ export class ResttyWasm {
 
   /** Destroy a terminal instance and free its resources. */
   destroy(handle: number): void {
+    this.snapshotReaders.get(handle)?.cancel(false);
     this.renderViewCaches.delete(handle);
     this.exports.restty_destroy(handle);
   }
@@ -114,7 +128,24 @@ export class ResttyWasm {
 
   /** Resize the terminal grid. */
   resize(handle: number, cols: number, rows: number): void {
+    const reader = this.snapshotReaders.get(handle);
+    if (reader?.queueResize(cols, rows)) return;
     this.exports.restty_resize(handle, cols, rows);
+  }
+
+  /** Create one incremental GHOSTSNP reader for one attach subscription. */
+  createSnapshotReader(handle: number): GhosttySnapshotReader | null {
+    const create = this.exports.restty_snapshot_reader_new;
+    if (!create || this.snapshotReaders.has(handle)) return null;
+    const readerHandle = create(handle);
+    if (!readerHandle) return null;
+    const reader = new GhosttySnapshotReader(this, handle, readerHandle);
+    this.snapshotReaders.set(handle, reader);
+    return reader;
+  }
+
+  releaseSnapshotReader(handle: number, reader: GhosttySnapshotReader): void {
+    if (this.snapshotReaders.get(handle) === reader) this.snapshotReaders.delete(handle);
   }
 
   /** Set pixel dimensions for Kitty graphics protocol. */
@@ -378,6 +409,111 @@ export class ResttyWasm {
       handle,
       this.getRenderViewCache(handle),
     );
+  }
+}
+
+export type GhosttySnapshotNextResult =
+  | { status: "page" }
+  | { status: "finish" }
+  | { status: "error"; error: string };
+
+/** A queued Ghostty reader for one incremental snapshot subscription. */
+export class GhosttySnapshotReader {
+  private readerHandle: number;
+  private readyComplete = false;
+  private pendingResize: { cols: number; rows: number } | null = null;
+
+  constructor(
+    private readonly wasm: ResttyWasm,
+    private readonly terminalHandle: number,
+    readerHandle: number,
+  ) {
+    this.readerHandle = readerHandle;
+  }
+
+  /** Feed the first opaque frame and decode through READY. */
+  ready(data: Uint8Array): string | null {
+    const ready = this.wasm.exports.restty_snapshot_reader_ready;
+    if (!this.readerHandle || !ready) return "snapshot_reader_ready export not available";
+    if (this.readyComplete) return "snapshot reader is already ready";
+
+    const result = this.callWithFrame(data, ready);
+    if (result !== GHOSTTY_SUCCESS) {
+      this.cancel(false);
+      return `snapshot_reader_ready error=${result} (${ghosttyResultName(result)})`;
+    }
+    this.readyComplete = true;
+
+    const renderResult = this.wasm.exports.restty_render_update(this.terminalHandle);
+    if (renderResult !== 0) {
+      this.cancel(false);
+      return `render_update error=${renderResult} (${wasmErrorName(renderResult)})`;
+    }
+    return null;
+  }
+
+  /** Feed one opaque PAGE or FINISH frame. */
+  next(data: Uint8Array): GhosttySnapshotNextResult {
+    const next = this.wasm.exports.restty_snapshot_reader_next;
+    if (!this.readerHandle || !next || !this.readyComplete) {
+      return { status: "error", error: "snapshot reader is not ready" };
+    }
+
+    const result = this.callWithFrame(data, next);
+    if (result === GHOSTTY_SUCCESS) {
+      const renderResult = this.wasm.exports.restty_render_update(this.terminalHandle);
+      if (renderResult === 0) return { status: "page" };
+      const error = `render_update error=${renderResult} (${wasmErrorName(renderResult)})`;
+      this.cancel(true);
+      return { status: "error", error };
+    }
+    if (result === GHOSTTY_NO_VALUE) {
+      this.finish(true);
+      return { status: "finish" };
+    }
+
+    const error = `snapshot_reader_next error=${result} (${ghosttyResultName(result)})`;
+    this.cancel(true);
+    return { status: "error", error };
+  }
+
+  /** Queue the latest terminal resize while history is incomplete. */
+  queueResize(cols: number, rows: number): boolean {
+    if (!this.readerHandle) return false;
+    this.pendingResize = { cols, rows };
+    return true;
+  }
+
+  /** Release the decoder and keep any READY terminal and restored history. */
+  cancel(applyPendingResize = true): void {
+    this.finish(applyPendingResize);
+  }
+
+  private callWithFrame(
+    data: Uint8Array,
+    operation: (reader: number, dataPtr: number, dataLen: number) => number,
+  ): number {
+    if (!(data instanceof Uint8Array) || data.byteLength === 0) return -2;
+    const ptr = this.wasm.exports.restty_alloc(data.byteLength);
+    if (!ptr) return -1;
+    new Uint8Array(this.wasm.memory.buffer, ptr, data.byteLength).set(data);
+    const result = operation(this.readerHandle, ptr, data.byteLength);
+    this.wasm.exports.restty_free(ptr, data.byteLength);
+    return result;
+  }
+
+  private finish(applyPendingResize: boolean): void {
+    if (!this.readerHandle) return;
+    this.wasm.exports.restty_snapshot_reader_free?.(this.readerHandle);
+    this.readerHandle = 0;
+    this.wasm.releaseSnapshotReader(this.terminalHandle, this);
+
+    const resize = this.pendingResize;
+    this.pendingResize = null;
+    if (applyPendingResize && resize) {
+      this.wasm.exports.restty_resize(this.terminalHandle, resize.cols, resize.rows);
+      this.wasm.exports.restty_render_update(this.terminalHandle);
+    }
   }
 }
 

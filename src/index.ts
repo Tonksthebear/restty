@@ -62,4 +62,7 @@ export type {
   ResttyShaderStageMode,
   ResttyShaderStageBackend,
   ResttyShaderStageSource,
+  ResttySnapshotNextResult,
+  ResttySnapshotReader,
+  ResttySnapshotReadyResult,
 } from "./runtime/types";

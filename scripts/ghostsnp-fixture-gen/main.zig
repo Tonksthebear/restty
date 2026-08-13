@@ -37,6 +37,49 @@ fn feed(stream: *ghostty.TerminalStream, bytes: []const u8) void {
     stream.nextSlice(bytes);
 }
 
+fn writeIncrementalFrames(
+    io: std.Io,
+    alloc: Allocator,
+    out_dir: []const u8,
+    prefix: []const u8,
+    snapshot: []const u8,
+) !void {
+    var source: std.Io.Reader = .fixed(snapshot);
+    var decoder: ghostty.snapshot.Decoder = .init(&source);
+    var decoded = try decoder.ready(alloc, resttyIo(), .{
+        .max_continuation_bytes = 1024,
+    });
+    defer decoded.deinit(alloc);
+
+    const ready_name = try std.fmt.allocPrint(alloc, "{s}-ready-v1.bin", .{prefix});
+    defer alloc.free(ready_name);
+    try writeFixture(io, alloc, out_dir, ready_name, snapshot[0..source.seek]);
+
+    var frame_start = source.seek;
+    var page_index: usize = 0;
+    while (true) {
+        const progress = try decoder.next(alloc, &decoded.terminal.?);
+        if (progress) |_| {
+            const page_name = try std.fmt.allocPrint(
+                alloc,
+                "{s}-page-{d:0>3}-v1.bin",
+                .{ prefix, page_index },
+            );
+            defer alloc.free(page_name);
+            try writeFixture(io, alloc, out_dir, page_name, snapshot[frame_start..source.seek]);
+            frame_start = source.seek;
+            page_index += 1;
+            continue;
+        }
+
+        const finish_name = try std.fmt.allocPrint(alloc, "{s}-finish-v1.bin", .{prefix});
+        defer alloc.free(finish_name);
+        try writeFixture(io, alloc, out_dir, finish_name, snapshot[frame_start..source.seek]);
+        if (source.seek != snapshot.len) return error.TrailingSnapshotData;
+        break;
+    }
+}
+
 /// Rich matrix fixture: scrollback, SGR attrs, colors, cursor, kitty kb, mouse.
 fn buildRichMatrix(alloc: Allocator) ![]u8 {
     var term = try ghostty.Terminal.init(resttyIo(), alloc, .{
@@ -84,6 +127,40 @@ fn buildRichMatrix(alloc: Allocator) ![]u8 {
     return try encodeTerminal(alloc, &term, .ground);
 }
 
+fn buildBlank(alloc: Allocator) ![]u8 {
+    var term = try ghostty.Terminal.init(resttyIo(), alloc, .{
+        .cols = 40,
+        .rows = 12,
+        .max_scrollback_bytes = 2_000_000,
+    });
+    defer term.deinit(alloc);
+    return try encodeTerminal(alloc, &term, .ground);
+}
+
+fn buildIncrementalHistory(alloc: Allocator) ![]u8 {
+    var term = try ghostty.Terminal.init(resttyIo(), alloc, .{
+        .cols = 215,
+        .rows = 2,
+        .max_scrollback_bytes = 20_000_000,
+    });
+    defer term.deinit(alloc);
+
+    var stream = ghostty.TerminalStream.init(.{
+        .allocator = alloc,
+        .handler = .init(&term),
+        .continuation_max_bytes = 1024,
+    });
+    defer stream.deinit();
+
+    var line_buf: [64]u8 = undefined;
+    for (0..1000) |i| {
+        const line = try std.fmt.bufPrint(&line_buf, "HISTORY-LINE-{d:0>4}\r\n", .{i});
+        feed(&stream, line);
+    }
+    feed(&stream, "READY-PAINT");
+    return try encodeTerminal(alloc, &term, .ground);
+}
+
 pub fn main(init: std.process.Init) !void {
     const alloc = init.gpa;
     const io = init.io;
@@ -105,4 +182,12 @@ pub fn main(init: std.process.Init) !void {
         std.process.exit(1);
     }
     try writeFixture(io, alloc, out_dir, "rich-matrix-v1.bin", rich);
+
+    const history = try buildIncrementalHistory(alloc);
+    defer alloc.free(history);
+    try writeIncrementalFrames(io, alloc, out_dir, "incremental-history", history);
+
+    const blank = try buildBlank(alloc);
+    defer alloc.free(blank);
+    try writeIncrementalFrames(io, alloc, out_dir, "incremental-blank", blank);
 }

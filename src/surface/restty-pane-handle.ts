@@ -4,7 +4,7 @@ import type {
   ResttyManagedAppPane,
   ResttyManagedPaneSearchUiStyleOptions,
 } from "./pane-app-manager";
-import type { ResttySearchState, ResttyShaderStage } from "../runtime/types";
+import type { ResttySearchState, ResttyShaderStage, ResttySnapshotReader } from "../runtime/types";
 import type {
   ResttyPaneSearchUiCloseOptions,
   ResttyPaneSearchUiOpenOptions,
@@ -37,6 +37,7 @@ export type ResttyPaneApi = {
   sendKeyInput: (text: string, source?: string) => void;
   clearScreen: () => void;
   loadBinarySnapshot: (data: Uint8Array) => boolean;
+  createBinarySnapshotReader: () => ResttySnapshotReader | null;
   getColorForeground: () => number | null;
   getColorBackground: () => number | null;
   getColorCursor: () => number | null;
@@ -127,6 +128,10 @@ export class ResttyPaneHandle implements ResttyPaneApi {
 
   loadBinarySnapshot(data: Uint8Array): boolean {
     return this.resolvePane().app.loadBinarySnapshot(data);
+  }
+
+  createBinarySnapshotReader(): ResttySnapshotReader | null {
+    return this.resolvePane().app.createBinarySnapshotReader();
   }
 
   getColorForeground(): number | null {

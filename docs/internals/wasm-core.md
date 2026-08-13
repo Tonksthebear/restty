@@ -18,8 +18,10 @@ updates, output draining, link metadata, and kitty image placement buffers.
   - uses `export` to expose functions and memory layout
 - Toolchain: Zig `0.16.0` exact; ghostty-org pin documented in
   `docs/internals/ghostty-lib-vt-patch.md`.
-- Snapshot import: `restty_snapshot_import` decodes GHOSTSNP via
-  `ghostty.snapshot.decodeExact` (import-only; no export helpers).
+- Snapshot import: `restty_snapshot_import` decodes a complete GHOSTSNP.
+- Incremental snapshot import uses one `ghostty.snapshot.Decoder` and queued reader per subscription.
+- READY exposes the restored terminal for paint.
+- Each later call consumes one PAGE or validates FINISH.
 
 ## Core Types
 - `Terminal`: maintains state, scrollback, screen, modes, etc.

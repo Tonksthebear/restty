@@ -218,18 +218,30 @@ const restty = new Restty({
   },
 });
 
-// Sole production snapshot install path: GHOSTSNP bytes from Hub/Core.
-// loadBinarySnapshot fails closed on non-GHOSTSNP / invalid blobs.
-const ok = restty.loadBinarySnapshot(ghostsnpBytes);
-if (!ok) {
-  // handle import failure; do not fall back to a second snapshot format
+// Create one reader for each attach subscription.
+const reader = restty.createBinarySnapshotReader();
+if (!reader) throw new Error("snapshot reader unavailable");
+
+// Feed opaque bytes through READY. Restty can paint after this call.
+const ready = reader.ready(readyFrame);
+if (ready.status === "error") throw new Error(ready.error);
+
+// Feed each later Snapshot frame in order.
+for (const frame of historyAndFinishFrames) {
+  const result = reader.next(frame);
+  if (result.status === "page") continue;
+  if (result.status === "finish") break;
+
+  // READY remains usable after a later history error.
+  console.warn(result.error);
+  break;
 }
 ```
 
 | Concern | Owner |
 | --- | --- |
 | Terminal truth / scrollback / modes | Core + Ghostty backend |
-| GHOSTSNP **import** and render | Restty (`loadBinarySnapshot`) |
+| GHOSTSNP **import** and render | Restty (`createBinarySnapshotReader`) |
 | PTY **query replies** (DA, DSR, OSC colors, …) | Core (muted in Restty when `readOnly: true`) |
 | Keyboard + mouse **input encoding** | Restty → session PTY sink (still live under `readOnly`) |
 

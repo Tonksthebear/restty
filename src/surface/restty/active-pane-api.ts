@@ -6,6 +6,7 @@ import type {
   ResttyPaneSearchUiOpenOptions,
 } from "../pane-search-ui";
 import type { ResttyManagedPaneSearchUiStyleOptions } from "../pane-app-manager";
+import type { ResttySnapshotReader } from "../../runtime/types";
 
 export abstract class ResttyActivePaneApi {
   protected abstract requireActivePaneHandle(): ResttyPaneHandle;
@@ -52,6 +53,10 @@ export abstract class ResttyActivePaneApi {
 
   loadBinarySnapshot(data: Uint8Array): boolean {
     return this.requireActivePaneHandle().loadBinarySnapshot(data);
+  }
+
+  createBinarySnapshotReader(): ResttySnapshotReader | null {
+    return this.requireActivePaneHandle().createBinarySnapshotReader();
   }
 
   getColorForeground(): number | null {

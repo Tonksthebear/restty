@@ -29,6 +29,13 @@ const ErrorCode = enum(u32) {
     internal = 4,
 };
 
+const SnapshotResult = enum(i32) {
+    success = 0,
+    out_of_memory = -1,
+    invalid_value = -2,
+    no_value = -4,
+};
+
 const CellFlags = struct {
     const hyperlink: u16 = 1 << 0;
     const has_grapheme: u16 = 1 << 1;
@@ -313,7 +320,49 @@ const Restty = struct {
     },
     rows: u16,
     cols: u16,
+    snapshot_reader: ?*SnapshotReader = null,
 };
+
+/// One stable Ghostty reader and decoder for one incremental subscription.
+/// Each public operation installs one borrowed frame before it calls Ghostty.
+const SnapshotReader = struct {
+    const State = enum {
+        start,
+        history,
+        finished,
+        failed,
+    };
+
+    owner: *Restty,
+    source: std.Io.Reader,
+    decoder: ghostty.snapshot.Decoder,
+    state: State = .start,
+
+    fn queueFrame(self: *SnapshotReader, data: []const u8) bool {
+        if (data.len == 0 or self.source.seek != self.source.end) return false;
+        self.source = .fixed(data);
+        return true;
+    }
+
+    fn finishFrame(self: *SnapshotReader) bool {
+        const consumed = self.source.seek == self.source.end;
+        self.source = .fixed(&.{});
+        return consumed;
+    }
+};
+
+fn snapshotErrorResult(err: anyerror) i32 {
+    return @intFromEnum(switch (err) {
+        error.OutOfMemory => SnapshotResult.out_of_memory,
+        else => SnapshotResult.invalid_value,
+    });
+}
+
+fn freeSnapshotReader(reader: *SnapshotReader) void {
+    const owner = reader.owner;
+    if (owner.snapshot_reader == reader) owner.snapshot_reader = null;
+    owner.alloc.destroy(reader);
+}
 
 fn packRGBA(rgb: ghostty.color.RGB, a: u8) u32 {
     return @as(u32, rgb.r) | (@as(u32, rgb.g) << 8) | (@as(u32, rgb.b) << 16) | (@as(u32, a) << 24);
@@ -582,6 +631,7 @@ pub export fn restty_create(cols: u16, rows: u16, max_scrollback: u32) ?*Restty 
 
 pub export fn restty_destroy(handle: ?*Restty) void {
     const h = handle orelse return;
+    if (h.snapshot_reader) |reader| freeSnapshotReader(reader);
     h.stream.deinit();
     h.render_state.deinit(h.alloc);
     h.term.deinit(h.alloc);
@@ -805,6 +855,7 @@ pub export fn restty_snapshot_import(
 ) callconv(.c) u32 {
     const h = self orelse return @intFromEnum(ErrorCode.invalid_handle);
     if (data_len == 0) return @intFromEnum(ErrorCode.invalid_arg);
+    if (h.snapshot_reader != null) return @intFromEnum(ErrorCode.invalid_arg);
 
     const data = data_ptr[0..@as(usize, data_len)];
     var source: std.Io.Reader = .fixed(data);
@@ -845,6 +896,105 @@ pub export fn restty_snapshot_import(
 
     ensureScrollingRegion(h);
     return @intFromEnum(ErrorCode.ok);
+}
+
+/// Create one incremental GHOSTSNP reader for one subscription.
+pub export fn restty_snapshot_reader_new(self: ?*Restty) ?*SnapshotReader {
+    const h = self orelse return null;
+    if (h.snapshot_reader != null) return null;
+
+    const reader = h.alloc.create(SnapshotReader) catch return null;
+    reader.* = undefined;
+    reader.owner = h;
+    reader.source = .fixed(&.{});
+    reader.decoder = .init(&reader.source);
+    reader.state = .start;
+    h.snapshot_reader = reader;
+    return reader;
+}
+
+/// Decode one opaque frame through READY and expose its terminal immediately.
+pub export fn restty_snapshot_reader_ready(
+    reader_: ?*SnapshotReader,
+    data_ptr: [*]const u8,
+    data_len: u32,
+) callconv(.c) i32 {
+    const reader = reader_ orelse return @intFromEnum(SnapshotResult.invalid_value);
+    if (reader.state != .start) return @intFromEnum(SnapshotResult.invalid_value);
+    if (!reader.queueFrame(data_ptr[0..@as(usize, data_len)])) {
+        return @intFromEnum(SnapshotResult.invalid_value);
+    }
+
+    const h = reader.owner;
+    var decoded = reader.decoder.ready(
+        h.alloc,
+        resttyIo(),
+        .{ .max_continuation_bytes = CONTINUATION_MAX_BYTES },
+    ) catch |err| {
+        reader.state = .failed;
+        _ = reader.finishFrame();
+        return snapshotErrorResult(err);
+    };
+    defer decoded.deinit(h.alloc);
+
+    if (!reader.finishFrame()) {
+        reader.state = .failed;
+        return @intFromEnum(SnapshotResult.invalid_value);
+    }
+
+    h.stream.deinit();
+    h.render_state.deinit(h.alloc);
+    h.term.deinit(h.alloc);
+    h.render_state = .empty;
+
+    h.term = decoded.toOwned();
+    h.stream = makeStream(h);
+    switch (decoded.continuation) {
+        .ground => {},
+        .bytes => |bytes| if (bytes.len > 0) h.stream.nextSlice(bytes),
+    }
+
+    ensureScrollingRegion(h);
+    reader.state = .history;
+    return @intFromEnum(SnapshotResult.success);
+}
+
+/// Decode one opaque PAGE frame, or validate an opaque FINISH frame.
+pub export fn restty_snapshot_reader_next(
+    reader_: ?*SnapshotReader,
+    data_ptr: [*]const u8,
+    data_len: u32,
+) callconv(.c) i32 {
+    const reader = reader_ orelse return @intFromEnum(SnapshotResult.invalid_value);
+    if (reader.state != .history) return @intFromEnum(SnapshotResult.invalid_value);
+    if (!reader.queueFrame(data_ptr[0..@as(usize, data_len)])) {
+        return @intFromEnum(SnapshotResult.invalid_value);
+    }
+
+    const progress = reader.decoder.next(
+        reader.owner.alloc,
+        &reader.owner.term,
+    ) catch |err| {
+        reader.state = .failed;
+        _ = reader.finishFrame();
+        return snapshotErrorResult(err);
+    };
+
+    if (!reader.finishFrame()) {
+        reader.state = .failed;
+        return @intFromEnum(SnapshotResult.invalid_value);
+    }
+    if (progress == null) {
+        reader.state = .finished;
+        return @intFromEnum(SnapshotResult.no_value);
+    }
+    return @intFromEnum(SnapshotResult.success);
+}
+
+/// Release a reader without releasing the READY terminal or restored history.
+pub export fn restty_snapshot_reader_free(reader_: ?*SnapshotReader) void {
+    const reader = reader_ orelse return;
+    freeSnapshotReader(reader);
 }
 
 pub export fn restty_render_update(handle: ?*Restty) u32 {

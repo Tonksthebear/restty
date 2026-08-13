@@ -9,7 +9,12 @@ import {
 import type { ResttyWasm, ResttyWasmExports } from "../../wasm";
 import { normalizeNewlines } from "../create-app-io-utils";
 import { resolveMaxScrollbackBytes } from "../max-scrollback";
-import type { ResttyApp, ResttyAppCallbacks, ResttyAppSession } from "../types";
+import type {
+  ResttyApp,
+  ResttyAppCallbacks,
+  ResttyAppSession,
+  ResttySnapshotReader,
+} from "../types";
 import type { PtyInputRuntime } from "./pty-input-runtime";
 import type { RuntimeInteraction } from "./interaction-runtime";
 
@@ -192,6 +197,7 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     nextBlinkTime: performance.now() + CURSOR_BLINK_MS,
   };
   const maxScrollbackBytes = resolveMaxScrollbackBytes(options);
+  let activeSnapshotReader: ResttySnapshotReader | null = null;
 
   function updateFps() {
     internalState.frameCount += 1;
@@ -414,6 +420,7 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
 
   function loadBinarySnapshot(data: Uint8Array): boolean {
     const shared = readState();
+    if (activeSnapshotReader) return false;
     if (!shared.wasmReady || !shared.wasm || !shared.wasmHandle) return false;
     if (!(data instanceof Uint8Array) || data.byteLength === 0) return false;
     if (interaction.selectionState.active || interaction.selectionState.dragging) {
@@ -462,6 +469,94 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
     handleSearchWasmReset();
     writeState({ needsRender: true });
     return true;
+  }
+
+  function createBinarySnapshotReader(): ResttySnapshotReader | null {
+    const shared = readState();
+    if (!shared.wasmReady || !shared.wasm || !shared.wasmHandle || activeSnapshotReader) {
+      return null;
+    }
+
+    let nextHandle = 0;
+    try {
+      nextHandle = createWasmHandle(shared.wasm);
+    } catch (e) {
+      appendLog(`[snapshot] createWasmHandle failed: ${e}`);
+      return null;
+    }
+
+    const decoder = shared.wasm.createSnapshotReader(nextHandle);
+    if (!decoder) {
+      shared.wasm.destroy(nextHandle);
+      return null;
+    }
+
+    let phase: "start" | "history" | "done" = "start";
+    const reader: ResttySnapshotReader = {
+      ready(data) {
+        if (phase !== "start") {
+          return { status: "error", error: "snapshot reader is not awaiting READY" };
+        }
+        if (interaction.selectionState.active || interaction.selectionState.dragging) {
+          interaction.clearSelection();
+        }
+        if (interaction.linkState.hoverId) interaction.updateLinkHover(null);
+
+        decoder.queueResize(gridState.cols || 80, gridState.rows || 24);
+        const error = decoder.ready(data);
+        if (error) {
+          appendLog(`[snapshot] incremental READY failed: ${error}`);
+          phase = "done";
+          activeSnapshotReader = null;
+          shared.wasm?.destroy(nextHandle);
+          return { status: "error", error };
+        }
+
+        try {
+          shared.wasm?.destroy(shared.wasmHandle);
+        } catch {
+          // Ignore WASM destroy errors during the READY handle swap.
+        }
+        writeState({ wasmHandle: nextHandle, needsRender: true });
+        rehydrateInputModesAfterSnapshotImport(nextHandle);
+        ptyInputRuntime.cancelSyncOutputReset();
+        handleSearchWasmReset();
+        phase = "history";
+        return { status: "ready" };
+      },
+      next(data) {
+        if (phase !== "history") {
+          return { status: "error", error: "snapshot reader is not awaiting history" };
+        }
+
+        const result = decoder.next(data);
+        if (result.status === "page") {
+          markSearchDirty();
+          writeState({ needsRender: true });
+          return result;
+        }
+
+        phase = "done";
+        activeSnapshotReader = null;
+        if (result.status === "error") {
+          appendLog(`[snapshot] incremental history failed: ${result.error}`);
+        }
+        writeState({ needsRender: true });
+        return result;
+      },
+      cancel() {
+        if (phase === "done") return;
+        const preserveReadyTerminal = phase === "history";
+        decoder.cancel(preserveReadyTerminal);
+        phase = "done";
+        activeSnapshotReader = null;
+        if (!preserveReadyTerminal) shared.wasm?.destroy(nextHandle);
+        writeState({ needsRender: preserveReadyTerminal });
+      },
+    };
+
+    activeSnapshotReader = reader;
+    return reader;
   }
 
   function rehydrateInputModesAfterSnapshotImport(handle: number) {
@@ -754,6 +849,8 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
   }
 
   function destroy() {
+    activeSnapshotReader?.cancel();
+    activeSnapshotReader = null;
     cancelAnimationFrame(internalState.rafId);
     internalState.rafId = 0;
     internalState.backend = "none";
@@ -847,6 +944,7 @@ export function createRuntimeAppApi(options: CreateRuntimeAppApiOptions): Runtim
       sendKeyInput: ptyInputRuntime.sendKeyInput,
       clearScreen,
       loadBinarySnapshot,
+      createBinarySnapshotReader,
       getColorForeground,
       getColorBackground,
       getColorCursor,
