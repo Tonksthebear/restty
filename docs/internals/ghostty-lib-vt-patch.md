@@ -1,15 +1,17 @@
 # Ghostty `lib_vt.zig` local patch
 
-Restty pins **trybotster/ghostty** at the pristine SHA:
+Restty pins **trybotster/ghostty** at the approved merge SHA:
 
-`2a465b03e217d32350744944453e835816267da6`
+`eb72ec61304ea256be1d86ed8fa961c84e43ecbd`
 
-The submodule **gitlink** records that SHA only. Pin includes trybotster SEGV fix commits; sole restty worktree patch remains
-are required for clone/CI.
+The submodule **gitlink** records that SHA only. The pin includes the trybotster
+logging and page-pressure fixes. The Restty worktree patch remains required for
+clone and CI builds.
 
 ## Sole intentional patch (restty-owned)
 
-File applied to the submodule worktree (never committed into ghostty-org):
+The build applies this file to the submodule worktree. The patch is not committed
+into trybotster/ghostty.
 
 - Patch: `patches/ghostty-lib-vt-snapshot-reexport.patch`
 - Target: `reference/ghostty/src/lib_vt.zig`
@@ -20,19 +22,17 @@ pub const snapshot = terminal.snapshot;
 
 (plus a short comment block above the re-export)
 
-This is the only source change relative to pinned Ghostty at the pin SHA.
-No Ghostty PR is filed unless a human requests one. The same one-liner is
-what would be proposed upstream if a human later asks for a PR.
+This is the only source change relative to the pinned Ghostty commit. Restty does
+not publish this patch outside the trybotster organization.
 
 ## Apply steps
 
 1. Init/update submodule to the pin:
    ```bash
-   # After .gitmodules URL retarget (e.g. Tonksthebear → ghostty-org), existing
-   # checkouts may still have the old URL in .git/config until you sync:
+   # Existing checkouts can retain an old URL in .git/config until this sync:
    git submodule sync --recursive
    git submodule update --init reference/ghostty
-   # gitlink must be 2a465b03e217d32350744944453e835816267da6
+   # gitlink must be eb72ec61304ea256be1d86ed8fa961c84e43ecbd
    ```
 
 2. Apply the restty-owned patch (idempotent):
@@ -57,7 +57,7 @@ Restty's WASM core imports `ghostty-vt` and needs `decode` / `decodeExact` /
 
 ## Obsolete fork patches (removed)
 
-The Tonksthebear wasm fork patches are no longer applied:
+The prior Wasm fork patches are no longer applied:
 
 - `terminal/style.zig` BoldColor stub for `.lib`
 - `terminal/mouse_shape.zig` build_config skip for `.lib`
@@ -72,23 +72,17 @@ Upstream lib-vt at this pin does not need them.
 - Import-only in restty (no encode path)
 - Fail closed on `InvalidMagic` / `UnsupportedVersion` / other decode errors
 
-## Pre-existing residual test failures (not regressions from this pin)
+## Wasm API compatibility
 
-Base branch before the bump was already red on Kitty graphics and search
-(`c7932be` measured ~154 pass / 13 fail). This bump is **160 pass / 9 fail** —
-a strict subset of base failures; zero new failures introduced.
+The approved pin keeps the Zig module API that Restty uses. Restty does not call
+Ghostty's removed typed Wasm allocation exports. Restty owns `restty_alloc` and
+`restty_free`, and the generated Wasm exports those functions.
 
-Upstream `terminal/build_options.zig` disables `kitty_graphics` on
-`wasm32-freestanding` (timestamp requirement). That matches pre-existing
-Kitty graphics test red on base — not a regression from Phase 2a. Re-enabling
-would need a second approved local patch or an upstream change (sole-patch
-rule holds for Phase 2a). Search ABI re-port is a follow-up, not a snapshot gate.
-
-`std.Io` freestanding: usable via `std.Io.failing` (same as upstream C
-libghostty-vt wrappers). No improvised shim.
+Freestanding `std.Io` uses `std.Io.failing`. This matches the Ghostty lib-vt
+wrapper pattern.
 
 ## Submodule packaging
 
-- **Gitlink:** pristine `2a465b03e…` (fetchable from ghostty-org)
+- **Gitlink:** approved `eb72ec613…` (fetchable from trybotster/ghostty)
 - **Patch:** restty-owned, applied at build time
 - Fresh clone path: `submodule update --init` → `bun run build:wasm` (auto-apply)

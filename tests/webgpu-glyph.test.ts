@@ -1,7 +1,7 @@
 import "../scripts/setup-wgpu-polyfill";
 import { test, expect } from "bun:test";
 import { installPolyfill, GPUTextureUsage, GPUBufferUsage, GPUMapMode } from "wgpu-polyfill";
-import { Font, buildAtlas, atlasToRGBA, PixelMode } from "../reference/text-shaper/src/index.ts";
+import { Font, buildAtlas, atlasToRGBA, PixelMode } from "text-shaper";
 import { GLYPH_SHADER_NEAREST } from "../src/renderer/shaders/glyph-wgsl.ts";
 
 const FONT_PATH = "playground/public/fonts/SymbolsNerdFontMono-Regular.ttf";

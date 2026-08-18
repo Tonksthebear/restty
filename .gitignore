@@ -21,6 +21,7 @@ coverage/
 wasm/.zig-cache/
 wasm/zig-cache/
 wasm/zig-out/
+wasm/zig-pkg/
 
 # Generated bundles (can be re-built via npm scripts)
 playground/public/app.js

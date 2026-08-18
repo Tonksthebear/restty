@@ -21,7 +21,7 @@ function runCommand(command: string[], cwd: string): void {
   }
 }
 
-// Pristine ghostty-org pin + restty-owned one-line lib_vt re-export.
+// Approved trybotster/ghostty pin + restty-owned one-line lib_vt re-export.
 // See docs/internals/ghostty-lib-vt-patch.md and
 // patches/ghostty-lib-vt-snapshot-reexport.patch.
 console.log("Ensuring Ghostty lib_vt snapshot re-export patch...");

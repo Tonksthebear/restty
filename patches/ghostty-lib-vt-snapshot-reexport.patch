@@ -1,8 +1,8 @@
 diff --git a/src/lib_vt.zig b/src/lib_vt.zig
-index c9edd20b0..1307e4679 100644
+index ba97dae1e..cc2230204 100644
 --- a/src/lib_vt.zig
 +++ b/src/lib_vt.zig
-@@ -80,6 +80,10 @@ pub const Terminal = terminal.Terminal;
+@@ -92,6 +92,10 @@ pub const Terminal = terminal.Terminal;
  pub const TerminalStream = terminal.TerminalStream;
  pub const Stream = terminal.Stream;
  pub const StreamAction = terminal.StreamAction;

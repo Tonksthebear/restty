@@ -2,6 +2,10 @@
 
 Committed binary snapshots for Restty A8 (`tests/ghostsnp-conformance.test.ts`).
 
+The fixtures were generated from trybotster/ghostty commit
+`eb72ec61304ea256be1d86ed8fa961c84e43ecbd`. Regeneration produced the same
+fixture bytes as the prior pin for this fixture set.
+
 | File | Source | Purpose |
 | --- | --- | --- |
 | `rich-matrix-v1.bin` | Ghostty-pin encode via `scripts/ghostsnp-fixture-gen` | Scrollback, SGR attrs, palette, cursor, Kitty keyboard flags, mouse 1000/1006 |

@@ -3,7 +3,7 @@
 ## Status
 
 - `reference/ghostty` was updated to upstream `main` at `925992abd98d83f08dc367f6b6c6265ee0510e60`.
-- `reference/text-shaper` was already current on `origin/main`, so there was no pointer change there.
+- Restty uses the `text-shaper` package dependency. The repository does not require a text-shaper reference submodule.
 
 ## Goal
 

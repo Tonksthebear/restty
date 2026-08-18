@@ -16,7 +16,7 @@ updates, output draining, link metadata, and kitty image placement buffers.
   - imports `ghostty-vt` as a module
   - exports a C ABI for JS
   - uses `export` to expose functions and memory layout
-- Toolchain: Zig `0.16.0` exact; ghostty-org pin documented in
+- Toolchain: Zig `0.16.0` exact; trybotster/ghostty pin documented in
   `docs/internals/ghostty-lib-vt-patch.md`.
 - Snapshot import: `restty_snapshot_import` decodes a complete GHOSTSNP.
 - Incremental snapshot import uses one `ghostty.snapshot.Decoder` and queued reader per subscription.

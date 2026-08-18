@@ -1,6 +1,3 @@
 [submodule "reference/ghostty"]
 	path = reference/ghostty
 	url = https://github.com/trybotster/ghostty.git
-[submodule "reference/text-shaper"]
-	path = reference/text-shaper
-	url = https://github.com/wiedymi/text-shaper.git

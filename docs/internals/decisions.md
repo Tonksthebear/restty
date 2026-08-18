@@ -17,7 +17,7 @@
 ## WASM Strategy
 - Custom Zig wrapper over ghostty-vt Zig API (not C ABI rewrite).
 - Avoid relying on current C ABI for Terminal/RenderState.
-- Pin ghostty-org/ghostty @ `22d13172cde98a0a4dda05d3d6a3fcb0dd8ed018`, Zig `0.16.0`.
+- Pin trybotster/ghostty @ `eb72ec61304ea256be1d86ed8fa961c84e43ecbd`, Zig `0.16.0`.
 - Sole local Ghostty patch: re-export `snapshot` from `src/lib_vt.zig`
   (see `docs/internals/ghostty-lib-vt-patch.md`). Obsolete wasm fork patches
   (style/mouse_shape/quirks) are dropped.
