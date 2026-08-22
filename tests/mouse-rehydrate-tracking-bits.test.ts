@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { MouseController, wheelReportSteps } from "../src/input/mouse";
+import { MouseController } from "../src/input/mouse";
 
 function createMouse() {
   const replies: string[] = [];
@@ -13,6 +13,16 @@ function createMouse() {
   return { mouse, replies };
 }
 
+function lineWheel(deltaY: number): WheelEvent {
+  return {
+    deltaY,
+    deltaMode: 1,
+    shiftKey: false,
+    altKey: false,
+    ctrlKey: false,
+  } as WheelEvent;
+}
+
 test("rehydrateFromTrackingBits enables SGR mouse tracking without CSI", () => {
   const { mouse, replies } = createMouse();
   expect(mouse.isActive()).toBe(false);
@@ -22,15 +32,9 @@ test("rehydrateFromTrackingBits enables SGR mouse tracking without CSI", () => {
   expect(mouse.isActive()).toBe(true);
   expect(mouse.getStatus().detail).toBe("sgr");
 
-  const wheel = {
-    deltaY: 1,
-    shiftKey: false,
-    altKey: false,
-    ctrlKey: false,
-  } as WheelEvent;
-  expect(mouse.sendMouseEvent("wheel", wheel)).toBe(true);
+  expect(mouse.sendMouseEvent("wheel", lineWheel(1))).toBe(true);
   expect(replies.length).toBeGreaterThan(0);
-  expect(replies[0]).toMatch(/^\x1b\[</);
+  expect(replies[0]!.startsWith("\x1b[<")).toBe(true);
 });
 
 test("rehydrateFromTrackingBits clears stale CSI shadow when bits are zero", () => {
@@ -42,13 +46,7 @@ test("rehydrateFromTrackingBits clears stale CSI shadow when bits are zero", () 
   expect(mouse.isActive()).toBe(false);
   expect(mouse.getStatus().detail).toBe("x10");
 
-  const wheel = {
-    deltaY: 1,
-    shiftKey: false,
-    altKey: false,
-    ctrlKey: false,
-  } as WheelEvent;
-  expect(mouse.sendMouseEvent("wheel", wheel)).toBe(false);
+  expect(mouse.sendMouseEvent("wheel", lineWheel(1))).toBe(false);
   expect(replies).toEqual([]);
 });
 
@@ -57,31 +55,4 @@ test("rehydrateFromTrackingBits prefers sgr_pixels over sgr", () => {
   mouse.rehydrateFromTrackingBits((1 << 1) | (1 << 5) | (1 << 7));
   expect(mouse.isActive()).toBe(true);
   expect(mouse.getStatus().detail).toBe("sgr_pixels");
-});
-
-test("wheelReportSteps scales pixel delta instead of collapsing to ±1", () => {
-  expect(wheelReportSteps({ deltaY: 0, deltaMode: 0 } as WheelEvent)).toBe(0);
-  expect(wheelReportSteps({ deltaY: -1, deltaMode: 0 } as WheelEvent)).toBe(-1);
-  expect(wheelReportSteps({ deltaY: 40, deltaMode: 0 } as WheelEvent)).toBe(1);
-  expect(wheelReportSteps({ deltaY: -120, deltaMode: 0 } as WheelEvent)).toBe(-3);
-  expect(wheelReportSteps({ deltaY: 400, deltaMode: 0 } as WheelEvent)).toBe(8); // capped
-  expect(wheelReportSteps({ deltaY: 3, deltaMode: 1 } as WheelEvent)).toBe(3);
-});
-
-test("sendMouseEvent wheel emits multiple SGR reports for large deltaY", () => {
-  const { mouse, replies } = createMouse();
-  mouse.rehydrateFromTrackingBits((1 << 1) | (1 << 5));
-  const wheel = {
-    deltaY: -120,
-    deltaMode: 0,
-    shiftKey: false,
-    altKey: false,
-    ctrlKey: false,
-  } as WheelEvent;
-  expect(mouse.sendMouseEvent("wheel", wheel)).toBe(true);
-  // 120px / 40 ≈ 3 steps of button 64 (wheel up)
-  expect(replies.length).toBe(3);
-  for (const r of replies) {
-    expect(r).toMatch(/^\x1b\[<64;/);
-  }
 });

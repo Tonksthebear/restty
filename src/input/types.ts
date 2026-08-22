@@ -112,6 +112,14 @@ export type InputHandlerOptions = {
    */
   positionToPixel?: (event: MouseEvent | PointerEvent | WheelEvent) => { x: number; y: number };
   /**
+   * Cell height in CSS pixels for wheel accumulation.
+   */
+  getCellHeight?: () => number;
+  /**
+   * Viewport rows for wheel page deltas and per-event report bound.
+   */
+  getRows?: () => number;
+  /**
    * Provide default colors for OSC 10/11/12 queries (RGB 0-255).
    */
   getDefaultColors?: () => DefaultColors;

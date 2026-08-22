@@ -56,13 +56,21 @@ function viewportRows(handle: number): string[] {
   return rows;
 }
 
-function cellRgb(state: NonNullable<ReturnType<ResttyWasm["getRenderState"]>>, row: number, col: number): number {
+function cellRgb(
+  state: NonNullable<ReturnType<ResttyWasm["getRenderState"]>>,
+  row: number,
+  col: number,
+): number {
   const i = row * state.cols + col;
   const bytes = state.fgBytes;
   return ((bytes[i * 4] ?? 0) << 16) | ((bytes[i * 4 + 1] ?? 0) << 8) | (bytes[i * 4 + 2] ?? 0);
 }
 
-function cellChar(state: NonNullable<ReturnType<ResttyWasm["getRenderState"]>>, row: number, col: number): string {
+function cellChar(
+  state: NonNullable<ReturnType<ResttyWasm["getRenderState"]>>,
+  row: number,
+  col: number,
+): string {
   const cp = state.codepoints[row * state.cols + col] ?? 0;
   return cp === 0 ? " " : String.fromCodePoint(cp);
 }
@@ -374,8 +382,8 @@ test("GHOSTSNP rich-matrix rehydrates Kitty keyboard flags and mouse modes for e
     input.rehydrateMouseFromTrackingBits?.(bits);
     expect(input.isMouseActive()).toBe(true);
     const wheel = {
-      deltaY: 40,
-      deltaMode: 0,
+      deltaY: 1,
+      deltaMode: 1,
       shiftKey: false,
       altKey: false,
       ctrlKey: false,
@@ -502,7 +510,9 @@ test("public loadBinarySnapshot reapplies the browser grid after a GHOSTSNP hand
 
     wasm.scrollViewport(activeHandle, -10_000);
     wasm.renderUpdate(activeHandle);
-    expect(viewportRows(activeHandle).some((row) => row.includes("SCROLLBACK-LINE-000"))).toBe(true);
+    expect(viewportRows(activeHandle).some((row) => row.includes("SCROLLBACK-LINE-000"))).toBe(
+      true,
+    );
   } finally {
     if (harness.sharedState.wasmHandle) {
       wasm.destroy(harness.sharedState.wasmHandle);

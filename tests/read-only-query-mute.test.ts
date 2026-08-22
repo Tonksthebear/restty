@@ -65,14 +65,7 @@ test("readOnly mutes OSC 10/11/12, DA, and DSR query replies on the PTY sink", (
   live.filterOutput("\u001b[0c");
   live.filterOutput("\u001b[6n");
 
-  expect(liveSink).toEqual([
-    OSC10,
-    OSC11,
-    OSC12,
-    "\u001b[?1;2c",
-    "\u001b[?1;2c",
-    "\u001b[3;7R",
-  ]);
+  expect(liveSink).toEqual([OSC10, OSC11, OSC12, "\u001b[?1;2c", "\u001b[?1;2c", "\u001b[3;7R"]);
 
   // Same stimuli through readOnly handler → zero PTY sink traffic.
   input.filterOutput("\u001b]10;?\u0007");
@@ -119,8 +112,8 @@ test("readOnly keeps Kitty key encode and mouse encode on the same PTY sink", ()
   expect(input.isMouseActive()).toBe(true);
 
   const wheel = {
-    deltaY: 40,
-    deltaMode: 0,
+    deltaY: 1,
+    deltaMode: 1,
     shiftKey: false,
     altKey: false,
     ctrlKey: false,

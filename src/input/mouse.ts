@@ -11,6 +11,16 @@ export type MouseControllerOptions = {
   positionToCell: (event: MouseEvent | PointerEvent | WheelEvent) => CellPosition;
   /** Map pointer events to 1-based pixel coordinates (for SGR-Pixels mode). */
   positionToPixel?: (event: MouseEvent | PointerEvent | WheelEvent) => { x: number; y: number };
+  /**
+   * Cell height in CSS pixels for wheel accumulation.
+   * Defaults to 20 when omitted.
+   */
+  getCellHeight?: () => number;
+  /**
+   * Viewport rows. Scales page-mode deltas and bounds reports per event.
+   * Defaults to 24 when omitted.
+   */
+  getRows?: () => number;
 };
 
 type MotionMode = "none" | "drag" | "any";
@@ -29,6 +39,8 @@ export class MouseController {
   private button = 0;
   private flags = { 1000: false, 1002: false, 1003: false };
   private x10Event = false;
+  /** Accumulated wheel pixels until one cell height. */
+  private pendingWheelPx = 0;
 
   private sendReply: (data: string) => void;
   private positionToCell: (event: MouseEvent | PointerEvent | WheelEvent) => CellPosition;
@@ -36,11 +48,15 @@ export class MouseController {
     x: number;
     y: number;
   };
+  private getCellHeight: () => number;
+  private getRows: () => number;
 
   constructor(options: MouseControllerOptions) {
     this.sendReply = options.sendReply;
     this.positionToCell = options.positionToCell;
     this.positionToPixel = options.positionToPixel;
+    this.getCellHeight = options.getCellHeight ?? (() => 20);
+    this.getRows = options.getRows ?? (() => 24);
   }
 
   setReplySink(fn: (data: string) => void) {
@@ -57,6 +73,11 @@ export class MouseController {
     this.positionToPixel = fn;
   }
 
+  setCellMetrics(getCellHeight: () => number, getRows?: () => number) {
+    this.getCellHeight = getCellHeight;
+    if (getRows) this.getRows = getRows;
+  }
+
   setMode(mode: MouseMode) {
     this.mode = mode;
     if (mode === "on") {
@@ -67,6 +88,7 @@ export class MouseController {
       this.enabled = false;
       this.format = "x10";
       this.motion = "none";
+      this.pendingWheelPx = 0;
     } else {
       this.enabled = this.x10Event || this.flags[1000] || this.flags[1002] || this.flags[1003];
       if (this.flags[1003]) this.motion = "any";
@@ -132,6 +154,7 @@ export class MouseController {
     this.enabled = false;
     this.pressed = false;
     this.button = 0;
+    this.pendingWheelPx = 0;
 
     const bit = (n: number) => (bits & (1 << n)) !== 0;
     this.x10Event = bit(0);
@@ -158,6 +181,7 @@ export class MouseController {
     if (this.flags[1003]) this.motion = "any";
     else if (this.flags[1002]) this.motion = "drag";
     else this.motion = "none";
+    if (!this.enabled) this.pendingWheelPx = 0;
   }
 
   isActive() {
@@ -205,18 +229,29 @@ export class MouseController {
       return this.sendMouse(code, col, row, pixel, false);
     }
     if (kind === "wheel") {
-      // Do not collapse to Math.sign only: trackpads/mice emit large |deltaY|
-      // per event; one report per event feels laggy. Emit proportional steps
-      // (capped) so app mouse mode keeps pace with local scroll.
-      const steps = wheelReportSteps(event as WheelEvent);
-      if (steps === 0) return false;
-      const codeBase = steps < 0 ? 64 : 65;
-      const n = Math.abs(steps);
-      let sent = false;
-      for (let i = 0; i < n; i += 1) {
-        if (this.sendMouse(codeBase + mods, col, row, pixel, false)) sent = true;
+      // Browser wheel quantity is pixels/lines/pages, not terminal bytes.
+      // Accumulate against cell height and emit one discrete report per cell.
+      const cellH = Math.max(1, this.getCellHeight() || 20);
+      const rows = Math.max(1, this.getRows() || 24);
+      const dyPx = wheelDeltaPixels(event as WheelEvent, cellH, rows);
+      if (!dyPx) return false;
+      // Drop stale remainder on reverse so leftover motion does not invert.
+      if (this.pendingWheelPx !== 0 && Math.sign(this.pendingWheelPx) !== Math.sign(dyPx)) {
+        this.pendingWheelPx = 0;
       }
-      return sent;
+      this.pendingWheelPx += dyPx;
+      if (Math.abs(this.pendingWheelPx) < cellH) {
+        // Consume the event so local scroll does not also run.
+        return true;
+      }
+      const rawSteps = Math.trunc(this.pendingWheelPx / cellH);
+      if (!rawSteps) return true;
+      // Bound one event to one viewport. Keep unsent cells in the remainder.
+      const maxSteps = rows;
+      const n = Math.min(Math.abs(rawSteps), maxSteps);
+      this.pendingWheelPx -= Math.sign(rawSteps) * n * cellH;
+      const code = (rawSteps < 0 ? 64 : 65) + mods;
+      return this.sendMouseRepeated(code, col, row, pixel, n);
     }
     return false;
   }
@@ -248,49 +283,67 @@ export class MouseController {
     pixel: { x: number; y: number } | null,
     release: boolean,
   ) {
+    const seq = this.encodeMouse(code, col, row, pixel, release);
+    if (!seq) return false;
+    this.sendReply(seq);
+    return true;
+  }
+
+  private sendMouseRepeated(
+    code: number,
+    col: number,
+    row: number,
+    pixel: { x: number; y: number } | null,
+    count: number,
+  ) {
+    if (count <= 0) return false;
+    const one = this.encodeMouse(code, col, row, pixel, false);
+    if (!one) return false;
+    this.sendReply(count === 1 ? one : one.repeat(count));
+    return true;
+  }
+
+  private encodeMouse(
+    code: number,
+    col: number,
+    row: number,
+    pixel: { x: number; y: number } | null,
+    release: boolean,
+  ): string | null {
     if (this.format === "x10") {
-      if (col > 223 || row > 223) return false;
+      if (col > 223 || row > 223) return null;
       const cb = 32 + code;
       const cx = 32 + col;
       const cy = 32 + row;
-      this.sendReply(`\x1b[M${String.fromCharCode(cb, cx, cy)}`);
-      return true;
+      return `\x1b[M${String.fromCharCode(cb, cx, cy)}`;
     }
     if (this.format === "utf8") {
       const cb = String.fromCharCode(32 + code);
       const cx = String.fromCodePoint(32 + col);
       const cy = String.fromCodePoint(32 + row);
-      this.sendReply(`\x1b[M${cb}${cx}${cy}`);
-      return true;
+      return `\x1b[M${cb}${cx}${cy}`;
     }
     if (this.format === "urxvt") {
-      this.sendReply(`\x1b[${32 + code};${col};${row}M`);
-      return true;
+      return `\x1b[${32 + code};${col};${row}M`;
     }
     const suffix = release ? "m" : "M";
     if (this.format === "sgr_pixels" && pixel) {
-      this.sendReply(`\x1b[<${code};${pixel.x};${pixel.y}${suffix}`);
-      return true;
+      return `\x1b[<${code};${pixel.x};${pixel.y}${suffix}`;
     }
-    this.sendReply(`\x1b[<${code};${col};${row}${suffix}`);
-    return true;
+    return `\x1b[<${code};${col};${row}${suffix}`;
   }
 }
 
-/** Signed wheel steps for app mouse reports. 0 means ignore. Cap avoids floods. */
-export function wheelReportSteps(event: WheelEvent, maxSteps = 8): number {
+/**
+ * Convert a DOM wheel event into pixel delta for accumulation.
+ * DOM_DELTA_PIXEL = 0, LINE = 1, PAGE = 2.
+ */
+export function wheelDeltaPixels(event: WheelEvent, cellH: number, rows: number): number {
   const dy = event.deltaY;
   if (!dy || !Number.isFinite(dy)) return 0;
-  const sign = dy < 0 ? -1 : 1;
-  // DOM_DELTA_PIXEL = 0, LINE = 1, PAGE = 2
-  let abs: number;
-  if (event.deltaMode === 1) {
-    abs = Math.max(1, Math.round(Math.abs(dy)));
-  } else if (event.deltaMode === 2) {
-    abs = Math.max(1, Math.round(Math.abs(dy) * 24));
-  } else {
-    // Pixels: ~40px per line is a common trackpad/mouse line height proxy.
-    abs = Math.max(1, Math.round(Math.abs(dy) / 40));
-  }
-  return sign * Math.min(abs, maxSteps);
+  const h = Math.max(1, cellH);
+  const r = Math.max(1, rows);
+  if (event.deltaMode === 1) return dy * h;
+  if (event.deltaMode === 2) return dy * r * h;
+  return dy;
 }

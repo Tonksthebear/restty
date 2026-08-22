@@ -50,14 +50,15 @@ test("post-import rehydrate activates mouse from Ghostty bits without CSI to JS"
     expect(input.isMouseActive()).toBe(true);
 
     const wheel = {
-      deltaY: 40,
+      deltaY: 1,
+      deltaMode: 1,
       shiftKey: false,
       altKey: false,
       ctrlKey: false,
     } as WheelEvent;
     expect(input.sendMouseEvent("wheel", wheel)).toBe(true);
     expect(replies.length).toBeGreaterThan(0);
-    expect(replies[0]).toMatch(/^\x1b\[</);
+    expect(replies[0]!.startsWith("\x1b[<")).toBe(true);
   } finally {
     wasm.destroy(handle);
   }
@@ -248,6 +249,7 @@ test("public loadBinarySnapshot rehydrates mouse from the NEW handle bits", () =
 
   const wheel = {
     deltaY: 1,
+    deltaMode: 1,
     shiftKey: false,
     altKey: false,
     ctrlKey: false,

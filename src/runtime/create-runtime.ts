@@ -561,6 +561,8 @@ export function createResttyApp(options: ResttyAppOptions): ResttyApp {
     suppressQueryReplies: options.readOnly === true,
     positionToCell,
     positionToPixel,
+    getCellHeight: () => Math.max(1, gridState.cellH || 20),
+    getRows: () => Math.max(1, gridState.rows || 24),
     getDefaultColors: () => ({
       fg: floatsToRgb(defaultFg),
       bg: floatsToRgb(defaultBg),

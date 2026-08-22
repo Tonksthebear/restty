@@ -86,7 +86,9 @@ export function bindPointerEvents(options: BindPointerEventsOptions) {
    */
   const applyTouchPan = (event: PointerEvent, deltaPx: number) => {
     if (!deltaPx) return;
-    if (shouldRoutePointerToAppMouse(event.shiftKey) && inputHandler.isMouseActive()) {
+    // One synthetic wheel event per pan sample. MouseController accumulates
+    // pixels and encodes reports. Do not invent extra steps here.
+    if (shouldRoutePointerToAppMouse(event.shiftKey)) {
       const wheelLike = {
         deltaY: -deltaPx,
         deltaMode: 0,
@@ -98,10 +100,9 @@ export function bindPointerEvents(options: BindPointerEventsOptions) {
         clientY: event.clientY,
         button: 0,
       } as WheelEvent;
-      if (inputHandler.sendMouseEvent("wheel", wheelLike)) {
-        event.preventDefault();
-        return;
-      }
+      inputHandler.sendMouseEvent("wheel", wheelLike);
+      event.preventDefault();
+      return;
     }
     scrollViewportByLines((deltaPx / Math.max(1, getGridState().cellH)) * 1.5);
     event.preventDefault();

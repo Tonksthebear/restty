@@ -22,6 +22,8 @@ export function createInputHandler(options: InputHandlerOptions = {}): InputHand
     sendReply: inputSink,
     positionToCell,
     positionToPixel: positionToPixel ?? undefined,
+    getCellHeight: options.getCellHeight,
+    getRows: options.getRows,
   });
   const filter = new OutputFilter({
     getCursorPosition: cursorProvider,
