@@ -666,7 +666,7 @@ test("bindPointerEvents touch pan uses local scroll when mouse tracking is off",
   expect(lineScrolls).toBe(1);
 });
 
-test("bindPointerEvents touch pan in mouse mode never falls back to local scroll", () => {
+test("bindPointerEvents touch pan falls back to local scroll when app mouse refuses the wheel", () => {
   let lineScrolls = 0;
   let wheelCalls = 0;
   const canvas = new FakeCanvas();
@@ -743,7 +743,7 @@ test("bindPointerEvents touch pan in mouse mode never falls back to local scroll
     createPointerEvent({ pointerType: "touch", pointerId: 4, clientY: 40 })
       .event as unknown as Event,
   );
-  expect(lineScrolls).toBe(0);
+  expect(lineScrolls).toBe(1);
   expect(wheelCalls).toBe(0);
 });
 

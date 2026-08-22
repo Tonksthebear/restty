@@ -116,7 +116,7 @@ export type InputHandlerOptions = {
    */
   getCellHeight?: () => number;
   /**
-   * Viewport rows for wheel page deltas and per-event report bound.
+   * Viewport rows for wheel page deltas.
    */
   getRows?: () => number;
   /**

@@ -17,7 +17,7 @@ export type MouseControllerOptions = {
    */
   getCellHeight?: () => number;
   /**
-   * Viewport rows. Scales page-mode deltas and bounds reports per event.
+   * Viewport rows. Scales page-mode wheel deltas.
    * Defaults to 24 when omitted.
    */
   getRows?: () => number;
@@ -71,11 +71,6 @@ export class MouseController {
     fn: (event: MouseEvent | PointerEvent | WheelEvent) => { x: number; y: number },
   ) {
     this.positionToPixel = fn;
-  }
-
-  setCellMetrics(getCellHeight: () => number, getRows?: () => number) {
-    this.getCellHeight = getCellHeight;
-    if (getRows) this.getRows = getRows;
   }
 
   setMode(mode: MouseMode) {
@@ -236,22 +231,24 @@ export class MouseController {
       const dyPx = wheelDeltaPixels(event as WheelEvent, cellH, rows);
       if (!dyPx) return false;
       // Drop stale remainder on reverse so leftover motion does not invert.
-      if (this.pendingWheelPx !== 0 && Math.sign(this.pendingWheelPx) !== Math.sign(dyPx)) {
-        this.pendingWheelPx = 0;
-      }
-      this.pendingWheelPx += dyPx;
-      if (Math.abs(this.pendingWheelPx) < cellH) {
-        // Consume the event so local scroll does not also run.
+      let next = this.pendingWheelPx;
+      if (next !== 0 && Math.sign(next) !== Math.sign(dyPx)) next = 0;
+      next += dyPx;
+      if (Math.abs(next) < cellH) {
+        this.pendingWheelPx = next;
         return true;
       }
-      const rawSteps = Math.trunc(this.pendingWheelPx / cellH);
-      if (!rawSteps) return true;
-      // Bound one event to one viewport. Keep unsent cells in the remainder.
-      const maxSteps = rows;
-      const n = Math.min(Math.abs(rawSteps), maxSteps);
-      this.pendingWheelPx -= Math.sign(rawSteps) * n * cellH;
+      const rawSteps = Math.trunc(next / cellH);
+      if (!rawSteps) {
+        this.pendingWheelPx = next;
+        return true;
+      }
+      const n = Math.abs(rawSteps);
       const code = (rawSteps < 0 ? 64 : 65) + mods;
-      return this.sendMouseRepeated(code, col, row, pixel, n);
+      // Encode before committing remainder so a failed X10 clamp does not drop motion.
+      if (!this.sendWheelBatch(code, col, row, pixel, n)) return false;
+      this.pendingWheelPx = next - Math.sign(rawSteps) * n * cellH;
+      return true;
     }
     return false;
   }
@@ -289,7 +286,7 @@ export class MouseController {
     return true;
   }
 
-  private sendMouseRepeated(
+  private sendWheelBatch(
     code: number,
     col: number,
     row: number,

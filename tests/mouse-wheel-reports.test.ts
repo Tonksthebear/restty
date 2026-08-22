@@ -85,17 +85,19 @@ test("momentum stream keeps fractional remainder across events", () => {
   expect(reportCount(replies[0], "\x1b[<")).toBe(1);
 });
 
-test("large delta sends a viewport bound and keeps the rest for later", () => {
+test("large delta batches every full cell and keeps only the fractional remainder", () => {
   const { mouse, replies } = createMouse({ cellH: 20, rows: 10 });
   enableSgr(mouse);
-  // 1000px / 20 = 50 cells. Bound is 10 rows. Remainder is 40 cells.
-  expect(mouse.sendMouseEvent("wheel", wheelEvent(-1000))).toBe(true);
+  // 1005px / 20 = 50 cells with 5px remainder. One write, no leftover cells.
+  expect(mouse.sendMouseEvent("wheel", wheelEvent(-1005))).toBe(true);
   expect(replies.length).toBe(1);
-  expect(reportCount(replies[0], "\x1b[<")).toBe(10);
+  expect(reportCount(replies[0], "\x1b[<")).toBe(50);
   replies.length = 0;
   expect(mouse.sendMouseEvent("wheel", wheelEvent(-1))).toBe(true);
+  expect(replies).toEqual([]);
+  expect(mouse.sendMouseEvent("wheel", wheelEvent(-14))).toBe(true);
   expect(replies.length).toBe(1);
-  expect(reportCount(replies[0], "\x1b[<")).toBe(10);
+  expect(reportCount(replies[0], "\x1b[<")).toBe(1);
 });
 
 test("negative deltaY encodes button 64 and positive encodes 65", () => {
@@ -140,6 +142,27 @@ test("ctrl modifier is encoded on batched wheel reports", () => {
   enableSgr(mouse);
   expect(mouse.sendMouseEvent("wheel", wheelEvent(-40, { ctrlKey: true }))).toBe(true);
   expect(replies[0]).toBe("\x1b[<80;3;2M\x1b[<80;3;2M");
+});
+
+test("X10 format clamp does not debit remainder when encode fails", () => {
+  let cell = { row: 300, col: 300 };
+  const replies: string[] = [];
+  const mouse = new MouseController({
+    sendReply: (data) => {
+      replies.push(data);
+    },
+    positionToCell: () => cell,
+    getCellHeight: () => 20,
+    getRows: () => 24,
+  });
+  mouse.setMode("auto");
+  mouse.handleModeSeq("\x1b[?1000h");
+  expect(mouse.sendMouseEvent("wheel", wheelEvent(-40))).toBe(false);
+  expect(replies).toEqual([]);
+  cell = { row: 1, col: 2 };
+  expect(mouse.sendMouseEvent("wheel", wheelEvent(-40))).toBe(true);
+  expect(replies.length).toBe(1);
+  expect(reportCount(replies[0], "\x1b[M")).toBe(2);
 });
 
 test("X10 event mode suppresses wheel and keeps the 223 clamp", () => {

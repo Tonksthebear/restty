@@ -100,9 +100,10 @@ export function bindPointerEvents(options: BindPointerEventsOptions) {
         clientY: event.clientY,
         button: 0,
       } as WheelEvent;
-      inputHandler.sendMouseEvent("wheel", wheelLike);
-      event.preventDefault();
-      return;
+      if (inputHandler.sendMouseEvent("wheel", wheelLike)) {
+        event.preventDefault();
+        return;
+      }
     }
     scrollViewportByLines((deltaPx / Math.max(1, getGridState().cellH)) * 1.5);
     event.preventDefault();
