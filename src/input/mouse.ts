@@ -21,7 +21,30 @@ export type MouseControllerOptions = {
    * Defaults to 24 when omitted.
    */
   getRows?: () => number;
+  /**
+   * Schedule a later wheel-remainder flush. Defaults to requestAnimationFrame
+   * so a coalesced flick is paced like native OS scroll callbacks.
+   */
+  scheduleWheelDrain?: (cb: () => void) => void;
 };
+
+/** Discrete reports per PTY write. TUIs redraw once per report. */
+export const WHEEL_REPORTS_PER_BURST = 3;
+
+type WheelBurstTarget = {
+  code: number;
+  col: number;
+  row: number;
+  pixel: { x: number; y: number } | null;
+};
+
+function defaultScheduleWheelDrain(cb: () => void) {
+  if (typeof requestAnimationFrame === "function") {
+    requestAnimationFrame(() => cb());
+    return;
+  }
+  setTimeout(cb, 16);
+}
 
 type MotionMode = "none" | "drag" | "any";
 type MouseFormat = "x10" | "utf8" | "sgr" | "urxvt" | "sgr_pixels";
@@ -41,6 +64,8 @@ export class MouseController {
   private x10Event = false;
   /** Accumulated wheel pixels until one cell height. */
   private pendingWheelPx = 0;
+  private wheelDrainEpoch = 0;
+  private wheelBurstTarget: WheelBurstTarget | null = null;
 
   private sendReply: (data: string) => void;
   private positionToCell: (event: MouseEvent | PointerEvent | WheelEvent) => CellPosition;
@@ -50,6 +75,7 @@ export class MouseController {
   };
   private getCellHeight: () => number;
   private getRows: () => number;
+  private scheduleWheelDrain: (cb: () => void) => void;
 
   constructor(options: MouseControllerOptions) {
     this.sendReply = options.sendReply;
@@ -57,6 +83,7 @@ export class MouseController {
     this.positionToPixel = options.positionToPixel;
     this.getCellHeight = options.getCellHeight ?? (() => 20);
     this.getRows = options.getRows ?? (() => 24);
+    this.scheduleWheelDrain = options.scheduleWheelDrain ?? defaultScheduleWheelDrain;
   }
 
   setReplySink(fn: (data: string) => void) {
@@ -83,7 +110,7 @@ export class MouseController {
       this.enabled = false;
       this.format = "x10";
       this.motion = "none";
-      this.pendingWheelPx = 0;
+      this.resetWheelAccumulator();
     } else {
       this.enabled = this.x10Event || this.flags[1000] || this.flags[1002] || this.flags[1003];
       if (this.flags[1003]) this.motion = "any";
@@ -149,7 +176,7 @@ export class MouseController {
     this.enabled = false;
     this.pressed = false;
     this.button = 0;
-    this.pendingWheelPx = 0;
+    this.resetWheelAccumulator();
 
     const bit = (n: number) => (bits & (1 << n)) !== 0;
     this.x10Event = bit(0);
@@ -176,7 +203,47 @@ export class MouseController {
     if (this.flags[1003]) this.motion = "any";
     else if (this.flags[1002]) this.motion = "drag";
     else this.motion = "none";
-    if (!this.enabled) this.pendingWheelPx = 0;
+    if (!this.enabled) this.resetWheelAccumulator();
+  }
+
+  private resetWheelAccumulator() {
+    this.wheelDrainEpoch += 1;
+    this.pendingWheelPx = 0;
+    this.wheelBurstTarget = null;
+  }
+
+  private wheelBurstLimit() {
+    return Math.max(1, Math.min(WHEEL_REPORTS_PER_BURST, this.getRows() || 24));
+  }
+
+  private queueWheelDrain() {
+    const cellH = Math.max(1, this.getCellHeight() || 20);
+    if (!this.wheelBurstTarget || Math.abs(this.pendingWheelPx) < cellH) return;
+    const epoch = this.wheelDrainEpoch;
+    this.scheduleWheelDrain(() => {
+      if (epoch !== this.wheelDrainEpoch) return;
+      this.flushWheelRemainder();
+    });
+  }
+
+  private flushWheelRemainder() {
+    const target = this.wheelBurstTarget;
+    if (!target || !this.isActive()) {
+      this.resetWheelAccumulator();
+      return;
+    }
+    const cellH = Math.max(1, this.getCellHeight() || 20);
+    if (Math.abs(this.pendingWheelPx) < cellH) {
+      this.wheelBurstTarget = null;
+      return;
+    }
+    const rawSteps = Math.trunc(this.pendingWheelPx / cellH);
+    if (!rawSteps) return;
+    const burst = Math.min(Math.abs(rawSteps), this.wheelBurstLimit());
+    if (!this.sendWheelBatch(target.code, target.col, target.row, target.pixel, burst)) return;
+    this.pendingWheelPx -= Math.sign(rawSteps) * burst * cellH;
+    if (Math.abs(this.pendingWheelPx) >= cellH) this.queueWheelDrain();
+    else this.wheelBurstTarget = null;
   }
 
   isActive() {
@@ -225,7 +292,11 @@ export class MouseController {
     }
     if (kind === "wheel") {
       // Browser wheel quantity is pixels/lines/pages, not terminal bytes.
-      // Accumulate against cell height and emit one discrete report per cell.
+      // A TUI treats each report as one line and redraws. Native terminals
+      // receive small OS scroll callbacks; browsers coalesce a flick into one
+      // huge delta. Burst now, drain leftover cells on later frames.
+      this.wheelDrainEpoch += 1;
+      this.wheelBurstTarget = null;
       const cellH = Math.max(1, this.getCellHeight() || 20);
       const rows = Math.max(1, this.getRows() || 24);
       const dyPx = wheelDeltaPixels(event as WheelEvent, cellH, rows);
@@ -243,11 +314,14 @@ export class MouseController {
         this.pendingWheelPx = next;
         return true;
       }
-      const n = Math.abs(rawSteps);
+      const burst = Math.min(Math.abs(rawSteps), this.wheelBurstLimit());
       const code = (rawSteps < 0 ? 64 : 65) + mods;
       // Encode before committing remainder so a failed X10 clamp does not drop motion.
-      if (!this.sendWheelBatch(code, col, row, pixel, n)) return false;
-      this.pendingWheelPx = next - Math.sign(rawSteps) * n * cellH;
+      if (!this.sendWheelBatch(code, col, row, pixel, burst)) return false;
+      this.pendingWheelPx = next - Math.sign(rawSteps) * burst * cellH;
+      this.wheelBurstTarget = { code, col, row, pixel };
+      if (Math.abs(this.pendingWheelPx) >= cellH) this.queueWheelDrain();
+      else this.wheelBurstTarget = null;
       return true;
     }
     return false;

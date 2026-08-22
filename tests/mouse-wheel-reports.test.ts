@@ -1,9 +1,10 @@
 import { expect, test } from "bun:test";
 import { createInputHandler } from "../src/input";
-import { MouseController, wheelDeltaPixels } from "../src/input/mouse";
+import { MouseController, WHEEL_REPORTS_PER_BURST, wheelDeltaPixels } from "../src/input/mouse";
 
 function createMouse(opts?: { cellH?: number; rows?: number; pixel?: { x: number; y: number } }) {
   const replies: string[] = [];
+  const drains: Array<() => void> = [];
   const mouse = new MouseController({
     sendReply: (data) => {
       replies.push(data);
@@ -12,9 +13,18 @@ function createMouse(opts?: { cellH?: number; rows?: number; pixel?: { x: number
     positionToPixel: opts?.pixel ? () => opts.pixel! : undefined,
     getCellHeight: () => opts?.cellH ?? 20,
     getRows: () => opts?.rows ?? 24,
+    scheduleWheelDrain: (cb) => {
+      drains.push(cb);
+    },
   });
   mouse.setMode("auto");
-  return { mouse, replies };
+  const flushDrains = () => {
+    while (drains.length > 0) {
+      const cb = drains.shift();
+      cb?.();
+    }
+  };
+  return { mouse, replies, drains, flushDrains };
 }
 
 function enableSgr(mouse: MouseController) {
@@ -85,13 +95,18 @@ test("momentum stream keeps fractional remainder across events", () => {
   expect(reportCount(replies[0], "\x1b[<")).toBe(1);
 });
 
-test("large delta batches every full cell and keeps only the fractional remainder", () => {
-  const { mouse, replies } = createMouse({ cellH: 20, rows: 10 });
+test("large swipe sends a TUI-sized burst then drains remainder on later frames", () => {
+  const { mouse, replies, drains, flushDrains } = createMouse({ cellH: 20, rows: 10 });
   enableSgr(mouse);
-  // 1005px / 20 = 50 cells with 5px remainder. One write, no leftover cells.
+  // 1005px / 20 = 50 cells with 5px remainder. One write is one mouse-notch burst.
   expect(mouse.sendMouseEvent("wheel", wheelEvent(-1005))).toBe(true);
   expect(replies.length).toBe(1);
-  expect(reportCount(replies[0], "\x1b[<")).toBe(50);
+  expect(reportCount(replies[0], "\x1b[<")).toBe(WHEEL_REPORTS_PER_BURST);
+  expect(drains.length).toBe(1);
+  flushDrains();
+  const total = replies.reduce((n, seq) => n + reportCount(seq, "\x1b[<"), 0);
+  expect(total).toBe(50);
+  expect(replies.length).toBeGreaterThan(1);
   replies.length = 0;
   expect(mouse.sendMouseEvent("wheel", wheelEvent(-1))).toBe(true);
   expect(replies).toEqual([]);
@@ -108,6 +123,21 @@ test("negative deltaY encodes button 64 and positive encodes 65", () => {
   replies.length = 0;
   expect(mouse.sendMouseEvent("wheel", wheelEvent(20))).toBe(true);
   expect(replies[0]).toBe("\x1b[<65;3;2M");
+});
+
+test("a later wheel event cancels a pending remainder drain", () => {
+  const { mouse, replies, drains } = createMouse({ cellH: 20 });
+  enableSgr(mouse);
+  expect(mouse.sendMouseEvent("wheel", wheelEvent(-80))).toBe(true);
+  expect(reportCount(replies[0], "\x1b[<")).toBe(WHEEL_REPORTS_PER_BURST);
+  expect(drains.length).toBe(1);
+  const stale = drains[0]!;
+  replies.length = 0;
+  drains.length = 0;
+  expect(mouse.sendMouseEvent("wheel", wheelEvent(-20))).toBe(true);
+  expect(replies.length).toBe(1);
+  stale();
+  expect(replies.length).toBe(1);
 });
 
 test("direction change drops stale remainder instead of reversing it", () => {
@@ -129,12 +159,15 @@ test("line-mode wheel uses the real line count and cell height", () => {
   expect(replies[0]!.startsWith("\x1b[<65;")).toBe(true);
 });
 
-test("page-mode wheel uses live viewport rows", () => {
-  const { mouse, replies } = createMouse({ cellH: 16, rows: 30 });
+test("page-mode wheel uses live viewport rows and paces the reports", () => {
+  const { mouse, replies, flushDrains } = createMouse({ cellH: 16, rows: 30 });
   enableSgr(mouse);
   expect(mouse.sendMouseEvent("wheel", wheelEvent(1, { deltaMode: 2 }))).toBe(true);
   expect(replies.length).toBe(1);
-  expect(reportCount(replies[0], "\x1b[<")).toBe(30);
+  expect(reportCount(replies[0], "\x1b[<")).toBe(WHEEL_REPORTS_PER_BURST);
+  flushDrains();
+  const total = replies.reduce((n, seq) => n + reportCount(seq, "\x1b[<"), 0);
+  expect(total).toBe(30);
 });
 
 test("ctrl modifier is encoded on batched wheel reports", () => {
